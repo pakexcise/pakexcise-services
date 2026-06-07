@@ -1,12 +1,20 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
+import { authConfig, buildLoginRedirectUrl } from "@/config/auth";
 import { LOCALE_COOKIE_NAME, routing } from "./i18n/routing";
 import { isValidLocale } from "./i18n/locale";
+import { applySecurityHeaders } from "@/server/security/headers";
 
 const handleI18nRouting = createMiddleware(routing);
 
 const legacyLocalePrefixPattern = /^\/(en|ur)(\/.*)?$/;
+
+const protectedRoutePrefixes = [
+  authConfig.customerPathPrefix,
+  authConfig.agentPathPrefix,
+  authConfig.adminPathPrefix,
+] as const;
 
 function redirectLegacyLocalePrefix(request: NextRequest): NextResponse | null {
   const { pathname } = request.nextUrl;
@@ -47,16 +55,56 @@ function syncLocaleCookie(response: NextResponse, request: NextRequest): NextRes
   return response;
 }
 
-export default function middleware(request: NextRequest) {
+function hasAuthSessionCookie(request: NextRequest): boolean {
+  return authConfig.sessionCookieNames.some((cookieName) =>
+    Boolean(request.cookies.get(cookieName)?.value),
+  );
+}
+
+function isProtectedRoute(pathname: string): boolean {
+  return protectedRoutePrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+function protectPrivateRoutes(request: NextRequest): NextResponse | null {
+  const { pathname } = request.nextUrl;
+
+  if (!isProtectedRoute(pathname)) {
+    return null;
+  }
+
+  if (hasAuthSessionCookie(request)) {
+    return null;
+  }
+
+  const loginUrl = request.nextUrl.clone();
+  const redirectTarget = buildLoginRedirectUrl(pathname);
+  const queryIndex = redirectTarget.indexOf("?");
+
+  loginUrl.pathname = authConfig.loginPath;
+  loginUrl.search =
+    queryIndex >= 0 ? redirectTarget.slice(queryIndex + 1) : "";
+
+  return NextResponse.redirect(loginUrl);
+}
+
+export default function proxy(request: NextRequest) {
   const legacyRedirect = redirectLegacyLocalePrefix(request);
 
   if (legacyRedirect) {
-    return legacyRedirect;
+    return applySecurityHeaders(legacyRedirect);
+  }
+
+  const authRedirect = protectPrivateRoutes(request);
+
+  if (authRedirect) {
+    return applySecurityHeaders(authRedirect);
   }
 
   const response = handleI18nRouting(withoutAcceptLanguage(request));
 
-  return syncLocaleCookie(response, request);
+  return applySecurityHeaders(syncLocaleCookie(response, request));
 }
 
 export const config = {

@@ -1,0 +1,49 @@
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
+import { adminMetadata } from "@/features/admin/lib/metadata";
+import { ServiceEditorForm } from "@/features/services/admin/components/service-editor-form";
+import {
+  emptyServiceEditorValues,
+} from "@/features/services/admin/lib/form-defaults";
+import { getServiceEditorLabels } from "@/features/services/admin/lib/labels";
+import {
+  adminServiceRepository,
+} from "@/server/repositories/admin-service-repository";
+import { regionRepository } from "@/server/repositories";
+import { getCurrentLocale } from "@/server/i18n/get-locale";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("admin.services");
+  return adminMetadata(t("createTitle"));
+}
+
+export default async function NewServicePage() {
+  const locale = await getCurrentLocale();
+  setRequestLocale(locale);
+  const t = await getTranslations("admin.services");
+
+  const [regions, nextOrder, labels] = await Promise.all([
+    regionRepository.listAdmin(),
+    adminServiceRepository.getNextDisplayOrder(),
+    getServiceEditorLabels(),
+  ]);
+
+  const defaultRegionId = regions[0]?.id ?? "";
+
+  return (
+    <div className="space-y-6">
+      <AdminPageHeader
+        title={t("createTitle")}
+        description={t("createDescription")}
+      />
+      <ServiceEditorForm
+        mode="create"
+        initialValues={emptyServiceEditorValues(defaultRegionId, nextOrder)}
+        regions={regions}
+        labels={labels}
+      />
+    </div>
+  );
+}

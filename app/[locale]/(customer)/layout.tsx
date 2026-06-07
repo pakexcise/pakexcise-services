@@ -1,11 +1,11 @@
-import { requireAuth } from "@/server/permissions/rbac";
+import { requireCustomerPortal } from "@/server/permissions/guards";
 
 export default async function CustomerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireAuth("CUSTOMER");
+  await requireCustomerPortal();
 
   return (
     <div className="min-h-screen bg-background">

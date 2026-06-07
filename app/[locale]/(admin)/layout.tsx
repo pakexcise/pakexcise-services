@@ -1,15 +1,32 @@
-import { requireAuth } from "@/server/permissions/rbac";
+import type { Metadata } from "next";
+
+import { AdminShell } from "@/components/admin/admin-shell";
+import { getAdminNavForRole } from "@/config/admin";
+import { adminMetadata } from "@/features/admin/lib/metadata";
+import { requireAdminPortal } from "@/server/permissions/guards";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return adminMetadata("Admin");
+}
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireAuth("ADMIN");
+  const user = await requireAdminPortal();
+  const navItems = getAdminNavForRole(user.role);
 
   return (
-    <div className="min-h-screen bg-muted/20">
-      <div className="container-site py-8">{children}</div>
-    </div>
+    <AdminShell
+      navItems={navItems}
+      user={{
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }}
+    >
+      {children}
+    </AdminShell>
   );
 }

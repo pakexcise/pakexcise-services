@@ -1,6 +1,7 @@
 import { Mail, Phone } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
+import { SocialLinks } from "@/components/marketing/social-links";
 import { Separator } from "@/components/ui/separator";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
@@ -115,27 +116,12 @@ export async function Footer() {
 
       <Separator />
       <div className="container-site py-4">
-        <h2 className="mb-2 text-sm font-semibold">{t("connect")}</h2>
-        {socialLinks.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("socialEmpty")}</p>
-        ) : (
-          <ul className="flex flex-wrap gap-3 text-sm">
-            {socialLinks.map((link) => (
-              <li key={link.id}>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                  data-analytics-event="click_social_link"
-                  data-platform={link.platform}
-                >
-                  {link.labelEn}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
+        <SocialLinks
+          links={socialLinks}
+          locale={locale}
+          title={t("connect")}
+          emptyMessage={t("socialEmpty")}
+        />
       </div>
 
       <Separator />

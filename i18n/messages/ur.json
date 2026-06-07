@@ -83,5 +83,453 @@
     "ctaTitle": "خدمت منتخب کرنے میں مدد چاہیے؟",
     "ctaDescription": "ہماری ٹیم آپ کو درست درخواست کے راستے میں رہنمائی کر سکتی ہے۔",
     "ctaButton": "سپورٹ سے رابطہ"
+  },
+  "marketing": {
+    "services": {
+      "title": "ایکسائز سہولت خدمات",
+      "metaTitle": "خدمات | PakExcise.com",
+      "metaDescription": "پنجاب، اسلام آباد ICT اور دیگر علاقوں کے لیے فعال ایکسائز سہولت خدمات دیکھیں۔ نجی سروس — سرکاری ویب سائٹ نہیں۔",
+      "empty": "فی الحال کوئی فعال خدمات دستیاب نہیں ہیں۔"
+    },
+    "service": {
+      "documentsTitle": "دستاویزات کی فہرست",
+      "documentsEmpty": "ایڈمن کی ترتیب کے بعد دستاویزات کی ضروریات یہاں ظاہر ہوں گی۔",
+      "required": "لازمی",
+      "optional": "اختیاری",
+      "faqsTitle": "خدمت سے متعلق سوالات",
+      "faqsEmpty": "ابھی کوئی خدمت سے متعلق سوالات نہیں ہیں۔",
+      "ctaTitle": "درخواست دینے کے لیے تیار ہیں؟",
+      "ctaDescription": "اپنی درخواست آن لائن شروع کریں۔ ہماری ٹیم آپ کی جمع کرائی گئی درخواست کا جائزہ لے گی اور اگلے مراحل میں رہنمائی کرے گی۔",
+      "applyNow": "ابھی درخواست دیں",
+      "relatedTitle": "متعلقہ خدمات"
+    },
+    "regions": {
+      "title": "علاقے",
+      "metaTitle": "علاقے | PakExcise.com",
+      "metaDescription": "پاکستان بھر کے علاقوں کے لحاظ سے ایکسائز سہولت خدمات دیکھیں۔",
+      "empty": "فی الحال کوئی فعال علاقے دستیاب نہیں ہیں۔",
+      "emptyServices": "اس علاقے میں ابھی کوئی فعال خدمات نہیں ہیں۔",
+      "viewServices": "خدمات دیکھیں",
+      "servicesInRegion": "اس علاقے کی خدمات"
+    },
+    "faqs": {
+      "title": "اکثر پوچھے گئے سوالات",
+      "metaTitle": "سوالات | PakExcise.com",
+      "metaDescription": "PakExcise نجی ایکسائز سہولت کے بارے میں عام سوالات کے جوابات۔",
+      "empty": "فی الحال کوئی سوالات دستیاب نہیں ہیں۔"
+    },
+    "guides": {
+      "title": "رہنما",
+      "metaTitle": "رہنما | PakExcise.com",
+      "metaDescription": "پاکستان ایکسائز سہولت کے عمل کے لیے مرحلہ وار رہنما۔",
+      "empty": "ابھی کوئی رہنما شائع نہیں ہوا۔"
+    },
+    "blog": {
+      "title": "بلاگ",
+      "metaTitle": "بلاگ | PakExcise.com",
+      "metaDescription": "PakExcise.com کی تازہ ترین معلومات اور مضامین۔",
+      "empty": "ابھی کوئی بلاگ پوسٹ شائع نہیں ہوئی۔"
+    },
+    "track": {
+      "inputLabel": "ٹریکنگ ID",
+      "submitLabel": "درخواست ٹریک کریں",
+      "helpText": "درخواست جمع کرانے کے بعد موصول ہونے والی ٹریکنگ ID درج کریں۔ آپ لاگ ان کر کے اپنی تمام درخواستیں بھی دیکھ سکتے ہیں۔"
+    }
+  },
+  "admin": {
+    "panel": "ایڈمن پینل",
+    "privateNotice": "نجی سہولت آپریشنز — سرکاری پورٹل نہیں۔",
+    "search": "تلاش",
+    "searchPlaceholder": "ٹریکنگ ID، کسٹمر یا سروس سے درخواست تلاش کریں",
+    "openMenu": "ایڈمن مینو کھولیں",
+    "errorDescription": "ایڈمن صفحہ لوڈ نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔",
+    "userMenu": {
+      "publicSite": "عوامی سائٹ دیکھیں",
+      "signOut": "سائن آؤٹ"
+    },
+    "nav": {
+      "dashboard": "ڈیش بورڈ",
+      "applications": "درخواستیں",
+      "services": "خدمات",
+      "regions": "علاقے",
+      "faqs": "سوالات",
+      "social": "سوشل لنکس",
+      "agents": "ایجنٹس",
+      "customers": "کسٹمرز",
+      "notifications": "اطلاعات",
+      "seo": "SEO",
+      "redirects": "ری ڈائریکٹس",
+      "blog": "بلاگ",
+      "guides": "رہنما",
+      "auditLogs": "آڈٹ لاگز",
+      "settings": "ترتیبات"
+    },
+    "dashboard": {
+      "title": "ڈیش بورڈ",
+      "description": "درخواستوں کا مجموعی جائزہ، قطاریں، اور فوری ایڈمن اقدامات۔",
+      "recentApplications": "حالیہ درخواستیں",
+      "recentEmpty": "ابھی کوئی درخواست جمع نہیں ہوئی۔",
+      "viewAllApplications": "تمام درخواستیں دیکھیں",
+      "quickLinks": "فوری لنکس",
+      "links": {
+        "services": "خدمات منظم کریں",
+        "applicationQueue": "درخواست جائزہ قطار",
+        "paymentVerification": "ادائیگی تصدیق قطار",
+        "auditLogs": "آڈٹ لاگز دیکھیں"
+      },
+      "cards": {
+        "total": "کل درخواستیں",
+        "review": "زیرِ جائزہ",
+        "docsRequired": "دستاویزات درکار",
+        "invoiceSent": "انوائس بھیجی گئی",
+        "paymentUploaded": "ادائیگی اپ لوڈ",
+        "paymentVerified": "ادائیگی تصدیق شدہ",
+        "inProgress": "جاری",
+        "completed": "مکمل",
+        "rejectedCancelled": "مسترد / منسوخ"
+      }
+    },
+    "applications": {
+      "title": "درخواستیں",
+      "description": "کسٹمر درخواستیں تلاش، فلٹر اور جائزہ کریں۔",
+      "detailTitle": "درخواست کی تفصیل",
+      "backToList": "درخواستوں پر واپس",
+      "overview": "جائزہ",
+      "notes": "ایڈمن نوٹس",
+      "noNotes": "ابھی کوئی ایڈمن نوٹ نہیں۔",
+      "statusHistory": "اسٹیٹس ہسٹری",
+      "noStatusHistory": "ابھی کوئی اسٹیٹس تبدیلی ریکارڈ نہیں ہوئی۔",
+      "view": "دیکھیں",
+      "emptyTitle": "کوئی درخواست نہیں ملی",
+      "emptyDescription": "فلٹرز یا تلاش کی شرائط تبدیل کریں۔",
+      "searchPlaceholder": "ٹریکنگ ID، کسٹمر یا سروس سے تلاش کریں",
+      "filters": {
+        "all": "تمام اسٹیٹس"
+      },
+      "columns": {
+        "trackingId": "ٹریکنگ ID",
+        "service": "خدمت",
+        "customer": "کسٹمر",
+        "status": "اسٹیٹس",
+        "created": "تاریخ",
+        "actions": "اقدامات"
+      },
+      "history": {
+        "note": "نوٹ",
+        "changedBy": "تبدیل کرنے والا"
+      }
+    },
+    "statuses": {
+      "SUBMITTED": "جمع شدہ",
+      "REVIEW": "جائزہ",
+      "DOCS_REQUIRED": "دستاویزات درکار",
+      "INVOICE_SENT": "انوائس بھیجی گئی",
+      "PAYMENT_UPLOADED": "ادائیگی اپ لوڈ",
+      "PAYMENT_VERIFIED": "ادائیگی تصدیق شدہ",
+      "IN_PROGRESS": "جاری",
+      "AT_OFFICE": "دفتر میں",
+      "COMPLETED": "مکمل",
+      "REJECTED": "مسترد",
+      "CANCELLED": "منسوخ"
+    },
+    "resources": {
+      "services": {
+        "title": "خدمات",
+        "description": "خدمات بنائیں، اپ ڈیٹ کریں، فعال/غیر فعال اور ترتیب دیں۔",
+        "emptyTitle": "منظم کرنے کے لیے کوئی خدمات نہیں",
+        "emptyDescription": "خدمات کے ریکارڈ CRUD آپریشنز کے لیے یہاں ظاہر ہوں گے۔",
+        "create": "خدمت شامل کریں"
+      },
+      "regions": {
+        "title": "علاقے",
+        "description": "علاقوں اور ان کے عوامی مواد کو منظم کریں۔",
+        "emptyTitle": "منظم کرنے کے لیے کوئی علاقے نہیں",
+        "emptyDescription": "علاقوں کے ریکارڈ CRUD آپریشنز کے لیے یہاں ظاہر ہوں گے۔",
+        "create": "علاقہ شامل کریں"
+      },
+      "faqs": {
+        "title": "سوالات",
+        "description": "عالمی اور خدمت سے متعلق سوالات منظم کریں۔",
+        "emptyTitle": "منظم کرنے کے لیے کوئی سوالات نہیں",
+        "emptyDescription": "سوالات کے ریکارڈ CRUD آپریشنز کے لیے یہاں ظاہر ہوں گے۔",
+        "create": "سوال شامل کریں"
+      },
+      "social": {
+        "title": "سوشل لنکس",
+        "description": "فعال سوشل اور رابطہ لنکس منظم کریں۔",
+        "emptyTitle": "منظم کرنے کے لیے کوئی سوشل لنکس نہیں",
+        "emptyDescription": "سوشل لنک ریکارڈ CRUD آپریشنز کے لیے یہاں ظاہر ہوں گے۔",
+        "create": "سوشل لنک شامل کریں"
+      },
+      "agents": {
+        "title": "ایجنٹس",
+        "description": "ایجنٹ پروفائلز، منظوری، اور تفویضات کا جائزہ لیں۔",
+        "emptyTitle": "کوئی ایجنٹ نہیں ملا",
+        "emptyDescription": "منظور شدہ اور زیرِ التوا ایجنٹس یہاں ظاہر ہوں گے۔"
+      },
+      "customers": {
+        "title": "کسٹمرز",
+        "description": "کسٹمر اکاؤنٹس اور درخواست ہسٹری دیکھیں۔",
+        "emptyTitle": "کوئی کسٹمر نہیں ملا",
+        "emptyDescription": "کسٹمر اکاؤنٹس یہاں ظاہر ہوں گے۔"
+      },
+      "notifications": {
+        "title": "اطلاعات",
+        "description": "باہر جانے والی ای میل اور واٹس ایپ اطلاعات مانیٹر کریں۔",
+        "emptyTitle": "کوئی اطلاع نہیں ملی",
+        "emptyDescription": "اطلاعات کی ڈیلیوری لاگز یہاں ظاہر ہوں گے۔"
+      },
+      "seo": {
+        "title": "SEO میٹا ڈیٹا",
+        "description": "صفحہ SEO فیلڈز، schema ڈیٹا، اور robots ترتیبات منظم کریں۔",
+        "emptyTitle": "منظم کرنے کے لیے کوئی SEO ریکارڈ نہیں",
+        "emptyDescription": "SEO میٹا ڈیٹا اندراجات یہاں ظاہر ہوں گی۔"
+      },
+      "redirects": {
+        "title": "ری ڈائریکٹس",
+        "description": "خدمات، رہنما اور بلاگ پوسٹس کے slug ری ڈائریکٹس منظم کریں۔",
+        "emptyTitle": "کوئی ری ڈائریکٹ ترتیب نہیں",
+        "emptyDescription": "ری ڈائریکٹ قوانین یہاں ظاہر ہوں گے۔",
+        "create": "ری ڈائریکٹ شامل کریں"
+      },
+      "blog": {
+        "title": "بلاگ پوسٹس",
+        "description": "SEO فیلڈز کے ساتھ بلاگ مواد بنائیں اور شائع کریں۔",
+        "emptyTitle": "منظم کرنے کے لیے کوئی بلاگ پوسٹ نہیں",
+        "emptyDescription": "بلاگ پوسٹس CRUD آپریشنز کے لیے یہاں ظاہر ہوں گی۔",
+        "create": "بلاگ پوسٹ شامل کریں"
+      },
+      "guides": {
+        "title": "رہنما",
+        "description": "SEO فیلڈز کے ساتھ رہنما بنائیں اور شائع کریں۔",
+        "emptyTitle": "منظم کرنے کے لیے کوئی رہنما نہیں",
+        "emptyDescription": "رہنما CRUD آپریشنز کے لیے یہاں ظاہر ہوں گے۔",
+        "create": "رہنما شامل کریں"
+      },
+      "auditLogs": {
+        "title": "آڈٹ لاگز",
+        "description": "ایڈمن اور سسٹم سرگرمی کے append-only لاگز دیکھیں۔",
+        "emptyTitle": "ابھی کوئی آڈٹ لاگ نہیں",
+        "emptyDescription": "ایڈمن اقدامات یہاں ریکارڈ ہوں گے۔"
+      },
+      "settings": {
+        "title": "سسٹم ترتیبات",
+        "description": "سائٹ، انٹیگریشنز، اور فیچر فلیگز کے لیے سپر ایڈمن کنفیگریشن۔",
+        "emptyTitle": "ترتیبات ماڈیول زیرِ التوا",
+        "emptyDescription": "سسٹم ترتیبات کے کنٹرولز یہاں ظاہر ہوں گے۔"
+      }
+    },
+    "services": {
+      "title": "خدمات کا انتظام",
+      "description": "خدمات، SEO، دستاویزات کی فہرست، اور ڈائنامک فارم فیلڈز منظم کریں۔",
+      "create": "خدمت شامل کریں",
+      "createTitle": "نئی خدمت بنائیں",
+      "createDescription": "نئی سہولت خدمت شامل کریں۔ محفوظ کرنے کے بعد دستاویزات اور فارم فیلڈز ترتیب دی جا سکتی ہیں۔",
+      "editTitle": "خدمت میں ترمیم",
+      "backToList": "خدمات پر واپس",
+      "searchPlaceholder": "نام یا slug سے تلاش کریں",
+      "allRegions": "تمام علاقے",
+      "allStatuses": "تمام اسٹیٹس",
+      "filter": "فلٹر",
+      "emptyTitle": "کوئی خدمت نہیں ملی",
+      "emptyDescription": "پہلی خدمت بنائیں یا فلٹرز تبدیل کریں۔",
+      "columns": {
+        "order": "ترتیب",
+        "name": "خدمت",
+        "region": "علاقہ",
+        "slug": "Slug",
+        "status": "اسٹیٹس",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "actions": {
+        "edit": "ترمیم",
+        "delete": "حذف",
+        "confirmDelete": "یہ خدمت سافٹ ڈیلیٹ کریں؟",
+        "moveUp": "اوپر",
+        "moveDown": "نیچے"
+      },
+      "sections": {
+        "core": "خدمت کی تفصیلات اور SEO",
+        "documents": "دستاویزات کی فہرست",
+        "fields": "ڈائنامک فارم فیلڈز"
+      },
+      "form": {
+        "tabs": {
+          "general": "عمومی",
+          "seo": "SEO"
+        },
+        "slug": "Slug",
+        "region": "علاقہ",
+        "selectRegion": "علاقہ منتخب کریں",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "shortDescriptionEn": "مختصر تفصیل (انگریزی)",
+        "shortDescriptionUr": "مختصر تفصیل (اردو)",
+        "contentEn": "مواد (انگریزی)",
+        "contentUr": "مواد (اردو)",
+        "ctaTextEn": "CTA متن (انگریزی)",
+        "ctaTextUr": "CTA متن (اردو)",
+        "processingNotesEn": "پروسیسنگ نوٹس (انگریزی)",
+        "processingNotesUr": "پروسیسنگ نوٹس (اردو)",
+        "requiresProof": "تکمیل کا ثبوت درکار",
+        "isActive": "فعال",
+        "displayOrder": "ڈسپلے ترتیب",
+        "metaTitleEn": "میٹا عنوان (انگریزی)",
+        "metaTitleUr": "میٹا عنوان (اردو)",
+        "metaDescriptionEn": "میٹا تفصیل (انگریزی)",
+        "metaDescriptionUr": "میٹا تفصیل (اردو)",
+        "h1En": "H1 (انگریزی)",
+        "h1Ur": "H1 (اردو)",
+        "canonicalUrl": "کینونیکل URL",
+        "ogTitleEn": "OG عنوان (انگریزی)",
+        "ogTitleUr": "OG عنوان (اردو)",
+        "ogDescriptionEn": "OG تفصیل (انگریزی)",
+        "ogDescriptionUr": "OG تفصیل (اردو)",
+        "ogImage": "OG تصویر URL",
+        "robotsIndex": "انڈیکسنگ کی اجازت",
+        "robotsFollow": "لنکس فالو کی اجازت",
+        "faqSchemaJson": "FAQ schema JSON",
+        "breadcrumbJson": "Breadcrumb schema JSON",
+        "save": "خدمت محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے...",
+        "saveFailed": "خدمت محفوظ نہیں ہو سکی",
+        "cancel": "منسوخ"
+      },
+      "documents": {
+        "existing": "موجودہ ضروریات",
+        "empty": "ابھی کوئی دستاویزات کی ضروریات نہیں ہیں۔",
+        "addDocument": "دستاویز کی ضرورت شامل کریں",
+        "editDocument": "دستاویز کی ضرورت میں ترمیم",
+        "docType": "دستاویز کی قسم",
+        "labelEn": "لیبل (انگریزی)",
+        "labelUr": "لیبل (اردو)",
+        "instructionsEn": "ہدایات (انگریزی)",
+        "instructionsUr": "ہدایات (اردو)",
+        "required": "لازمی",
+        "optional": "اختیاری",
+        "maxSizeBytes": "زیادہ سے زیادہ سائز (bytes)",
+        "acceptedMimeTypes": "قبول شدہ MIME types (کاما سے جدا)",
+        "displayOrder": "ڈسپلے ترتیب",
+        "isActive": "فعال",
+        "saveDocument": "ضرورت محفوظ کریں",
+        "clear": "فارم صاف کریں",
+        "edit": "ترمیم",
+        "delete": "حذف",
+        "confirmDelete": "یہ دستاویز کی ضرورت حذف کریں؟"
+      },
+      "fields": {
+        "existing": "موجودہ فارم فیلڈز",
+        "empty": "ابھی کوئی ڈائنامک فارم فیلڈز نہیں ہیں۔",
+        "addField": "فارم فیلڈ شامل کریں",
+        "editField": "فارم فیلڈ میں ترمیم",
+        "fieldKey": "فیلڈ key",
+        "fieldType": "فیلڈ کی قسم",
+        "labelEn": "لیبل (انگریزی)",
+        "labelUr": "لیبل (اردو)",
+        "placeholderEn": "Placeholder (انگریزی)",
+        "placeholderUr": "Placeholder (اردو)",
+        "helpTextEn": "مددگار متن (انگریزی)",
+        "helpTextUr": "مددگار متن (اردو)",
+        "required": "لازمی",
+        "isEncrypted": "محفوظ قدر خفیہ کریں",
+        "isActive": "فعال",
+        "displayOrder": "ڈسپلے ترتیب",
+        "optionsJson": "Options JSON",
+        "validationJson": "Validation JSON",
+        "conditionalJson": "Conditional logic JSON",
+        "saveField": "فیلڈ محفوظ کریں",
+        "clear": "فارم صاف کریں",
+        "edit": "ترمیم",
+        "delete": "حذف",
+        "confirmDelete": "یہ فارم فیلڈ حذف کریں؟",
+        "invalidJson": "غلط JSON فارمیٹ"
+      }
+    },
+    "faqs": {
+      "title": "FAQ کا انتظام",
+      "description": "عوامی صفحات اور schema کے لیے عمومی اور سروس مخصوص FAQs منظم کریں۔",
+      "create": "FAQ شامل کریں",
+      "createTitle": "FAQ بنائیں",
+      "createDescription": "نیا FAQ شامل کریں۔ جوابات عوامی سائٹ پر دکھانے سے پہلے صاف کیے جاتے ہیں۔",
+      "editTitle": "FAQ میں ترمیم",
+      "editDescription": "FAQ مواد، زمرہ، سروس لنک، اور نمائش اپ ڈیٹ کریں۔",
+      "backToList": "FAQs پر واپس",
+      "searchPlaceholder": "سوالات یا جوابات تلاش کریں",
+      "allCategories": "تمام زمرے",
+      "allServices": "تمام خدمات",
+      "allStatuses": "تمام اسٹیٹس",
+      "globalFaq": "عمومی",
+      "filter": "فلٹر",
+      "emptyTitle": "کوئی FAQ نہیں ملا",
+      "emptyDescription": "پہلا FAQ بنائیں یا فلٹرز تبدیل کریں۔",
+      "columns": {
+        "order": "ترتیب",
+        "question": "سوال",
+        "category": "زمرہ",
+        "service": "خدمت",
+        "status": "اسٹیٹس",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "actions": {
+        "edit": "ترمیم",
+        "delete": "حذف",
+        "confirmDelete": "یہ FAQ حذف کریں؟",
+        "moveUp": "اوپر",
+        "moveDown": "نیچے"
+      },
+      "form": {
+        "questionEn": "سوال (انگریزی)",
+        "questionUr": "سوال (اردو)",
+        "answerEn": "جواب (انگریزی)",
+        "answerUr": "جواب (اردو)",
+        "category": "زمرہ",
+        "service": "منسلک خدمت (اختیاری)",
+        "noService": "عمومی FAQ",
+        "isActive": "فعال",
+        "displayOrder": "ڈسپلے ترتیب",
+        "save": "FAQ محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے...",
+        "saveFailed": "FAQ محفوظ نہیں ہو سکا",
+        "cancel": "منسوخ"
+      }
+    },
+    "social": {
+      "title": "سوشل لنکس",
+      "description": "فوٹر اور صفحات کے سوشل لنکس منظم کریں۔ یہاں WhatsApp لنکس click_social_link analytics استعمال کرتے ہیں، FAB سے الگ۔",
+      "existing": "موجودہ لنکس",
+      "empty": "ابھی کوئی سوشل لنک ترتیب نہیں دیا گیا۔",
+      "addLink": "سوشل لنک شامل کریں",
+      "editLink": "سوشل لنک میں ترمیم",
+      "platform": "پلیٹ فارم",
+      "url": "URL",
+      "iconName": "Lucide آئیکن نام",
+      "labelEn": "لیبل (انگریزی)",
+      "labelUr": "لیبل (اردو)",
+      "isActive": "فعال",
+      "displayOrder": "ڈسپلے ترتیب",
+      "saveLink": "لنک محفوظ کریں",
+      "clear": "فارم صاف کریں",
+      "edit": "ترمیم",
+      "delete": "حذف",
+      "confirmDelete": "یہ سوشل لنک حذف کریں؟",
+      "saveFailed": "سوشل لنک محفوظ نہیں ہو سکا",
+      "whatsappNotice": "WhatsApp سوشل لنکس floating WhatsApp CTA سے الگ ہیں۔ سوشل لنکس click_social_link بھیجتے ہیں؛ FAB click_whatsapp بھیجتا ہے۔",
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "actions": {
+        "moveUp": "اوپر",
+        "moveDown": "نیچے"
+      }
+    }
   }
 }

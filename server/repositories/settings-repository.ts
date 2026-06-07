@@ -4,16 +4,18 @@ import { Repository } from "@/server/repositories/base/repository";
 
 export class SettingsRepository extends Repository {
   async getValue<T>(key: string): Promise<T | null> {
-    const setting = await this.db.setting.findUnique({
-      where: { key },
-      select: { value: true },
-    });
+    return this.query(async () => {
+      const setting = await this.db.setting.findUnique({
+        where: { key },
+        select: { value: true },
+      });
 
-    if (!setting) {
-      return null;
-    }
+      if (!setting) {
+        return null;
+      }
 
-    return setting.value as T;
+      return setting.value as T;
+    }, null);
   }
 
   async setValue(key: string, value: unknown) {

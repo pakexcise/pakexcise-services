@@ -83,5 +83,453 @@
     "ctaTitle": "Need help choosing a service?",
     "ctaDescription": "Our team can guide you through the right application path.",
     "ctaButton": "Contact support"
+  },
+  "marketing": {
+    "services": {
+      "title": "Excise facilitation services",
+      "metaTitle": "Services | PakExcise.com",
+      "metaDescription": "Browse active excise facilitation services for Punjab, Islamabad ICT, and more. Private service — not a government website.",
+      "empty": "No active services are available right now."
+    },
+    "service": {
+      "documentsTitle": "Document checklist",
+      "documentsEmpty": "Document requirements will appear here once configured by admin.",
+      "required": "Required",
+      "optional": "Optional",
+      "faqsTitle": "Service FAQs",
+      "faqsEmpty": "No service-specific FAQs yet.",
+      "ctaTitle": "Ready to apply?",
+      "ctaDescription": "Start your application online. Our team will review your submission and guide you through the next steps.",
+      "applyNow": "Apply now",
+      "relatedTitle": "Related services"
+    },
+    "regions": {
+      "title": "Regions",
+      "metaTitle": "Regions | PakExcise.com",
+      "metaDescription": "Explore excise facilitation services by region across Pakistan.",
+      "empty": "No active regions are available right now.",
+      "emptyServices": "No active services are available in this region yet.",
+      "viewServices": "View services",
+      "servicesInRegion": "Services in this region"
+    },
+    "faqs": {
+      "title": "Frequently asked questions",
+      "metaTitle": "FAQs | PakExcise.com",
+      "metaDescription": "Answers to common questions about PakExcise private excise facilitation.",
+      "empty": "No FAQs are available right now."
+    },
+    "guides": {
+      "title": "Guides",
+      "metaTitle": "Guides | PakExcise.com",
+      "metaDescription": "Step-by-step guides for Pakistan excise facilitation processes.",
+      "empty": "No guides are published yet."
+    },
+    "blog": {
+      "title": "Blog",
+      "metaTitle": "Blog | PakExcise.com",
+      "metaDescription": "Updates and articles from PakExcise.com.",
+      "empty": "No blog posts are published yet."
+    },
+    "track": {
+      "inputLabel": "Tracking ID",
+      "submitLabel": "Track application",
+      "helpText": "Enter the tracking ID you received after submitting your application. You can also log in to view all your applications."
+    }
+  },
+  "admin": {
+    "panel": "Admin panel",
+    "privateNotice": "Private facilitation operations — not a government portal.",
+    "search": "Search",
+    "searchPlaceholder": "Search applications by tracking ID, customer, or service",
+    "openMenu": "Open admin menu",
+    "errorDescription": "The admin page could not be loaded. Please try again.",
+    "userMenu": {
+      "publicSite": "View public site",
+      "signOut": "Sign out"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "applications": "Applications",
+      "services": "Services",
+      "regions": "Regions",
+      "faqs": "FAQs",
+      "social": "Social links",
+      "agents": "Agents",
+      "customers": "Customers",
+      "notifications": "Notifications",
+      "seo": "SEO",
+      "redirects": "Redirects",
+      "blog": "Blog",
+      "guides": "Guides",
+      "auditLogs": "Audit logs",
+      "settings": "Settings"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Overview of application volume, queues, and quick admin actions.",
+      "recentApplications": "Recent applications",
+      "recentEmpty": "No applications submitted yet.",
+      "viewAllApplications": "View all applications",
+      "quickLinks": "Quick links",
+      "links": {
+        "services": "Manage services",
+        "applicationQueue": "Application review queue",
+        "paymentVerification": "Payment verification queue",
+        "auditLogs": "View audit logs"
+      },
+      "cards": {
+        "total": "Total applications",
+        "review": "Pending review",
+        "docsRequired": "Docs required",
+        "invoiceSent": "Invoice sent",
+        "paymentUploaded": "Payment uploaded",
+        "paymentVerified": "Payment verified",
+        "inProgress": "In progress",
+        "completed": "Completed",
+        "rejectedCancelled": "Rejected / cancelled"
+      }
+    },
+    "applications": {
+      "title": "Applications",
+      "description": "Search, filter, and review customer applications.",
+      "detailTitle": "Application detail",
+      "backToList": "Back to applications",
+      "overview": "Overview",
+      "notes": "Admin notes",
+      "noNotes": "No admin notes yet.",
+      "statusHistory": "Status history",
+      "noStatusHistory": "No status changes recorded yet.",
+      "view": "View",
+      "emptyTitle": "No applications found",
+      "emptyDescription": "Try changing filters or search terms.",
+      "searchPlaceholder": "Search by tracking ID, customer, or service",
+      "filters": {
+        "all": "All statuses"
+      },
+      "columns": {
+        "trackingId": "Tracking ID",
+        "service": "Service",
+        "customer": "Customer",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "history": {
+        "note": "Note",
+        "changedBy": "Changed by"
+      }
+    },
+    "statuses": {
+      "SUBMITTED": "Submitted",
+      "REVIEW": "Review",
+      "DOCS_REQUIRED": "Docs required",
+      "INVOICE_SENT": "Invoice sent",
+      "PAYMENT_UPLOADED": "Payment uploaded",
+      "PAYMENT_VERIFIED": "Payment verified",
+      "IN_PROGRESS": "In progress",
+      "AT_OFFICE": "At office",
+      "COMPLETED": "Completed",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled"
+    },
+    "resources": {
+      "services": {
+        "title": "Services",
+        "description": "Create, update, enable, disable, and reorder services.",
+        "emptyTitle": "No services to manage",
+        "emptyDescription": "Service records will appear here for CRUD operations.",
+        "create": "Add service"
+      },
+      "regions": {
+        "title": "Regions",
+        "description": "Manage regions and their public content.",
+        "emptyTitle": "No regions to manage",
+        "emptyDescription": "Region records will appear here for CRUD operations.",
+        "create": "Add region"
+      },
+      "faqs": {
+        "title": "FAQs",
+        "description": "Manage global and service-specific FAQs.",
+        "emptyTitle": "No FAQs to manage",
+        "emptyDescription": "FAQ records will appear here for CRUD operations.",
+        "create": "Add FAQ"
+      },
+      "social": {
+        "title": "Social links",
+        "description": "Manage active social and contact links.",
+        "emptyTitle": "No social links to manage",
+        "emptyDescription": "Social link records will appear here for CRUD operations.",
+        "create": "Add social link"
+      },
+      "agents": {
+        "title": "Agents",
+        "description": "Review agent profiles, approvals, and assignments.",
+        "emptyTitle": "No agents found",
+        "emptyDescription": "Approved and pending agents will appear here."
+      },
+      "customers": {
+        "title": "Customers",
+        "description": "View customer accounts and application history.",
+        "emptyTitle": "No customers found",
+        "emptyDescription": "Customer accounts will appear here."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Monitor outbound email and WhatsApp notifications.",
+        "emptyTitle": "No notifications found",
+        "emptyDescription": "Notification delivery logs will appear here."
+      },
+      "seo": {
+        "title": "SEO metadata",
+        "description": "Manage page SEO fields, schema data, and robots settings.",
+        "emptyTitle": "No SEO records to manage",
+        "emptyDescription": "SEO metadata entries will appear here."
+      },
+      "redirects": {
+        "title": "Redirects",
+        "description": "Manage slug redirects for services, guides, and blog posts.",
+        "emptyTitle": "No redirects configured",
+        "emptyDescription": "Redirect rules will appear here.",
+        "create": "Add redirect"
+      },
+      "blog": {
+        "title": "Blog posts",
+        "description": "Create and publish blog content with SEO fields.",
+        "emptyTitle": "No blog posts to manage",
+        "emptyDescription": "Blog posts will appear here for CRUD operations.",
+        "create": "Add blog post"
+      },
+      "guides": {
+        "title": "Guides",
+        "description": "Create and publish guides with SEO fields.",
+        "emptyTitle": "No guides to manage",
+        "emptyDescription": "Guides will appear here for CRUD operations.",
+        "create": "Add guide"
+      },
+      "auditLogs": {
+        "title": "Audit logs",
+        "description": "Review append-only admin and system activity logs.",
+        "emptyTitle": "No audit logs yet",
+        "emptyDescription": "Admin actions will be recorded here."
+      },
+      "settings": {
+        "title": "System settings",
+        "description": "Super admin configuration for site, integrations, and feature flags.",
+        "emptyTitle": "Settings module pending",
+        "emptyDescription": "System settings controls will appear here."
+      }
+    },
+    "services": {
+      "title": "Service management",
+      "description": "Create and manage services, SEO, document checklists, and dynamic form fields.",
+      "create": "Add service",
+      "createTitle": "Create service",
+      "createDescription": "Add a new facilitation service. Document requirements and form fields can be configured after saving.",
+      "editTitle": "Edit service",
+      "backToList": "Back to services",
+      "searchPlaceholder": "Search by name or slug",
+      "allRegions": "All regions",
+      "allStatuses": "All statuses",
+      "filter": "Filter",
+      "emptyTitle": "No services found",
+      "emptyDescription": "Create your first service or adjust filters.",
+      "columns": {
+        "order": "Order",
+        "name": "Service",
+        "region": "Region",
+        "slug": "Slug",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Soft delete this service?",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
+      },
+      "sections": {
+        "core": "Service details & SEO",
+        "documents": "Document checklist",
+        "fields": "Dynamic form fields"
+      },
+      "form": {
+        "tabs": {
+          "general": "General",
+          "seo": "SEO"
+        },
+        "slug": "Slug",
+        "region": "Region",
+        "selectRegion": "Select region",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "shortDescriptionEn": "Short description (English)",
+        "shortDescriptionUr": "Short description (Urdu)",
+        "contentEn": "Content (English)",
+        "contentUr": "Content (Urdu)",
+        "ctaTextEn": "CTA text (English)",
+        "ctaTextUr": "CTA text (Urdu)",
+        "processingNotesEn": "Processing notes (English)",
+        "processingNotesUr": "Processing notes (Urdu)",
+        "requiresProof": "Requires completion proof",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "metaTitleEn": "Meta title (English)",
+        "metaTitleUr": "Meta title (Urdu)",
+        "metaDescriptionEn": "Meta description (English)",
+        "metaDescriptionUr": "Meta description (Urdu)",
+        "h1En": "H1 (English)",
+        "h1Ur": "H1 (Urdu)",
+        "canonicalUrl": "Canonical URL",
+        "ogTitleEn": "OG title (English)",
+        "ogTitleUr": "OG title (Urdu)",
+        "ogDescriptionEn": "OG description (English)",
+        "ogDescriptionUr": "OG description (Urdu)",
+        "ogImage": "OG image URL",
+        "robotsIndex": "Allow indexing",
+        "robotsFollow": "Allow following links",
+        "faqSchemaJson": "FAQ schema JSON",
+        "breadcrumbJson": "Breadcrumb schema JSON",
+        "save": "Save service",
+        "saving": "Saving...",
+        "saveFailed": "Failed to save service",
+        "cancel": "Cancel"
+      },
+      "documents": {
+        "existing": "Current requirements",
+        "empty": "No document requirements configured yet.",
+        "addDocument": "Add document requirement",
+        "editDocument": "Edit document requirement",
+        "docType": "Document type key",
+        "labelEn": "Label (English)",
+        "labelUr": "Label (Urdu)",
+        "instructionsEn": "Instructions (English)",
+        "instructionsUr": "Instructions (Urdu)",
+        "required": "Required",
+        "optional": "Optional",
+        "maxSizeBytes": "Max file size (bytes)",
+        "acceptedMimeTypes": "Accepted MIME types (comma separated)",
+        "displayOrder": "Display order",
+        "isActive": "Active",
+        "saveDocument": "Save requirement",
+        "clear": "Clear form",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Delete this document requirement?"
+      },
+      "fields": {
+        "existing": "Current form fields",
+        "empty": "No dynamic form fields configured yet.",
+        "addField": "Add form field",
+        "editField": "Edit form field",
+        "fieldKey": "Field key",
+        "fieldType": "Field type",
+        "labelEn": "Label (English)",
+        "labelUr": "Label (Urdu)",
+        "placeholderEn": "Placeholder (English)",
+        "placeholderUr": "Placeholder (Urdu)",
+        "helpTextEn": "Help text (English)",
+        "helpTextUr": "Help text (Urdu)",
+        "required": "Required",
+        "isEncrypted": "Encrypt stored value",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "optionsJson": "Options JSON",
+        "validationJson": "Validation JSON",
+        "conditionalJson": "Conditional logic JSON",
+        "saveField": "Save field",
+        "clear": "Clear form",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Delete this form field?",
+        "invalidJson": "Invalid JSON format"
+      }
+    },
+    "faqs": {
+      "title": "FAQ management",
+      "description": "Manage global and service-specific FAQs for public pages and schema.",
+      "create": "Add FAQ",
+      "createTitle": "Create FAQ",
+      "createDescription": "Add a new FAQ entry. Answers are sanitized before display on the frontend.",
+      "editTitle": "Edit FAQ",
+      "editDescription": "Update FAQ content, category, service link, and visibility.",
+      "backToList": "Back to FAQs",
+      "searchPlaceholder": "Search questions or answers",
+      "allCategories": "All categories",
+      "allServices": "All services",
+      "allStatuses": "All statuses",
+      "globalFaq": "Global",
+      "filter": "Filter",
+      "emptyTitle": "No FAQs found",
+      "emptyDescription": "Create your first FAQ or adjust filters.",
+      "columns": {
+        "order": "Order",
+        "question": "Question",
+        "category": "Category",
+        "service": "Service",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Delete this FAQ?",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
+      },
+      "form": {
+        "questionEn": "Question (English)",
+        "questionUr": "Question (Urdu)",
+        "answerEn": "Answer (English)",
+        "answerUr": "Answer (Urdu)",
+        "category": "Category",
+        "service": "Linked service (optional)",
+        "noService": "Global FAQ",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "save": "Save FAQ",
+        "saving": "Saving...",
+        "saveFailed": "Could not save FAQ",
+        "cancel": "Cancel"
+      }
+    },
+    "social": {
+      "title": "Social links",
+      "description": "Manage footer and page social links. WhatsApp links here use click_social_link analytics, separate from the WhatsApp FAB.",
+      "existing": "Existing links",
+      "empty": "No social links configured yet.",
+      "addLink": "Add social link",
+      "editLink": "Edit social link",
+      "platform": "Platform",
+      "url": "URL",
+      "iconName": "Lucide icon name",
+      "labelEn": "Label (English)",
+      "labelUr": "Label (Urdu)",
+      "isActive": "Active",
+      "displayOrder": "Display order",
+      "saveLink": "Save link",
+      "clear": "Clear form",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete this social link?",
+      "saveFailed": "Could not save social link",
+      "whatsappNotice": "WhatsApp social links are separate from the floating WhatsApp CTA. Social links fire click_social_link; the FAB fires click_whatsapp.",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "moveUp": "Move up",
+        "moveDown": "Move down"
+      }
+    }
   }
 }

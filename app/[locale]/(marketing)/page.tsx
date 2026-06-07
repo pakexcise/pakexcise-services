@@ -11,20 +11,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { buildMetadata } from "@/features/seo/lib/metadata";
+import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { Link } from "@/i18n/navigation";
-import { getActiveServices } from "@/server/repositories";
+import { getActiveServices, seoMetaRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getCurrentLocale();
   const t = await getTranslations({ locale, namespace: "home" });
+  const seo = await seoMetaRepository.findByPageKey("home");
 
-  return buildMetadata({
-    title: t("metaTitle"),
-    description: t("metaDescription"),
+  return resolveMetadataFromSeo({
     locale,
     path: "/",
+    seo,
+    fallbacks: {
+      title: {
+        en: t("metaTitle"),
+        ur: t("metaTitle"),
+      },
+      description: {
+        en: t("metaDescription"),
+        ur: t("metaDescription"),
+      },
+      h1: {
+        en: t("heroTitle"),
+        ur: t("heroTitle"),
+      },
+    },
   });
 }
 

@@ -1,36 +1,24 @@
-import "server-only";
+export {
+  auth,
+  isAdminRoleRequiringTwoFactor,
+  type AuthUser,
+  type Session,
+} from "@/server/auth/config";
 
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
+export {
+  clearSessionTwoFactorVerified,
+  getRequestMeta,
+  getRequestMetaFromHeaders,
+  getServerSession,
+  getSessionTwoFactorVerifiedAt,
+  hasSessionCookie,
+  markSessionTwoFactorVerified,
+  type ServerSession,
+  type SessionMeta,
+} from "@/server/auth/session";
 
-import { prisma } from "@/server/db/client";
-
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-  emailAndPassword: {
-    enabled: true,
-  },
-  session: {
-    expiresIn: 60 * 60 * 24 * 7,
-    updateAge: 60 * 60 * 24,
-  },
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        required: false,
-        defaultValue: "CUSTOMER",
-        input: false,
-      },
-      phone: {
-        type: "string",
-        required: false,
-      },
-    },
-  },
-});
-
-export type Session = typeof auth.$Infer.Session;
-export type AuthUser = Session["user"];
+export {
+  getCurrentUser,
+  requireUser,
+  type CurrentUser,
+} from "@/server/auth/current-user";

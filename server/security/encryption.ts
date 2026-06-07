@@ -3,12 +3,12 @@ import "server-only";
 import {
   createCipheriv,
   createDecipheriv,
-  createHash,
   randomBytes,
 } from "node:crypto";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12;
+const ENCRYPTED_PAYLOAD_PARTS = 3;
 
 function getEncryptionKey(): Buffer {
   const key = process.env.ENCRYPTION_KEY;
@@ -24,6 +24,11 @@ function getEncryptionKey(): Buffer {
   }
 
   return buffer;
+}
+
+export function isEncryptedPayload(payload: string): boolean {
+  const parts = payload.split(":");
+  return parts.length === ENCRYPTED_PAYLOAD_PARTS;
 }
 
 export function encryptSensitiveValue(plaintext: string): string {
@@ -43,6 +48,10 @@ export function encryptSensitiveValue(plaintext: string): string {
 }
 
 export function decryptSensitiveValue(payload: string): string {
+  if (!isEncryptedPayload(payload)) {
+    throw new Error("Invalid encrypted payload format");
+  }
+
   const [ivB64, authTagB64, encryptedB64] = payload.split(":");
 
   if (!ivB64 || !authTagB64 || !encryptedB64) {
@@ -63,6 +72,14 @@ export function decryptSensitiveValue(payload: string): string {
   return decrypted.toString("utf8");
 }
 
-export function hashOtp(otp: string): string {
-  return createHash("sha256").update(otp).digest("hex");
+export function encryptCnic(cnic: string): string {
+  return encryptSensitiveValue(cnic);
+}
+
+export function decryptCnic(encryptedCnic: string): string {
+  return decryptSensitiveValue(encryptedCnic);
+}
+
+export function maskEncryptedValue(): string {
+  return "[ENCRYPTED]";
 }

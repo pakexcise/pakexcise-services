@@ -110,9 +110,11 @@ model User {
   emailVerified Boolean    @default(false)
   image         String?
   phone         String?
-  role          UserRole   @default(CUSTOMER)
-  status        UserStatus @default(ACTIVE)
-  createdAt     DateTime   @default(now())
+  role              UserRole   @default(CUSTOMER)
+  status            UserStatus @default(ACTIVE)
+  twoFactorEnabled  Boolean    @default(false)
+  twoFactorSecret   String?
+  createdAt         DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   deletedAt     DateTime?
 
@@ -157,10 +159,11 @@ model Session {
   userId    String
   token     String   @unique
   expiresAt DateTime
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  ipAddress           String?
+  userAgent           String?
+  twoFactorVerifiedAt DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -226,6 +229,10 @@ model Service {
   shortDescriptionUr  String?   @db.Text
   contentEn           String?   @db.Text
   contentUr           String?   @db.Text
+  ctaTextEn           String?
+  ctaTextUr           String?
+  processingNotesEn   String?   @db.Text
+  processingNotesUr   String?   @db.Text
   requiresProof       Boolean   @default(true)
   isActive            Boolean   @default(true)
   displayOrder        Int       @default(0)
@@ -236,6 +243,7 @@ model Service {
   region          Region                @relation(fields: [regionId], references: [id])
   formFields      ServiceFormField[]
   documentReqs    DocumentRequirement[]
+  faqs            FAQ[]
   applications    Application[]
   seoMeta         SeoMeta?
   feeConfig       ServiceFeeConfig?
@@ -506,6 +514,8 @@ model AuditLog {
   entityId   String?
   metadata   Json?
   ipAddress  String?
+  ipHash     String?
+  userAgent  String?
   createdAt  DateTime    @default(now())
 
   actor User? @relation(fields: [actorId], references: [id])
@@ -537,6 +547,8 @@ model AnalyticsAttribution {
 
 model FAQ {
   id           String   @id @default(cuid())
+  serviceId    String?
+  category     String   @default("general")
   questionEn   String
   questionUr   String
   answerEn     String   @db.Text
@@ -546,7 +558,11 @@ model FAQ {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  service Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
   @@index([isActive, displayOrder])
+  @@index([category, isActive, displayOrder])
+  @@index([serviceId, isActive, displayOrder])
   @@map("faqs")
 }
 
@@ -556,6 +572,7 @@ model SocialLink {
   labelEn      String
   labelUr      String
   url          String
+  iconName     String   @default("Link")
   isActive     Boolean  @default(true)
   displayOrder Int      @default(0)
   createdAt    DateTime @default(now())

@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Prisma } from "@prisma/client";
+
 import {
   activeOnly,
   paginate,
@@ -11,17 +13,66 @@ import {
 
 export type { PublicServiceSelect as PublicServiceCard };
 
+const publicDocumentRequirementSelect = {
+  id: true,
+  docType: true,
+  labelEn: true,
+  labelUr: true,
+  instructionsEn: true,
+  instructionsUr: true,
+  isRequired: true,
+  maxSizeBytes: true,
+  acceptedMimeTypes: true,
+  displayOrder: true,
+} as const;
+
+export const publicServiceDetailSelect = {
+  id: true,
+  slug: true,
+  nameEn: true,
+  nameUr: true,
+  shortDescriptionEn: true,
+  shortDescriptionUr: true,
+  contentEn: true,
+  contentUr: true,
+  requiresProof: true,
+  displayOrder: true,
+  regionId: true,
+  updatedAt: true,
+  region: {
+    select: {
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
+  documentReqs: {
+    where: activeOnly(),
+    orderBy: { displayOrder: "asc" },
+    select: publicDocumentRequirementSelect,
+  },
+  seoMeta: true,
+} as const satisfies Prisma.ServiceSelect;
+
+export type PublicServiceDetail = Prisma.ServiceGetPayload<{
+  select: typeof publicServiceDetailSelect;
+}>;
+
 export class ServiceRepository extends Repository {
   async listPublic(limit = 6): Promise<PublicServiceSelect[]> {
-    return this.db.service.findMany({
-      where: {
-        ...activeOnly(),
-        region: activeOnly(),
-      },
-      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
-      take: limit,
-      select: publicServiceSelect,
-    });
+    return this.query(
+      () =>
+        this.db.service.findMany({
+          where: {
+            ...activeOnly(),
+            region: activeOnly(),
+          },
+          orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+          take: limit,
+          select: publicServiceSelect,
+        }),
+      [],
+    );
   }
 
   async listPublicPaginated(
@@ -47,6 +98,18 @@ export class ServiceRepository extends Repository {
     );
   }
 
+  async listPublicByRegionId(regionId: string): Promise<PublicServiceSelect[]> {
+    return this.db.service.findMany({
+      where: {
+        regionId,
+        ...activeOnly(),
+        region: activeOnly(),
+      },
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+      select: publicServiceSelect,
+    });
+  }
+
   async findPublicBySlug(slug: string): Promise<PublicServiceSelect | null> {
     return this.db.service.findFirst({
       where: {
@@ -55,6 +118,49 @@ export class ServiceRepository extends Repository {
         region: activeOnly(),
       },
       select: publicServiceSelect,
+    });
+  }
+
+  async findPublicDetailBySlug(slug: string): Promise<PublicServiceDetail | null> {
+    return this.db.service.findFirst({
+      where: {
+        slug,
+        ...activeOnly(),
+        region: activeOnly(),
+      },
+      select: publicServiceDetailSelect,
+    });
+  }
+
+  async listRelatedServices(
+    serviceId: string,
+    regionId: string,
+    limit = 3,
+  ): Promise<PublicServiceSelect[]> {
+    return this.db.service.findMany({
+      where: {
+        id: { not: serviceId },
+        regionId,
+        ...activeOnly(),
+        region: activeOnly(),
+      },
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+      take: limit,
+      select: publicServiceSelect,
+    });
+  }
+
+  async listActiveSlugs(): Promise<Array<{ slug: string; updatedAt: Date }>> {
+    return this.db.service.findMany({
+      where: {
+        ...activeOnly(),
+        region: activeOnly(),
+      },
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
     });
   }
 }

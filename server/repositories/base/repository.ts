@@ -2,10 +2,15 @@ import "server-only";
 
 import type { Prisma } from "@prisma/client";
 
+import { safeDbQuery } from "@/server/db/safe-query";
 import { prisma } from "@/server/db/prisma";
 
 export abstract class Repository {
   protected readonly db = prisma;
+
+  protected query<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
+    return safeDbQuery(operation, fallback);
+  }
 }
 
 export type PaginationInput = {

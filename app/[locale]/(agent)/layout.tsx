@@ -1,11 +1,11 @@
-import { requireAuth } from "@/server/permissions/rbac";
+import { requireApprovedAgent } from "@/server/permissions/guards";
 
 export default async function AgentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireAuth("AGENT");
+  await requireApprovedAgent();
 
   return (
     <div className="min-h-screen bg-background">
