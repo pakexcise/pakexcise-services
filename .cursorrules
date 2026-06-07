@@ -1,0 +1,807 @@
+# PakExcise.com — Cursor Rules
+
+You are building PakExcise.com, a private Pakistan excise facilitation web application.
+
+PakExcise.com is NOT a government website.
+Never write UI copy that implies government affiliation.
+Always show the private facilitation disclaimer in header, footer, service pages, application forms, payment pages, invoices, emails, WhatsApp templates, and legal pages.
+
+## Core Stack
+
+Use:
+
+* Next.js 16 App Router
+* React 19
+* TypeScript strict mode
+* Tailwind CSS v4
+* shadcn/ui
+* Radix UI
+* Lucide Icons
+* Prisma ORM
+* Neon PostgreSQL
+* Better Auth
+* Zod
+* React Hook Form
+* Zustand only where client state is needed
+* next-themes for dark/light/system theme
+* next-intl for English and Urdu translations
+* Cloudflare R2 for private document storage
+* Upstash Redis for rate limiting and queues
+* Resend + React Email for email notifications
+* WhatsApp Cloud API for WhatsApp notifications
+* GA4, GTM, Meta Pixel/CAPI, TikTok Pixel/Events API
+* Sentry for error monitoring
+
+Use pnpm.
+Use exact package versions where possible.
+Use Node.js LTS.
+
+## Architecture Rules
+
+Use feature-based architecture.
+
+Recommended structure:
+
+app/
+(marketing)/
+page.tsx
+services/
+page.tsx
+[serviceSlug]/
+page.tsx
+regions/
+[regionSlug]/
+page.tsx
+guides/
+[slug]/
+page.tsx
+blog/
+[slug]/
+page.tsx
+faqs/
+page.tsx
+track/
+page.tsx
+about/
+page.tsx
+contact/
+page.tsx
+privacy/
+page.tsx
+terms/
+page.tsx
+disclaimer/
+page.tsx
+refund/
+page.tsx
+(customer)/
+customer/
+dashboard/
+page.tsx
+applications/
+[id]/
+page.tsx
+profile/
+page.tsx
+(agent)/
+agent/
+dashboard/
+page.tsx
+applications/
+page.tsx
+commissions/
+page.tsx
+(admin)/
+admin/
+dashboard/
+page.tsx
+applications/
+page.tsx
+applications/
+[id]/
+page.tsx
+services/
+page.tsx
+regions/
+page.tsx
+faqs/
+page.tsx
+social/
+page.tsx
+agents/
+page.tsx
+customers/
+page.tsx
+notifications/
+page.tsx
+settings/
+page.tsx
+audit-logs/
+page.tsx
+seo/
+page.tsx
+redirects/
+page.tsx
+blog/
+page.tsx
+guides/
+page.tsx
+api/
+upload/
+tracking/
+webhooks/
+components/
+ui/
+shared/
+marketing/
+forms/
+customer/
+admin/
+theme/
+features/
+services/
+applications/
+invoices/
+payments/
+documents/
+notifications/
+analytics/
+seo/
+users/
+server/
+db/
+auth/
+security/
+repositories/
+r2/
+cache/
+permissions/
+lib/
+validations/
+utils.ts
+i18n/
+messages/
+en.json
+ur.json
+config.ts
+request.ts
+prisma/
+config/
+
+Rules:
+
+* Use Server Components by default.
+* Add "use client" only when interactivity is required.
+* Never import server-only modules into client components.
+* Add import "server-only" in server-only files.
+* Do not put business logic directly inside page.tsx.
+* Do not write raw Prisma queries directly inside UI components.
+* Use repositories/actions/services for domain logic.
+* No giant files.
+* No duplicated logic.
+* No TypeScript any.
+* No unsafe casts.
+* No hardcoded services, fees, FAQs, social links, document requirements, form fields, legal content, payment instructions, or SEO metadata.
+* Public pages must read dynamic data from the database.
+* Admin must be able to create, update, delete, enable, disable, reorder, and SEO-optimize dynamic content.
+
+## URL and Language Rules
+
+PakExcise must use clean URLs without locale prefixes.
+
+Do not use:
+
+* /en
+* /ur
+* /en/services
+* /ur/services
+* /en/services/[serviceSlug]
+* /ur/services/[serviceSlug]
+
+Use only clean URLs:
+
+* /
+* /services
+* /services/[serviceSlug]
+* /regions/[regionSlug]
+* /guides/[slug]
+* /blog/[slug]
+* /faqs
+* /track
+* /about
+* /contact
+* /privacy
+* /terms
+* /disclaimer
+* /refund
+* /customer/dashboard
+* /agent/dashboard
+* /admin/dashboard
+
+Language behavior:
+
+* English is the default language.
+* New users must see English by default.
+* When the user switches to Urdu, the URL must stay the same.
+* Do not redirect `/` to `/en`.
+* Do not redirect any route to `/ur`.
+* Store selected language in a cookie, for example `NEXT_LOCALE`.
+* On refresh, keep the selected language from cookie.
+* On a new browser/session without cookie, default to English.
+* Use next-intl with no visible locale prefix, such as `localePrefix: "never"` if compatible with the installed version.
+* If using next-intl internally, do not expose locale segments in the browser URL.
+* The LanguageSwitcher must only update the language cookie and refresh/re-render the current page.
+* Navigation links must never generate `/en` or `/ur`.
+* Sitemap URLs must never include `/en` or `/ur`.
+* Canonical URLs must never include `/en` or `/ur`.
+* Do not generate separate hreflang URLs for `/en` or `/ur`.
+* Since the same URL is used for both languages, treat the clean URL as canonical.
+* Keep `<html lang>` dynamic based on selected language.
+* Use `<html dir="rtl">` only when Urdu is selected.
+* Use `<html dir="ltr">` when English is selected.
+* Urdu UI/content must render RTL correctly.
+* English UI/content must render LTR correctly.
+* All user-facing strings must come from next-intl translation files or database multilingual fields.
+* No hardcoded user-facing strings in components.
+
+## i18n Content Rules
+
+Support English and Urdu.
+
+Use:
+
+* en.json for English UI strings
+* ur.json for Urdu UI strings
+* English and Urdu fields in database for admin-managed content
+
+Admin-managed content that needs both languages:
+
+* Service name
+* Service short description
+* Service full content
+* Region name
+* Document checklist label/instructions
+* Dynamic form field label/help text/options
+* FAQ question/answer
+* SEO title/description/H1
+* Legal disclaimer
+* Payment instructions where shown to user
+* Notification templates
+* Email templates
+* WhatsApp templates
+
+Rules:
+
+* All user-facing static text must use next-intl.
+* All dynamic content must come from DB fields based on selected language.
+* If Urdu field is missing, fallback to English safely.
+* Never break page rendering because a translation is missing.
+* Urdu must use proper Urdu font through next/font.
+* Keep layout mobile-first in both LTR and RTL.
+
+## Business Rules
+
+PakExcise services include:
+
+* Vehicle Transfer Punjab
+* Vehicle Transfer Islamabad ICT
+* Token Tax All Provinces
+* New Vehicle Registration Punjab
+* New Vehicle Registration Islamabad ICT
+* Vehicle Inspection Punjab
+* Vehicle Inspection Islamabad ICT
+* Vehicle Passing / Fitness Islamabad ICT
+* Route Permit Punjab
+* Route Permit Islamabad ICT
+* Data Correction Punjab + ICT
+* Driving License Renewal Punjab + ICT
+* Learner License Punjab + ICT
+
+But do not hardcode them as permanent UI data.
+Create seed data only.
+Admin must manage services dynamically.
+
+## Service Fee Rules
+
+Never show service fees on public frontend pages.
+Never show estimated service fees on service pages.
+Never show pricing cards.
+Fees are admin-only.
+Admin sets service fee per application through invoice generator.
+Invoice is the only customer-facing fee document.
+Government taxes/official fees must be separated from PakExcise facilitation service fee.
+
+## SEO Rules
+
+Every public page must be SEO optimized.
+
+Admin must manage:
+
+* Meta title
+* Meta description
+* H1
+* Canonical URL
+* OG title
+* OG description
+* OG image
+* Twitter cards
+* Robots setting
+* FAQ schema data
+* Service schema data
+* Breadcrumb schema data
+* Page content
+* Urdu metadata/content fields
+
+Use generateMetadata() on public pages.
+Use server-rendered public pages.
+Use dynamic sitemap.ts.
+Use dynamic robots.ts.
+
+Block private areas:
+
+* /admin
+* /customer
+* /agent
+* /api
+
+Use human-readable URLs:
+
+* /
+* /services
+* /services/[serviceSlug]
+* /regions/[regionSlug]
+* /guides/[slug]
+* /faqs
+* /track
+* /about
+* /contact
+* /privacy
+* /terms
+* /disclaimer
+* /refund
+* /blog/[slug]
+
+Use JSON-LD:
+
+* Organization
+* LocalBusiness
+* Service
+* FAQPage
+* BreadcrumbList
+* WebSite
+
+SEO URL rules:
+
+* Do not create `/en` URLs.
+* Do not create `/ur` URLs.
+* Do not include `/en` or `/ur` in sitemap.
+* Do not include `/en` or `/ur` in canonical URLs.
+* Do not generate duplicate language URLs.
+* Clean URL is the canonical URL.
+* Public pages must still be server-rendered and SEO optimized.
+* Admin should manage SEO content for English and Urdu, but the canonical URL remains the same.
+
+## UI/UX Rules
+
+Design must be:
+
+* Mobile-first
+* Responsive for all devices
+* Fast on Pakistani mobile networks
+* Clean, modern, trustworthy
+* Conversion-focused
+* Accessible
+* RTL compatible for Urdu
+* LTR compatible for English
+* Dark/light/system theme compatible
+
+Use PakExcise brand style:
+
+* Primary: #2159BA
+* Secondary: #FAC515
+* Use clean white/light backgrounds and strong contrast
+* Dark mode must be polished
+* Avoid heavy animations
+* Avoid autoplay videos
+* Avoid large sliders
+* Use sticky mobile CTA where useful
+* WhatsApp CTA must be visible on conversion pages
+* No layout shift
+* Use next/image
+* Provide fixed image dimensions
+* Use skeletons/loading states
+* Use error states
+* Use empty states
+
+## Auth & RBAC Rules
+
+Roles:
+
+* Guest
+* Customer
+* Agent
+* Support Staff
+* Admin
+* Super Admin
+
+Guest can:
+
+* Browse public pages
+* View services
+* View FAQs
+* Use contact
+* Switch language/theme
+
+Guest cannot:
+
+* Submit application
+* Upload documents
+* View invoice
+* View pricing
+
+Customer can:
+
+* Submit application
+* Upload documents
+* Track own applications
+* View own invoice
+* Upload payment screenshot
+* Download own completion proof
+
+Customer cannot:
+
+* View other customers data
+* Set fees
+* Access admin
+
+Agent can:
+
+* Submit applications for customers
+* Track assigned applications
+* View commissions
+
+Agent cannot:
+
+* Access admin
+* Set fees
+* Verify payments
+
+Support Staff can:
+
+* View applications
+* Add notes
+* Contact customer
+* View documents
+
+Support Staff cannot:
+
+* Verify payments
+* Manage services
+* Change critical settings
+
+Admin can:
+
+* Manage applications
+* Manage services
+* Manage FAQs
+* Manage social links
+* Generate invoices
+* Manage status
+* Verify payments
+* Upload proof documents
+
+Admin cannot:
+
+* Delete audit logs
+* Change super admin role
+
+Super Admin can:
+
+* Full access
+* Manage users/roles
+* Manage settings
+* Manage feature flags
+* Manage backups
+
+Enforce RBAC on server side only.
+Client-side checks are only for UX.
+
+Every route/action must verify:
+
+* Logged-in user
+* Role permission
+* Resource ownership
+* Current application status
+* Allowed transition
+
+## Security Rules
+
+Security is server-enforced.
+
+Use:
+
+* Zod validation on every server action, route handler, upload, and webhook
+* AES-256-GCM encryption for CNIC and sensitive form fields
+* bcrypt cost 12+ for passwords
+* Hashed OTP
+* OTP expiry 5 minutes
+* OTP resend max 3 per hour
+* HTTP-only secure cookies
+* SameSite Strict
+* CSRF protection on state-changing operations
+* Upstash Redis rate limiting
+* Cloudflare Turnstile on public forms
+* HMAC verification for webhooks
+* Signed R2 URLs only
+* Virus/MIME validation for uploads
+* Max file size validation
+* Audit logs for all admin actions
+* Append-only status history
+
+Never:
+
+* Store CNIC in plain text
+* Store OTP in plain text
+* Store passwords in plain text
+* Expose private R2 URLs
+* Trust client-side validation
+* Send PII to analytics/pixels
+* Log sensitive PII
+* Commit .env files
+* Expose stack traces to users
+* Use unsafe raw SQL
+
+## Application Flow Rules
+
+Application statuses:
+
+* SUBMITTED
+* REVIEW
+* DOCS_REQUIRED
+* INVOICE_SENT
+* PAYMENT_UPLOADED
+* PAYMENT_VERIFIED
+* IN_PROGRESS
+* AT_OFFICE
+* COMPLETED
+* REJECTED
+* CANCELLED
+
+Rules:
+
+* Every status change requires a note.
+* No silent status transition.
+* COMPLETED requires proof upload when service.requiresProof is true.
+* Admin cannot mark COMPLETED without proof.
+* Customer can only upload payment screenshot after invoice is sent.
+* Admin can approve/reject payment screenshot with reason.
+* Customer receives tracking ID after submission.
+* Documents are uploaded to private R2 using pre-signed URLs.
+* Document signed viewer URL expires in 1 hour.
+* Proof download URL expires in 24 hours.
+
+## Database Rules
+
+Use Prisma schema with normalized tables.
+
+Important models:
+
+* User
+* Account
+* Session
+* AgentProfile
+* Region
+* Service
+* ServiceFormField
+* DocumentRequirement
+* Application
+* ApplicationFieldValue
+* Document
+* Invoice
+* InvoiceLineItem
+* Payment
+* StatusHistory
+* Notification
+* AuditLog
+* AnalyticsAttribution
+* FAQ
+* SocialLink
+* Setting
+* SeoMeta
+* Redirect
+* BlogPost
+* Guide
+
+Add indexes for:
+
+* applications(status, createdAt)
+* applications(trackingId)
+* applications(userId, createdAt)
+* applications(agentId, createdAt)
+* documents(applicationId, type)
+* invoices(applicationId, status)
+* payments(applicationId, status)
+* services(slug)
+* regions(slug)
+* faqs(active, displayOrder)
+* social_links(active, displayOrder)
+* audit_logs(actorId, createdAt)
+* analytics_attribution(source, campaign)
+
+Use soft delete where suitable.
+Audit logs must be append-only.
+Changing a service slug must create a 301 redirect.
+
+## Upload Rules
+
+Use Cloudflare R2 private bucket.
+Use pre-signed upload URLs.
+
+Validate:
+
+* File type
+* MIME type
+* Extension
+* File size
+* Double extension
+* Virus scanning hook/queue
+
+Allowed default formats:
+
+* image/jpeg
+* image/png
+* image/webp
+* application/pdf
+
+Do not expose object keys to unauthorized users.
+Use checksum where possible.
+
+## Analytics Rules
+
+Track:
+
+* view_service
+* click_whatsapp
+* start_application
+* complete_step
+* upload_document
+* submit_application
+* invoice_viewed
+* payment_uploaded
+* application_completed
+* click_social_link
+
+Store attribution on every lead/application:
+
+* first_touch_source
+* first_touch_medium
+* first_touch_campaign
+* last_touch_source
+* last_touch_campaign
+* gclid
+* fbclid
+* ttclid
+* landing_page
+* referrer
+* device_type
+
+Never send:
+
+* CNIC
+* Phone number
+* Email
+* Full address
+* Document names
+* R2 keys
+* Application private notes
+
+Use event_id for deduplication with server-side events.
+
+## Performance Rules
+
+Targets:
+
+* LCP under 2.5s
+* CLS under 0.1
+* INP under 200ms
+* Cached TTFB under 300ms
+* First load JS under 80KB gzipped where possible
+
+Use:
+
+* Server Components
+* ISR for public service/region pages
+* Dynamic rendering only where needed
+* next/image
+* WebP/AVIF
+* Lazy loading
+* Suspense
+* loading.tsx
+* error.tsx
+* Pagination
+* Search indexes
+* Avoid N+1 queries
+* Avoid heavy client bundles
+* Defer third-party scripts until consent or interaction where possible
+
+Never cache:
+
+* Dashboards
+* Signed URLs
+* Private application data
+* Admin pages
+
+## Admin Dashboard Rules
+
+Admin must manage:
+
+* Services
+* Regions
+* Dynamic form fields
+* Document checklists
+* FAQs
+* SEO
+* Social links
+* Applications
+* Status transitions
+* Invoices
+* Payments
+* Proof uploads
+* Customers
+* Agents
+* Notifications
+* Settings
+* Audit logs
+* Redirects
+* Blog/guides
+* English and Urdu content fields
+
+Every admin CRUD must have:
+
+* Search
+* Pagination
+* Filters
+* Active/inactive toggle where useful
+* Display order where useful
+* Validation
+* Audit logging
+* Confirm delete modal
+* Empty state
+* Loading state
+* Error state
+
+## Testing Rules
+
+Add tests for:
+
+* RBAC
+* IDOR protection
+* Status transitions
+* Invoice generation
+* Payment screenshot flow
+* Upload validation
+* Signed URL expiry
+* SEO metadata generation
+* Sitemap/robots
+* FAQ JSON-LD
+* Tracking events
+* Admin CRUD actions
+* Language switching without URL change
+* English default language
+* Urdu RTL layout
+
+Before saying a feature is complete:
+
+* Run typecheck
+* Run lint
+* Run tests
+* Ensure no TypeScript any
+* Ensure no hardcoded business data
+* Ensure no frontend service fees
+* Ensure no `/en` routes
+* Ensure no `/ur` routes
+* Ensure language switch keeps the same URL
+* Ensure mobile responsive UI
+* Ensure dark mode works
+* Ensure Urdu RTL works
+* Ensure SEO metadata exists
