@@ -227,6 +227,8 @@ export async function createAndSendInvoiceAction(
       trackingId: application.trackingId,
       invoiceNumber,
       serviceName: application.service.nameEn,
+      serviceNameUr: application.service.nameUr,
+      locale: application.locale,
       total: formatPkr(total, locale),
       userEmail: application.user.email,
       userPhone: application.user.phone,

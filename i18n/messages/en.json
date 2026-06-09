@@ -762,6 +762,55 @@
         "error": "Could not update agent."
       }
     },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Monitor outbound email, WhatsApp, and SMS notification delivery.",
+      "emptyTitle": "No notifications found",
+      "emptyDescription": "Notification delivery logs will appear here after customer events.",
+      "filters": {
+        "search": "Search",
+        "searchPlaceholder": "Tracking ID, title, or body",
+        "apply": "Apply filters",
+        "reset": "Reset",
+        "status": "Status",
+        "channel": "Channel",
+        "eventType": "Event"
+      },
+      "table": {
+        "createdAt": "Created",
+        "event": "Event",
+        "channel": "Channel",
+        "status": "Status",
+        "tracking": "Tracking ID",
+        "locale": "Locale",
+        "recipient": "Recipient hash",
+        "retries": "Retries",
+        "lastError": "Last error"
+      },
+      "status": {
+        "PENDING": "Pending",
+        "RETRYING": "Retrying",
+        "SENT": "Sent",
+        "FAILED": "Failed"
+      },
+      "channel": {
+        "EMAIL": "Email",
+        "WHATSAPP": "WhatsApp",
+        "SMS": "SMS"
+      },
+      "eventType": {
+        "APPLICATION_SUBMITTED": "Application submitted",
+        "DOCS_REQUIRED": "Documents required",
+        "INVOICE_SENT": "Invoice sent",
+        "PAYMENT_UPLOADED": "Payment uploaded",
+        "PAYMENT_VERIFIED": "Payment verified",
+        "STATUS_CHANGED": "Status changed",
+        "APPLICATION_COMPLETED": "Completed",
+        "APPLICATION_REJECTED": "Rejected",
+        "APPLICATION_CANCELLED": "Cancelled",
+        "PAYMENT_REJECTED": "Payment rejected"
+      }
+    },
     "payments": {
       "verification": {
         "title": "Payment verification",

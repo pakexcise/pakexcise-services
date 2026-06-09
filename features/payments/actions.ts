@@ -20,7 +20,10 @@ import {
 } from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
-import { queuePaymentRejectedNotifications } from "@/server/notifications/queue-payment-notification";
+import {
+  queuePaymentRejectedNotifications,
+  queuePaymentUploadedNotifications,
+} from "@/server/notifications/queue-payment-notification";
 import { queueApplicationStatusNotifications } from "@/server/notifications/queue-application-status-notification";
 import { requirePermission, requireUser } from "@/server/permissions/guards";
 import { createPresignedUploadUrl } from "@/server/r2/presign-upload";
@@ -41,6 +44,8 @@ async function getOwnedPayment(paymentId: string, userId: string) {
           status: true,
           trackingId: true,
           userId: true,
+          locale: true,
+          service: { select: { nameEn: true, nameUr: true } },
           user: { select: { email: true, phone: true } },
         },
       },
@@ -184,6 +189,17 @@ export async function confirmPaymentScreenshotUploadAction(
     });
   });
 
+  await queuePaymentUploadedNotifications({
+    applicationId: payment.applicationId,
+    userId: payment.application.userId,
+    trackingId: payment.application.trackingId,
+    serviceName: payment.application.service.nameEn,
+    serviceNameUr: payment.application.service.nameUr,
+    locale: payment.application.locale,
+    userEmail: payment.application.user.email,
+    userPhone: payment.application.user.phone,
+  });
+
   return successResult({
     paymentId: payment.id,
     applicationStatus: "PAYMENT_UPLOADED",
@@ -209,6 +225,8 @@ export async function verifyPaymentAction(
           status: true,
           trackingId: true,
           userId: true,
+          locale: true,
+          service: { select: { nameEn: true, nameUr: true } },
           user: { select: { email: true, phone: true } },
         },
       },
@@ -266,7 +284,9 @@ export async function verifyPaymentAction(
     applicationId: payment.applicationId,
     userId: payment.application.userId,
     trackingId: payment.application.trackingId,
-    serviceName: "your application",
+    serviceName: payment.application.service.nameEn,
+    serviceNameUr: payment.application.service.nameUr,
+    locale: payment.application.locale,
     toStatus: "PAYMENT_VERIFIED",
     note: parsed.data.note,
     userEmail: payment.application.user.email,
@@ -295,6 +315,8 @@ export async function rejectPaymentAction(
           status: true,
           trackingId: true,
           userId: true,
+          locale: true,
+          service: { select: { nameEn: true, nameUr: true } },
           user: { select: { email: true, phone: true } },
         },
       },
@@ -356,6 +378,9 @@ export async function rejectPaymentAction(
     applicationId: payment.applicationId,
     userId: payment.application.userId,
     trackingId: payment.application.trackingId,
+    serviceName: payment.application.service.nameEn,
+    serviceNameUr: payment.application.service.nameUr,
+    locale: payment.application.locale,
     reason: parsed.data.reason,
     userEmail: payment.application.user.email,
     userPhone: payment.application.user.phone,

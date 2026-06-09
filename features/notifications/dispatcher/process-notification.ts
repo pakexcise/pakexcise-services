@@ -1,0 +1,122 @@
+import "server-only";
+
+import type { Notification } from "@prisma/client";
+
+import { buildNotificationTemplate } from "@/features/notifications/lib/build-template";
+import { normalizeNotificationLocale } from "@/features/notifications/lib/resolve-locale";
+import { resolveNotificationRecipient } from "@/features/notifications/lib/resolve-recipient";
+import { sendEmailNotification } from "@/features/notifications/dispatcher/channels/email-channel";
+import { sendSmsNotification } from "@/features/notifications/dispatcher/channels/sms-channel";
+import { sendWhatsAppNotification } from "@/features/notifications/dispatcher/channels/whatsapp-channel";
+import type { NotificationPayload } from "@/features/notifications/types";
+import { prisma } from "@/server/db/client";
+
+export type ProcessNotificationResult =
+  | { ok: true }
+  | { ok: false; error: string; retryable: boolean };
+
+function parsePayload(notification: Notification): NotificationPayload | null {
+  if (!notification.payloadJson || typeof notification.payloadJson !== "object") {
+    return null;
+  }
+
+  return notification.payloadJson as NotificationPayload;
+}
+
+export async function processNotificationRecord(
+  notification: Notification,
+): Promise<ProcessNotificationResult> {
+  if (!notification.applicationId) {
+    return { ok: false, error: "missing_application_id", retryable: false };
+  }
+
+  const payload = parsePayload(notification);
+
+  if (!payload?.trackingId) {
+    return { ok: false, error: "invalid_payload", retryable: false };
+  }
+
+  const locale = normalizeNotificationLocale(notification.locale);
+  const template = buildNotificationTemplate({
+    eventType: notification.eventType,
+    locale,
+    applicationId: notification.applicationId,
+    payload,
+  });
+
+  const recipient = await resolveNotificationRecipient({
+    userId: notification.userId,
+    applicationId: notification.applicationId,
+    channel: notification.channel,
+  });
+
+  if (!recipient) {
+    return { ok: false, error: "recipient_not_found", retryable: false };
+  }
+
+  if (notification.channel === "EMAIL") {
+    const result = await sendEmailNotification({
+      to: recipient,
+      subject: template.subject,
+      text: template.body,
+      html: template.html,
+    });
+
+    if (!result.ok) {
+      return { ok: false, error: result.error, retryable: true };
+    }
+
+    return { ok: true };
+  }
+
+  if (notification.channel === "WHATSAPP") {
+    const result = await sendWhatsAppNotification({
+      phone: recipient,
+      text: `${template.whatsappText}\n${template.applicationUrl}`,
+    });
+
+    if (result.ok) {
+      return { ok: true };
+    }
+
+    if (result.fallbackToSms) {
+      const sms = await sendSmsNotification({
+        phone: recipient,
+        text: template.smsText,
+      });
+
+      if (sms.ok) {
+        await prisma.notification.update({
+          where: { id: notification.id },
+          data: {
+            lastError: `whatsapp_failed:${result.error}; sms_fallback:sent`,
+          },
+        });
+        return { ok: true };
+      }
+
+      return {
+        ok: false,
+        error: `whatsapp:${result.error}; sms:${sms.error}`,
+        retryable: true,
+      };
+    }
+
+    return { ok: false, error: result.error, retryable: true };
+  }
+
+  if (notification.channel === "SMS") {
+    const result = await sendSmsNotification({
+      phone: recipient,
+      text: template.smsText,
+    });
+
+    if (!result.ok) {
+      return { ok: false, error: result.error, retryable: true };
+    }
+
+    return { ok: true };
+  }
+
+  return { ok: false, error: "unsupported_channel", retryable: false };
+}

@@ -144,6 +144,8 @@ export async function transitionApplicationStatusAction(
       userId: application.user.id,
       trackingId: application.trackingId,
       serviceName: application.service.nameEn,
+      serviceNameUr: application.service.nameUr,
+      locale: application.locale,
       toStatus: parsed.data.toStatus,
       note: parsed.data.note,
       userEmail: application.user.email,

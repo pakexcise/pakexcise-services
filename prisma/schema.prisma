@@ -86,6 +86,19 @@ enum NotificationStatus {
   RETRYING
 }
 
+enum NotificationEventType {
+  APPLICATION_SUBMITTED
+  DOCS_REQUIRED
+  INVOICE_SENT
+  PAYMENT_UPLOADED
+  PAYMENT_VERIFIED
+  STATUS_CHANGED
+  APPLICATION_COMPLETED
+  APPLICATION_REJECTED
+  APPLICATION_CANCELLED
+  PAYMENT_REJECTED
+}
+
 enum FieldType {
   TEXT
   TEXTAREA
@@ -532,26 +545,32 @@ model StatusHistory {
 }
 
 model Notification {
-  id            String              @id @default(cuid())
+  id            String                @id @default(cuid())
   userId        String?
   applicationId String?
   channel       NotificationChannel
-  status        NotificationStatus  @default(PENDING)
+  eventType     NotificationEventType
+  locale        String                @default("en")
+  status        NotificationStatus    @default(PENDING)
   title         String
-  body          String              @db.Text
+  body          String                @db.Text
   payloadJson   Json?
-  isRead        Boolean             @default(false)
+  recipientHash String?
+  lastError     String?               @db.Text
+  isRead        Boolean               @default(false)
   sentAt        DateTime?
   failedAt      DateTime?
-  retryCount    Int                 @default(0)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  retryCount    Int                   @default(0)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
 
   user        User?        @relation(fields: [userId], references: [id])
   application Application? @relation(fields: [applicationId], references: [id])
 
   @@index([userId, isRead, createdAt])
   @@index([status, createdAt])
+  @@index([eventType, createdAt])
+  @@index([channel, status, createdAt])
   @@map("notifications")
 }
 

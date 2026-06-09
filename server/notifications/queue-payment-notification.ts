@@ -1,11 +1,15 @@
 import "server-only";
 
-import { prisma } from "@/server/db/client";
+import { enqueueNotificationEvent } from "@/features/notifications/queue/enqueue";
+import { normalizeNotificationLocale } from "@/features/notifications/lib/resolve-locale";
 
 type QueuePaymentRejectedInput = {
   applicationId: string;
   userId: string;
   trackingId: string;
+  serviceName: string;
+  serviceNameUr?: string;
+  locale?: string;
   reason: string;
   userEmail: string;
   userPhone?: string | null;
@@ -14,41 +18,53 @@ type QueuePaymentRejectedInput = {
 export async function queuePaymentRejectedNotifications(
   input: QueuePaymentRejectedInput,
 ): Promise<void> {
-  const title = "Payment screenshot rejected";
-  const body = `Your payment proof for application ${input.trackingId} was rejected. Reason: ${input.reason}. Please upload a new screenshot from your dashboard.`;
+  const locale = normalizeNotificationLocale(input.locale);
 
-  await prisma.$transaction([
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "EMAIL",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "payment_rejected",
-          trackingId: input.trackingId,
-          reason: input.reason,
-          toEmail: input.userEmail,
-        },
-      },
-    }),
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "WHATSAPP",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "payment_rejected",
-          trackingId: input.trackingId,
-          reason: input.reason,
-          phone: input.userPhone ?? null,
-        },
-      },
-    }),
-  ]);
+  await enqueueNotificationEvent({
+    userId: input.userId,
+    applicationId: input.applicationId,
+    eventType: "PAYMENT_REJECTED",
+    locale,
+    channels: ["EMAIL", "WHATSAPP"],
+    recipientEmail: input.userEmail,
+    recipientPhone: input.userPhone,
+    payload: {
+      trackingId: input.trackingId,
+      serviceName: input.serviceName,
+      serviceNameUr: input.serviceNameUr,
+      reason: input.reason,
+    },
+  });
+}
+
+type QueuePaymentUploadedInput = {
+  applicationId: string;
+  userId: string;
+  trackingId: string;
+  serviceName: string;
+  serviceNameUr?: string;
+  locale?: string;
+  userEmail: string;
+  userPhone?: string | null;
+};
+
+export async function queuePaymentUploadedNotifications(
+  input: QueuePaymentUploadedInput,
+): Promise<void> {
+  const locale = normalizeNotificationLocale(input.locale);
+
+  await enqueueNotificationEvent({
+    userId: input.userId,
+    applicationId: input.applicationId,
+    eventType: "PAYMENT_UPLOADED",
+    locale,
+    channels: ["EMAIL", "WHATSAPP"],
+    recipientEmail: input.userEmail,
+    recipientPhone: input.userPhone,
+    payload: {
+      trackingId: input.trackingId,
+      serviceName: input.serviceName,
+      serviceNameUr: input.serviceNameUr,
+    },
+  });
 }

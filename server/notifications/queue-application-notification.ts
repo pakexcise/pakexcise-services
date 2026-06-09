@@ -1,12 +1,15 @@
 import "server-only";
 
-import { prisma } from "@/server/db/client";
+import { enqueueNotificationEvent } from "@/features/notifications/queue/enqueue";
+import { normalizeNotificationLocale } from "@/features/notifications/lib/resolve-locale";
 
 type QueueApplicationSubmittedInput = {
   applicationId: string;
   userId: string;
   trackingId: string;
   serviceName: string;
+  serviceNameUr?: string;
+  locale?: string;
   userEmail: string;
   userPhone?: string | null;
 };
@@ -14,39 +17,20 @@ type QueueApplicationSubmittedInput = {
 export async function queueApplicationSubmittedNotifications(
   input: QueueApplicationSubmittedInput,
 ): Promise<void> {
-  const title = "Application submitted";
-  const body = `Your PakExcise application ${input.trackingId} for ${input.serviceName} has been submitted. We will review it shortly.`;
+  const locale = normalizeNotificationLocale(input.locale);
 
-  await prisma.$transaction([
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "EMAIL",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "application_submitted",
-          trackingId: input.trackingId,
-          toEmail: input.userEmail,
-        },
-      },
-    }),
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "WHATSAPP",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "application_submitted",
-          trackingId: input.trackingId,
-          phone: input.userPhone ?? null,
-        },
-      },
-    }),
-  ]);
+  await enqueueNotificationEvent({
+    userId: input.userId,
+    applicationId: input.applicationId,
+    eventType: "APPLICATION_SUBMITTED",
+    locale,
+    channels: ["EMAIL", "WHATSAPP"],
+    recipientEmail: input.userEmail,
+    recipientPhone: input.userPhone,
+    payload: {
+      trackingId: input.trackingId,
+      serviceName: input.serviceName,
+      serviceNameUr: input.serviceNameUr,
+    },
+  });
 }

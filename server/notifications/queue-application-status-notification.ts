@@ -2,13 +2,17 @@ import "server-only";
 
 import type { ApplicationStatus } from "@prisma/client";
 
-import { prisma } from "@/server/db/client";
+import { enqueueNotificationEvent } from "@/features/notifications/queue/enqueue";
+import { mapStatusToNotificationEvent } from "@/features/notifications/lib/map-status-to-event";
+import { normalizeNotificationLocale } from "@/features/notifications/lib/resolve-locale";
 
 type QueueStatusChangeInput = {
   applicationId: string;
   userId: string;
   trackingId: string;
   serviceName: string;
+  serviceNameUr?: string;
+  locale?: string;
   toStatus: ApplicationStatus;
   note: string;
   userEmail: string;
@@ -18,41 +22,28 @@ type QueueStatusChangeInput = {
 export async function queueApplicationStatusNotifications(
   input: QueueStatusChangeInput,
 ): Promise<void> {
-  const title = `Application status: ${input.toStatus.replace(/_/g, " ").toLowerCase()}`;
-  const body = `Your PakExcise application ${input.trackingId} for ${input.serviceName} is now ${input.toStatus.replace(/_/g, " ").toLowerCase()}. ${input.note}`;
+  const eventType = mapStatusToNotificationEvent(input.toStatus);
 
-  await prisma.$transaction([
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "EMAIL",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "application_status_changed",
-          trackingId: input.trackingId,
-          toStatus: input.toStatus,
-          toEmail: input.userEmail,
-        },
-      },
-    }),
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "WHATSAPP",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "application_status_changed",
-          trackingId: input.trackingId,
-          toStatus: input.toStatus,
-          phone: input.userPhone ?? null,
-        },
-      },
-    }),
-  ]);
+  if (!eventType || eventType === "INVOICE_SENT") {
+    return;
+  }
+
+  const locale = normalizeNotificationLocale(input.locale);
+
+  await enqueueNotificationEvent({
+    userId: input.userId,
+    applicationId: input.applicationId,
+    eventType,
+    locale,
+    channels: ["EMAIL", "WHATSAPP"],
+    recipientEmail: input.userEmail,
+    recipientPhone: input.userPhone,
+    payload: {
+      trackingId: input.trackingId,
+      serviceName: input.serviceName,
+      serviceNameUr: input.serviceNameUr,
+      toStatus: input.toStatus,
+      note: input.note,
+    },
+  });
 }

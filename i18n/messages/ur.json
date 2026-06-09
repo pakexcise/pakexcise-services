@@ -762,6 +762,55 @@
         "error": "ایجنٹ اپڈیٹ نہیں ہو سکا۔"
       }
     },
+    "notifications": {
+      "title": "اطلاعات",
+      "description": "ای میل، واٹس ایپ اور SMS اطلاعات کی ترسیل مانیٹر کریں۔",
+      "emptyTitle": "کوئی اطلاع نہیں ملی",
+      "emptyDescription": "کسٹمر واقعات کے بعد اطلاعات کی لاگز یہاں ظاہر ہوں گی۔",
+      "filters": {
+        "search": "تلاش",
+        "searchPlaceholder": "ٹریکنگ ID، عنوان یا متن",
+        "apply": "فلٹرز لاگو کریں",
+        "reset": "ری سیٹ",
+        "status": "اسٹیٹس",
+        "channel": "چینل",
+        "eventType": "واقعہ"
+      },
+      "table": {
+        "createdAt": "تاریخ",
+        "event": "واقعہ",
+        "channel": "چینل",
+        "status": "اسٹیٹس",
+        "tracking": "ٹریکنگ ID",
+        "locale": "زبان",
+        "recipient": "وصول کنندہ ہیش",
+        "retries": "دوبارہ کوشش",
+        "lastError": "آخری خرابی"
+      },
+      "status": {
+        "PENDING": "زیر التوا",
+        "RETRYING": "دوبارہ کوشش",
+        "SENT": "بھیجی گئی",
+        "FAILED": "ناکام"
+      },
+      "channel": {
+        "EMAIL": "ای میل",
+        "WHATSAPP": "واٹس ایپ",
+        "SMS": "SMS"
+      },
+      "eventType": {
+        "APPLICATION_SUBMITTED": "درخواست جمع",
+        "DOCS_REQUIRED": "دستاویزات درکار",
+        "INVOICE_SENT": "انوائس بھیجی گئی",
+        "PAYMENT_UPLOADED": "ادائیگی اپ لوڈ",
+        "PAYMENT_VERIFIED": "ادائیگی تصدیق",
+        "STATUS_CHANGED": "اسٹیٹس تبدیل",
+        "APPLICATION_COMPLETED": "مکمل",
+        "APPLICATION_REJECTED": "مسترد",
+        "APPLICATION_CANCELLED": "منسوخ",
+        "PAYMENT_REJECTED": "ادائیگی مسترد"
+      }
+    },
     "payments": {
       "verification": {
         "title": "ادائیگی کی تصدیق",

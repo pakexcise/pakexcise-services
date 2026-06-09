@@ -264,6 +264,8 @@ export async function submitApplicationAction(
     userId: user.id,
     trackingId: draft.trackingId,
     serviceName: service.name,
+    serviceNameUr: serviceRecord.nameUr,
+    locale: parsed.data.locale,
     userEmail: parsed.data.basic.email,
     userPhone: parsed.data.basic.phone,
   });

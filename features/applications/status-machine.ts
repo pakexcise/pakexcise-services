@@ -39,7 +39,6 @@ const allowedTransitions: Record<
 
 const notificationTransitions = new Set<ApplicationStatus>([
   "DOCS_REQUIRED",
-  "INVOICE_SENT",
   "PAYMENT_VERIFIED",
   "IN_PROGRESS",
   "AT_OFFICE",

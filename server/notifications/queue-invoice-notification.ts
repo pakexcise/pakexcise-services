@@ -1,6 +1,7 @@
 import "server-only";
 
-import { prisma } from "@/server/db/client";
+import { enqueueNotificationEvent } from "@/features/notifications/queue/enqueue";
+import { normalizeNotificationLocale } from "@/features/notifications/lib/resolve-locale";
 
 type QueueInvoiceSentInput = {
   applicationId: string;
@@ -8,6 +9,8 @@ type QueueInvoiceSentInput = {
   trackingId: string;
   invoiceNumber: string;
   serviceName: string;
+  serviceNameUr?: string;
+  locale?: string;
   total: string;
   userEmail: string;
   userPhone?: string | null;
@@ -16,41 +19,22 @@ type QueueInvoiceSentInput = {
 export async function queueInvoiceSentNotifications(
   input: QueueInvoiceSentInput,
 ): Promise<void> {
-  const title = "Invoice sent";
-  const body = `Your PakExcise invoice ${input.invoiceNumber} for application ${input.trackingId} is ready. Total due: ${input.total}. Please review the invoice in your dashboard and upload payment proof.`;
+  const locale = normalizeNotificationLocale(input.locale);
 
-  await prisma.$transaction([
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "EMAIL",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "invoice_sent",
-          trackingId: input.trackingId,
-          invoiceNumber: input.invoiceNumber,
-          toEmail: input.userEmail,
-        },
-      },
-    }),
-    prisma.notification.create({
-      data: {
-        userId: input.userId,
-        applicationId: input.applicationId,
-        channel: "WHATSAPP",
-        status: "PENDING",
-        title,
-        body,
-        payloadJson: {
-          type: "invoice_sent",
-          trackingId: input.trackingId,
-          invoiceNumber: input.invoiceNumber,
-          phone: input.userPhone ?? null,
-        },
-      },
-    }),
-  ]);
+  await enqueueNotificationEvent({
+    userId: input.userId,
+    applicationId: input.applicationId,
+    eventType: "INVOICE_SENT",
+    locale,
+    channels: ["EMAIL", "WHATSAPP"],
+    recipientEmail: input.userEmail,
+    recipientPhone: input.userPhone,
+    payload: {
+      trackingId: input.trackingId,
+      serviceName: input.serviceName,
+      serviceNameUr: input.serviceNameUr,
+      invoiceNumber: input.invoiceNumber,
+      total: input.total,
+    },
+  });
 }
