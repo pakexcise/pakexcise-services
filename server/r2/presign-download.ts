@@ -5,11 +5,12 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import {
   DOCUMENT_VIEW_EXPIRY_SECONDS,
+  INVOICE_DOWNLOAD_EXPIRY_SECONDS,
   PROOF_DOWNLOAD_EXPIRY_SECONDS,
 } from "@/config/uploads";
 import { getR2BucketName, getR2Client } from "@/server/r2/client";
 
-export type SignedDownloadPurpose = "view" | "proof";
+export type SignedDownloadPurpose = "view" | "proof" | "invoice";
 
 export type PresignedDownloadInput = {
   key: string;
@@ -32,9 +33,15 @@ export function resolveDownloadExpirySeconds(
     return override;
   }
 
-  return purpose === "proof"
-    ? PROOF_DOWNLOAD_EXPIRY_SECONDS
-    : DOCUMENT_VIEW_EXPIRY_SECONDS;
+  if (purpose === "proof") {
+    return PROOF_DOWNLOAD_EXPIRY_SECONDS;
+  }
+
+  if (purpose === "invoice") {
+    return INVOICE_DOWNLOAD_EXPIRY_SECONDS;
+  }
+
+  return DOCUMENT_VIEW_EXPIRY_SECONDS;
 }
 
 export async function createPresignedDownloadUrl(
@@ -46,9 +53,9 @@ export async function createPresignedDownloadUrl(
   );
 
   const disposition =
-    input.purpose === "proof"
-      ? `attachment; filename="${sanitizeContentDispositionFileName(input.fileName)}"`
-      : `inline; filename="${sanitizeContentDispositionFileName(input.fileName)}"`;
+    input.purpose === "view"
+      ? `inline; filename="${sanitizeContentDispositionFileName(input.fileName)}"`
+      : `attachment; filename="${sanitizeContentDispositionFileName(input.fileName)}"`;
 
   const command = new GetObjectCommand({
     Bucket: getR2BucketName(),

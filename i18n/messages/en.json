@@ -161,16 +161,149 @@
     }
   },
   "customer": {
+    "nav": {
+      "ariaLabel": "Customer portal navigation",
+      "dashboard": "Dashboard",
+      "profile": "Profile"
+    },
+    "nextAction": {
+      "upload_docs": "Upload missing documents",
+      "view_invoice": "View invoice",
+      "upload_payment": "Upload payment screenshot",
+      "wait_verification": "Wait for payment verification",
+      "download_proof": "Download completion proof",
+      "wait_review": "Wait for review",
+      "in_progress": "In progress",
+      "none": "No action required"
+    },
     "dashboard": {
       "metaTitle": "My dashboard | PakExcise.com",
       "title": "My dashboard",
       "welcome": "Welcome, {name}",
+      "applicationsTitle": "My applications",
+      "applicationsEmpty": "You have not submitted any applications yet.",
+      "viewApplication": "View details",
+      "statusCards": {
+        "total": "Total applications",
+        "actionRequired": "Action required",
+        "inProgress": "In progress",
+        "completed": "Completed",
+        "closed": "Closed"
+      },
+      "columns": {
+        "trackingId": "Tracking ID",
+        "service": "Service",
+        "status": "Status",
+        "nextAction": "Next action",
+        "submitted": "Submitted",
+        "updated": "Last updated",
+        "actions": "Actions"
+      },
       "trackTitle": "Track applications",
       "trackDescription": "Use your tracking ID to check application status.",
       "trackCta": "Go to track page",
       "servicesTitle": "Browse services",
       "servicesDescription": "Start a new excise facilitation application.",
       "servicesCta": "View services"
+    },
+    "profile": {
+      "metaTitle": "My profile | PakExcise.com",
+      "title": "My profile",
+      "description": "Update your contact details used for application updates.",
+      "name": "Full name",
+      "phone": "Mobile number",
+      "email": "Email address",
+      "emailReadOnly": "Email cannot be changed here. Contact support if needed.",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Profile updated.",
+      "error": "Could not update profile."
+    },
+    "application": {
+      "metaTitle": "Application details | PakExcise.com",
+      "title": "Application details",
+      "backToDashboard": "Back to dashboard",
+      "status": "Status",
+      "nextAction": "Next action",
+      "service": "Service",
+      "submitted": "Submitted",
+      "updated": "Last updated",
+      "timeline": {
+        "title": "Status timeline",
+        "empty": "Status updates will appear here as your application progresses.",
+        "current": "Current status"
+      },
+      "submittedData": {
+        "title": "Submitted information",
+        "empty": "No additional form data was submitted.",
+        "protected": "Sensitive field"
+      },
+      "documents": {
+        "title": "Documents",
+        "empty": "No documents uploaded yet.",
+        "status": "Status",
+        "rejectionReason": "Rejection reason",
+        "uploadSection": "Upload or replace documents requested by our team.",
+        "required": "Required",
+        "optional": "Optional",
+        "upload": "Upload",
+        "uploading": "Uploading…",
+        "replace": "Replace",
+        "remove": "Remove",
+        "maxSize": "Max __SIZE__",
+        "allowedTypes": "Allowed file types",
+        "uploadFailed": "Upload failed.",
+        "invalidType": "File type is not allowed.",
+        "tooLarge": "File is too large.",
+        "invalidName": "Invalid file name."
+      },
+      "proof": {
+        "title": "Completion proof",
+        "description": "Your application is complete. Download your completion proof using a secure signed link.",
+        "download": "Download proof",
+        "loading": "Preparing download…",
+        "error": "Could not prepare proof download.",
+        "retry": "Retry"
+      },
+      "invoicePending": "Your invoice will appear here once our team sends it after review.",
+      "invoice": {
+        "title": "Invoice",
+        "invoiceNumber": "Invoice number",
+        "total": "Total due",
+        "subtotal": "Subtotal",
+        "tax": "Tax",
+        "officialFeeNote": "Government / official fees",
+        "paymentMethod": "Payment method",
+        "paymentInstructions": "Payment instructions",
+        "dueDate": "Due date",
+        "notes": "Notes",
+        "lineItems": "Line items",
+        "officialFee": "official fee",
+        "downloadPdf": "Download invoice PDF",
+        "loadingPdf": "Loading PDF…",
+        "pdfError": "Could not load invoice PDF.",
+        "retry": "Retry",
+        "sentOn": "Sent on",
+        "notAvailable": "No invoice has been sent for this application yet."
+      },
+      "payment": {
+        "title": "Upload payment proof",
+        "description": "After paying as instructed on your invoice, upload a screenshot of your payment.",
+        "upload": "Upload screenshot",
+        "uploading": "Uploading…",
+        "uploaded": "Payment screenshot uploaded",
+        "replace": "Replace screenshot",
+        "maxSize": "Max size",
+        "allowedTypes": "Allowed types",
+        "uploadFailed": "Payment upload failed.",
+        "invalidType": "File type is not allowed.",
+        "tooLarge": "File is too large.",
+        "invalidName": "Invalid file name.",
+        "waitingVerification": "Your payment screenshot is being reviewed.",
+        "verified": "Payment verified. Our team will continue processing your application.",
+        "rejected": "Payment rejected",
+        "rejectionReason": "Reason"
+      }
     }
   },
   "agent": {
@@ -271,7 +404,35 @@
     "track": {
       "inputLabel": "Tracking ID",
       "submitLabel": "Track application",
-      "helpText": "Enter the tracking ID you received after submitting your application. You can also log in to view all your applications."
+      "helpText": "Enter the tracking ID you received after submitting your application. You can also log in to view all your applications.",
+      "error": "We could not find an application for that tracking ID.",
+      "rateLimited": "Too many lookup attempts. Please wait a moment and try again.",
+      "disclaimer": "PakExcise.com is a private facilitation service and is not affiliated with any government department. Public tracking shows limited status information only.",
+      "whatsapp": "WhatsApp support",
+      "whatsappMessage": "Hello PakExcise, I need help tracking my application.",
+      "result": {
+        "title": "Application status",
+        "trackingId": "Tracking ID",
+        "service": "Service",
+        "status": "Status",
+        "updated": "Last updated",
+        "publicStatusDescription": "This is a limited public status view. Sensitive details are not shown.",
+        "loginPrompt": "Log in to view invoices, upload documents, payment proof, and completion documents.",
+        "loginCta": "Log in for full details"
+      },
+      "publicStatus": {
+        "SUBMITTED": "Your application has been submitted and is awaiting review.",
+        "REVIEW": "Our team is reviewing your application.",
+        "DOCS_REQUIRED": "Additional documents are required. Log in to upload them.",
+        "INVOICE_SENT": "An invoice has been sent. Log in to view payment instructions.",
+        "PAYMENT_UPLOADED": "Your payment proof was received and is being verified.",
+        "PAYMENT_VERIFIED": "Payment verified. Your application is being processed.",
+        "IN_PROGRESS": "Your application is in progress.",
+        "AT_OFFICE": "Your application is being processed with the relevant office.",
+        "COMPLETED": "Your application has been completed. Log in to download proof if available.",
+        "REJECTED": "This application was rejected. Contact support for assistance.",
+        "CANCELLED": "This application was cancelled."
+      }
     }
   },
   "admin": {
@@ -427,6 +588,56 @@
           "unsupported": "Inline preview is not available for this file type.",
           "openNewTab": "Open in new tab"
         }
+      }
+    },
+    "invoices": {
+      "viewPdf": "View invoice PDF",
+      "loadingPdf": "Loading PDF…",
+      "pdfError": "Could not load invoice PDF.",
+      "generator": {
+        "title": "Invoice generator",
+        "description": "Create and send the customer-facing invoice. Only available after review when documents are acceptable.",
+        "serviceFee": "PakExcise service fee (PKR)",
+        "officialFeeNote": "Government / official fee note",
+        "paymentMethod": "Payment method",
+        "paymentInstructions": "Payment instructions",
+        "dueDate": "Due date",
+        "notes": "Invoice notes",
+        "taxTotal": "Tax total (PKR)",
+        "statusNote": "Status note (required)",
+        "lineItems": "Additional line items",
+        "itemLabel": "Label",
+        "itemDescription": "Description",
+        "itemAmount": "Amount (PKR)",
+        "officialFee": "Mark as official / government fee",
+        "addLineItem": "Add line item",
+        "removeLineItem": "Remove",
+        "submit": "Generate PDF and send invoice",
+        "submitting": "Generating…",
+        "success": "Invoice sent:",
+        "error": "Could not create invoice."
+      }
+    },
+    "payments": {
+      "verification": {
+        "title": "Payment verification",
+        "description": "Review the customer payment screenshot and approve or reject with a reason.",
+        "amount": "Amount",
+        "approve": "Approve payment",
+        "approving": "Approving…",
+        "reject": "Reject payment",
+        "rejecting": "Rejecting…",
+        "verifyNote": "Verification note",
+        "rejectReason": "Rejection reason (shown to customer)",
+        "rejectNote": "Internal status note",
+        "successApprove": "Payment approved.",
+        "successReject": "Payment rejected. Customer can upload again.",
+        "error": "Could not update payment.",
+        "viewerLoading": "Loading payment screenshot…",
+        "viewerError": "Could not load payment screenshot.",
+        "viewerRetry": "Retry",
+        "viewerOpen": "Open in new tab",
+        "viewerUnsupported": "Inline preview is not available for this file type."
       }
     },
     "statuses": {

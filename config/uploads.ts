@@ -24,11 +24,13 @@ export const EXTENSION_TO_MIME: Record<string, AcceptedMimeType> = {
 
 export const DEFAULT_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
-export const UPLOAD_URL_EXPIRY_SECONDS = 900;
+export const UPLOAD_URL_EXPIRY_SECONDS = 15 * 60;
 
 export const DOCUMENT_VIEW_EXPIRY_SECONDS = 60 * 60;
 
-export const PROOF_DOWNLOAD_EXPIRY_SECONDS = 60 * 60 * 24;
+export const PROOF_DOWNLOAD_EXPIRY_SECONDS = 24 * 60 * 60;
+
+export const INVOICE_DOWNLOAD_EXPIRY_SECONDS = 24 * 60 * 60;
 
 export const COMPLETION_PROOF_DOC_TYPE = "completion_proof";
 
@@ -138,3 +140,12 @@ export function buildPaymentScreenshotKey(input: {
   const safeExt = input.extension.replace(/[^a-z0-9]/gi, "").toLowerCase();
   return `applications/${input.applicationId}/payments/${input.paymentId}.${safeExt || "bin"}`;
 }
+
+export function buildInvoicePdfKey(input: {
+  applicationId: string;
+  invoiceId: string;
+}): string {
+  return `applications/${input.applicationId}/invoices/${input.invoiceId}.pdf`;
+}
+
+export const PAYMENT_SCREENSHOT_MAX_BYTES = DEFAULT_MAX_FILE_SIZE_BYTES;

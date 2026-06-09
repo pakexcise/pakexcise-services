@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
@@ -14,6 +15,10 @@ import { getPageContent, seoMetaRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
+
+type TrackPageProps = {
+  searchParams: Promise<{ trackingId?: string }>;
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getCurrentLocale();
@@ -41,12 +46,16 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function TrackPage() {
+export default async function TrackPage({ searchParams }: TrackPageProps) {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
+  const { trackingId } = await searchParams;
   const t = await getTranslations("marketing");
   const tNav = await getTranslations("nav");
+  const tStatus = await getTranslations("admin.statuses");
+  const tPublicStatus = await getTranslations("marketing.track.publicStatus");
+
   const [content, seo] = await Promise.all([
     getPageContent("track"),
     seoMetaRepository.findByPageKey("track"),
@@ -74,6 +83,34 @@ export default async function TrackPage() {
     { name: title, url: absoluteUrl("/track") },
   ]);
 
+  const statusLabels: Record<string, string> = {
+    SUBMITTED: tStatus("SUBMITTED"),
+    REVIEW: tStatus("REVIEW"),
+    DOCS_REQUIRED: tStatus("DOCS_REQUIRED"),
+    INVOICE_SENT: tStatus("INVOICE_SENT"),
+    PAYMENT_UPLOADED: tStatus("PAYMENT_UPLOADED"),
+    PAYMENT_VERIFIED: tStatus("PAYMENT_VERIFIED"),
+    IN_PROGRESS: tStatus("IN_PROGRESS"),
+    AT_OFFICE: tStatus("AT_OFFICE"),
+    COMPLETED: tStatus("COMPLETED"),
+    REJECTED: tStatus("REJECTED"),
+    CANCELLED: tStatus("CANCELLED"),
+  };
+
+  const publicStatus: Record<string, string> = {
+    SUBMITTED: tPublicStatus("SUBMITTED"),
+    REVIEW: tPublicStatus("REVIEW"),
+    DOCS_REQUIRED: tPublicStatus("DOCS_REQUIRED"),
+    INVOICE_SENT: tPublicStatus("INVOICE_SENT"),
+    PAYMENT_UPLOADED: tPublicStatus("PAYMENT_UPLOADED"),
+    PAYMENT_VERIFIED: tPublicStatus("PAYMENT_VERIFIED"),
+    IN_PROGRESS: tPublicStatus("IN_PROGRESS"),
+    AT_OFFICE: tPublicStatus("AT_OFFICE"),
+    COMPLETED: tPublicStatus("COMPLETED"),
+    REJECTED: tPublicStatus("REJECTED"),
+    CANCELLED: tPublicStatus("CANCELLED"),
+  };
+
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />
@@ -87,12 +124,33 @@ export default async function TrackPage() {
       />
       <div className="container-site space-y-8 py-10 md:py-12">
         <ProseContent content={body} />
-        <TrackForm
-          placeholder={t("track.inputLabel")}
-          submitLabel={t("track.submitLabel")}
-          helpText={t("track.helpText")}
-          loginLabel={tNav("login")}
-        />
+        <Suspense fallback={null}>
+          <TrackForm
+            placeholder={t("track.inputLabel")}
+            submitLabel={t("track.submitLabel")}
+            helpText={t("track.helpText")}
+            loginLabel={tNav("login")}
+            locale={locale === "ur" ? "ur" : "en"}
+            initialTrackingId={trackingId ?? ""}
+            labels={{
+              error: t("track.error"),
+              rateLimited: t("track.rateLimited"),
+              disclaimer: t("track.disclaimer"),
+              whatsapp: t("track.whatsapp"),
+              whatsappMessage: t("track.whatsappMessage"),
+              resultTitle: t("track.result.title"),
+              resultTrackingId: t("track.result.trackingId"),
+              resultService: t("track.result.service"),
+              resultStatus: t("track.result.status"),
+              resultUpdated: t("track.result.updated"),
+              resultPublicStatusDescription: t("track.result.publicStatusDescription"),
+              resultLoginPrompt: t("track.result.loginPrompt"),
+              resultLoginCta: t("track.result.loginCta"),
+              publicStatus,
+              statusLabels,
+            }}
+          />
+        </Suspense>
       </div>
     </>
   );

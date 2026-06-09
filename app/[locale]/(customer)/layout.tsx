@@ -1,7 +1,7 @@
-import {
-  enforcePortalAccess,
-} from "@/server/permissions/portal-access";
+import { CustomerPortalNav } from "@/components/customer/CustomerPortalNav";
+import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
 import { requireCustomerPortal } from "@/server/permissions/guards";
+import { enforcePortalAccess } from "@/server/permissions/portal-access";
 
 export default async function CustomerLayout({
   children,
@@ -12,7 +12,11 @@ export default async function CustomerLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container-site py-8">{children}</div>
+      <LegalDisclaimer />
+      <div className="container-site space-y-6 py-8">
+        <CustomerPortalNav />
+        {children}
+      </div>
     </div>
   );
 }

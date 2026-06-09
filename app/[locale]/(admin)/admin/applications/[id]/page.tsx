@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { AdminInvoicePdfButton } from "@/components/admin/AdminInvoicePdfButton";
+import { InvoiceGenerator } from "@/components/admin/InvoiceGenerator";
+import { PaymentVerification } from "@/components/admin/PaymentVerification";
 import { SecureDocViewer } from "@/components/admin/SecureDocViewer";
 import { StatusManager } from "@/components/admin/StatusManager";
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
@@ -11,6 +14,8 @@ import { ProofUploadSection } from "@/features/admin/components/proof-upload-sec
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { getAllowedNextStatuses } from "@/features/applications/status-machine";
+import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligibility";
+import { formatPkr } from "@/features/invoices/lib/format-pkr";
 import {
   resolveAdminFieldDisplayValues,
   resolveCustomerContactDisplay,
@@ -74,6 +79,22 @@ export default async function AdminApplicationDetailPage({
     user !== null && roleHasPermission(user.role, "application:notes");
   const canUploadProof =
     user !== null && roleHasPermission(user.role, "application:write");
+  const canManageInvoice =
+    user !== null && roleHasPermission(user.role, "invoice:manage");
+  const canVerifyPayment =
+    user !== null && roleHasPermission(user.role, "payment:verify");
+
+  const hasActiveSentInvoice = application.invoices.some(
+    (invoice) => invoice.status === "SENT",
+  );
+  const showInvoiceGenerator =
+    canManageInvoice &&
+    canCreateInvoiceForStatus(application.status) &&
+    !hasActiveSentInvoice;
+
+  const pendingVerificationPayment = application.payments.find(
+    (payment) => payment.status === "UPLOADED",
+  );
 
   const statusLabels = Object.fromEntries(
     application.statusHistory
@@ -384,6 +405,43 @@ export default async function AdminApplicationDetailPage({
         </Card>
       ) : null}
 
+      {showInvoiceGenerator ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("invoices.generator.title")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <InvoiceGenerator
+              applicationId={application.id}
+              locale={application.locale === "ur" ? "ur" : "en"}
+              labels={{
+                title: t("invoices.generator.title"),
+                description: t("invoices.generator.description"),
+                serviceFee: t("invoices.generator.serviceFee"),
+                officialFeeNote: t("invoices.generator.officialFeeNote"),
+                paymentMethod: t("invoices.generator.paymentMethod"),
+                paymentInstructions: t("invoices.generator.paymentInstructions"),
+                dueDate: t("invoices.generator.dueDate"),
+                notes: t("invoices.generator.notes"),
+                taxTotal: t("invoices.generator.taxTotal"),
+                statusNote: t("invoices.generator.statusNote"),
+                lineItems: t("invoices.generator.lineItems"),
+                itemLabel: t("invoices.generator.itemLabel"),
+                itemDescription: t("invoices.generator.itemDescription"),
+                itemAmount: t("invoices.generator.itemAmount"),
+                officialFee: t("invoices.generator.officialFee"),
+                addLineItem: t("invoices.generator.addLineItem"),
+                removeLineItem: t("invoices.generator.removeLineItem"),
+                submit: t("invoices.generator.submit"),
+                submitting: t("invoices.generator.submitting"),
+                success: t("invoices.generator.success"),
+                error: t("invoices.generator.error"),
+              }}
+            />
+          </CardContent>
+        </Card>
+      ) : null}
+
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
@@ -403,20 +461,39 @@ export default async function AdminApplicationDetailPage({
                       <Badge variant="outline">{invoice.status}</Badge>
                     </div>
                     <p className="mt-2 text-muted-foreground">
-                      {t("applications.detail.invoiceTotal")}: {invoice.currency}{" "}
-                      {invoice.total.toString()}
+                      {t("applications.detail.invoiceTotal")}:{" "}
+                      {formatPkr(invoice.total.toString(), locale === "ur" ? "ur" : "en")}
                     </p>
+                    {invoice.paymentMethod ? (
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        {t("invoices.generator.paymentMethod")}: {invoice.paymentMethod}
+                      </p>
+                    ) : null}
+                    {invoice.officialFeeNote ? (
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        {invoice.officialFeeNote}
+                      </p>
+                    ) : null}
                     {invoice.lineItems.length > 0 ? (
                       <ul className="mt-3 space-y-1 text-xs text-muted-foreground">
                         {invoice.lineItems.map((item) => (
                           <li key={item.id}>
-                            {item.label} — {invoice.currency} {item.amount.toString()}
+                            {item.label} —{" "}
+                            {formatPkr(item.amount.toString(), locale === "ur" ? "ur" : "en")}
                             {item.isOfficialFee
                               ? ` (${t("applications.detail.officialFee")})`
                               : ""}
                           </li>
                         ))}
                       </ul>
+                    ) : null}
+                    {invoice.pdfR2Key && canManageInvoice ? (
+                      <AdminInvoicePdfButton
+                        invoiceId={invoice.id}
+                        label={t("invoices.viewPdf")}
+                        loadingLabel={t("invoices.loadingPdf")}
+                        errorLabel={t("invoices.pdfError")}
+                      />
                     ) : null}
                   </div>
                 ))}
@@ -445,9 +522,14 @@ export default async function AdminApplicationDetailPage({
                       <Badge variant="outline">{payment.status}</Badge>
                     </div>
                     <p className="mt-2 text-muted-foreground">
-                      {t("applications.detail.paymentAmount")}: PKR{" "}
-                      {payment.amount.toString()}
+                      {t("applications.detail.paymentAmount")}:{" "}
+                      {formatPkr(payment.amount.toString(), locale === "ur" ? "ur" : "en")}
                     </p>
+                    {payment.screenshotFileName ? (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {payment.screenshotFileName}
+                      </p>
+                    ) : null}
                     {payment.rejectionReason ? (
                       <p className="mt-2 text-xs text-destructive">
                         {payment.rejectionReason}
@@ -460,6 +542,45 @@ export default async function AdminApplicationDetailPage({
           </CardContent>
         </Card>
       </div>
+
+      {canVerifyPayment && pendingVerificationPayment ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("payments.verification.title")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PaymentVerification
+              payment={{
+                id: pendingVerificationPayment.id,
+                status: pendingVerificationPayment.status,
+                amount: pendingVerificationPayment.amount.toString(),
+                fileName: pendingVerificationPayment.screenshotFileName,
+                rejectionReason: pendingVerificationPayment.rejectionReason,
+              }}
+              labels={{
+                title: t("payments.verification.title"),
+                description: t("payments.verification.description"),
+                amount: t("payments.verification.amount"),
+                approve: t("payments.verification.approve"),
+                approving: t("payments.verification.approving"),
+                reject: t("payments.verification.reject"),
+                rejecting: t("payments.verification.rejecting"),
+                verifyNote: t("payments.verification.verifyNote"),
+                rejectReason: t("payments.verification.rejectReason"),
+                rejectNote: t("payments.verification.rejectNote"),
+                successApprove: t("payments.verification.successApprove"),
+                successReject: t("payments.verification.successReject"),
+                error: t("payments.verification.error"),
+                viewerLoading: t("payments.verification.viewerLoading"),
+                viewerError: t("payments.verification.viewerError"),
+                viewerRetry: t("payments.verification.viewerRetry"),
+                viewerOpen: t("payments.verification.viewerOpen"),
+                viewerUnsupported: t("payments.verification.viewerUnsupported"),
+              }}
+            />
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>

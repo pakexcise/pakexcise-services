@@ -1,51 +1,213 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { AlertTriangle, MessageCircle } from "lucide-react";
+
+import { TrackResult } from "@/components/marketing/TrackResult";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
+import { trackApplicationAction } from "@/features/customer/actions/track-application";
+import { Link, useRouter } from "@/i18n/navigation";
+import { siteConfig } from "@/config/site";
 
 type TrackFormProps = {
   placeholder: string;
   submitLabel: string;
   helpText: string;
   loginLabel: string;
+  locale: "en" | "ur";
+  labels: {
+    error: string;
+    rateLimited: string;
+    disclaimer: string;
+    whatsapp: string;
+    whatsappMessage: string;
+    resultTitle: string;
+    resultTrackingId: string;
+    resultService: string;
+    resultStatus: string;
+    resultUpdated: string;
+    resultPublicStatusDescription: string;
+    resultLoginPrompt: string;
+    resultLoginCta: string;
+    publicStatus: Record<string, string>;
+    statusLabels: Record<string, string>;
+  };
+  initialTrackingId?: string;
 };
+
+function buildWhatsAppUrl(phoneNumber: string, message: string): string {
+  const normalized = phoneNumber.replace(/\D/g, "");
+  return `https://wa.me/${normalized}?text=${encodeURIComponent(message)}`;
+}
 
 export function TrackForm({
   placeholder,
   submitLabel,
   helpText,
   loginLabel,
+  locale,
+  labels,
+  initialTrackingId = "",
 }: TrackFormProps) {
-  const [trackingId, setTrackingId] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryTrackingId = searchParams.get("trackingId")?.trim() ?? "";
+  const [trackingId, setTrackingId] = useState(
+    queryTrackingId || initialTrackingId,
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<Awaited<
+    ReturnType<typeof trackApplicationAction>
+  > | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  function handleTrack(id: string) {
+    const normalized = id.trim().toUpperCase();
+    setError(null);
+    setResult(null);
+
+    startTransition(async () => {
+      const response = await trackApplicationAction({ trackingId: normalized });
+      setResult(response);
+
+      if (!response.success) {
+        setError(
+          response.error?.includes("Too many")
+            ? labels.rateLimited
+            : (response.error ?? labels.error),
+        );
+      }
+    });
+  }
+
+  useEffect(() => {
+    const id = (queryTrackingId || initialTrackingId).trim();
+    if (!id) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      handleTrack(id.toUpperCase());
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+    // Auto-lookup once when a tracking ID is present in the URL.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryTrackingId, initialTrackingId]);
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!trackingId.trim()) {
+      return;
+    }
+
+    const normalized = trackingId.trim().toUpperCase();
+    setTrackingId(normalized);
+    router.replace(`/track?trackingId=${encodeURIComponent(normalized)}`, {
+      scroll: false,
+    });
+    handleTrack(normalized);
+  }
+
+  const whatsappMessage =
+    result?.success && result.data
+      ? `${labels.whatsappMessage} ${result.data.trackingId}`
+      : labels.whatsappMessage;
+
+  const whatsappHref = buildWhatsAppUrl(
+    siteConfig.contact.whatsapp,
+    whatsappMessage,
+  );
 
   return (
-    <div className="mx-auto max-w-xl space-y-4 rounded-xl border bg-card p-6">
-      <form
-        className="space-y-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-        }}
+    <div className="mx-auto max-w-xl space-y-6">
+      <div
+        role="note"
+        className="flex items-start gap-2 rounded-lg border border-secondary/40 bg-secondary/10 p-4 text-sm"
       >
-        <label className="block space-y-2">
-          <span className="text-sm font-medium">{placeholder}</span>
-          <input
-            type="text"
-            value={trackingId}
-            onChange={(event) => setTrackingId(event.target.value)}
-            placeholder={placeholder}
-            className="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
-            autoComplete="off"
-          />
-        </label>
-        <Button type="submit" className="w-full sm:w-auto" disabled={!trackingId.trim()}>
-          {submitLabel}
-        </Button>
-      </form>
-      <p className="text-sm text-muted-foreground">{helpText}</p>
-      <Button asChild variant="outline" size="sm">
-        <Link href="/login">{loginLabel}</Link>
-      </Button>
+        <AlertTriangle className="mt-0.5 size-4 shrink-0 text-secondary-foreground" />
+        <p>{labels.disclaimer}</p>
+      </div>
+
+      <div className="space-y-4 rounded-xl border bg-card p-6">
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <label className="block space-y-2">
+            <span className="text-sm font-medium">{placeholder}</span>
+            <input
+              type="text"
+              value={trackingId}
+              onChange={(event) => setTrackingId(event.target.value.toUpperCase())}
+              placeholder={placeholder}
+              className="flex h-11 w-full rounded-md border border-input bg-background px-3 font-mono text-sm uppercase shadow-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </label>
+          <Button
+            type="submit"
+            className="w-full sm:w-auto"
+            disabled={!trackingId.trim() || isPending}
+          >
+            {isPending ? "…" : submitLabel}
+          </Button>
+        </form>
+        <p className="text-sm text-muted-foreground">{helpText}</p>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/login">{loginLabel}</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-analytics-event="click_whatsapp"
+            >
+              <MessageCircle className="size-4" />
+              {labels.whatsapp}
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      {error ? (
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
+
+      {result?.success ? (
+        <TrackResult
+          trackingId={result.data.trackingId}
+          status={result.data.status}
+          serviceName={
+            locale === "ur"
+              ? result.data.serviceNameUr
+              : result.data.serviceNameEn
+          }
+          updatedAt={result.data.updatedAt}
+          locale={locale}
+          labels={{
+            title: labels.resultTitle,
+            trackingId: labels.resultTrackingId,
+            service: labels.resultService,
+            status: labels.resultStatus,
+            updated: labels.resultUpdated,
+            publicStatusDescription: labels.resultPublicStatusDescription,
+            loginPrompt: labels.resultLoginPrompt,
+            loginCta: labels.resultLoginCta,
+          }}
+          statusLabel={
+            labels.statusLabels[result.data.status] ?? result.data.status
+          }
+          publicStatusMessage={
+            labels.publicStatus[result.data.status] ??
+            labels.resultPublicStatusDescription
+          }
+          loginHref="/login"
+        />
+      ) : null}
     </div>
   );
 }

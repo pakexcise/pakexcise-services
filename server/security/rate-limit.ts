@@ -41,6 +41,12 @@ export const publicFormRateLimit = createLimiter(
   "1 m",
 );
 
+export const trackLookupRateLimit = createLimiter(
+  "pakexcise:ratelimit:track-lookup",
+  8,
+  "1 m",
+);
+
 export const otpRateLimit = createLimiter("pakexcise:ratelimit:otp", 3, "1 h");
 
 export const loginRateLimit = createLimiter(
