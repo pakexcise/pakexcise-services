@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { ApplicationCompletedTracker } from "@/components/analytics/ApplicationCompletedTracker";
 import { ApplicationDocumentsPanel } from "@/components/customer/ApplicationDocumentsPanel";
 import { InvoiceView } from "@/components/customer/InvoiceView";
 import { NextActionBadge } from "@/components/customer/NextActionBadge";
@@ -195,8 +196,16 @@ export default async function CustomerApplicationPage({
         }}
       />
 
+      {application.status === "COMPLETED" ? (
+        <ApplicationCompletedTracker
+          applicationId={application.id}
+          serviceSlug={application.service.slug}
+        />
+      ) : null}
+
       {invoice ? (
         <InvoiceView
+          applicationId={application.id}
           invoice={invoice}
           locale={locale === "ur" ? "ur" : "en"}
           labels={{
@@ -230,6 +239,7 @@ export default async function CustomerApplicationPage({
 
       {payment ? (
         <PaymentUpload
+          applicationId={application.id}
           paymentId={payment.id}
           paymentStatus={payment.status}
           rejectionReason={payment.rejectionReason}

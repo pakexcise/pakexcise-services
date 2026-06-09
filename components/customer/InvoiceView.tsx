@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import { pushAnalyticsEvent } from "@/features/analytics/data-layer";
 import { Download, FileText, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +18,7 @@ type InvoiceLineItem = {
 };
 
 type InvoiceViewProps = {
+  applicationId: string;
   invoice: {
     id: string;
     invoiceNumber: string;
@@ -54,10 +57,28 @@ type InvoiceViewProps = {
   };
 };
 
-export function InvoiceView({ invoice, locale, labels }: InvoiceViewProps) {
+export function InvoiceView({
+  applicationId,
+  invoice,
+  locale,
+  labels,
+}: InvoiceViewProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [isLoadingPdf, setIsLoadingPdf] = useState(false);
+  const viewedRef = useRef(false);
+
+  useEffect(() => {
+    if (viewedRef.current) {
+      return;
+    }
+
+    viewedRef.current = true;
+    pushAnalyticsEvent("invoice_viewed", {
+      application_id: applicationId,
+      invoice_id: invoice.id,
+    });
+  }, [applicationId, invoice.id]);
 
   const loadPdfUrl = useCallback(async () => {
     setIsLoadingPdf(true);

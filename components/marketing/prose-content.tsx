@@ -1,3 +1,4 @@
+import { renderRichTextHtml } from "@/lib/security/rich-text";
 import { cn } from "@/lib/utils";
 
 type ProseContentProps = {
@@ -10,13 +11,15 @@ export function ProseContent({ content, className }: ProseContentProps) {
     return null;
   }
 
+  const html = renderRichTextHtml(content);
+
   return (
-    <div className={cn("space-y-4 text-muted-foreground", className)}>
-      {content.split("\n\n").map((paragraph, index) => (
-        <p key={index} className="text-sm leading-relaxed sm:text-base">
-          {paragraph}
-        </p>
-      ))}
-    </div>
+    <div
+      className={cn(
+        "prose-content space-y-4 text-muted-foreground [&_a]:text-primary [&_strong]:text-foreground",
+        className,
+      )}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }

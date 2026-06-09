@@ -16,6 +16,7 @@ import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
+import { requireGuidesEnabled } from "@/features/settings/lib/feature-gates";
 import { guideRepository, seoMetaRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
@@ -48,6 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function GuidesPage() {
+  await requireGuidesEnabled();
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 

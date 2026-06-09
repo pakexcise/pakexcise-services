@@ -11,6 +11,8 @@ const publishedGuideSelect = {
   excerptUr: true,
   contentEn: true,
   contentUr: true,
+  relatedServiceIds: true,
+  attachedFaqIds: true,
   publishedAt: true,
   updatedAt: true,
   seoMeta: true,

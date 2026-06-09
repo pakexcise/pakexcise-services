@@ -1,8 +1,13 @@
 import { AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-export async function LegalDisclaimer() {
+type LegalDisclaimerProps = {
+  bannerText?: string | null;
+};
+
+export async function LegalDisclaimer({ bannerText }: LegalDisclaimerProps) {
   const t = await getTranslations("disclaimer");
+  const text = bannerText?.trim() || t("banner");
 
   return (
     <div
@@ -11,7 +16,7 @@ export async function LegalDisclaimer() {
     >
       <div className="container-site flex items-start justify-center gap-2 text-center text-xs leading-snug sm:text-sm">
         <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-        <p className="max-w-4xl">{t("banner")}</p>
+        <p className="max-w-4xl">{text}</p>
       </div>
     </div>
   );

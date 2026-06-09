@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import type { SeoSettings } from "@/features/settings/types";
 import { absoluteUrl, publicPath } from "@/lib/utils";
 
 export type SeoInput = {
@@ -56,27 +57,48 @@ export function buildMetadata(input: SeoInput): Metadata {
   };
 }
 
-export function buildOrganizationJsonLd(baseUrl: string) {
+function resolveLogoUrl(baseUrl: string, logoPath: string): string {
+  if (logoPath.startsWith("http")) {
+    return logoPath;
+  }
+
+  return `${baseUrl}${logoPath.startsWith("/") ? logoPath : `/${logoPath}`}`;
+}
+
+export function buildOrganizationJsonLd(
+  baseUrl: string,
+  seo?: Pick<
+    SeoSettings,
+    | "organizationName"
+    | "organizationDescriptionEn"
+    | "organizationLogoPath"
+    | "organizationAreaServed"
+  >,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "PakExcise.com",
+    name: seo?.organizationName ?? "PakExcise.com",
     url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
+    logo: resolveLogoUrl(baseUrl, seo?.organizationLogoPath ?? "/logo.png"),
     description:
+      seo?.organizationDescriptionEn ??
       "Private excise facilitation service for Pakistan. Not affiliated with any government body.",
     areaServed: {
       "@type": "Country",
-      name: "Pakistan",
+      name: seo?.organizationAreaServed ?? "Pakistan",
     },
   };
 }
 
-export function buildWebSiteJsonLd(baseUrl: string) {
+export function buildWebSiteJsonLd(
+  baseUrl: string,
+  siteName = "PakExcise.com",
+) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "PakExcise.com",
+    name: siteName,
     url: baseUrl,
     inLanguage: ["en-PK", "ur-PK"],
     potentialAction: {
@@ -87,16 +109,26 @@ export function buildWebSiteJsonLd(baseUrl: string) {
   };
 }
 
-export function buildLocalBusinessJsonLd(baseUrl: string) {
+export function buildLocalBusinessJsonLd(
+  baseUrl: string,
+  seo?: Pick<
+    SeoSettings,
+    | "localBusinessName"
+    | "localBusinessDescriptionEn"
+    | "localBusinessAreaServed"
+    | "localBusinessPriceRange"
+  >,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "PakExcise.com",
+    name: seo?.localBusinessName ?? "PakExcise.com",
     url: baseUrl,
     description:
+      seo?.localBusinessDescriptionEn ??
       "Private excise facilitation service for Pakistan. Not affiliated with any government body.",
-    areaServed: "Pakistan",
-    priceRange: "$$",
+    areaServed: seo?.localBusinessAreaServed ?? "Pakistan",
+    priceRange: seo?.localBusinessPriceRange ?? "$$",
   };
 }
 

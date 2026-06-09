@@ -45,6 +45,26 @@ export type { PageContent } from "./page-content-repository";
 export { guideRepository, GuideRepository } from "./guide-repository";
 export { blogPostRepository, BlogPostRepository } from "./blog-post-repository";
 export {
+  adminBlogRepository,
+  AdminBlogRepository,
+} from "./admin-blog-repository";
+export {
+  adminGuideRepository,
+  AdminGuideRepository,
+} from "./admin-guide-repository";
+export {
+  adminSeoRepository,
+  AdminSeoRepository,
+} from "./admin-seo-repository";
+export {
+  adminRedirectRepository,
+  AdminRedirectRepository,
+} from "./admin-redirect-repository";
+export {
+  adminPageContentRepository,
+  AdminPageContentRepository,
+} from "./admin-page-content-repository";
+export {
   applicationRepository,
   ApplicationRepository,
 } from "./application-repository";

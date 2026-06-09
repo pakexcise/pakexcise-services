@@ -500,13 +500,17 @@
       "title": "رہنما",
       "metaTitle": "رہنما | PakExcise.com",
       "metaDescription": "پاکستان ایکسائز سہولت کے عمل کے لیے مرحلہ وار رہنما۔",
-      "empty": "ابھی کوئی رہنما شائع نہیں ہوا۔"
+      "empty": "ابھی کوئی رہنما شائع نہیں ہوا۔",
+      "relatedServices": "متعلقہ خدمات",
+      "attachedFaqs": "متعلقہ سوالات"
     },
     "blog": {
       "title": "بلاگ",
       "metaTitle": "بلاگ | PakExcise.com",
       "metaDescription": "PakExcise.com کی تازہ ترین معلومات اور مضامین۔",
-      "empty": "ابھی کوئی بلاگ پوسٹ شائع نہیں ہوئی۔"
+      "empty": "ابھی کوئی بلاگ پوسٹ شائع نہیں ہوئی۔",
+      "relatedServices": "متعلقہ خدمات",
+      "attachedFaqs": "متعلقہ سوالات"
     },
     "track": {
       "inputLabel": "ٹریکنگ ID",
@@ -932,6 +936,92 @@
         "description": "سائٹ، انٹیگریشنز، اور فیچر فلیگز کے لیے سپر ایڈمن کنفیگریشن۔",
         "emptyTitle": "ترتیبات ماڈیول زیرِ التوا",
         "emptyDescription": "سسٹم ترتیبات کے کنٹرولز یہاں ظاہر ہوں گے۔"
+      }
+    },
+    "settingsPanel": {
+      "title": "سسٹم ترتیبات",
+      "description": "کاروباری تفصیلات، ادائیگی، SEO ڈیفالٹس، ٹریکنگ IDs، اور فیچر فلیگز منظم کریں۔",
+      "save": "تبدیلیاں محفوظ کریں",
+      "saving": "محفوظ ہو رہا ہے…",
+      "saved": "ترتیبات محفوظ ہو گئیں۔",
+      "error": "ترتیبات محفوظ نہیں ہو سکیں۔",
+      "secretsNote": "API secrets (CAPI tokens، Twilio، وغیرہ) صرف environment variables میں رہتے ہیں۔",
+      "tabs": {
+        "business": "کاروبار",
+        "payment": "ادائیگی",
+        "seo": "SEO",
+        "tracking": "سوشل اور ٹریکنگ",
+        "features": "فیچر فلیگز"
+      },
+      "business": {
+        "siteName": "سائٹ کا نام",
+        "businessEmail": "کاروباری ای میل",
+        "phoneNumber": "فون نمبر",
+        "whatsappNumber": "واٹس ایپ نمبر (صرف ہندسے)",
+        "whatsappDefaultMessage": "واٹس ایپ ڈیفالٹ پیغام",
+        "businessHoursEn": "کاروباری اوقات (انگریزی)",
+        "businessHoursUr": "کاروباری اوقات (اردو)",
+        "addressEn": "پتہ / کوریج (انگریزی)",
+        "addressUr": "پتہ / کوریج (اردو)",
+        "disclaimerEn": "نجی سہولت ڈس کلیمر (انگریزی)",
+        "disclaimerUr": "نجی سہولت ڈس کلیمر (اردو)"
+      },
+      "payment": {
+        "jazzCashInstructionsEn": "JazzCash ہدایات (انگریزی)",
+        "jazzCashInstructionsUr": "JazzCash ہدایات (اردو)",
+        "easypaisaInstructionsEn": "Easypaisa ہدایات (انگریزی)",
+        "easypaisaInstructionsUr": "Easypaisa ہدایات (اردو)",
+        "bankTransferInstructionsEn": "بینک ٹرانسفر ہدایات (انگریزی)",
+        "bankTransferInstructionsUr": "بینک ٹرانسفر ہدایات (اردو)",
+        "paymentAccountDisplayName": "ادائیگی اکاؤنٹ ڈسپلے نام",
+        "manualPaymentEnabled": "دستی ادائیگی (اسکرین شاٹ اپ لوڈ) فعال",
+        "jazzCashGatewayEnabled": "JazzCash گیٹ وے (فیز 2 placeholder)",
+        "easypaisaGatewayEnabled": "Easypaisa گیٹ وے (فیز 2 placeholder)",
+        "cardGatewayEnabled": "کارڈ گیٹ وے (فیز 2 placeholder)",
+        "gatewayPhase2Note": "گیٹ وے فیز 2 نوٹ",
+        "phase2Hint": "آن لائن گیٹ وے فیز 2 تک placeholder ہیں۔ دستی ادائیگی کی ہدایات انوائسز پر دکھائی جاتی ہیں۔"
+      },
+      "seo": {
+        "defaultMetaTitleEn": "ڈیفالٹ میٹا عنوان (انگریزی)",
+        "defaultMetaTitleUr": "ڈیفالٹ میٹا عنوان (اردو)",
+        "defaultMetaDescriptionEn": "ڈیفالٹ میٹا تفصیل (انگریزی)",
+        "defaultMetaDescriptionUr": "ڈیفالٹ میٹا تفصیل (اردو)",
+        "defaultOgImage": "ڈیفالٹ OG تصویر path یا URL",
+        "organizationSection": "Organization schema",
+        "organizationName": "تنظیم کا نام",
+        "organizationDescriptionEn": "تنظیم کی تفصیل (انگریزی)",
+        "organizationDescriptionUr": "تنظیم کی تفصیل (اردو)",
+        "organizationLogoPath": "تنظیم لوگو path",
+        "organizationAreaServed": "تنظیم کی کوریج",
+        "localBusinessSection": "LocalBusiness schema",
+        "localBusinessName": "مقامی کاروبار کا نام",
+        "localBusinessDescriptionEn": "مقامی کاروبار کی تفصیل (انگریزی)",
+        "localBusinessDescriptionUr": "مقامی کاروبار کی تفصیل (اردو)",
+        "localBusinessPriceRange": "قیمت کی حد",
+        "localBusinessAreaServed": "مقامی کاروبار کی کوریج"
+      },
+      "tracking": {
+        "ga4MeasurementId": "GA4 measurement ID",
+        "gtmId": "Google Tag Manager ID",
+        "metaPixelId": "Meta Pixel ID",
+        "tiktokPixelId": "TikTok Pixel ID",
+        "consentMode": "Analytics consent mode",
+        "requireConsentBeforeScripts": "اسکرپٹس سے پہلے واضح رضامندی ضروری",
+        "showConsentBanner": "رضامندی بینر دکھائیں (UI placeholder)",
+        "consentImplied": "ضمنی رضامندی (local storage سے انکار)",
+        "consentExplicit": "واضح رضامندی ضروری",
+        "consentDisabled": "غیر فعال (کوئی third-party اسکرپٹ نہیں)",
+        "publicIdsNote": "عوامی measurement IDs ڈیٹابیس میں محفوظ ہیں۔ خالی فیلڈز کے لیے env vars fallback ہیں۔"
+      },
+      "features": {
+        "agentModuleEnabled": "ایجنٹ ماڈیول فعال",
+        "blogEnabled": "بلاگ فعال",
+        "guidesEnabled": "گائیڈز فعال",
+        "whatsappNotificationsEnabled": "واٹس ایپ نوٹیفیکیشنز فعال",
+        "smsFallbackEnabled": "SMS fallback فعال",
+        "maintenanceMode": "مینٹیننس موڈ (عوامی مارکیٹنگ صفحات)",
+        "maintenanceMessageEn": "مینٹیننس پیغام (انگریزی)",
+        "maintenanceMessageUr": "مینٹیننس پیغام (اردو)"
       }
     },
     "services": {

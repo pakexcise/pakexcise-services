@@ -1,5 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 
+import {
+  defaultBusinessSettings,
+  defaultFeatureFlagSettings,
+  defaultPaymentSettings,
+  defaultSeoSettings,
+  defaultTrackingSettings,
+} from "../features/settings/lib/defaults";
+import { SETTINGS_KEYS } from "../features/settings/lib/keys";
+
 const prisma = new PrismaClient();
 
 const DEFAULT_MIME_TYPES = [
@@ -296,6 +305,27 @@ async function main() {
       },
     },
   });
+
+  const business = defaultBusinessSettings();
+  business.whatsappNumber = "923001234567";
+  business.whatsappDefaultMessage =
+    "Hello PakExcise, I need help with an excise facilitation service.";
+  business.businessEmail = "support@pakexcise.com";
+  business.phoneNumber = "+92 300 0000000";
+
+  for (const [group, value] of [
+    [SETTINGS_KEYS.business, business],
+    [SETTINGS_KEYS.payment, defaultPaymentSettings()],
+    [SETTINGS_KEYS.seo, defaultSeoSettings()],
+    [SETTINGS_KEYS.tracking, defaultTrackingSettings()],
+    [SETTINGS_KEYS.features, defaultFeatureFlagSettings()],
+  ] as const) {
+    await prisma.setting.upsert({
+      where: { key: group },
+      update: { value },
+      create: { key: group, value },
+    });
+  }
 
   const globalFaqs = [
     {

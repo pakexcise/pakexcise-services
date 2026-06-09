@@ -16,6 +16,7 @@ import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl, formatDate } from "@/lib/utils";
+import { requireBlogEnabled } from "@/features/settings/lib/feature-gates";
 import { blogPostRepository, seoMetaRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
@@ -48,6 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BlogPage() {
+  await requireBlogEnabled();
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 

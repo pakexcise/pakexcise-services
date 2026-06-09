@@ -1,6 +1,7 @@
 import { AgentPortalNav } from "@/components/agent/AgentPortalNav";
 import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
 import { isApprovedActiveAgent } from "@/features/agents/lib/is-approved-agent";
+import { requireAgentModuleEnabled } from "@/features/settings/lib/feature-gates";
 import { requireAgent } from "@/server/permissions/guards";
 import { enforcePortalAccess } from "@/server/permissions/portal-access";
 
@@ -9,6 +10,7 @@ export default async function AgentLayout({
 }: {
   children: React.ReactNode;
 }) {
+  await requireAgentModuleEnabled();
   const user = await enforcePortalAccess(requireAgent, "/agent/dashboard");
 
   return (

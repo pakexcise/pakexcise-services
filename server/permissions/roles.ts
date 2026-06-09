@@ -12,6 +12,7 @@ export const permissions = [
   "service:manage",
   "faq:manage",
   "social:manage",
+  "content:manage",
   "users:manage",
   "settings:manage",
   "audit:read",
@@ -32,6 +33,7 @@ const adminPermissions: Permission[] = [
   "service:manage",
   "faq:manage",
   "social:manage",
+  "content:manage",
   "agents:manage",
   "audit:read",
 ];

@@ -9,6 +9,7 @@ import { sendEmailNotification } from "@/features/notifications/dispatcher/chann
 import { sendSmsNotification } from "@/features/notifications/dispatcher/channels/sms-channel";
 import { sendWhatsAppNotification } from "@/features/notifications/dispatcher/channels/whatsapp-channel";
 import type { NotificationPayload } from "@/features/notifications/types";
+import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
 import { prisma } from "@/server/db/client";
 
 export type ProcessNotificationResult =
@@ -69,7 +70,17 @@ export async function processNotificationRecord(
     return { ok: true };
   }
 
+  const featureFlags = await getFeatureFlagSettings();
+
   if (notification.channel === "WHATSAPP") {
+    if (!featureFlags.whatsappNotificationsEnabled) {
+      return {
+        ok: false,
+        error: "whatsapp_notifications_disabled",
+        retryable: false,
+      };
+    }
+
     const result = await sendWhatsAppNotification({
       phone: recipient,
       text: `${template.whatsappText}\n${template.applicationUrl}`,
@@ -79,7 +90,7 @@ export async function processNotificationRecord(
       return { ok: true };
     }
 
-    if (result.fallbackToSms) {
+    if (result.fallbackToSms && featureFlags.smsFallbackEnabled) {
       const sms = await sendSmsNotification({
         phone: recipient,
         text: template.smsText,
@@ -106,6 +117,10 @@ export async function processNotificationRecord(
   }
 
   if (notification.channel === "SMS") {
+    if (!featureFlags.smsFallbackEnabled) {
+      return { ok: false, error: "sms_notifications_disabled", retryable: false };
+    }
+
     const result = await sendSmsNotification({
       phone: recipient,
       text: template.smsText,

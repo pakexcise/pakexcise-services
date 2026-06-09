@@ -1,7 +1,9 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
+import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import {
@@ -9,19 +11,15 @@ import {
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
 } from "@/features/seo/lib/metadata";
+import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
+import { buildTrackingRuntimeConfig } from "@/features/settings/lib/tracking-runtime";
 import { routing, type Locale } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/utils";
-import { getSettingValue } from "@/server/repositories";
 import { getCurrentLocale, isValidLocale } from "@/server/i18n/get-locale";
 
 type LocaleLayoutProps = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
-};
-
-type WhatsAppSettings = {
-  phoneNumber?: string;
-  defaultMessage?: string;
 };
 
 export function generateStaticParams() {
@@ -45,19 +43,15 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
-  let whatsappSettings: WhatsAppSettings | null = null;
-
-  try {
-    whatsappSettings = await getSettingValue<WhatsAppSettings>("whatsapp");
-  } catch {
-    whatsappSettings = null;
-  }
+  const publicSettings = await getPublicSettings();
+  const { business, seo, tracking } = publicSettings;
+  const trackingRuntime = buildTrackingRuntimeConfig(tracking);
 
   const baseUrl = absoluteUrl("/");
   const siteJsonLd = [
-    buildOrganizationJsonLd(baseUrl),
-    buildWebSiteJsonLd(baseUrl),
-    buildLocalBusinessJsonLd(baseUrl),
+    buildOrganizationJsonLd(baseUrl, seo),
+    buildWebSiteJsonLd(baseUrl, seo.organizationName),
+    buildLocalBusinessJsonLd(baseUrl, seo),
   ];
 
   return (
@@ -68,10 +62,14 @@ export default async function LocaleLayout({
       />
       <ThemeProvider>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <Suspense fallback={null}>
+            <AnalyticsProvider tracking={trackingRuntime}>
+              {children}
+            </AnalyticsProvider>
+          </Suspense>
           <WhatsAppFAB
-            phoneNumber={whatsappSettings?.phoneNumber}
-            message={whatsappSettings?.defaultMessage}
+            phoneNumber={business.whatsappNumber}
+            message={business.whatsappDefaultMessage}
           />
         </NextIntlClientProvider>
       </ThemeProvider>

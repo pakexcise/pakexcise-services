@@ -37,6 +37,7 @@ export function WhatsAppFAB({
       rel="noopener noreferrer"
       aria-label={t("whatsappHelp")}
       data-analytics-event="click_whatsapp"
+      data-analytics-placement="fab"
       className={cn(
         "fixed end-4 z-50 inline-flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:size-14",
         "bottom-[max(1rem,env(safe-area-inset-bottom))]",

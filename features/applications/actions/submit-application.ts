@@ -18,8 +18,10 @@ import { serviceRepository } from "@/server/repositories/service-repository";
 import { prisma } from "@/server/db/client";
 import { encryptSensitiveValue } from "@/server/security/encryption";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
-import { queueApplicationSubmittedNotifications } from "@/server/notifications/queue-application-notification";
+import { sendServerAnalyticsEvent } from "@/features/analytics/server-events";
 import { canTransitionStatus } from "@/features/applications/lib/status-transitions";
+import { queueApplicationSubmittedNotifications } from "@/server/notifications/queue-application-notification";
+import { absoluteUrl } from "@/lib/utils";
 
 export async function submitApplicationAction(
   input: unknown,
@@ -268,6 +270,23 @@ export async function submitApplicationAction(
     locale: parsed.data.locale,
     userEmail: parsed.data.basic.email,
     userPhone: parsed.data.basic.phone,
+  });
+
+  const eventId =
+    parsed.data.analyticsEventId ??
+    (typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `srv_${Date.now()}`);
+
+  void sendServerAnalyticsEvent({
+    eventName: "submit_application",
+    eventId,
+    payload: {
+      service_slug: serviceRecord.slug,
+      application_id: draft.id,
+    },
+    attribution: attribution ?? undefined,
+    eventSourceUrl: absoluteUrl(`/apply/${serviceRecord.slug}`),
   });
 
   return successResult({

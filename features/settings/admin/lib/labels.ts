@@ -1,0 +1,84 @@
+export type SettingsPanelLabels = {
+  tabs: {
+    business: string;
+    payment: string;
+    seo: string;
+    tracking: string;
+    features: string;
+  };
+  save: string;
+  saving: string;
+  saved: string;
+  error: string;
+  secretsNote: string;
+  business: {
+    siteName: string;
+    businessEmail: string;
+    phoneNumber: string;
+    whatsappNumber: string;
+    whatsappDefaultMessage: string;
+    businessHoursEn: string;
+    businessHoursUr: string;
+    addressEn: string;
+    addressUr: string;
+    disclaimerEn: string;
+    disclaimerUr: string;
+  };
+  payment: {
+    jazzCashInstructionsEn: string;
+    jazzCashInstructionsUr: string;
+    easypaisaInstructionsEn: string;
+    easypaisaInstructionsUr: string;
+    bankTransferInstructionsEn: string;
+    bankTransferInstructionsUr: string;
+    paymentAccountDisplayName: string;
+    manualPaymentEnabled: string;
+    jazzCashGatewayEnabled: string;
+    easypaisaGatewayEnabled: string;
+    cardGatewayEnabled: string;
+    gatewayPhase2Note: string;
+    phase2Hint: string;
+  };
+  seo: {
+    defaultMetaTitleEn: string;
+    defaultMetaTitleUr: string;
+    defaultMetaDescriptionEn: string;
+    defaultMetaDescriptionUr: string;
+    defaultOgImage: string;
+    organizationName: string;
+    organizationDescriptionEn: string;
+    organizationDescriptionUr: string;
+    organizationLogoPath: string;
+    organizationAreaServed: string;
+    localBusinessName: string;
+    localBusinessDescriptionEn: string;
+    localBusinessDescriptionUr: string;
+    localBusinessPriceRange: string;
+    localBusinessAreaServed: string;
+    organizationSection: string;
+    localBusinessSection: string;
+  };
+  tracking: {
+    ga4MeasurementId: string;
+    gtmId: string;
+    metaPixelId: string;
+    tiktokPixelId: string;
+    consentMode: string;
+    requireConsentBeforeScripts: string;
+    showConsentBanner: string;
+    consentImplied: string;
+    consentExplicit: string;
+    consentDisabled: string;
+    publicIdsNote: string;
+  };
+  features: {
+    agentModuleEnabled: string;
+    blogEnabled: string;
+    guidesEnabled: string;
+    whatsappNotificationsEnabled: string;
+    smsFallbackEnabled: string;
+    maintenanceMode: string;
+    maintenanceMessageEn: string;
+    maintenanceMessageUr: string;
+  };
+};

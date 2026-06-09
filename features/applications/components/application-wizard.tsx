@@ -10,6 +10,7 @@ import { DocumentsStep } from "@/features/applications/components/documents-step
 import { DynamicFieldsStep } from "@/features/applications/components/dynamic-fields-step";
 import { ReviewStep } from "@/features/applications/components/review-step";
 import { WizardStepIndicator } from "@/features/applications/components/wizard-step-indicator";
+import { generateEventId } from "@/features/analytics/data-layer";
 import { trackApplicationEvent } from "@/features/applications/lib/analytics";
 import {
   captureAttributionFromUrl,
@@ -285,6 +286,7 @@ export function ApplicationWizard({
     setSubmitting(true, null);
 
     const attribution = getStoredAttribution();
+    const analyticsEventId = generateEventId();
     const result = await submitApplicationAction({
       applicationId,
       locale,
@@ -296,6 +298,7 @@ export function ApplicationWizard({
       },
       fields,
       attribution,
+      analyticsEventId,
     });
 
     if (!result.success) {
@@ -303,10 +306,14 @@ export function ApplicationWizard({
       return;
     }
 
-    trackApplicationEvent("submit_application", {
-      service_slug: service.slug,
-      application_id: applicationId,
-    });
+    trackApplicationEvent(
+      "submit_application",
+      {
+        service_slug: service.slug,
+        application_id: applicationId,
+      },
+      { eventId: analyticsEventId },
+    );
 
     router.push(
       `/apply/${service.slug}/success?trackingId=${encodeURIComponent(result.data.trackingId)}`,

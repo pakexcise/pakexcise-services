@@ -38,6 +38,7 @@ export const saveApplicationDraftSchema = z.object({
 });
 
 export const submitApplicationSchema = z.object({
+  analyticsEventId: z.string().uuid().optional(),
   applicationId: z.string().cuid(),
   locale: localeSchema,
   basic: basicApplicantDetailsSchema,

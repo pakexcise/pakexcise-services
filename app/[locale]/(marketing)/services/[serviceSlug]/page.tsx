@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { ViewServiceTracker } from "@/components/analytics/ViewServiceTracker";
 import { DocumentChecklist } from "@/components/marketing/document-checklist";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { HowItWorks } from "@/components/marketing/how-it-works";
@@ -26,18 +27,13 @@ import {
   redirectRepository,
   serviceRepository,
 } from "@/server/repositories";
-import { getSettingValue } from "@/server/repositories";
+import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
 
 type ServicePageProps = {
   params: Promise<{ serviceSlug: string }>;
-};
-
-type WhatsAppSettings = {
-  phoneNumber?: string;
-  defaultMessage?: string;
 };
 
 export async function generateMetadata({
@@ -96,10 +92,10 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const tCommon = await getTranslations("common");
   const tHome = await getTranslations("home");
 
-  const [serviceFaqs, relatedServices, whatsappSettings] = await Promise.all([
+  const [serviceFaqs, relatedServices, businessSettings] = await Promise.all([
     faqRepository.listByServiceId(service.id),
     serviceRepository.listRelatedServices(service.id, service.regionId, 3),
-    getSettingValue<WhatsAppSettings>("whatsapp"),
+    getBusinessSettings(),
   ]);
 
   const name = pickLocalized(locale, {
@@ -147,6 +143,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   return (
     <>
+      <ViewServiceTracker serviceSlug={service.slug} serviceId={service.id} />
       <JsonLd
         data={
           faqJsonLd
@@ -208,8 +205,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           applyLabel={t("service.applyNow")}
           applyHref={`/apply/${service.slug}`}
           whatsappLabel={tCommon("whatsappHelp")}
-          whatsappPhone={whatsappSettings?.phoneNumber}
-          whatsappMessage={whatsappSettings?.defaultMessage}
+          whatsappPhone={businessSettings.whatsappNumber}
+          whatsappMessage={businessSettings.whatsappDefaultMessage}
         />
 
         {relatedServices.length > 0 ? (

@@ -500,13 +500,17 @@
       "title": "Guides",
       "metaTitle": "Guides | PakExcise.com",
       "metaDescription": "Step-by-step guides for Pakistan excise facilitation processes.",
-      "empty": "No guides are published yet."
+      "empty": "No guides are published yet.",
+      "relatedServices": "Related services",
+      "attachedFaqs": "Related FAQs"
     },
     "blog": {
       "title": "Blog",
       "metaTitle": "Blog | PakExcise.com",
       "metaDescription": "Updates and articles from PakExcise.com.",
-      "empty": "No blog posts are published yet."
+      "empty": "No blog posts are published yet.",
+      "relatedServices": "Related services",
+      "attachedFaqs": "Related FAQs"
     },
     "track": {
       "inputLabel": "Tracking ID",
@@ -932,6 +936,92 @@
         "description": "Super admin configuration for site, integrations, and feature flags.",
         "emptyTitle": "Settings module pending",
         "emptyDescription": "System settings controls will appear here."
+      }
+    },
+    "settingsPanel": {
+      "title": "System settings",
+      "description": "Manage business details, payments, SEO defaults, tracking IDs, and feature flags.",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Settings saved.",
+      "error": "Could not save settings.",
+      "secretsNote": "API secrets (CAPI tokens, Twilio, etc.) stay in environment variables only.",
+      "tabs": {
+        "business": "Business",
+        "payment": "Payment",
+        "seo": "SEO",
+        "tracking": "Social & tracking",
+        "features": "Feature flags"
+      },
+      "business": {
+        "siteName": "Site name",
+        "businessEmail": "Business email",
+        "phoneNumber": "Phone number",
+        "whatsappNumber": "WhatsApp number (digits only)",
+        "whatsappDefaultMessage": "WhatsApp default message",
+        "businessHoursEn": "Business hours (English)",
+        "businessHoursUr": "Business hours (Urdu)",
+        "addressEn": "Address / coverage (English)",
+        "addressUr": "Address / coverage (Urdu)",
+        "disclaimerEn": "Private facilitation disclaimer (English)",
+        "disclaimerUr": "Private facilitation disclaimer (Urdu)"
+      },
+      "payment": {
+        "jazzCashInstructionsEn": "JazzCash instructions (English)",
+        "jazzCashInstructionsUr": "JazzCash instructions (Urdu)",
+        "easypaisaInstructionsEn": "Easypaisa instructions (English)",
+        "easypaisaInstructionsUr": "Easypaisa instructions (Urdu)",
+        "bankTransferInstructionsEn": "Bank transfer instructions (English)",
+        "bankTransferInstructionsUr": "Bank transfer instructions (Urdu)",
+        "paymentAccountDisplayName": "Payment account display name",
+        "manualPaymentEnabled": "Manual payment (screenshot upload) enabled",
+        "jazzCashGatewayEnabled": "JazzCash gateway (Phase 2 placeholder)",
+        "easypaisaGatewayEnabled": "Easypaisa gateway (Phase 2 placeholder)",
+        "cardGatewayEnabled": "Card gateway (Phase 2 placeholder)",
+        "gatewayPhase2Note": "Gateway Phase 2 note",
+        "phase2Hint": "Online gateways are placeholders until Phase 2. Manual payment instructions are shown on invoices."
+      },
+      "seo": {
+        "defaultMetaTitleEn": "Default meta title (English)",
+        "defaultMetaTitleUr": "Default meta title (Urdu)",
+        "defaultMetaDescriptionEn": "Default meta description (English)",
+        "defaultMetaDescriptionUr": "Default meta description (Urdu)",
+        "defaultOgImage": "Default OG image path or URL",
+        "organizationSection": "Organization schema",
+        "organizationName": "Organization name",
+        "organizationDescriptionEn": "Organization description (English)",
+        "organizationDescriptionUr": "Organization description (Urdu)",
+        "organizationLogoPath": "Organization logo path",
+        "organizationAreaServed": "Organization area served",
+        "localBusinessSection": "LocalBusiness schema",
+        "localBusinessName": "Local business name",
+        "localBusinessDescriptionEn": "Local business description (English)",
+        "localBusinessDescriptionUr": "Local business description (Urdu)",
+        "localBusinessPriceRange": "Price range",
+        "localBusinessAreaServed": "Local business area served"
+      },
+      "tracking": {
+        "ga4MeasurementId": "GA4 measurement ID",
+        "gtmId": "Google Tag Manager ID",
+        "metaPixelId": "Meta Pixel ID",
+        "tiktokPixelId": "TikTok Pixel ID",
+        "consentMode": "Analytics consent mode",
+        "requireConsentBeforeScripts": "Require explicit consent before loading scripts",
+        "showConsentBanner": "Show consent banner (UI placeholder)",
+        "consentImplied": "Implied consent (deny via local storage)",
+        "consentExplicit": "Explicit consent required",
+        "consentDisabled": "Disabled (no third-party scripts)",
+        "publicIdsNote": "Public measurement IDs are stored in the database. Env vars are used only as fallback when a field is empty."
+      },
+      "features": {
+        "agentModuleEnabled": "Agent module enabled",
+        "blogEnabled": "Blog enabled",
+        "guidesEnabled": "Guides enabled",
+        "whatsappNotificationsEnabled": "WhatsApp notifications enabled",
+        "smsFallbackEnabled": "SMS fallback enabled",
+        "maintenanceMode": "Maintenance mode (public marketing pages)",
+        "maintenanceMessageEn": "Maintenance message (English)",
+        "maintenanceMessageUr": "Maintenance message (Urdu)"
       }
     },
     "services": {

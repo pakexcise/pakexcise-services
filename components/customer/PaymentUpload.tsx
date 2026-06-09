@@ -6,6 +6,7 @@ import { FileUp, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { pushAnalyticsEvent } from "@/features/analytics/data-layer";
 import {
   confirmPaymentScreenshotUploadAction,
   requestPaymentScreenshotUploadAction,
@@ -16,6 +17,7 @@ import {
 } from "@/features/applications/lib/validate-upload";
 
 type PaymentUploadProps = {
+  applicationId: string;
   paymentId: string;
   paymentStatus: string;
   rejectionReason?: string | null;
@@ -51,6 +53,7 @@ async function computeSha256Checksum(file: File): Promise<string> {
 }
 
 export function PaymentUpload({
+  applicationId,
   paymentId,
   paymentStatus,
   rejectionReason,
@@ -150,6 +153,11 @@ export function PaymentUpload({
           setError(confirm.error ?? labels.uploadFailed);
           return;
         }
+
+        pushAnalyticsEvent("payment_uploaded", {
+          application_id: applicationId,
+          payment_id: paymentId,
+        });
 
         setFileName(file.name);
         onUploaded?.();

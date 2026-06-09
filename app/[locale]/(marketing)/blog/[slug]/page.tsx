@@ -1,15 +1,26 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { ContentDetailExtras } from "@/components/marketing/content-detail-extras";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
-import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
+import {
+  loadAttachedFaqs,
+  loadRelatedServices,
+} from "@/features/cms/lib/load-content-extras";
+import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
+import {
+  buildBreadcrumbJsonLd,
+  buildFaqJsonLd,
+} from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { redirect } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl, formatDate } from "@/lib/utils";
-import { blogPostRepository } from "@/server/repositories";
+import { requireBlogEnabled } from "@/features/settings/lib/feature-gates";
+import { blogPostRepository, redirectRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
@@ -51,15 +62,27 @@ export async function generateMetadata({
 }
 
 export default async function BlogDetailPage({ params }: BlogPageProps) {
+  await requireBlogEnabled();
   const { slug } = await params;
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
-  const post = await blogPostRepository.findPublishedBySlug(slug);
+  const slugRedirect = await redirectRepository.findActiveByOldSlug(`blog:${slug}`);
+  if (slugRedirect) {
+    const newSlug = slugRedirect.newSlug.replace(/^blog:/, "");
+    redirect({ href: `/blog/${newSlug}`, locale });
+  }
 
+  const post = await blogPostRepository.findPublishedBySlug(slug);
   if (!post) {
     notFound();
   }
+
+  const t = await getTranslations("marketing.blog");
+  const [relatedServices, attachedFaqs] = await Promise.all([
+    loadRelatedServices(post.relatedServiceIds),
+    loadAttachedFaqs(post.attachedFaqIds),
+  ]);
 
   const title = pickLocalized(locale, {
     en: post.titleEn,
@@ -80,9 +103,12 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
     { name: title, url: absoluteUrl(`/blog/${post.slug}`) },
   ]);
 
+  const faqItems = mapFaqsForLocale(attachedFaqs, locale);
+  const faqJsonLd = faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
+
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={faqJsonLd ? [breadcrumbJsonLd, faqJsonLd] : breadcrumbJsonLd} />
       <PageHero
         title={title}
         description={excerpt}
@@ -102,6 +128,15 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
         ) : null}
         <ProseContent content={content} />
       </article>
+      <ContentDetailExtras
+        locale={locale}
+        relatedServices={relatedServices}
+        attachedFaqs={attachedFaqs}
+        labels={{
+          relatedServices: t("relatedServices"),
+          faqs: t("attachedFaqs"),
+        }}
+      />
     </>
   );
 }

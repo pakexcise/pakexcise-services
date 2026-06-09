@@ -56,7 +56,7 @@ export function DocumentUploadItem({
       labels={labels}
       onUploaded={(document) => {
         trackApplicationEvent("upload_document", {
-          service_doc_type: requirement.docType,
+          doc_type: requirement.docType,
           mime_type: document.mimeType,
           file_size_kb: Math.round(document.fileSize / 1024),
         });

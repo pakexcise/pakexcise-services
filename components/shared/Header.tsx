@@ -92,6 +92,7 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
               target="_blank"
               rel="noopener noreferrer"
               data-analytics-event="click_whatsapp"
+              data-analytics-placement="header_desktop"
               aria-label={tCommon("whatsapp")}
             >
               <MessageCircle className="size-4" />
@@ -162,6 +163,7 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-analytics-event="click_whatsapp"
+                  data-analytics-placement="header_mobile"
                 >
                   <MessageCircle className="size-4" />
                   {tCommon("whatsappHelp")}

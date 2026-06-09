@@ -1,0 +1,1064 @@
+"use client";
+
+import { useState, useTransition } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  updateBusinessSettingsAction,
+  updateFeatureFlagSettingsAction,
+  updatePaymentSettingsAction,
+  updateSeoSettingsAction,
+  updateTrackingSettingsAction,
+} from "@/features/settings/admin/actions/settings-actions";
+import type { SettingsPanelLabels } from "@/features/settings/admin/lib/labels";
+import type { AdminSettingsSnapshot } from "@/features/settings/types";
+import { useRouter } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
+
+type SettingsTab = keyof SettingsPanelLabels["tabs"];
+
+type SettingsPanelProps = {
+  initialValues: AdminSettingsSnapshot;
+  labels: SettingsPanelLabels;
+};
+
+function CheckboxField({
+  id,
+  label,
+  checked,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        className="size-4 rounded border-input"
+      />
+      <Label htmlFor={id} className="font-normal">
+        {label}
+      </Label>
+    </div>
+  );
+}
+
+export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<SettingsTab>("business");
+  const [values, setValues] = useState(initialValues);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const tabs: SettingsTab[] = [
+    "business",
+    "payment",
+    "seo",
+    "tracking",
+    "features",
+  ];
+
+  function handleSave() {
+    setError(null);
+    setSuccess(null);
+
+    startTransition(async () => {
+      let result;
+
+      switch (activeTab) {
+        case "business":
+          result = await updateBusinessSettingsAction(values.business);
+          break;
+        case "payment":
+          result = await updatePaymentSettingsAction(values.payment);
+          break;
+        case "seo":
+          result = await updateSeoSettingsAction(values.seo);
+          break;
+        case "tracking":
+          result = await updateTrackingSettingsAction(values.tracking);
+          break;
+        case "features":
+          result = await updateFeatureFlagSettingsAction(values.features);
+          break;
+      }
+
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+
+      setSuccess(labels.saved);
+      router.refresh();
+    });
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-2 border-b pb-4">
+        {tabs.map((tab) => (
+          <Button
+            key={tab}
+            type="button"
+            variant={activeTab === tab ? "default" : "outline"}
+            size="sm"
+            onClick={() => {
+              setActiveTab(tab);
+              setError(null);
+              setSuccess(null);
+            }}
+          >
+            {labels.tabs[tab]}
+          </Button>
+        ))}
+      </div>
+
+      {activeTab === "business" ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="siteName">{labels.business.siteName}</Label>
+            <Input
+              id="siteName"
+              value={values.business.siteName}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    siteName: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="businessEmail">{labels.business.businessEmail}</Label>
+            <Input
+              id="businessEmail"
+              type="email"
+              value={values.business.businessEmail}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    businessEmail: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">{labels.business.phoneNumber}</Label>
+            <Input
+              id="phoneNumber"
+              value={values.business.phoneNumber}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    phoneNumber: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="whatsappNumber">{labels.business.whatsappNumber}</Label>
+            <Input
+              id="whatsappNumber"
+              value={values.business.whatsappNumber}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    whatsappNumber: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="whatsappDefaultMessage">
+              {labels.business.whatsappDefaultMessage}
+            </Label>
+            <Textarea
+              id="whatsappDefaultMessage"
+              rows={2}
+              value={values.business.whatsappDefaultMessage}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    whatsappDefaultMessage: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="businessHoursEn">{labels.business.businessHoursEn}</Label>
+            <Input
+              id="businessHoursEn"
+              value={values.business.businessHoursEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    businessHoursEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="businessHoursUr">{labels.business.businessHoursUr}</Label>
+            <Input
+              id="businessHoursUr"
+              dir="rtl"
+              value={values.business.businessHoursUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    businessHoursUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="addressEn">{labels.business.addressEn}</Label>
+            <Textarea
+              id="addressEn"
+              rows={2}
+              value={values.business.addressEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    addressEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="addressUr">{labels.business.addressUr}</Label>
+            <Textarea
+              id="addressUr"
+              dir="rtl"
+              rows={2}
+              value={values.business.addressUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    addressUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="disclaimerEn">{labels.business.disclaimerEn}</Label>
+            <Textarea
+              id="disclaimerEn"
+              rows={3}
+              value={values.business.disclaimerEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    disclaimerEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="disclaimerUr">{labels.business.disclaimerUr}</Label>
+            <Textarea
+              id="disclaimerUr"
+              dir="rtl"
+              rows={3}
+              value={values.business.disclaimerUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  business: {
+                    ...current.business,
+                    disclaimerUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === "payment" ? (
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">{labels.payment.phase2Hint}</p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="paymentAccountDisplayName">
+                {labels.payment.paymentAccountDisplayName}
+              </Label>
+              <Input
+                id="paymentAccountDisplayName"
+                value={values.payment.paymentAccountDisplayName}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      paymentAccountDisplayName: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="flex items-end">
+              <CheckboxField
+                id="manualPaymentEnabled"
+                label={labels.payment.manualPaymentEnabled}
+                checked={values.payment.manualPaymentEnabled}
+                onChange={(checked) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      manualPaymentEnabled: checked,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="jazzCashInstructionsEn">
+                {labels.payment.jazzCashInstructionsEn}
+              </Label>
+              <Textarea
+                id="jazzCashInstructionsEn"
+                rows={3}
+                value={values.payment.jazzCashInstructionsEn}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      jazzCashInstructionsEn: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="jazzCashInstructionsUr">
+                {labels.payment.jazzCashInstructionsUr}
+              </Label>
+              <Textarea
+                id="jazzCashInstructionsUr"
+                dir="rtl"
+                rows={3}
+                value={values.payment.jazzCashInstructionsUr}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      jazzCashInstructionsUr: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="easypaisaInstructionsEn">
+                {labels.payment.easypaisaInstructionsEn}
+              </Label>
+              <Textarea
+                id="easypaisaInstructionsEn"
+                rows={3}
+                value={values.payment.easypaisaInstructionsEn}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      easypaisaInstructionsEn: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="easypaisaInstructionsUr">
+                {labels.payment.easypaisaInstructionsUr}
+              </Label>
+              <Textarea
+                id="easypaisaInstructionsUr"
+                dir="rtl"
+                rows={3}
+                value={values.payment.easypaisaInstructionsUr}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      easypaisaInstructionsUr: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="bankTransferInstructionsEn">
+                {labels.payment.bankTransferInstructionsEn}
+              </Label>
+              <Textarea
+                id="bankTransferInstructionsEn"
+                rows={3}
+                value={values.payment.bankTransferInstructionsEn}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      bankTransferInstructionsEn: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="bankTransferInstructionsUr">
+                {labels.payment.bankTransferInstructionsUr}
+              </Label>
+              <Textarea
+                id="bankTransferInstructionsUr"
+                dir="rtl"
+                rows={3}
+                value={values.payment.bankTransferInstructionsUr}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      bankTransferInstructionsUr: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="gatewayPhase2Note">
+                {labels.payment.gatewayPhase2Note}
+              </Label>
+              <Textarea
+                id="gatewayPhase2Note"
+                rows={2}
+                value={values.payment.gatewayPhase2Note}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      gatewayPhase2Note: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <CheckboxField
+              id="jazzCashGatewayEnabled"
+              label={labels.payment.jazzCashGatewayEnabled}
+              checked={values.payment.jazzCashGatewayEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  payment: {
+                    ...current.payment,
+                    jazzCashGatewayEnabled: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="easypaisaGatewayEnabled"
+              label={labels.payment.easypaisaGatewayEnabled}
+              checked={values.payment.easypaisaGatewayEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  payment: {
+                    ...current.payment,
+                    easypaisaGatewayEnabled: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="cardGatewayEnabled"
+              label={labels.payment.cardGatewayEnabled}
+              checked={values.payment.cardGatewayEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  payment: {
+                    ...current.payment,
+                    cardGatewayEnabled: checked,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === "seo" ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="defaultMetaTitleEn">
+              {labels.seo.defaultMetaTitleEn}
+            </Label>
+            <Input
+              id="defaultMetaTitleEn"
+              value={values.seo.defaultMetaTitleEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: { ...current.seo, defaultMetaTitleEn: event.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="defaultMetaTitleUr">
+              {labels.seo.defaultMetaTitleUr}
+            </Label>
+            <Input
+              id="defaultMetaTitleUr"
+              dir="rtl"
+              value={values.seo.defaultMetaTitleUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: { ...current.seo, defaultMetaTitleUr: event.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="defaultMetaDescriptionEn">
+              {labels.seo.defaultMetaDescriptionEn}
+            </Label>
+            <Textarea
+              id="defaultMetaDescriptionEn"
+              rows={2}
+              value={values.seo.defaultMetaDescriptionEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    defaultMetaDescriptionEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="defaultMetaDescriptionUr">
+              {labels.seo.defaultMetaDescriptionUr}
+            </Label>
+            <Textarea
+              id="defaultMetaDescriptionUr"
+              dir="rtl"
+              rows={2}
+              value={values.seo.defaultMetaDescriptionUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    defaultMetaDescriptionUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="defaultOgImage">{labels.seo.defaultOgImage}</Label>
+            <Input
+              id="defaultOgImage"
+              value={values.seo.defaultOgImage}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: { ...current.seo, defaultOgImage: event.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className="md:col-span-2">
+            <h3 className="text-sm font-semibold">{labels.seo.organizationSection}</h3>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="organizationName">{labels.seo.organizationName}</Label>
+            <Input
+              id="organizationName"
+              value={values.seo.organizationName}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: { ...current.seo, organizationName: event.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="organizationLogoPath">
+              {labels.seo.organizationLogoPath}
+            </Label>
+            <Input
+              id="organizationLogoPath"
+              value={values.seo.organizationLogoPath}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    organizationLogoPath: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="organizationDescriptionEn">
+              {labels.seo.organizationDescriptionEn}
+            </Label>
+            <Textarea
+              id="organizationDescriptionEn"
+              rows={2}
+              value={values.seo.organizationDescriptionEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    organizationDescriptionEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="organizationDescriptionUr">
+              {labels.seo.organizationDescriptionUr}
+            </Label>
+            <Textarea
+              id="organizationDescriptionUr"
+              dir="rtl"
+              rows={2}
+              value={values.seo.organizationDescriptionUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    organizationDescriptionUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="organizationAreaServed">
+              {labels.seo.organizationAreaServed}
+            </Label>
+            <Input
+              id="organizationAreaServed"
+              value={values.seo.organizationAreaServed}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    organizationAreaServed: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="md:col-span-2">
+            <h3 className="text-sm font-semibold">
+              {labels.seo.localBusinessSection}
+            </h3>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="localBusinessName">{labels.seo.localBusinessName}</Label>
+            <Input
+              id="localBusinessName"
+              value={values.seo.localBusinessName}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: { ...current.seo, localBusinessName: event.target.value },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="localBusinessPriceRange">
+              {labels.seo.localBusinessPriceRange}
+            </Label>
+            <Input
+              id="localBusinessPriceRange"
+              value={values.seo.localBusinessPriceRange}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessPriceRange: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="localBusinessDescriptionEn">
+              {labels.seo.localBusinessDescriptionEn}
+            </Label>
+            <Textarea
+              id="localBusinessDescriptionEn"
+              rows={2}
+              value={values.seo.localBusinessDescriptionEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessDescriptionEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="localBusinessDescriptionUr">
+              {labels.seo.localBusinessDescriptionUr}
+            </Label>
+            <Textarea
+              id="localBusinessDescriptionUr"
+              dir="rtl"
+              rows={2}
+              value={values.seo.localBusinessDescriptionUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessDescriptionUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="localBusinessAreaServed">
+              {labels.seo.localBusinessAreaServed}
+            </Label>
+            <Input
+              id="localBusinessAreaServed"
+              value={values.seo.localBusinessAreaServed}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessAreaServed: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === "tracking" ? (
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">{labels.tracking.publicIdsNote}</p>
+          <p className="text-sm text-muted-foreground">{labels.secretsNote}</p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="ga4MeasurementId">
+                {labels.tracking.ga4MeasurementId}
+              </Label>
+              <Input
+                id="ga4MeasurementId"
+                value={values.tracking.ga4MeasurementId}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    tracking: {
+                      ...current.tracking,
+                      ga4MeasurementId: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="gtmId">{labels.tracking.gtmId}</Label>
+              <Input
+                id="gtmId"
+                value={values.tracking.gtmId}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    tracking: { ...current.tracking, gtmId: event.target.value },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="metaPixelId">{labels.tracking.metaPixelId}</Label>
+              <Input
+                id="metaPixelId"
+                value={values.tracking.metaPixelId}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    tracking: {
+                      ...current.tracking,
+                      metaPixelId: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tiktokPixelId">{labels.tracking.tiktokPixelId}</Label>
+              <Input
+                id="tiktokPixelId"
+                value={values.tracking.tiktokPixelId}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    tracking: {
+                      ...current.tracking,
+                      tiktokPixelId: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="consentMode">{labels.tracking.consentMode}</Label>
+              <select
+                id="consentMode"
+                value={values.tracking.consentMode}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    tracking: {
+                      ...current.tracking,
+                      consentMode: event.target.value as typeof values.tracking.consentMode,
+                    },
+                  }))
+                }
+                className={cn(
+                  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
+                )}
+              >
+                <option value="implied">{labels.tracking.consentImplied}</option>
+                <option value="explicit">{labels.tracking.consentExplicit}</option>
+                <option value="disabled">{labels.tracking.consentDisabled}</option>
+              </select>
+            </div>
+            <CheckboxField
+              id="requireConsentBeforeScripts"
+              label={labels.tracking.requireConsentBeforeScripts}
+              checked={values.tracking.requireConsentBeforeScripts}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  tracking: {
+                    ...current.tracking,
+                    requireConsentBeforeScripts: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="showConsentBanner"
+              label={labels.tracking.showConsentBanner}
+              checked={values.tracking.showConsentBanner}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  tracking: {
+                    ...current.tracking,
+                    showConsentBanner: checked,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === "features" ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <CheckboxField
+            id="agentModuleEnabled"
+            label={labels.features.agentModuleEnabled}
+            checked={values.features.agentModuleEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, agentModuleEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="blogEnabled"
+            label={labels.features.blogEnabled}
+            checked={values.features.blogEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, blogEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="guidesEnabled"
+            label={labels.features.guidesEnabled}
+            checked={values.features.guidesEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, guidesEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="whatsappNotificationsEnabled"
+            label={labels.features.whatsappNotificationsEnabled}
+            checked={values.features.whatsappNotificationsEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: {
+                  ...current.features,
+                  whatsappNotificationsEnabled: checked,
+                },
+              }))
+            }
+          />
+          <CheckboxField
+            id="smsFallbackEnabled"
+            label={labels.features.smsFallbackEnabled}
+            checked={values.features.smsFallbackEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, smsFallbackEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="maintenanceMode"
+            label={labels.features.maintenanceMode}
+            checked={values.features.maintenanceMode}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, maintenanceMode: checked },
+              }))
+            }
+          />
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="maintenanceMessageEn">
+              {labels.features.maintenanceMessageEn}
+            </Label>
+            <Textarea
+              id="maintenanceMessageEn"
+              rows={2}
+              value={values.features.maintenanceMessageEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  features: {
+                    ...current.features,
+                    maintenanceMessageEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="maintenanceMessageUr">
+              {labels.features.maintenanceMessageUr}
+            </Label>
+            <Textarea
+              id="maintenanceMessageUr"
+              dir="rtl"
+              rows={2}
+              value={values.features.maintenanceMessageUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  features: {
+                    ...current.features,
+                    maintenanceMessageUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {error ? (
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
+      {success ? (
+        <p className="text-sm text-green-600 dark:text-green-400" role="status">
+          {success}
+        </p>
+      ) : null}
+
+      <div className="flex justify-end border-t pt-4">
+        <Button type="button" onClick={handleSave} disabled={isPending}>
+          {isPending ? labels.saving : labels.save}
+        </Button>
+      </div>
+    </div>
+  );
+}

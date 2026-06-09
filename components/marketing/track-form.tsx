@@ -163,6 +163,7 @@ export function TrackForm({
               target="_blank"
               rel="noopener noreferrer"
               data-analytics-event="click_whatsapp"
+              data-analytics-placement="track_page"
             >
               <MessageCircle className="size-4" />
               {labels.whatsapp}

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
 import { absoluteUrl } from "@/lib/utils";
 import {
   blogPostRepository,
@@ -29,14 +30,32 @@ const staticPaths: Array<{
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const featureFlags = await getFeatureFlagSettings();
+
   const [services, regions, guides, posts] = await Promise.all([
     serviceRepository.listActiveSlugs().catch(() => []),
     regionRepository.listActiveSlugs().catch(() => []),
-    guideRepository.listPublished().catch(() => []),
-    blogPostRepository.listPublished().catch(() => []),
+    featureFlags.guidesEnabled
+      ? guideRepository.listPublished().catch(() => [])
+      : Promise.resolve([]),
+    featureFlags.blogEnabled
+      ? blogPostRepository.listPublished().catch(() => [])
+      : Promise.resolve([]),
   ]);
 
-  const staticEntries: MetadataRoute.Sitemap = staticPaths.map((entry) => ({
+  const activeStaticPaths = staticPaths.filter((entry) => {
+    if (entry.path === "/blog") {
+      return featureFlags.blogEnabled;
+    }
+
+    if (entry.path === "/guides") {
+      return featureFlags.guidesEnabled;
+    }
+
+    return true;
+  });
+
+  const staticEntries: MetadataRoute.Sitemap = activeStaticPaths.map((entry) => ({
     url: absoluteUrl(entry.path),
     lastModified: new Date(),
     changeFrequency: entry.changeFrequency,

@@ -63,19 +63,7 @@ export type ApplicationDraftJson = {
   attribution?: ApplicationAttributionInput;
 };
 
-export type ApplicationAttributionInput = {
-  firstTouchSource?: string;
-  firstTouchMedium?: string;
-  firstTouchCampaign?: string;
-  lastTouchSource?: string;
-  lastTouchCampaign?: string;
-  gclid?: string;
-  fbclid?: string;
-  ttclid?: string;
-  landingPage?: string;
-  referrer?: string;
-  deviceType?: string;
-};
+export type { AttributionData as ApplicationAttributionInput } from "@/lib/attribution";
 
 export type WizardStep = 1 | 2 | 3 | 4;
 
