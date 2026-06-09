@@ -340,9 +340,23 @@
       "view": "دیکھیں",
       "emptyTitle": "کوئی درخواست نہیں ملی",
       "emptyDescription": "فلٹرز یا تلاش کی شرائط تبدیل کریں۔",
-      "searchPlaceholder": "ٹریکنگ ID، کسٹمر یا سروس سے تلاش کریں",
+      "searchPlaceholder": "ٹریکنگ ID، کسٹمر، ای میل یا فون سے تلاش کریں",
+      "stats": {
+        "all": "تمام پائپ لائن"
+      },
       "filters": {
-        "all": "تمام اسٹیٹس"
+        "all": "تمام اسٹیٹس",
+        "allServices": "تمام خدمات",
+        "dateFrom": "شروع تاریخ",
+        "dateTo": "اختتام تاریخ",
+        "reset": "فلٹرز ری سیٹ"
+      },
+      "bulk": {
+        "select": "درخواست منتخب کریں",
+        "assign": "بلک اسائن",
+        "pending": "اسائن ہو رہا ہے…",
+        "placeholder": "بلک اسائنمنٹ ابھی فعال نہیں۔ آپ کی منتخب کردہ درخواستیں مستقبل کی رہائی کے لیے لاگ ہو گئیں۔",
+        "clear": "انتخاب صاف کریں"
       },
       "columns": {
         "trackingId": "ٹریکنگ ID",
@@ -355,6 +369,64 @@
       "history": {
         "note": "نوٹ",
         "changedBy": "تبدیل کرنے والا"
+      },
+      "detail": {
+        "overview": "درخواست کا جائزہ",
+        "region": "علاقہ",
+        "locale": "زبان",
+        "customer": "کسٹمر کی تفصیلات",
+        "customerName": "نام",
+        "customerEmail": "ای میل",
+        "customerPhone": "فون",
+        "sensitiveMasked": "حساس رابطے کی تفصیلات ایڈمن ویو میں مخفی ہیں۔",
+        "statusManager": "اسٹیٹس مینیجر",
+        "statusManagerDescription": "ہر اسٹیٹس تبدیلی کے لیے اندرونی نوٹ لازمی ہے۔ غلط منتقلی روکی جاتی ہے۔",
+        "currentStatus": "موجودہ اسٹیٹس",
+        "nextStatus": "نئی اسٹیٹس",
+        "statusNote": "اسٹیٹس نوٹ",
+        "statusNotePlaceholder": "اسٹیٹس کیوں بدل رہی ہے وضاحت کریں…",
+        "statusSubmit": "اسٹیٹس اپڈیٹ",
+        "statusSubmitting": "اپڈیٹ ہو رہا ہے…",
+        "noTransitions": "مزید اسٹیٹس منتقلی دستیاب نہیں۔",
+        "statusSuccess": "اسٹیٹس کامیابی سے اپڈیٹ ہو گئی۔",
+        "statusError": "اسٹیٹس اپڈیٹ نہیں ہو سکی۔",
+        "requiresProof": "مکمل سے پہلے تکمیل کا ثبوت اپ لوڈ کریں۔",
+        "fieldValues": "درخواست فیلڈ ویلیوز",
+        "noFieldValues": "کوئی ڈائنامک فیلڈ ویلیو جمع نہیں ہوئی۔",
+        "protected": "محفوظ",
+        "documents": "دستاویزات",
+        "noDocuments": "ابھی کوئی دستاویز اپ لوڈ نہیں ہوئی۔",
+        "proofSection": "تکمیل کا ثبوت",
+        "proofTitle": "تکمیل کا ثبوت اپ لوڈ",
+        "proofDescription": "جب خدمت کو ثبوت درکار ہو تو مکمل سے پہلے یہ لازمی ہے۔",
+        "proofUpload": "ثبوت اپ لوڈ",
+        "proofUploading": "اپ لوڈ ہو رہا ہے…",
+        "proofUploaded": "ثبوت اپ لوڈ ہو گیا",
+        "proofRequired": "اس خدمت کے لیے تکمیل کا ثبوت لازمی ہے۔",
+        "proofUploadFailed": "ثبوت اپ لوڈ ناکام۔",
+        "proofInvalidType": "فائل قسم مجاز نہیں۔",
+        "proofTooLarge": "فائل بہت بڑی ہے۔",
+        "proofInvalidName": "غلط فائل نام۔",
+        "invoices": "انوائسز",
+        "noInvoices": "ابھی کوئی انوائس نہیں بنی۔",
+        "invoiceTotal": "کل",
+        "officialFee": "سرکاری فیس",
+        "payments": "ادائیگیاں",
+        "noPayments": "ابھی کوئی ادائیگی ریکارڈ نہیں۔",
+        "paymentAmount": "رقم",
+        "notesSave": "نوٹس محفوظ",
+        "notesSaving": "محفوظ ہو رہا ہے…",
+        "notesSaved": "نوٹس محفوظ ہو گئے۔",
+        "notesError": "نوٹس محفوظ نہیں ہو سکے۔",
+        "notesPlaceholder": "سپورٹ اور ایڈمن کے لیے اندرونی نوٹس…",
+        "viewer": {
+          "loading": "محفوظ دستاویز لوڈ ہو رہی ہے…",
+          "error": "دستاویز لوڈ نہیں ہو سکی۔",
+          "retry": "دوبارہ کوشش",
+          "expiresIn": "__MINUTES__ منٹ میں ختم",
+          "unsupported": "اس فائل کی ان لائن پیش نظارہ دستیاب نہیں۔",
+          "openNewTab": "نئی ٹیب میں کھولیں"
+        }
       }
     },
     "statuses": {

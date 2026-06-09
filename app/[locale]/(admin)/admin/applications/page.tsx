@@ -3,24 +3,14 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ApplicationFilters } from "@/features/admin/components/application-filters";
-import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
+import { ApplicationQueueStats } from "@/features/admin/components/application-queue-stats";
+import { ApplicationsBulkSelectTable } from "@/features/admin/components/applications-bulk-select-table";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { adminMetadata } from "@/features/admin/lib/metadata";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { adminDefaultPageSize } from "@/config/admin";
-import { Link } from "@/i18n/navigation";
-import { formatDate } from "@/lib/utils";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
@@ -43,12 +33,33 @@ type ApplicationsPageProps = {
     page?: string;
     status?: string;
     q?: string;
+    serviceId?: string;
+    dateFrom?: string;
+    dateTo?: string;
   }>;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin");
   return adminMetadata(t("nav.applications"));
+}
+
+function parseDateStart(value?: string): Date | undefined {
+  if (!value?.trim()) {
+    return undefined;
+  }
+
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+function parseDateEnd(value?: string): Date | undefined {
+  if (!value?.trim()) {
+    return undefined;
+  }
+
+  const date = new Date(`${value}T23:59:59.999Z`);
+  return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
 export default async function AdminApplicationsPage({
@@ -61,38 +72,48 @@ export default async function AdminApplicationsPage({
   const params = await searchParams;
   const page = Math.max(1, Number(params.page ?? "1") || 1);
   const search = params.q?.trim() || undefined;
+  const serviceId = params.serviceId?.trim() || undefined;
+  const dateFrom = parseDateStart(params.dateFrom);
+  const dateTo = parseDateEnd(params.dateTo);
   const statusParam = params.status;
   const status =
     statusParam && validStatuses.has(statusParam)
       ? (statusParam as ApplicationStatus)
       : undefined;
 
-  let result = {
-    items: [] as Awaited<
-      ReturnType<typeof applicationRepository.listAdminPaginated>
-    >["items"],
-    page: 1,
-    pageSize: adminDefaultPageSize,
-    total: 0,
-    totalPages: 1,
+  const filterParams = {
+    q: search,
+    serviceId,
+    dateFrom: params.dateFrom,
+    dateTo: params.dateTo,
   };
 
-  try {
-    result = await applicationRepository.listAdminPaginated({
+  const [result, services] = await Promise.all([
+    applicationRepository.listAdminPaginated({
       page,
       pageSize: adminDefaultPageSize,
       status,
+      serviceId,
+      dateFrom,
+      dateTo,
       search,
-    });
-  } catch {
-    result = {
-      items: [],
-      page: 1,
-      pageSize: adminDefaultPageSize,
-      total: 0,
-      totalPages: 1,
-    };
-  }
+    }),
+    applicationRepository.listServicesForFilter(),
+  ]);
+
+  const rows = result.items.map((application) => ({
+    id: application.id,
+    trackingId: application.trackingId,
+    status: application.status,
+    createdAt: application.createdAt,
+    serviceName:
+      locale === "ur"
+        ? application.service.nameUr
+        : application.service.nameEn,
+    customerName: application.user.name ?? "—",
+    customerEmail: application.user.email,
+    statusLabel: t(getApplicationStatusLabelKey(application.status)),
+  }));
 
   return (
     <div className="space-y-6">
@@ -101,81 +122,59 @@ export default async function AdminApplicationsPage({
         description={t("applications.description")}
       />
 
-      <ApplicationFilters currentStatus={status} currentSearch={search} />
+      <ApplicationQueueStats
+        currentStatus={status}
+        searchParams={filterParams}
+      />
 
-      {result.items.length === 0 ? (
+      <ApplicationFilters
+        currentStatus={status}
+        currentSearch={search}
+        currentServiceId={serviceId}
+        currentDateFrom={params.dateFrom}
+        currentDateTo={params.dateTo}
+        services={services}
+        locale={locale}
+      />
+
+      {rows.length === 0 ? (
         <EmptyState
           title={t("applications.emptyTitle")}
           description={t("applications.emptyDescription")}
         />
       ) : (
-        <div className="space-y-4 rounded-xl border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t("applications.columns.trackingId")}</TableHead>
-                <TableHead>{t("applications.columns.service")}</TableHead>
-                <TableHead>{t("applications.columns.customer")}</TableHead>
-                <TableHead>{t("applications.columns.status")}</TableHead>
-                <TableHead>{t("applications.columns.created")}</TableHead>
-                <TableHead className="text-right">
-                  {t("applications.columns.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {result.items.map((application) => (
-                <TableRow key={application.id}>
-                  <TableCell className="font-mono text-xs">
-                    {application.trackingId}
-                  </TableCell>
-                  <TableCell>
-                    {locale === "ur"
-                      ? application.service.nameUr
-                      : application.service.nameEn}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span>{application.user.name ?? "—"}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {application.user.email}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <ApplicationStatusBadge
-                      status={application.status}
-                      label={t(
-                        getApplicationStatusLabelKey(application.status),
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {formatDate(application.createdAt, locale)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button asChild variant="ghost" size="sm">
-                      <Link href={`/admin/applications/${application.id}`}>
-                        {t("applications.view")}
-                      </Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="space-y-4 rounded-xl border p-4">
+          <ApplicationsBulkSelectTable
+            applications={rows}
+            locale={locale}
+            labels={{
+              trackingId: t("applications.columns.trackingId"),
+              service: t("applications.columns.service"),
+              customer: t("applications.columns.customer"),
+              status: t("applications.columns.status"),
+              created: t("applications.columns.created"),
+              actions: t("applications.columns.actions"),
+              view: t("applications.view"),
+              select: t("applications.bulk.select"),
+              bulkAssign: t("applications.bulk.assign"),
+              bulkPending: t("applications.bulk.pending"),
+              bulkPlaceholder: t("applications.bulk.placeholder"),
+              bulkClear: t("applications.bulk.clear"),
+            }}
+          />
 
-          <div className="px-4 pb-4">
-            <PaginationControls
-              page={result.page}
-              totalPages={result.totalPages}
-              basePath="/admin/applications"
-              searchParams={{
-                status,
-                q: search,
-              }}
-            />
-          </div>
+          <PaginationControls
+            page={result.page}
+            totalPages={result.totalPages}
+            basePath="/admin/applications"
+            searchParams={{
+              status,
+              q: search,
+              serviceId,
+              dateFrom: params.dateFrom,
+              dateTo: params.dateTo,
+            }}
+          />
         </div>
       )}
     </div>

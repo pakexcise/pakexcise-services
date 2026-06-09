@@ -340,9 +340,23 @@
       "view": "View",
       "emptyTitle": "No applications found",
       "emptyDescription": "Try changing filters or search terms.",
-      "searchPlaceholder": "Search by tracking ID, customer, or service",
+      "searchPlaceholder": "Search by tracking ID, customer, email, or phone",
+      "stats": {
+        "all": "All pipeline"
+      },
       "filters": {
-        "all": "All statuses"
+        "all": "All statuses",
+        "allServices": "All services",
+        "dateFrom": "From date",
+        "dateTo": "To date",
+        "reset": "Reset filters"
+      },
+      "bulk": {
+        "select": "Select application",
+        "assign": "Bulk assign",
+        "pending": "Assigning…",
+        "placeholder": "Bulk assignment is not enabled yet. Your selection was logged for a future release.",
+        "clear": "Clear selection"
       },
       "columns": {
         "trackingId": "Tracking ID",
@@ -355,6 +369,64 @@
       "history": {
         "note": "Note",
         "changedBy": "Changed by"
+      },
+      "detail": {
+        "overview": "Application overview",
+        "region": "Region",
+        "locale": "Locale",
+        "customer": "Customer details",
+        "customerName": "Name",
+        "customerEmail": "Email",
+        "customerPhone": "Phone",
+        "sensitiveMasked": "Sensitive contact fields are masked in the admin view.",
+        "statusManager": "Status manager",
+        "statusManagerDescription": "Every status change requires an internal note. Invalid transitions are blocked.",
+        "currentStatus": "Current status",
+        "nextStatus": "Move to status",
+        "statusNote": "Status note",
+        "statusNotePlaceholder": "Explain why this status is changing…",
+        "statusSubmit": "Update status",
+        "statusSubmitting": "Updating…",
+        "noTransitions": "No further status transitions are available.",
+        "statusSuccess": "Status updated successfully.",
+        "statusError": "Could not update status.",
+        "requiresProof": "Upload completion proof before marking as completed.",
+        "fieldValues": "Application field values",
+        "noFieldValues": "No dynamic field values were submitted.",
+        "protected": "Protected",
+        "documents": "Documents",
+        "noDocuments": "No documents uploaded yet.",
+        "proofSection": "Completion proof",
+        "proofTitle": "Upload completion proof",
+        "proofDescription": "Required before marking this application as completed when the service needs proof.",
+        "proofUpload": "Upload proof",
+        "proofUploading": "Uploading…",
+        "proofUploaded": "Proof uploaded",
+        "proofRequired": "Completion proof is required for this service.",
+        "proofUploadFailed": "Proof upload failed.",
+        "proofInvalidType": "File type is not allowed.",
+        "proofTooLarge": "File is too large.",
+        "proofInvalidName": "Invalid file name.",
+        "invoices": "Invoices",
+        "noInvoices": "No invoices generated yet.",
+        "invoiceTotal": "Total",
+        "officialFee": "official fee",
+        "payments": "Payments",
+        "noPayments": "No payment records yet.",
+        "paymentAmount": "Amount",
+        "notesSave": "Save notes",
+        "notesSaving": "Saving…",
+        "notesSaved": "Notes saved.",
+        "notesError": "Could not save notes.",
+        "notesPlaceholder": "Internal notes for support and admin staff…",
+        "viewer": {
+          "loading": "Loading secure document…",
+          "error": "Could not load document.",
+          "retry": "Retry",
+          "expiresIn": "Expires in __MINUTES__ min",
+          "unsupported": "Inline preview is not available for this file type.",
+          "openNewTab": "Open in new tab"
+        }
       }
     },
     "statuses": {
