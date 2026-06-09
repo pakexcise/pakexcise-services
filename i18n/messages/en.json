@@ -307,11 +307,118 @@
     }
   },
   "agent": {
+    "nav": {
+      "ariaLabel": "Agent portal navigation",
+      "dashboard": "Dashboard",
+      "applications": "Applications",
+      "newApplication": "New application",
+      "commissions": "Commissions",
+      "profile": "Profile"
+    },
+    "approvalStatus": {
+      "PENDING": "Pending approval",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
     "dashboard": {
       "metaTitle": "Agent dashboard | PakExcise.com",
       "title": "Agent dashboard",
       "welcome": "Welcome, {name}",
-      "description": "Assigned applications and commission tools will appear here."
+      "description": "Once approved, you can submit applications on behalf of customers and track assigned cases.",
+      "pendingTitle": "Agent account pending approval",
+      "pendingDescription": "You cannot submit applications until an admin approves your agent profile.",
+      "rejectedTitle": "Agent account rejected",
+      "rejectedDescription": "Contact PakExcise support if you believe this is a mistake.",
+      "recentApplications": "Recent applications",
+      "viewAll": "View all",
+      "applicationsEmpty": "No assigned applications yet.",
+      "statusCards": {
+        "total": "Assigned applications",
+        "inProgress": "In progress",
+        "completed": "Completed",
+        "closed": "Closed"
+      },
+      "columns": {
+        "trackingId": "Tracking ID",
+        "service": "Service",
+        "status": "Status",
+        "updated": "Updated"
+      }
+    },
+    "applications": {
+      "metaTitle": "Agent applications | PakExcise.com",
+      "title": "Assigned applications",
+      "description": "Applications you submitted or are assigned to manage.",
+      "newApplication": "New application",
+      "empty": "No assigned applications yet.",
+      "view": "View",
+      "columns": {
+        "trackingId": "Tracking ID",
+        "customer": "Customer",
+        "service": "Service",
+        "status": "Status",
+        "updated": "Updated",
+        "actions": "Actions"
+      }
+    },
+    "application": {
+      "metaTitle": "Application tracking | PakExcise.com",
+      "title": "Application tracking",
+      "backToList": "Back to applications",
+      "status": "Status",
+      "service": "Service",
+      "customer": "Customer contact",
+      "submitted": "Submitted",
+      "updated": "Updated",
+      "trackingNote": "Invoices, payments, and sensitive documents are managed by the customer through their dashboard.",
+      "timeline": {
+        "title": "Status timeline",
+        "empty": "Status updates will appear here.",
+        "current": "Current status"
+      }
+    },
+    "newApplication": {
+      "metaTitle": "New application | PakExcise.com",
+      "title": "Start a new application",
+      "description": "Choose a service to begin an application on behalf of a customer. Enter the customer details in the application form.",
+      "empty": "No active services are available right now.",
+      "startApplication": "Start application"
+    },
+    "commissions": {
+      "metaTitle": "Commissions | PakExcise.com",
+      "title": "Commissions",
+      "description": "Commission line items set by admin for your facilitation work.",
+      "commissionRate": "Your commission rate",
+      "empty": "No commission line items yet.",
+      "payoutPlaceholder": "Payout processing is managed by admin. Contact support for payout questions.",
+      "columns": {
+        "label": "Item",
+        "amount": "Amount",
+        "payoutStatus": "Payout status",
+        "application": "Application",
+        "date": "Date"
+      },
+      "payoutStatus": {
+        "PENDING": "Pending",
+        "PROCESSING": "Processing",
+        "PAID": "Paid",
+        "CANCELLED": "Cancelled"
+      }
+    },
+    "profile": {
+      "metaTitle": "Agent profile | PakExcise.com",
+      "title": "Agent profile",
+      "description": "Update your contact details and view your agent status.",
+      "name": "Full name",
+      "phone": "Mobile number",
+      "email": "Email address",
+      "emailReadOnly": "Email cannot be changed here.",
+      "commissionRate": "Commission rate",
+      "approvalStatus": "Approval status",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Profile updated.",
+      "error": "Could not update profile."
     }
   },
   "footer": {
@@ -616,6 +723,43 @@
         "submitting": "Generating…",
         "success": "Invoice sent:",
         "error": "Could not create invoice."
+      }
+    },
+    "agents": {
+      "title": "Agents",
+      "description": "Approve agents, set commission rates, and manage commission line items.",
+      "emptyTitle": "No agents found",
+      "emptyDescription": "Promote users to the agent role to create agent profiles.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "commissionRate": "Commission rate",
+      "applicationCount": "Submitted applications",
+      "commissionItems": "Commission line items",
+      "recentApplications": "Recent agent applications",
+      "columns": {
+        "trackingId": "Tracking ID",
+        "service": "Service",
+        "status": "Status",
+        "created": "Created"
+      },
+      "actions": {
+        "approve": "Approve agent",
+        "approving": "Approving…",
+        "reject": "Reject agent",
+        "rejecting": "Rejecting…",
+        "rejectNotes": "Rejection notes",
+        "updateRate": "Update rate",
+        "updatingRate": "Updating…",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "toggling": "Updating…",
+        "addCommission": "Add commission line item",
+        "commissionLabel": "Label",
+        "commissionAmount": "Amount (PKR)",
+        "commissionDescription": "Description",
+        "addingCommission": "Adding…",
+        "success": "Agent updated.",
+        "error": "Could not update agent."
       }
     },
     "payments": {

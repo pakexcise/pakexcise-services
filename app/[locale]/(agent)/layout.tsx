@@ -1,4 +1,7 @@
-import { requireApprovedAgent } from "@/server/permissions/guards";
+import { AgentPortalNav } from "@/components/agent/AgentPortalNav";
+import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
+import { isApprovedActiveAgent } from "@/features/agents/lib/is-approved-agent";
+import { requireAgent } from "@/server/permissions/guards";
 import { enforcePortalAccess } from "@/server/permissions/portal-access";
 
 export default async function AgentLayout({
@@ -6,11 +9,15 @@ export default async function AgentLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await enforcePortalAccess(requireApprovedAgent, "/agent/dashboard");
+  const user = await enforcePortalAccess(requireAgent, "/agent/dashboard");
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container-site py-8">{children}</div>
+      <LegalDisclaimer />
+      <div className="container-site space-y-6 py-8">
+        <AgentPortalNav isApproved={isApprovedActiveAgent(user)} />
+        {children}
+      </div>
     </div>
   );
 }

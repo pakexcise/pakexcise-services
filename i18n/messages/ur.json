@@ -307,11 +307,118 @@
     }
   },
   "agent": {
+    "nav": {
+      "ariaLabel": "ایجنٹ پورٹل نیویگیشن",
+      "dashboard": "ڈیش بورڈ",
+      "applications": "درخواستیں",
+      "newApplication": "نئی درخواست",
+      "commissions": "کمیشن",
+      "profile": "پروفائل"
+    },
+    "approvalStatus": {
+      "PENDING": "منظوری زیر التوا",
+      "APPROVED": "منظور شدہ",
+      "REJECTED": "مسترد"
+    },
     "dashboard": {
       "metaTitle": "ایجنٹ ڈیش بورڈ | PakExcise.com",
       "title": "ایجنٹ ڈیش بورڈ",
       "welcome": "خوش آمدید، {name}",
-      "description": "تفویض شدہ درخواستیں اور کمیشن ٹولز یہاں ظاہر ہوں گے۔"
+      "description": "منظوری کے بعد آپ کسٹمرز کی جانب سے درخواستیں جمع کرا سکتے ہیں۔",
+      "pendingTitle": "ایجنٹ اکاؤنٹ منظوری کا انتظار",
+      "pendingDescription": "ایڈمن کی منظوری سے پہلے درخواستیں جمع نہیں کر سکتے۔",
+      "rejectedTitle": "ایجنٹ اکاؤنٹ مسترد",
+      "rejectedDescription": "اگر یہ غلطی لگے تو PakExcise سپورٹ سے رابطہ کریں۔",
+      "recentApplications": "حالیہ درخواستیں",
+      "viewAll": "سب دیکھیں",
+      "applicationsEmpty": "ابھی کوئی تفویض شدہ درخواست نہیں۔",
+      "statusCards": {
+        "total": "تفویض شدہ درخواستیں",
+        "inProgress": "جاری",
+        "completed": "مکمل",
+        "closed": "بند"
+      },
+      "columns": {
+        "trackingId": "ٹریکنگ ID",
+        "service": "خدمت",
+        "status": "اسٹیٹس",
+        "updated": "اپڈیٹ"
+      }
+    },
+    "applications": {
+      "metaTitle": "ایجنٹ درخواستیں | PakExcise.com",
+      "title": "تفویض شدہ درخواستیں",
+      "description": "وہ درخواستیں جو آپ نے جمع کروائیں یا جن کا انتظام آپ کے پاس ہے۔",
+      "newApplication": "نئی درخواست",
+      "empty": "ابھی کوئی تفویض شدہ درخواست نہیں۔",
+      "view": "دیکھیں",
+      "columns": {
+        "trackingId": "ٹریکنگ ID",
+        "customer": "کسٹمر",
+        "service": "خدمت",
+        "status": "اسٹیٹس",
+        "updated": "اپڈیٹ",
+        "actions": "اقدامات"
+      }
+    },
+    "application": {
+      "metaTitle": "درخواست ٹریکنگ | PakExcise.com",
+      "title": "درخواست ٹریکنگ",
+      "backToList": "درخواستوں پر واپس",
+      "status": "اسٹیٹس",
+      "service": "خدمت",
+      "customer": "کسٹمر رابطہ",
+      "submitted": "جمع شدہ",
+      "updated": "اپڈیٹ",
+      "trackingNote": "انوائس، ادائیگیاں اور حساس دستاویزات کسٹمر اپنے ڈیش بورڈ سے منظم کرتا ہے۔",
+      "timeline": {
+        "title": "اسٹیٹس ٹائم لائن",
+        "empty": "اسٹیٹس اپڈیٹس یہاں ظاہر ہوں گی۔",
+        "current": "موجودہ اسٹیٹس"
+      }
+    },
+    "newApplication": {
+      "metaTitle": "نئی درخواست | PakExcise.com",
+      "title": "نئی درخواست شروع کریں",
+      "description": "کسٹمر کی جانب سے درخواست کے لیے خدمت منتخب کریں۔ فارم میں کسٹمر کی تفصیلات درج کریں۔",
+      "empty": "ابھی کوئی فعال خدمت دستیاب نہیں۔",
+      "startApplication": "درخواست شروع کریں"
+    },
+    "commissions": {
+      "metaTitle": "کمیشن | PakExcise.com",
+      "title": "کمیشن",
+      "description": "ایڈمن کی طرف سے مقرر کردہ کمیشن لائن آئٹمز۔",
+      "commissionRate": "آپ کی کمیشن شرح",
+      "empty": "ابھی کوئی کمیشن لائن آئٹم نہیں۔",
+      "payoutPlaceholder": "ادائیگی کی پروسیسنگ ایڈمن منظم کرتا ہے۔",
+      "columns": {
+        "label": "آئٹم",
+        "amount": "رقم",
+        "payoutStatus": "ادائیگی کی صورتحال",
+        "application": "درخواست",
+        "date": "تاریخ"
+      },
+      "payoutStatus": {
+        "PENDING": "زیر التوا",
+        "PROCESSING": "پروسیسنگ",
+        "PAID": "ادا شدہ",
+        "CANCELLED": "منسوخ"
+      }
+    },
+    "profile": {
+      "metaTitle": "ایجنٹ پروفائل | PakExcise.com",
+      "title": "ایجنٹ پروفائل",
+      "description": "رابطے کی تفصیلات اپ ڈیٹ کریں اور ایجنٹ اسٹیٹس دیکھیں۔",
+      "name": "پورا نام",
+      "phone": "موبائل نمبر",
+      "email": "ای میل",
+      "emailReadOnly": "ای میل یہاں تبدیل نہیں ہو سکتی۔",
+      "commissionRate": "کمیشن شرح",
+      "approvalStatus": "منظوری کی صورتحال",
+      "save": "تبدیلیاں محفوظ کریں",
+      "saving": "محفوظ ہو رہا ہے…",
+      "saved": "پروفائل اپ ڈیٹ ہو گئی۔",
+      "error": "پروفائل اپ ڈیٹ نہیں ہو سکی۔"
     }
   },
   "footer": {
@@ -616,6 +723,43 @@
         "submitting": "بن رہی ہے…",
         "success": "انوائس بھیج دی گئی:",
         "error": "انوائس نہیں بن سکی۔"
+      }
+    },
+    "agents": {
+      "title": "ایجنٹس",
+      "description": "ایجنٹس منظور کریں، کمیشن شرح مقرر کریں، اور کمیشن لائن آئٹمز منظم کریں۔",
+      "emptyTitle": "کوئی ایجنٹ نہیں ملا",
+      "emptyDescription": "صارفین کو ایجنٹ رول میں ترقی دیں تاکہ پروفائلز بنیں۔",
+      "active": "فعال",
+      "inactive": "غیر فعال",
+      "commissionRate": "کمیشن شرح",
+      "applicationCount": "جمع شدہ درخواستیں",
+      "commissionItems": "کمیشن لائن آئٹمز",
+      "recentApplications": "حالیہ ایجنٹ درخواستیں",
+      "columns": {
+        "trackingId": "ٹریکنگ ID",
+        "service": "خدمت",
+        "status": "اسٹیٹس",
+        "created": "تاریخ"
+      },
+      "actions": {
+        "approve": "ایجنٹ منظور",
+        "approving": "منظور ہو رہا ہے…",
+        "reject": "ایجنٹ مسترد",
+        "rejecting": "مسترد ہو رہا ہے…",
+        "rejectNotes": "مستردی کے نوٹس",
+        "updateRate": "شرح اپڈیٹ",
+        "updatingRate": "اپڈیٹ ہو رہا ہے…",
+        "activate": "فعال کریں",
+        "deactivate": "غیر فعال کریں",
+        "toggling": "اپڈیٹ ہو رہا ہے…",
+        "addCommission": "کمیشن لائن آئٹم شامل",
+        "commissionLabel": "لیبل",
+        "commissionAmount": "رقم (PKR)",
+        "commissionDescription": "تفصیل",
+        "addingCommission": "شامل ہو رہا ہے…",
+        "success": "ایجنٹ اپڈیٹ ہو گیا۔",
+        "error": "ایجنٹ اپڈیٹ نہیں ہو سکا۔"
       }
     },
     "payments": {

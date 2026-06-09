@@ -15,6 +15,7 @@ export const permissions = [
   "users:manage",
   "settings:manage",
   "audit:read",
+  "agents:manage",
 ] as const;
 
 export type Permission = (typeof permissions)[number];
@@ -31,6 +32,7 @@ const adminPermissions: Permission[] = [
   "service:manage",
   "faq:manage",
   "social:manage",
+  "agents:manage",
   "audit:read",
 ];
 
@@ -40,7 +42,7 @@ const supportPermissions: Permission[] = [
   "documents:read",
 ];
 
-const agentPermissions: Permission[] = ["application:read", "application:write"];
+const agentPermissions: Permission[] = ["application:write"];
 
 export const rolePermissions: Record<UserRole, readonly Permission[]> = {
   CUSTOMER: [],

@@ -23,7 +23,7 @@ export async function enforcePortalAccess(
         redirect(buildLoginRedirectUrl(callbackPath) as Route);
       }
 
-      if (error.code === "FORBIDDEN") {
+      if (error.code === "FORBIDDEN" || error.code === "AGENT_NOT_APPROVED") {
         const user = await getCurrentUser();
 
         if (user) {

@@ -65,6 +65,10 @@ export async function requireApplyAccess(): Promise<CurrentUser> {
   throw new AuthError("FORBIDDEN", "Only customers and approved agents can apply");
 }
 
+export async function requireAgent(): Promise<CurrentUser> {
+  return requireRole(...portalRoles.agent);
+}
+
 export async function requireApprovedAgent(): Promise<CurrentUser> {
   const user = await requireRole(...portalRoles.agent);
 
@@ -127,10 +131,6 @@ export function canAccessApplication(
   user: CurrentUser,
   application: Pick<Application, "userId" | "agentId">,
 ): boolean {
-  if (roleHasPermission(user.role, "application:read")) {
-    return true;
-  }
-
   if (user.role === "AGENT") {
     return (
       application.agentId === user.id &&
@@ -141,6 +141,10 @@ export function canAccessApplication(
 
   if (user.role === "CUSTOMER") {
     return application.userId === user.id;
+  }
+
+  if (roleHasPermission(user.role, "application:read")) {
+    return true;
   }
 
   return false;
