@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
 
 import { isApprovedActiveAgent } from "@/features/agents/lib/is-approved-agent";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,8 @@ export default async function AgentNewApplicationPage() {
   const user = await getCurrentUser();
 
   if (!user || !isApprovedActiveAgent(user)) {
-    redirect("/agent/dashboard");
+    redirect({ href: "/agent/dashboard", locale });
+    return;
   }
 
   const t = await getTranslations("agent.newApplication");

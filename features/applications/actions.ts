@@ -1,5 +1,7 @@
 "use server";
 
+import { z } from "zod";
+
 import { COMPLETION_PROOF_DOC_TYPE } from "@/config/uploads";
 import {
   canTransitionApplicationStatus,
@@ -23,8 +25,8 @@ import {
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { queueApplicationStatusNotifications } from "@/server/notifications/queue-application-status-notification";
+import { applicationIdParamSchema } from "@/lib/validations/route-params";
 import { requirePermission } from "@/server/permissions/guards";
-import { applicationRepository } from "@/server/repositories/application-repository";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
 
 async function requireApplicationStatusPermission() {
@@ -48,12 +50,21 @@ async function hasCompletionProof(applicationId: string): Promise<boolean> {
 }
 
 export async function getAllowedStatusTransitionsAction(
-  applicationId: string,
+  input: unknown,
 ): Promise<ActionResult<{ currentStatus: string; allowed: string[] }>> {
   await requireApplicationStatusPermission();
 
+  const parsed = parseInput(
+    z.object({ applicationId: applicationIdParamSchema }),
+    input,
+  );
+
+  if (!parsed.success) {
+    return parsed;
+  }
+
   const application = await prisma.application.findUnique({
-    where: { id: applicationId },
+    where: { id: parsed.data.applicationId },
     select: { status: true },
   });
 

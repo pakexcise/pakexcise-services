@@ -13,7 +13,7 @@ export type AttributionData = {
 };
 
 type StoredAttribution = AttributionData & {
-  capturedAt: string;
+  capturedAt?: string;
 };
 
 const FIRST_TOUCH_COOKIE = "pe_attr_ft";
@@ -71,6 +71,7 @@ function parseStoredAttribution(raw: string | null): AttributionData {
   try {
     const parsed = JSON.parse(raw) as StoredAttribution;
     const { capturedAt: _capturedAt, ...attribution } = parsed;
+    void _capturedAt;
     return attribution;
   } catch {
     return {};

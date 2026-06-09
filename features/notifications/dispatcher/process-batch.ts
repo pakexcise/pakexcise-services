@@ -18,7 +18,8 @@ function isReadyForRetry(
   retryCount: number,
   updatedAt: Date,
 ): boolean {
-  const backoff = RETRY_BACKOFF_MS[Math.min(retryCount, RETRY_BACKOFF_MS.length - 1)];
+  const backoff =
+    RETRY_BACKOFF_MS[Math.min(retryCount, RETRY_BACKOFF_MS.length - 1)] ?? 0;
   const elapsed = Date.now() - updatedAt.getTime();
   return elapsed >= backoff;
 }

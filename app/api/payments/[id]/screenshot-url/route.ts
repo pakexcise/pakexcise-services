@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { canViewPaymentScreenshot } from "@/features/payments/lib/payment-access";
+import { paymentIdParamSchema } from "@/lib/validations/route-params";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { prisma } from "@/server/db/client";
 import { createPresignedDownloadUrl } from "@/server/r2/presign-download";
@@ -27,9 +28,14 @@ export async function GET(
   }
 
   const { id } = await context.params;
+  const idParsed = paymentIdParamSchema.safeParse(id);
+
+  if (!idParsed.success) {
+    return NextResponse.json({ error: "Invalid payment id" }, { status: 400 });
+  }
 
   const payment = await prisma.payment.findUnique({
-    where: { id },
+    where: { id: idParsed.data },
     select: {
       id: true,
       screenshotR2Key: true,

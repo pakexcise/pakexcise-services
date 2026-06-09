@@ -173,7 +173,7 @@ export default async function CustomerApplicationPage({
         applicationId={application.id}
         applicationStatus={application.status}
         locale={locale === "ur" ? "ur" : "en"}
-        requirements={application.service.documentRequirements}
+        requirements={application.service.documentReqs}
         documents={application.documents}
         labels={{
           title: t("documents.title"),

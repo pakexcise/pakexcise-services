@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+
+import { redirect } from "@/i18n/navigation";
 
 import { StatusTimeline } from "@/components/customer/StatusTimeline";
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
@@ -35,7 +37,8 @@ export default async function AgentApplicationDetailPage({
   const user = await getCurrentUser();
 
   if (!user || !isApprovedActiveAgent(user)) {
-    redirect("/agent/dashboard");
+    redirect({ href: "/agent/dashboard", locale });
+    return;
   }
 
   const t = await getTranslations("agent.application");

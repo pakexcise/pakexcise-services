@@ -201,8 +201,7 @@ export default async function AdminAgentsPage({
 
           <PaginationControls
             page={result.page}
-            pageSize={result.pageSize}
-            total={result.total}
+            totalPages={result.totalPages}
             basePath="/admin/agents"
           />
         </div>

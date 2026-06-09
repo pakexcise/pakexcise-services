@@ -29,7 +29,7 @@ import { requirePermission } from "@/server/permissions/guards";
 const ADMIN_SETTINGS_PATH = "/admin/settings";
 
 function revalidateAfterSettingsUpdate() {
-  revalidateTag(PUBLIC_SETTINGS_CACHE_TAG);
+  revalidateTag(PUBLIC_SETTINGS_CACHE_TAG, "max");
   revalidatePath(ADMIN_SETTINGS_PATH);
   revalidatePath("/", "layout");
   revalidatePath("/about");

@@ -28,7 +28,7 @@ export function AgentPortalNav({ isApproved }: AgentPortalNavProps) {
       className="flex flex-wrap items-center gap-2 border-b pb-4"
     >
       {navItems.map((item) => {
-        if (item.requiresApproval && !isApproved) {
+        if ("requiresApproval" in item && item.requiresApproval && !isApproved) {
           return null;
         }
 

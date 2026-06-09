@@ -59,7 +59,7 @@ export function seoFromRecord(
       seo.twitterCard === "summary" ? "summary" : "summary_large_image",
     robotsIndex: seo.robotsIndex ?? true,
     robotsFollow: seo.robotsFollow ?? true,
-    faqSchemaJson: seo.faqSchemaJson ?? null,
-    breadcrumbJson: seo.breadcrumbJson ?? null,
+    faqSchemaJson: (seo.faqSchemaJson ?? null) as SeoMetaInput["faqSchemaJson"],
+    breadcrumbJson: (seo.breadcrumbJson ?? null) as SeoMetaInput["breadcrumbJson"],
   };
 }

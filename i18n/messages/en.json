@@ -1024,6 +1024,15 @@
         "maintenanceMessageUr": "Maintenance message (Urdu)"
       }
     },
+    "auditLogs": {
+      "columns": {
+        "time": "Time",
+        "actor": "Actor",
+        "action": "Action",
+        "entity": "Entity"
+      },
+      "systemActor": "System"
+    },
     "services": {
       "title": "Service management",
       "description": "Create and manage services, SEO, document checklists, and dynamic form fields.",

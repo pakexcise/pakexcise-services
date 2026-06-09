@@ -233,3 +233,9 @@ export const serviceRepository = new ServiceRepository();
 export async function getActiveServices(limit = 6): Promise<PublicServiceSelect[]> {
   return serviceRepository.listPublic(limit);
 }
+
+export async function listPublicServices(
+  limit = 50,
+): Promise<PublicServiceSelect[]> {
+  return serviceRepository.listPublic(limit);
+}

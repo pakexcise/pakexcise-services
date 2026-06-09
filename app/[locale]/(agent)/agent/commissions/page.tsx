@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
 
 import { isApprovedActiveAgent } from "@/features/agents/lib/is-approved-agent";
 import { formatPkr } from "@/features/invoices/lib/format-pkr";
@@ -33,13 +33,15 @@ export default async function AgentCommissionsPage() {
   const user = await getCurrentUser();
 
   if (!user || !isApprovedActiveAgent(user) || !user.agentProfile) {
-    redirect("/agent/dashboard");
+    redirect({ href: "/agent/dashboard", locale });
+    return;
   }
 
+  const agentProfile = user.agentProfile;
   const t = await getTranslations("agent.commissions");
 
   const commissions = await agentRepository.listCommissionsForAgent(
-    user.agentProfile.id,
+    agentProfile.id,
   );
 
   return (
@@ -48,7 +50,7 @@ export default async function AgentCommissionsPage() {
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{t("description")}</p>
         <p className="mt-2 text-sm">
-          {t("commissionRate")}: {user.agentProfile.commissionRate.toString()}%
+          {t("commissionRate")}: {agentProfile.commissionRate.toString()}%
         </p>
       </div>
 

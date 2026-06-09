@@ -1,5 +1,7 @@
 import type { FieldType } from "@prisma/client";
 
+import type { AttributionData } from "@/lib/attribution";
+
 export type LocalizedText = {
   en: string;
   ur: string;
@@ -60,7 +62,7 @@ export type ApplicationDraftJson = {
       fileSize: number;
     }
   >;
-  attribution?: ApplicationAttributionInput;
+  attribution?: AttributionData;
 };
 
 export type { AttributionData as ApplicationAttributionInput } from "@/lib/attribution";

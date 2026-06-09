@@ -11,8 +11,8 @@ export function normalizeLocalizedContent(input: {
   return {
     titleEn: input.titleEn.trim(),
     titleUr: input.titleUr.trim(),
-    excerptEn: input.excerptEn?.trim() || null,
-    excerptUr: input.excerptUr?.trim() || null,
+    excerptEn: input.excerptEn?.trim() || undefined,
+    excerptUr: input.excerptUr?.trim() || undefined,
     contentEn: sanitizeRichTextContent(input.contentEn),
     contentUr: sanitizeRichTextContent(input.contentUr),
   };

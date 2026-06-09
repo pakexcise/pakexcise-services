@@ -1,5 +1,7 @@
 "use server";
 
+import { z } from "zod";
+
 import { buildInvoicePdfKey } from "@/config/uploads";
 import { canTransitionApplicationStatus } from "@/features/applications/status-machine";
 import { formatPkr, roundMoney } from "@/features/invoices/lib/format-pkr";
@@ -8,6 +10,7 @@ import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligi
 import { invoicePdfLabels } from "@/features/invoices/lib/invoice-labels";
 import { renderInvoicePdfBuffer } from "@/features/invoices/lib/render-invoice-pdf";
 import { createInvoiceSchema } from "@/features/invoices/validators";
+import { applicationIdParamSchema } from "@/lib/validations/route-params";
 import {
   errorResult,
   parseInput,
@@ -246,7 +249,7 @@ export async function createAndSendInvoiceAction(
 }
 
 export async function getCustomerInvoiceAction(
-  applicationId: string,
+  input: unknown,
 ): Promise<
   ActionResult<
     NonNullable<
@@ -258,6 +261,17 @@ export async function getCustomerInvoiceAction(
 > {
   const { requireUser } = await import("@/server/permissions/guards");
   const user = await requireUser();
+
+  const parsed = parseInput(
+    z.object({ applicationId: applicationIdParamSchema }),
+    input,
+  );
+
+  if (!parsed.success) {
+    return parsed;
+  }
+
+  const applicationId = parsed.data.applicationId;
 
   const application = await prisma.application.findFirst({
     where: { id: applicationId, userId: user.id },

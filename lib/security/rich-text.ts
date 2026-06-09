@@ -36,7 +36,7 @@ function parseBlocks(content: string): RichBlock[] {
       blocks.push({
         type: "heading",
         level: Math.min(level, 3),
-        text: headingMatch[1],
+        text: headingMatch[1] ?? "",
       });
       continue;
     }

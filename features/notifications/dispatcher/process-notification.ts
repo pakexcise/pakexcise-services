@@ -38,7 +38,7 @@ export async function processNotificationRecord(
   }
 
   const locale = normalizeNotificationLocale(notification.locale);
-  const template = buildNotificationTemplate({
+  const template = await buildNotificationTemplate({
     eventType: notification.eventType,
     locale,
     applicationId: notification.applicationId,

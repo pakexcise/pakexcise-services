@@ -32,7 +32,7 @@ export async function enqueueNotificationEvent(
     return [];
   }
 
-  const template = buildNotificationTemplate({
+  const template = await buildNotificationTemplate({
     eventType: input.eventType,
     locale: input.locale,
     applicationId: input.applicationId,

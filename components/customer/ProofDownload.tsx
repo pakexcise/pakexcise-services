@@ -31,7 +31,10 @@ export function ProofDownload({
     setError(null);
 
     startTransition(async () => {
-      const result = await getDocumentSignedUrlAction(documentId, "proof");
+      const result = await getDocumentSignedUrlAction({
+        documentId,
+        purpose: "proof",
+      });
 
       if (!result.success) {
         setError(result.error ?? labels.error);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { canViewInvoicePdf } from "@/features/invoices/lib/invoice-access";
+import { invoiceIdParamSchema } from "@/lib/validations/route-params";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { invoiceRepository } from "@/server/repositories/invoice-repository";
 import { createPresignedDownloadUrl } from "@/server/r2/presign-download";
@@ -27,7 +28,13 @@ export async function GET(
   }
 
   const { id } = await context.params;
-  const invoice = await invoiceRepository.findByIdForAccess(id);
+  const idParsed = invoiceIdParamSchema.safeParse(id);
+
+  if (!idParsed.success) {
+    return NextResponse.json({ error: "Invalid invoice id" }, { status: 400 });
+  }
+
+  const invoice = await invoiceRepository.findByIdForAccess(idParsed.data);
 
   if (!invoice?.pdfR2Key || invoice.status !== "SENT") {
     return NextResponse.json({ error: "Invoice not found" }, { status: 404 });

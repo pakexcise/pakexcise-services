@@ -1024,6 +1024,15 @@
         "maintenanceMessageUr": "مینٹیننس پیغام (اردو)"
       }
     },
+    "auditLogs": {
+      "columns": {
+        "time": "وقت",
+        "actor": "فاعل",
+        "action": "عمل",
+        "entity": "ہستی"
+      },
+      "systemActor": "سسٹم"
+    },
     "services": {
       "title": "خدمات کا انتظام",
       "description": "خدمات، SEO، دستاویزات کی فہرست، اور ڈائنامک فارم فیلڈز منظم کریں۔",

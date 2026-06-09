@@ -61,7 +61,7 @@ const customerApplicationDetailSelect = {
       nameUr: true,
       slug: true,
       requiresProof: true,
-      documentRequirements: {
+      documentReqs: {
         where: { isActive: true },
         orderBy: { displayOrder: "asc" },
         select: {

@@ -39,6 +39,7 @@ export function SecureDocViewer({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
+  const [now, setNow] = useState(() => Date.now());
 
   const loadSignedUrl = useCallback(async () => {
     setIsLoading(true);
@@ -57,21 +58,35 @@ export function SecureDocViewer({
       if (!response.ok) {
         setError(data.error ?? labels.error);
         setPayload(null);
+        setExpiresAt(null);
         return;
       }
 
       setPayload(data);
       setExpiresAt(Date.now() + data.expiresInSeconds * 1000);
+      setNow(Date.now());
     } catch {
       setError(labels.error);
       setPayload(null);
+      setExpiresAt(null);
     } finally {
       setIsLoading(false);
     }
   }, [documentId, purpose, labels.error]);
 
   useEffect(() => {
-    void loadSignedUrl();
+    let cancelled = false;
+
+    void (async () => {
+      await loadSignedUrl();
+      if (cancelled) {
+        return;
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [loadSignedUrl]);
 
   useEffect(() => {
@@ -79,21 +94,18 @@ export function SecureDocViewer({
       return;
     }
 
-    const remaining = expiresAt - Date.now();
+    const interval = window.setInterval(() => {
+      setNow(Date.now());
+    }, 30_000);
 
-    if (remaining <= 0) {
-      setError(labels.error);
-      setPayload(null);
-      return;
-    }
+    return () => window.clearInterval(interval);
+  }, [expiresAt]);
 
-    const timer = window.setTimeout(() => {
-      setError(labels.error);
-      setPayload(null);
-    }, remaining);
-
-    return () => window.clearTimeout(timer);
-  }, [expiresAt, labels.error]);
+  const isExpired = expiresAt !== null && expiresAt <= now;
+  const minutesRemaining =
+    expiresAt && !isExpired
+      ? Math.max(1, Math.ceil((expiresAt - now) / 60_000))
+      : null;
 
   if (isLoading) {
     return (
@@ -107,7 +119,7 @@ export function SecureDocViewer({
     );
   }
 
-  if (error || !payload) {
+  if (error || !payload || isExpired) {
     return (
       <div
         className={`rounded-lg border border-destructive/30 bg-destructive/5 p-4 ${className ?? ""}`}
@@ -142,12 +154,9 @@ export function SecureDocViewer({
           <span className="truncate">{displayName}</span>
         </div>
         <div className="flex items-center gap-2">
-          {expiresAt ? (
+          {minutesRemaining ? (
             <span className="text-xs text-muted-foreground">
-              {labels.expiresIn.replace(
-                "__MINUTES__",
-                String(Math.max(1, Math.ceil((expiresAt - Date.now()) / 60000))),
-              )}
+              {labels.expiresIn.replace("__MINUTES__", String(minutesRemaining))}
             </span>
           ) : null}
           <Button asChild size="sm" variant="outline">

@@ -1,10 +1,17 @@
 "use server";
 
+import { z } from "zod";
+
 import {
   errorResult,
+  parseInput,
   successResult,
   type ActionResult,
 } from "@/lib/validations/common";
+import {
+  documentIdParamSchema,
+  documentPurposeQuerySchema,
+} from "@/lib/validations/route-params";
 import {
   handleApproveDocument,
   handleConfirmUpload,
@@ -57,9 +64,13 @@ export async function confirmDocumentUploadAction(
   return mapHandlerError(result);
 }
 
+const documentSignedUrlSchema = z.object({
+  documentId: documentIdParamSchema,
+  purpose: documentPurposeQuerySchema,
+});
+
 export async function getDocumentSignedUrlAction(
-  documentId: string,
-  purpose: "view" | "proof" = "view",
+  input: unknown,
 ): Promise<
   ActionResult<{
     signedUrl: string;
@@ -71,7 +82,17 @@ export async function getDocumentSignedUrlAction(
   const user = await requireUser();
   await enforceRateLimit(serverActionRateLimit, `doc-view:${user.id}`);
 
-  const result = await handleSignedUrl(user, documentId, purpose);
+  const parsed = parseInput(documentSignedUrlSchema, input);
+
+  if (!parsed.success) {
+    return parsed;
+  }
+
+  const result = await handleSignedUrl(
+    user,
+    parsed.data.documentId,
+    parsed.data.purpose,
+  );
   return mapHandlerError(result);
 }
 

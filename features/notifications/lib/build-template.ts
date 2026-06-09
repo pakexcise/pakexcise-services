@@ -22,12 +22,12 @@ export type BuiltNotificationTemplate = {
   applicationUrl: string;
 };
 
-export function buildNotificationTemplate(input: {
+export async function buildNotificationTemplate(input: {
   eventType: NotificationEventType;
   locale: NotificationLocale;
   applicationId: string;
   payload: NotificationPayload;
-}): BuiltNotificationTemplate {
+}): Promise<BuiltNotificationTemplate> {
   const links = buildSignedCustomerLinks(input.locale, input.applicationId);
 
   const contentInput: TemplateContentInput = {
@@ -47,7 +47,7 @@ export function buildNotificationTemplate(input: {
 
   const content = buildNotificationContent(contentInput);
 
-  const html = render(
+  const html = await render(
     ApplicationEventEmail({
       title: content.title,
       body: content.body,

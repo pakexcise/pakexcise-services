@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { serviceSlugSchema } from "@/lib/validations/admin-service";
-
 export const redirectCoreSchema = z.object({
   oldSlug: z.string().trim().min(1).max(200),
   newSlug: z.string().trim().min(1).max(200),

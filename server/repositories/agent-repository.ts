@@ -90,18 +90,18 @@ export class AgentRepository extends Repository {
       };
     }
 
-    return paginate({
-      findMany: (args) =>
+    return paginate(
+      ({ skip, take }) =>
         this.db.agentProfile.findMany({
-          ...args,
+          skip,
+          take,
           where,
           orderBy: { createdAt: "desc" },
           select: adminAgentListSelect,
         }),
-      count: () => this.db.agentProfile.count({ where }),
-      page,
-      pageSize,
-    });
+      () => this.db.agentProfile.count({ where }),
+      { page, pageSize },
+    );
   }
 
   async findByIdForAdmin(id: string) {
