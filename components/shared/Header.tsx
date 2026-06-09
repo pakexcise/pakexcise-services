@@ -1,9 +1,10 @@
 "use client";
 
-import { LogIn, Menu, MessageCircle, X } from "lucide-react";
+import { Menu, MessageCircle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { AuthNav } from "@/components/shared/auth-nav";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -42,25 +43,25 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="border-b border-secondary/20 bg-muted/40 px-4 py-1.5 text-center text-xs text-muted-foreground lg:hidden">
+      <div className="border-b border-secondary/20 bg-muted/40 px-4 py-1.5 text-center text-xs text-muted-foreground xl:hidden">
         {tDisclaimer("short")}
       </div>
 
-      <div className="container-site grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+      <div className="container-site flex min-h-16 items-center justify-between gap-3 py-2">
         <Link
           href="/"
-          className="flex min-w-0 flex-col justify-self-start text-start"
+          className="flex min-w-0 max-w-[45%] shrink-0 flex-col text-start sm:max-w-none"
         >
-          <span className="truncate text-lg font-bold text-primary">
+          <span className="truncate text-base font-bold text-primary sm:text-lg">
             {tCommon("brandName")}
           </span>
-          <span className="truncate text-xs text-muted-foreground">
+          <span className="hidden truncate text-xs text-muted-foreground sm:block">
             {tCommon("tagline")}
           </span>
         </Link>
 
         <nav
-          className="hidden items-center justify-center gap-0.5 lg:flex"
+          className="hidden items-center justify-center gap-0.5 xl:flex"
           aria-label="Primary"
         >
           {navItems.map((item) => (
@@ -68,7 +69,7 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                "rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground xl:px-3",
                 pathname === item.href || pathname.startsWith(`${item.href}/`)
                   ? "bg-accent text-accent-foreground"
                   : "text-foreground/80",
@@ -79,38 +80,40 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
           ))}
         </nav>
 
-        <div className="flex items-center justify-end gap-1 sm:gap-2 lg:justify-self-end">
+        <div className="flex shrink-0 items-center justify-end gap-1 sm:gap-1.5">
           <Button
             asChild
             size="sm"
             variant="secondary"
-            className="hidden bg-[#25D366] text-white hover:bg-[#20bd5a] sm:inline-flex"
+            className="hidden bg-[#25D366] px-2.5 text-white hover:bg-[#20bd5a] md:inline-flex"
           >
             <a
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
               data-analytics-event="click_whatsapp"
+              aria-label={tCommon("whatsapp")}
             >
               <MessageCircle className="size-4" />
-              <span className="hidden md:inline">{tCommon("whatsapp")}</span>
+              <span className="hidden lg:inline">{tCommon("whatsapp")}</span>
             </a>
           </Button>
 
           <LanguageSwitcher />
           <ThemeToggle />
 
-          <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
-            <Link href="/login">
-              <LogIn className="size-4" />
-              {t("login")}
-            </Link>
-          </Button>
+          <AuthNav
+            loginLabel={t("login")}
+            dashboardLabel={t("dashboard")}
+            logoutLabel={t("logout")}
+            compact
+            className="hidden sm:inline-flex"
+          />
 
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className="xl:hidden"
             aria-label={mobileOpen ? tCommon("close") : tCommon("menu")}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
@@ -124,7 +127,7 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
       {mobileOpen ? (
         <nav
           id="mobile-nav"
-          className="border-t lg:hidden"
+          className="border-t xl:hidden"
           aria-label="Mobile primary"
         >
           <div className="container-site flex flex-col gap-1 py-3">
@@ -134,7 +137,7 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium text-start",
+                  "rounded-md px-3 py-2.5 text-sm font-medium text-start",
                   pathname === item.href || pathname.startsWith(`${item.href}/`)
                     ? "bg-accent text-accent-foreground"
                     : "text-foreground/80",
@@ -143,26 +146,28 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
                 {t(item.key)}
               </Link>
             ))}
-            <Button asChild variant="outline" className="mt-2 justify-start">
-              <Link href="/login" onClick={() => setMobileOpen(false)}>
-                <LogIn className="size-4" />
-                {t("login")}
-              </Link>
-            </Button>
-            <Button
-              asChild
-              className="justify-start bg-[#25D366] text-white hover:bg-[#20bd5a]"
-            >
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-analytics-event="click_whatsapp"
+            <div className="mt-2 flex flex-col gap-2 border-t pt-3">
+              <AuthNav
+                loginLabel={t("login")}
+                dashboardLabel={t("dashboard")}
+                logoutLabel={t("logout")}
+                onNavigate={() => setMobileOpen(false)}
+              />
+              <Button
+                asChild
+                className="justify-start bg-[#25D366] text-white hover:bg-[#20bd5a] md:hidden"
               >
-                <MessageCircle className="size-4" />
-                {tCommon("whatsappHelp")}
-              </a>
-            </Button>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-analytics-event="click_whatsapp"
+                >
+                  <MessageCircle className="size-4" />
+                  {tCommon("whatsappHelp")}
+                </a>
+              </Button>
+            </div>
           </div>
         </nav>
       ) : null}

@@ -1,5 +1,6 @@
 export {
   activeOnly,
+  isActiveOnly,
   paginate,
   publicServiceSelect,
   Repository,

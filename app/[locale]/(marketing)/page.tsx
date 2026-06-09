@@ -63,12 +63,12 @@ export default async function HomePage() {
   return (
     <>
       <section className="border-b bg-gradient-to-b from-primary/5 to-background">
-        <div className="container-site grid gap-8 py-12 md:py-16 lg:grid-cols-2 lg:items-center">
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+        <div className="container-site grid gap-8 py-10 sm:py-12 md:py-16 lg:grid-cols-2 lg:items-center lg:gap-12">
+          <div className="space-y-5 sm:space-y-6">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
               {t("heroTitle")}
             </h1>
-            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+            <p className="max-w-2xl text-sm text-muted-foreground sm:text-base md:text-lg">
               {t("heroSubtitle")}
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -84,7 +84,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 lg:grid-cols-1">
             <Card>
               <CardHeader className="pb-2">
                 <Search className="mb-2 size-5 text-primary" aria-hidden="true" />

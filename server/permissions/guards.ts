@@ -51,6 +51,20 @@ export async function requireCustomerPortal(): Promise<CurrentUser> {
   return requireRole(...portalRoles.customer);
 }
 
+export async function requireApplyAccess(): Promise<CurrentUser> {
+  const user = await requireUser();
+
+  if (user.role === "CUSTOMER") {
+    return user;
+  }
+
+  if (user.role === "AGENT") {
+    return requireApprovedAgent();
+  }
+
+  throw new AuthError("FORBIDDEN", "Only customers and approved agents can apply");
+}
+
 export async function requireApprovedAgent(): Promise<CurrentUser> {
   const user = await requireRole(...portalRoles.agent);
 

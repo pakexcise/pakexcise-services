@@ -41,7 +41,145 @@
     "about": "ہمارے بارے میں",
     "contact": "رابطہ",
     "login": "لاگ ان",
+    "logout": "سائن آؤٹ",
     "dashboard": "ڈیش بورڈ"
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "لاگ ان | PakExcise.com",
+      "title": "اپنے اکاؤنٹ میں سائن ان کریں",
+      "description": "اپنی درخواستیں، دستاویزات، اور ڈیش بورڈ تک رسائی حاصل کریں۔",
+      "email": "ای میل ایڈریس",
+      "phone": "موبائل نمبر",
+      "phoneHint": "وہ پاکستانی موبائل نمبر درج کریں جس پر WhatsApp فعال ہو (مثال: 03XX XXXXXXX)۔",
+      "otp": "تصدیقی کوڈ",
+      "otpHint": "6 ہندسوں کا کوڈ درج کریں۔ یہ 5 منٹ میں ختم ہو جائے گا۔",
+      "sendOtp": "تصدیقی کوڈ بھیجیں",
+      "sendingOtp": "کوڈ بھیجا جا رہا ہے...",
+      "verifyOtp": "تصدیق کریں اور سائن ان کریں",
+      "verifyingOtp": "تصدیق ہو رہی ہے...",
+      "resendOtp": "کوڈ دوبارہ بھیجیں",
+      "changeEmail": "ای میل تبدیل کریں",
+      "changePhone": "نمبر تبدیل کریں",
+      "otpSentEmail": "ہم نے آپ کے ای میل پر تصدیقی کوڈ بھیج دیا ہے۔",
+      "otpSentEmailSandbox": "Resend ٹیسٹ موڈ: کوڈ __OWNER_EMAIL__ پر بھیجا گیا ہے (__REQUESTED_EMAIL__ پر نہیں)۔ 6 ہندسوں کا OTP اس ان باکس میں دیکھیں۔",
+      "otpSentEmailDevConsole": "ڈیولپمنٹ موڈ: اگر ای میل نہ آئے تو سرور ٹرمینل میں [email:dev:fallback] سے OTP دیکھیں۔",
+      "otpSentPhone": "ہم نے آپ کے WhatsApp نمبر پر تصدیقی کوڈ بھیج دیا ہے۔",
+      "whatsappUnavailable": "یہ نمبر WhatsApp پر رجسٹرڈ نہیں ہے۔ براہ کرم ای میل، Google یا Facebook سے اکاؤنٹ بنائیں یا سائن ان کریں۔",
+      "whatsappNotConfigured": "WhatsApp تصدیق فی الحال دستیاب نہیں ہے۔ براہ کرم ای میل، Google یا Facebook استعمال کریں۔",
+      "whatsappRecipientNotAllowed": "یہ نمبر Meta WhatsApp API Testing میں شامل نہیں ہے۔ WhatsApp > API Testing میں شامل کریں، یا ای میل/Google/Facebook استعمال کریں۔",
+      "whatsappTokenExpired": "WhatsApp access token کی میعاد ختم ہو گئی ہے۔ Meta WhatsApp API Setup سے نیا token بنائیں اور WHATSAPP_ACCESS_TOKEN اپ ڈیٹ کریں۔",
+      "otpSentPhoneDevFallback": "ڈیولپمنٹ موڈ: WhatsApp پر کوڈ نہیں بھیجا جا سکا، لیکن OTP سرور ٹرمینل میں [whatsapp-otp:dev-fallback] کے طور پر لاگ ہو گیا ہے۔",
+      "sendFailed": "تصدیقی کوڈ نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔",
+      "verifyFailed": "کوڈ غلط ہے یا میعاد ختم ہو چکی ہے۔ دوبارہ کوشش کریں۔",
+      "invalidEmail": "درست ای میل ایڈریس درج کریں۔",
+      "invalidPhone": "درست پاکستانی موبائل نمبر درج کریں۔",
+      "methodEmail": "ای میل",
+      "methodPhone": "فون",
+      "noAccount": "اکاؤنٹ نہیں ہے؟",
+      "signupLink": "اکاؤنٹ بنائیں",
+      "orContinueWith": "یا ای میل یا فون سے جاری رکھیں",
+      "google": "Google کے ساتھ جاری رکھیں",
+      "facebook": "Facebook کے ساتھ جاری رکھیں",
+      "socialFailed": "سوشل سائن ان ناکام۔ دوبارہ کوشش کریں۔",
+      "socialNotConfigured": "سوشل لاگ ان ابھی ترتیب نہیں ہوا۔ ای میل یا فون OTP استعمال کریں۔"
+    },
+    "signup": {
+      "metaTitle": "اکاؤنٹ بنائیں | PakExcise.com",
+      "title": "اپنا اکاؤنٹ بنائیں",
+      "description": "درخواستیں جمع کرانے اور پیش رفت ٹریک کرنے کے لیے کسٹمر کے طور پر رجسٹر کریں۔",
+      "name": "مکمل نام",
+      "email": "ای میل ایڈریس",
+      "phone": "موبائل نمبر",
+      "phoneHint": "وہ پاکستانی موبائل نمبر درج کریں جس پر WhatsApp فعال ہو (مثال: 03XX XXXXXXX)۔",
+      "otp": "تصدیقی کوڈ",
+      "otpHint": "6 ہندسوں کا کوڈ درج کریں۔ یہ 5 منٹ میں ختم ہو جائے گا۔",
+      "sendOtp": "تصدیقی کوڈ بھیجیں",
+      "sendingOtp": "کوڈ بھیجا جا رہا ہے...",
+      "verifyOtp": "تصدیق کریں اور اکاؤنٹ بنائیں",
+      "verifyingOtp": "تصدیق ہو رہی ہے...",
+      "resendOtp": "کوڈ دوبارہ بھیجیں",
+      "changeEmail": "ای میل تبدیل کریں",
+      "changePhone": "نمبر تبدیل کریں",
+      "otpSentEmail": "ہم نے آپ کے ای میل پر تصدیقی کوڈ بھیج دیا ہے۔",
+      "otpSentEmailSandbox": "Resend ٹیسٹ موڈ: کوڈ __OWNER_EMAIL__ پر بھیجا گیا ہے (__REQUESTED_EMAIL__ پر نہیں)۔ 6 ہندسوں کا OTP اس ان باکس میں دیکھیں۔",
+      "otpSentEmailDevConsole": "ڈیولپمنٹ موڈ: اگر ای میل نہ آئے تو سرور ٹرمینل میں [email:dev:fallback] سے OTP دیکھیں۔",
+      "otpSentPhone": "ہم نے آپ کے WhatsApp نمبر پر تصدیقی کوڈ بھیج دیا ہے۔",
+      "whatsappUnavailable": "یہ نمبر WhatsApp پر رجسٹرڈ نہیں ہے۔ براہ کرم ای میل، Google یا Facebook سے اکاؤنٹ بنائیں یا سائن ان کریں۔",
+      "whatsappNotConfigured": "WhatsApp تصدیق فی الحال دستیاب نہیں ہے۔ براہ کرم ای میل، Google یا Facebook استعمال کریں۔",
+      "whatsappRecipientNotAllowed": "یہ نمبر Meta WhatsApp API Testing میں شامل نہیں ہے۔ WhatsApp > API Testing میں شامل کریں، یا ای میل/Google/Facebook استعمال کریں۔",
+      "whatsappTokenExpired": "WhatsApp access token کی میعاد ختم ہو گئی ہے۔ Meta WhatsApp API Setup سے نیا token بنائیں اور WHATSAPP_ACCESS_TOKEN اپ ڈیٹ کریں۔",
+      "otpSentPhoneDevFallback": "ڈیولپمنٹ موڈ: WhatsApp پر کوڈ نہیں بھیجا جا سکا، لیکن OTP سرور ٹرمینل میں [whatsapp-otp:dev-fallback] کے طور پر لاگ ہو گیا ہے۔",
+      "sendFailed": "تصدیقی کوڈ نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔",
+      "verifyFailed": "کوڈ غلط ہے یا میعاد ختم ہو چکی ہے۔ دوبارہ کوشش کریں۔",
+      "invalidEmail": "درست ای میل ایڈریس درج کریں۔",
+      "invalidPhone": "درست پاکستانی موبائل نمبر درج کریں۔",
+      "nameRequired": "مکمل نام درج کرنا ضروری ہے۔",
+      "methodEmail": "ای میل",
+      "methodPhone": "فون",
+      "hasAccount": "پہلے سے اکاؤنٹ ہے؟",
+      "loginLink": "سائن ان",
+      "orContinueWith": "یا ای میل یا فون سے جاری رکھیں",
+      "google": "Google کے ساتھ جاری رکھیں",
+      "facebook": "Facebook کے ساتھ جاری رکھیں",
+      "socialFailed": "سوشل سائن ان ناکام۔ دوبارہ کوشش کریں۔",
+      "socialNotConfigured": "سوشل لاگ ان ابھی ترتیب نہیں ہوا۔ ای میل یا فون OTP استعمال کریں۔"
+    },
+    "social": {
+      "google": "Google کے ساتھ جاری رکھیں",
+      "facebook": "Facebook کے ساتھ جاری رکھیں",
+      "failed": "سوشل سائن ان ناکام۔ دوبارہ کوشش کریں۔",
+      "notConfigured": "سوشل لاگ ان ابھی ترتیب نہیں دیا گیا۔ OAuth keys شامل کریں یا ای میل سے سائن ان کریں۔"
+    },
+    "forgotPassword": {
+      "metaTitle": "پاس ورڈ بھول گئے | PakExcise.com",
+      "title": "پاس ورڈ ری سیٹ کریں",
+      "description": "اپنی ای میل درج کریں، ہم آپ کو محفوظ ری سیٹ لنک بھیجیں گے۔",
+      "email": "ای میل ایڈریس",
+      "submit": "ری سیٹ لنک بھیجیں",
+      "submitting": "بھیجا جا رہا ہے...",
+      "success": "اگر اس ای میل پر اکاؤنٹ موجود ہے تو ری سیٹ لنک بھیج دیا گیا ہے۔",
+      "requestFailed": "ری سیٹ لنک نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔",
+      "backToLogin": "سائن ان پر واپس"
+    },
+    "resetPassword": {
+      "metaTitle": "پاس ورڈ ری سیٹ | PakExcise.com",
+      "title": "نیا پاس ورڈ منتخب کریں",
+      "description": "اپنے اکاؤنٹ کے لیے مضبوط نیا پاس ورڈ درج کریں۔",
+      "loading": "فارم لوڈ ہو رہا ہے...",
+      "newPassword": "نیا پاس ورڈ",
+      "confirmPassword": "نئے پاس ورڈ کی تصدیق",
+      "submit": "پاس ورڈ اپ ڈیٹ کریں",
+      "submitting": "اپ ڈیٹ ہو رہا ہے...",
+      "success": "پاس ورڈ اپ ڈیٹ ہو گیا۔ اب سائن ان کریں۔",
+      "resetFailed": "پاس ورڈ ری سیٹ نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
+      "passwordMismatch": "پاس ورڈ مماثل نہیں ہیں۔",
+      "passwordHint": "پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے۔",
+      "invalidToken": "یہ ری سیٹ لنک غلط ہے یا میعاد ختم ہو چکی ہے۔",
+      "backToLogin": "سائن ان پر واپس",
+      "requestNewLink": "نیا ری سیٹ لنک طلب کریں"
+    }
+  },
+  "customer": {
+    "dashboard": {
+      "metaTitle": "میرا ڈیش بورڈ | PakExcise.com",
+      "title": "میرا ڈیش بورڈ",
+      "welcome": "خوش آمدید، {name}",
+      "trackTitle": "درخواستیں ٹریک کریں",
+      "trackDescription": "درخواست کی صورتحال جاننے کے لیے ٹریکنگ ID استعمال کریں۔",
+      "trackCta": "ٹریک صفحے پر جائیں",
+      "servicesTitle": "خدمات دیکھیں",
+      "servicesDescription": "نئی ایکسائز سہولت درخواست شروع کریں۔",
+      "servicesCta": "خدمات دیکھیں"
+    }
+  },
+  "agent": {
+    "dashboard": {
+      "metaTitle": "ایجنٹ ڈیش بورڈ | PakExcise.com",
+      "title": "ایجنٹ ڈیش بورڈ",
+      "welcome": "خوش آمدید، {name}",
+      "description": "تفویض شدہ درخواستیں اور کمیشن ٹولز یہاں ظاہر ہوں گے۔"
+    }
   },
   "footer": {
     "description": "PakExcise.com پاکستان میں ایکسائز سے متعلق عملوں میں نجی سہولت کے ذریعے مدد فراہم کرتا ہے۔",
@@ -220,6 +358,7 @@
       }
     },
     "statuses": {
+      "DRAFT": "مسودہ",
       "SUBMITTED": "جمع شدہ",
       "REVIEW": "جائزہ",
       "DOCS_REQUIRED": "دستاویزات درکار",
@@ -530,6 +669,88 @@
         "moveUp": "اوپر",
         "moveDown": "نیچے"
       }
+    }
+  },
+  "apply": {
+    "metaTitle": "{service} کے لیے درخواست | PakExcise.com",
+    "metaDescription": "{service} کے لیے نجی ایکسائز سہولت درخواست شروع کریں۔ سرکاری ویب سائٹ نہیں۔",
+    "pageTitle": "{service} کے لیے درخواست",
+    "pageDescription": "{region} کے لیے اپنی درخواست مکمل کرنے کے لیے نیچے دیے گئے مراحل مکمل کریں۔",
+    "breadcrumbApply": "درخواست",
+    "resumeNotice": "اس خدمت کے لیے محفوظ مسودہ مل گیا۔ آپ جہاں چھوڑا تھا وہاں سے جاری رکھ سکتے ہیں۔",
+    "saveFailed": "پیشرفت محفوظ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+    "autoSaved": "پیشرفت محفوظ ہو رہی ہے...",
+    "forbiddenTitle": "آپ اس اکاؤنٹ سے درخواست نہیں دے سکتے",
+    "forbiddenDescription": "صرف کسٹمر اور منظور شدہ ایجنٹ اکاؤنٹس درخواست جمع کرا سکتے ہیں۔",
+    "agentNotApprovedTitle": "ایجنٹ اکاؤنٹ منظور نہیں",
+    "agentNotApprovedDescription": "کسٹمرز کے لیے درخواست جمع کرانے سے پہلے آپ کا ایجنٹ اکاؤنٹ منظور ہونا ضروری ہے۔",
+    "goToDashboard": "ڈیش بورڈ پر جائیں",
+    "steps": {
+      "basic": "آپ کی تفصیلات",
+      "fields": "خدمت کی تفصیلات",
+      "documents": "دستاویزات",
+      "review": "جائزہ"
+    },
+    "basic": {
+      "title": "درخواست گزار کی تفصیلات",
+      "description": "رابطے کی تفصیلات درج کریں جن کے ذریعے ہم اس درخواست کی اپڈیٹس بھیجیں گے۔",
+      "fullName": "مکمل نام",
+      "email": "ای میل",
+      "phone": "موبائل نمبر",
+      "phoneHint": "پاکستانی موبائل (مثال: 03001234567)",
+      "cnic": "شناختی کارڈ",
+      "cnicHint": "فارمیٹ: 12345-1234567-1"
+    },
+    "fields": {
+      "title": "خدمت سے متعلق معلومات",
+      "description": "اس خدمت کے لیے درکار تفصیلات فراہم کریں۔",
+      "empty": "اس خدمت کے لیے کوئی اضافی فیلڈ درکار نہیں۔ دستاویزات کے مرحلے پر جائیں۔"
+    },
+    "documents": {
+      "title": "ضروری دستاویزات",
+      "description": "ہر ضروری دستاویز کی واضح اسکین یا تصویر اپ لوڈ کریں۔",
+      "empty": "اس خدمت کے لیے کوئی دستاویز درکار نہیں۔ جائزے کے مرحلے پر جائیں۔",
+      "missingRequired": "جاری رکھنے سے پہلے تمام لازمی دستاویزات اپ لوڈ کریں۔",
+      "required": "لازمی",
+      "optional": "اختیاری",
+      "upload": "فائل اپ لوڈ",
+      "uploading": "اپ لوڈ ہو رہی ہے...",
+      "replace": "تبدیل کریں",
+      "remove": "ہٹائیں",
+      "maxSize": "زیادہ سے زیادہ سائز: __SIZE__",
+      "allowedTypes": "اجازت یافتہ: JPG, PNG, WebP, PDF",
+      "uploadFailed": "اپ لوڈ ناکام۔ دوبارہ کوشش کریں۔",
+      "invalidType": "یہ فائل قسم مجاز نہیں۔",
+      "tooLarge": "فائل بہت بڑی ہے۔",
+      "invalidName": "غلط فائل نام۔"
+    },
+    "review": {
+      "title": "جائزہ اور جمع کرائیں",
+      "description": "جمع کرانے سے پہلے تفصیلات چیک کریں۔ جمع کرانے کے بعد آپ کو ٹریکنگ ID ملے گی۔",
+      "basicSection": "درخواست گزار کی تفصیلات",
+      "fieldsSection": "خدمت کی تفصیلات",
+      "documentsSection": "اپ لوڈ شدہ دستاویزات",
+      "noDocuments": "کوئی دستاویز اپ لوڈ نہیں ہوئی۔",
+      "disclaimer": "جمع کرا کر آپ تصدیق کرتے ہیں کہ {service} سہولت درخواست کے لیے فراہم کردہ معلومات درست ہیں۔ PakExcise.com نجی سروس ہے اور سرکاری ویب سائٹ نہیں۔"
+    },
+    "actions": {
+      "back": "واپس",
+      "continue": "جاری رکھیں",
+      "saving": "محفوظ ہو رہا ہے...",
+      "submit": "درخواست جمع کرائیں",
+      "submitting": "جمع ہو رہی ہے..."
+    },
+    "success": {
+      "metaTitle": "درخواست جمع ہو گئی | PakExcise.com",
+      "title": "درخواست جمع ہو گئی",
+      "description": "شکریہ۔ ہمیں آپ کی درخواست موصول ہو گئی ہے اور ہم جلد جائزہ لیں گے۔",
+      "breadcrumb": "جمع شدہ",
+      "trackingLabel": "آپ کی ٹریکنگ ID",
+      "nextStep1": "ہم آپ کی درخواست کا جائزہ لیں گے اور اگر مزید کچھ درکار ہو تو رابطہ کریں گے۔",
+      "nextStep2": "آپ کو ای میل اور WhatsApp پر اسٹیٹس کی اپڈیٹس موصول ہوں گی۔",
+      "nextStep3": "اپنی ٹریکنگ ID محفوظ رکھیں — ٹریک صفحے یا ڈیش بورڈ میں استعمال کریں۔",
+      "viewDashboard": "میری درخواستیں دیکھیں",
+      "trackApplication": "یہ درخواست ٹریک کریں"
     }
   }
 }

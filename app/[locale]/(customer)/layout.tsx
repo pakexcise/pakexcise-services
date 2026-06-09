@@ -1,3 +1,6 @@
+import {
+  enforcePortalAccess,
+} from "@/server/permissions/portal-access";
 import { requireCustomerPortal } from "@/server/permissions/guards";
 
 export default async function CustomerLayout({
@@ -5,7 +8,7 @@ export default async function CustomerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await requireCustomerPortal();
+  await enforcePortalAccess(requireCustomerPortal, "/customer/dashboard");
 
   return (
     <div className="min-h-screen bg-background">

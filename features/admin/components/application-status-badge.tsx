@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 const statusVariantMap: Partial<
   Record<ApplicationStatus, "default" | "secondary" | "warning" | "success" | "destructive" | "outline">
 > = {
+  DRAFT: "outline",
   SUBMITTED: "secondary",
   REVIEW: "warning",
   DOCS_REQUIRED: "warning",

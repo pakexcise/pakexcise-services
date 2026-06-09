@@ -5,6 +5,7 @@ const allowedTransitions: Record<
   ApplicationStatus,
   readonly ApplicationStatus[]
 > = {
+  DRAFT: ["SUBMITTED", "CANCELLED"],
   SUBMITTED: ["REVIEW", "CANCELLED"],
   REVIEW: ["DOCS_REQUIRED", "INVOICE_SENT", "REJECTED", "CANCELLED"],
   DOCS_REQUIRED: ["REVIEW", "REJECTED", "CANCELLED"],

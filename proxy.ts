@@ -96,13 +96,12 @@ export default function proxy(request: NextRequest) {
     return applySecurityHeaders(legacyRedirect);
   }
 
+  const response = handleI18nRouting(withoutAcceptLanguage(request));
   const authRedirect = protectPrivateRoutes(request);
 
   if (authRedirect) {
     return applySecurityHeaders(authRedirect);
   }
-
-  const response = handleI18nRouting(withoutAcceptLanguage(request));
 
   return applySecurityHeaders(syncLocaleCookie(response, request));
 }

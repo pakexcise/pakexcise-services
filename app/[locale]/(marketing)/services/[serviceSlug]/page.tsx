@@ -206,7 +206,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           title={t("service.ctaTitle")}
           description={t("service.ctaDescription")}
           applyLabel={t("service.applyNow")}
-          applyHref={`/customer/apply/${service.slug}`}
+          applyHref={`/apply/${service.slug}`}
           whatsappLabel={tCommon("whatsappHelp")}
           whatsappPhone={whatsappSettings?.phoneNumber}
           whatsappMessage={whatsappSettings?.defaultMessage}

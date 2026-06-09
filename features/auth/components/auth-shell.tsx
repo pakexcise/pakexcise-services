@@ -1,0 +1,42 @@
+import { siteConfig } from "@/config/site";
+import { Link } from "@/i18n/navigation";
+
+type AuthShellProps = {
+  title: string;
+  description: string;
+  disclaimer: string;
+  children: React.ReactNode;
+};
+
+export function AuthShell({
+  title,
+  description,
+  disclaimer,
+  children,
+}: AuthShellProps) {
+  return (
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-primary/5 via-background to-background px-4 py-10">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(33,89,186,0.08),transparent_55%)]" />
+      <div className="relative w-full max-w-md space-y-6">
+        <div className="text-center">
+          <Link
+            href="/"
+            className="inline-flex text-xl font-semibold text-primary hover:underline"
+          >
+            {siteConfig.name}
+          </Link>
+          <h1 className="mt-4 text-2xl font-bold tracking-tight">{title}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+        </div>
+
+        <p className="rounded-lg border border-secondary/30 bg-secondary/10 px-3 py-2 text-center text-xs font-medium text-secondary-foreground">
+          {disclaimer}
+        </p>
+
+        <div className="rounded-2xl border bg-card/95 p-6 shadow-sm backdrop-blur-sm sm:p-7">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}

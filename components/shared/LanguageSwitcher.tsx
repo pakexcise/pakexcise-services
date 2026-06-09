@@ -85,7 +85,7 @@ export function LanguageSwitcher() {
 
       {isPending ? (
         <Loader2
-          className="text-primary absolute -end-6 size-3.5 animate-spin"
+          className="text-primary ms-1 size-3.5 shrink-0 animate-spin"
           aria-hidden="true"
         />
       ) : null}

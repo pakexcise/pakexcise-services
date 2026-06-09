@@ -4,6 +4,7 @@ import type { Prisma } from "@prisma/client";
 
 import {
   activeOnly,
+  isActiveOnly,
   paginate,
   publicServiceSelect,
   Repository,
@@ -12,6 +13,24 @@ import {
 } from "@/server/repositories/base/repository";
 
 export type { PublicServiceSelect as PublicServiceCard };
+
+const publicFormFieldSelect = {
+  id: true,
+  fieldKey: true,
+  labelEn: true,
+  labelUr: true,
+  placeholderEn: true,
+  placeholderUr: true,
+  helpTextEn: true,
+  helpTextUr: true,
+  fieldType: true,
+  isRequired: true,
+  isEncrypted: true,
+  optionsJson: true,
+  validationJson: true,
+  conditionalJson: true,
+  displayOrder: true,
+} as const;
 
 const publicDocumentRequirementSelect = {
   id: true,
@@ -47,7 +66,7 @@ export const publicServiceDetailSelect = {
     },
   },
   documentReqs: {
-    where: activeOnly(),
+    where: isActiveOnly(),
     orderBy: { displayOrder: "asc" },
     select: publicDocumentRequirementSelect,
   },
@@ -56,6 +75,37 @@ export const publicServiceDetailSelect = {
 
 export type PublicServiceDetail = Prisma.ServiceGetPayload<{
   select: typeof publicServiceDetailSelect;
+}>;
+
+export const publicServiceApplySelect = {
+  id: true,
+  slug: true,
+  nameEn: true,
+  nameUr: true,
+  shortDescriptionEn: true,
+  shortDescriptionUr: true,
+  requiresProof: true,
+  region: {
+    select: {
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
+  formFields: {
+    where: isActiveOnly(),
+    orderBy: { displayOrder: "asc" },
+    select: publicFormFieldSelect,
+  },
+  documentReqs: {
+    where: isActiveOnly(),
+    orderBy: { displayOrder: "asc" },
+    select: publicDocumentRequirementSelect,
+  },
+} as const satisfies Prisma.ServiceSelect;
+
+export type PublicServiceApplyConfig = Prisma.ServiceGetPayload<{
+  select: typeof publicServiceApplySelect;
 }>;
 
 export class ServiceRepository extends Repository {
@@ -129,6 +179,19 @@ export class ServiceRepository extends Repository {
         region: activeOnly(),
       },
       select: publicServiceDetailSelect,
+    });
+  }
+
+  async findPublicApplyConfigBySlug(
+    slug: string,
+  ): Promise<PublicServiceApplyConfig | null> {
+    return this.db.service.findFirst({
+      where: {
+        slug,
+        ...activeOnly(),
+        region: activeOnly(),
+      },
+      select: publicServiceApplySelect,
     });
   }
 

@@ -1,13 +1,24 @@
 import "server-only";
 
-import {
-  GetObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { S3Client } from "@aws-sdk/client-s3";
 
-function getR2Client(): S3Client {
+let cachedClient: S3Client | null = null;
+
+export function getR2BucketName(): string {
+  const bucket = process.env.R2_BUCKET_NAME;
+
+  if (!bucket) {
+    throw new Error("R2_BUCKET_NAME is not configured");
+  }
+
+  return bucket;
+}
+
+export function getR2Client(): S3Client {
+  if (cachedClient) {
+    return cachedClient;
+  }
+
   const accountId = process.env.R2_ACCOUNT_ID;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
@@ -16,7 +27,7 @@ function getR2Client(): S3Client {
     throw new Error("R2 credentials are not configured");
   }
 
-  return new S3Client({
+  cachedClient = new S3Client({
     region: "auto",
     endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
     credentials: {
@@ -24,46 +35,15 @@ function getR2Client(): S3Client {
       secretAccessKey,
     },
   });
+
+  return cachedClient;
 }
 
-export async function createUploadSignedUrl(input: {
-  key: string;
-  contentType: string;
-  expiresInSeconds?: number;
-}): Promise<string> {
-  const bucket = process.env.R2_BUCKET_NAME;
-
-  if (!bucket) {
-    throw new Error("R2_BUCKET_NAME is not configured");
-  }
-
-  const command = new PutObjectCommand({
-    Bucket: bucket,
-    Key: input.key,
-    ContentType: input.contentType,
-  });
-
-  return getSignedUrl(getR2Client(), command, {
-    expiresIn: input.expiresInSeconds ?? 900,
-  });
-}
-
-export async function createDownloadSignedUrl(input: {
-  key: string;
-  expiresInSeconds?: number;
-}): Promise<string> {
-  const bucket = process.env.R2_BUCKET_NAME;
-
-  if (!bucket) {
-    throw new Error("R2_BUCKET_NAME is not configured");
-  }
-
-  const command = new GetObjectCommand({
-    Bucket: bucket,
-    Key: input.key,
-  });
-
-  return getSignedUrl(getR2Client(), command, {
-    expiresIn: input.expiresInSeconds ?? 3600,
-  });
+export function isR2Configured(): boolean {
+  return Boolean(
+    process.env.R2_ACCOUNT_ID &&
+      process.env.R2_ACCESS_KEY_ID &&
+      process.env.R2_SECRET_ACCESS_KEY &&
+      process.env.R2_BUCKET_NAME,
+  );
 }

@@ -69,6 +69,16 @@ export function activeOnly<T extends { isActive?: boolean; deletedAt?: Date | nu
   };
 }
 
+/** For models with isActive but no soft-delete (deletedAt) field. */
+export function isActiveOnly<T extends { isActive?: boolean }>(
+  where: T = {} as T,
+): T & { isActive: boolean } {
+  return {
+    ...where,
+    isActive: true,
+  };
+}
+
 export type PublicServiceSelect = Prisma.ServiceGetPayload<{
   select: {
     id: true;

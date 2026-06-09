@@ -24,6 +24,7 @@ export const roleHierarchy = {
 export type UserRole = keyof typeof roleHierarchy;
 
 export const applicationStatuses = [
+  "DRAFT",
   "SUBMITTED",
   "REVIEW",
   "DOCS_REQUIRED",
@@ -60,4 +61,5 @@ export const publicMarketingRoutes = [
   "/disclaimer",
   "/refund",
   "/blog",
+  "/apply",
 ] as const;

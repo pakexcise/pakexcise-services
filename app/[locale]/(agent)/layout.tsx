@@ -1,11 +1,12 @@
 import { requireApprovedAgent } from "@/server/permissions/guards";
+import { enforcePortalAccess } from "@/server/permissions/portal-access";
 
 export default async function AgentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireApprovedAgent();
+  await enforcePortalAccess(requireApprovedAgent, "/agent/dashboard");
 
   return (
     <div className="min-h-screen bg-background">
