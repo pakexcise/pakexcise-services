@@ -11,6 +11,7 @@ export const authConfig = {
   resetPasswordPath: "/reset-password",
   customerPathPrefix: "/customer",
   agentPathPrefix: "/agent",
+  supportPathPrefix: "/support",
   adminPathPrefix: "/admin",
   bcryptCost: 12,
   otpPepperEnvKey: "OTP_PEPPER",

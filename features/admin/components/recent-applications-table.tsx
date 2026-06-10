@@ -40,9 +40,9 @@ export async function RecentApplicationsTable({
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{title}</CardTitle>
-        <Button asChild variant="outline" size="sm">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <CardTitle className="min-w-0">{title}</CardTitle>
+        <Button asChild variant="outline" size="sm" className="shrink-0 self-start sm:self-auto">
           <Link href="/admin/applications">{viewLabel}</Link>
         </Button>
       </CardHeader>

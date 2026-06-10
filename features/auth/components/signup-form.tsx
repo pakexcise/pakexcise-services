@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 
+import { AuthUrlErrorAlert } from "@/features/auth/components/auth-url-error-alert";
 import { AuthDivider } from "@/features/auth/components/auth-divider";
 import {
   AuthMethodTabs,
@@ -18,10 +19,21 @@ type SignupFormLabels = {
   email: string;
   phone: string;
   phoneHint: string;
+  cnic: string;
+  cnicHint: string;
+  cnicVerificationNote: string;
+  cnicExists: string;
+  invalidCnic: string;
+  password: string;
+  confirmPassword: string;
+  passwordHint: string;
+  passwordMismatch: string;
+  invalidPassword: string;
+  showPassword: string;
   otp: string;
   otpHint: string;
-  sendOtp: string;
-  sendingOtp: string;
+  createAccount: string;
+  creatingAccount: string;
   verifyOtp: string;
   verifyingOtp: string;
   resendOtp: string;
@@ -30,25 +42,26 @@ type SignupFormLabels = {
   otpSentEmail: string;
   otpSentEmailSandbox: string;
   otpSentEmailDevConsole: string;
-  otpSentPhone: string;
-  whatsappUnavailable: string;
-  whatsappNotConfigured: string;
-  whatsappRecipientNotAllowed: string;
-  whatsappTokenExpired: string;
   sendFailed: string;
   verifyFailed: string;
   invalidEmail: string;
   invalidPhone: string;
   nameRequired: string;
+  accountNotFound: string;
+  accountExists: string;
+  signupPrompt: string;
+  loginPrompt: string;
   hasAccount: string;
   loginLink: string;
+  signupLink: string;
   orContinueWith: string;
   google: string;
-  facebook: string;
   socialFailed: string;
+  authError: string;
   socialNotConfigured: string;
   methodEmail: string;
   methodPhone: string;
+  signupVerifyHint: string;
 };
 
 type SignupFormProps = {
@@ -59,48 +72,89 @@ type SignupFormProps = {
 function SignupFormContent({ labels, socialProviders }: SignupFormProps) {
   const [method, setMethod] = useState<AuthMethod>("email");
 
-  const otpLabels = {
+  const emailLabels = {
     name: labels.name,
     email: labels.email,
-    phone: labels.phone,
-    phoneHint: labels.phoneHint,
+    password: labels.password,
+    confirmPassword: labels.confirmPassword,
+    passwordHint: labels.passwordHint,
+    passwordMismatch: labels.passwordMismatch,
+    invalidPassword: labels.invalidPassword,
+    showPassword: labels.showPassword,
     otp: labels.otp,
     otpHint: labels.otpHint,
-    sendOtp: labels.sendOtp,
-    sendingOtp: labels.sendingOtp,
+    createAccount: labels.createAccount,
+    creatingAccount: labels.creatingAccount,
     verifyOtp: labels.verifyOtp,
     verifyingOtp: labels.verifyingOtp,
     resendOtp: labels.resendOtp,
     changeEmail: labels.changeEmail,
-    changePhone: labels.changePhone,
     otpSentEmail: labels.otpSentEmail,
     otpSentEmailSandbox: labels.otpSentEmailSandbox,
     otpSentEmailDevConsole: labels.otpSentEmailDevConsole,
-    otpSentPhone: labels.otpSentPhone,
-    whatsappUnavailable: labels.whatsappUnavailable,
-    whatsappNotConfigured: labels.whatsappNotConfigured,
-    whatsappRecipientNotAllowed: labels.whatsappRecipientNotAllowed,
-    whatsappTokenExpired: labels.whatsappTokenExpired,
     sendFailed: labels.sendFailed,
     verifyFailed: labels.verifyFailed,
     invalidEmail: labels.invalidEmail,
+    nameRequired: labels.nameRequired,
+    accountNotFound: labels.accountNotFound,
+    accountExists: labels.accountExists,
+    signupPrompt: labels.signupPrompt,
+    loginPrompt: labels.loginPrompt,
+    signupLink: labels.signupLink,
+    loginLink: labels.loginLink,
+  };
+
+  const phoneLabels = {
+    name: labels.name,
+    phone: labels.phone,
+    phoneHint: labels.phoneHint,
+    cnic: labels.cnic,
+    cnicHint: labels.cnicHint,
+    cnicVerificationNote: labels.cnicVerificationNote,
+    cnicExists: labels.cnicExists,
+    invalidCnic: labels.invalidCnic,
+    password: labels.password,
+    confirmPassword: labels.confirmPassword,
+    passwordHint: labels.passwordHint,
+    passwordMismatch: labels.passwordMismatch,
+    invalidPassword: labels.invalidPassword,
+    showPassword: labels.showPassword,
+    createAccount: labels.createAccount,
+    creatingAccount: labels.creatingAccount,
+    sendFailed: labels.sendFailed,
+    verifyFailed: labels.verifyFailed,
     invalidPhone: labels.invalidPhone,
     nameRequired: labels.nameRequired,
+    accountNotFound: labels.accountNotFound,
+    accountExists: labels.accountExists,
+    signupPrompt: labels.signupPrompt,
+    loginPrompt: labels.loginPrompt,
+    signupLink: labels.signupLink,
+    loginLink: labels.loginLink,
   };
 
   return (
     <div className="space-y-5">
-      <SocialAuthButtons
-        providers={socialProviders}
+      <AuthUrlErrorAlert
         labels={{
-          google: labels.google,
-          facebook: labels.facebook,
+          authError: labels.authError,
           socialFailed: labels.socialFailed,
-          notConfigured: labels.socialNotConfigured,
         }}
       />
-
-      <AuthDivider label={labels.orContinueWith} />
+      {socialProviders.length > 0 ? (
+        <>
+          <SocialAuthButtons
+            providers={socialProviders}
+            errorCallbackPath="/signup"
+            labels={{
+              google: labels.google,
+              socialFailed: labels.socialFailed,
+              notConfigured: labels.socialNotConfigured,
+            }}
+          />
+          <AuthDivider label={labels.orContinueWith} />
+        </>
+      ) : null}
 
       <AuthMethodTabs
         value={method}
@@ -110,9 +164,12 @@ function SignupFormContent({ labels, socialProviders }: SignupFormProps) {
       />
 
       {method === "email" ? (
-        <EmailOtpAuthForm mode="signup" labels={otpLabels} />
+        <>
+          <p className="text-xs text-muted-foreground">{labels.signupVerifyHint}</p>
+          <EmailOtpAuthForm mode="signup" labels={emailLabels} />
+        </>
       ) : (
-        <PhoneOtpAuthForm mode="signup" labels={otpLabels} />
+        <PhoneOtpAuthForm mode="signup" labels={phoneLabels} />
       )}
 
       <p className="text-center text-sm text-muted-foreground">

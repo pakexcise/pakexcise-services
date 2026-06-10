@@ -9,11 +9,13 @@ import { cn } from "@/lib/utils";
 type ApplicationQueueStatsProps = {
   currentStatus?: ApplicationStatus;
   searchParams?: Record<string, string | undefined>;
+  applicationsBasePath?: string;
 };
 
 function buildStatusHref(
   status: ApplicationStatus | undefined,
   searchParams?: Record<string, string | undefined>,
+  applicationsBasePath = "/admin/applications",
 ): string {
   const params = new URLSearchParams();
 
@@ -38,7 +40,9 @@ function buildStatusHref(
   }
 
   const query = params.toString();
-  return query ? `/admin/applications?${query}` : "/admin/applications";
+  return query
+    ? `${applicationsBasePath}?${query}`
+    : applicationsBasePath;
 }
 
 const statStatuses: ApplicationStatus[] = [
@@ -58,6 +62,7 @@ const statStatuses: ApplicationStatus[] = [
 export async function ApplicationQueueStats({
   currentStatus,
   searchParams,
+  applicationsBasePath = "/admin/applications",
 }: ApplicationQueueStatsProps) {
   const t = await getTranslations("admin");
   const counts = await applicationRepository.getAdminPipelineStatusCounts();
@@ -65,7 +70,7 @@ export async function ApplicationQueueStats({
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
       <Link
-        href={buildStatusHref(undefined, searchParams)}
+        href={buildStatusHref(undefined, searchParams, applicationsBasePath)}
         className={cn(
           "rounded-lg border px-3 py-2 text-sm transition-colors hover:bg-muted/50",
           !currentStatus && "border-primary bg-primary/5",
@@ -85,7 +90,7 @@ export async function ApplicationQueueStats({
       {statStatuses.map((status) => (
         <Link
           key={status}
-          href={buildStatusHref(status, searchParams)}
+          href={buildStatusHref(status, searchParams, applicationsBasePath)}
           className={cn(
             "rounded-lg border px-3 py-2 text-sm transition-colors hover:bg-muted/50",
             currentStatus === status && "border-primary bg-primary/5",

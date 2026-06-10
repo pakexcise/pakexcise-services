@@ -1,7 +1,6 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -9,6 +8,7 @@ import { cn } from "@/lib/utils";
 type WhatsAppFABProps = {
   phoneNumber?: string | null;
   message?: string | null;
+  ariaLabel: string;
   className?: string;
 };
 
@@ -20,9 +20,9 @@ function buildWhatsAppUrl(phoneNumber: string, message: string): string {
 export function WhatsAppFAB({
   phoneNumber,
   message,
+  ariaLabel,
   className,
 }: WhatsAppFABProps) {
-  const t = useTranslations("common");
   const resolvedPhone = phoneNumber ?? siteConfig.contact.whatsapp;
   const resolvedMessage = message ?? siteConfig.contact.whatsappMessage;
 
@@ -35,7 +35,7 @@ export function WhatsAppFAB({
       href={buildWhatsAppUrl(resolvedPhone, resolvedMessage)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={t("whatsappHelp")}
+      aria-label={ariaLabel}
       data-analytics-event="click_whatsapp"
       data-analytics-placement="fab"
       className={cn(
@@ -45,7 +45,7 @@ export function WhatsAppFAB({
       )}
     >
       <MessageCircle className="size-7" aria-hidden="true" />
-      <span className="sr-only">{t("whatsappHelp")}</span>
+      <span className="sr-only">{ariaLabel}</span>
     </a>
   );
 }

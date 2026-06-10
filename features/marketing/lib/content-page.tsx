@@ -6,7 +6,6 @@ import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { SocialLinks } from "@/components/marketing/social-links";
-import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
 import {
   buildBreadcrumbJsonLd,
 } from "@/features/seo/lib/metadata";
@@ -100,7 +99,6 @@ export function createContentPage(config: ContentPageConfig) {
           ]}
         />
         <div className="container-site space-y-10 py-10 md:py-12">
-          <LegalDisclaimer />
           <ProseContent content={body} />
           {config.showSocialLinks ? (
             <SocialLinks

@@ -7,14 +7,18 @@ import { AlertTriangle, MessageCircle } from "lucide-react";
 import { TrackResult } from "@/components/marketing/TrackResult";
 import { Button } from "@/components/ui/button";
 import { trackApplicationAction } from "@/features/customer/actions/track-application";
+import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
 import { Link, useRouter } from "@/i18n/navigation";
 import { siteConfig } from "@/config/site";
+import { getUserRole } from "@/lib/auth-types";
+import { useSession } from "@/lib/auth-client";
 
 type TrackFormProps = {
   placeholder: string;
   submitLabel: string;
   helpText: string;
   loginLabel: string;
+  dashboardLabel: string;
   locale: "en" | "ur";
   labels: {
     error: string;
@@ -30,6 +34,8 @@ type TrackFormProps = {
     resultPublicStatusDescription: string;
     resultLoginPrompt: string;
     resultLoginCta: string;
+    resultDashboardPrompt: string;
+    resultDashboardCta: string;
     publicStatus: Record<string, string>;
     statusLabels: Record<string, string>;
   };
@@ -46,12 +52,19 @@ export function TrackForm({
   submitLabel,
   helpText,
   loginLabel,
+  dashboardLabel,
   locale,
   labels,
   initialTrackingId = "",
 }: TrackFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
+  const isLoggedIn = Boolean(session?.user);
+  const accountHref = isLoggedIn
+    ? resolvePostLoginPath(getUserRole(session?.user))
+    : "/login";
+  const accountLabel = isLoggedIn ? dashboardLabel : loginLabel;
   const queryTrackingId = searchParams.get("trackingId")?.trim() ?? "";
   const [trackingId, setTrackingId] = useState(
     queryTrackingId || initialTrackingId,
@@ -155,7 +168,7 @@ export function TrackForm({
         <p className="text-sm text-muted-foreground">{helpText}</p>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline" size="sm">
-            <Link href="/login">{loginLabel}</Link>
+            <Link href={accountHref}>{accountLabel}</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
             <a
@@ -196,8 +209,12 @@ export function TrackForm({
             status: labels.resultStatus,
             updated: labels.resultUpdated,
             publicStatusDescription: labels.resultPublicStatusDescription,
-            loginPrompt: labels.resultLoginPrompt,
-            loginCta: labels.resultLoginCta,
+            accountPrompt: isLoggedIn
+              ? labels.resultDashboardPrompt
+              : labels.resultLoginPrompt,
+            accountCta: isLoggedIn
+              ? labels.resultDashboardCta
+              : labels.resultLoginCta,
           }}
           statusLabel={
             labels.statusLabels[result.data.status] ?? result.data.status
@@ -206,7 +223,7 @@ export function TrackForm({
             labels.publicStatus[result.data.status] ??
             labels.resultPublicStatusDescription
           }
-          loginHref="/login"
+          accountHref={accountHref}
         />
       ) : null}
     </div>

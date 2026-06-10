@@ -11,7 +11,6 @@ import { MarketingCta } from "@/components/marketing/marketing-cta";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { ServiceCard } from "@/components/marketing/service-card";
-import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
   buildBreadcrumbJsonLd,
@@ -225,7 +224,6 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           </section>
         ) : null}
 
-        <LegalDisclaimer />
       </div>
     </>
   );

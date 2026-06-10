@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { AuthNav } from "@/components/shared/auth-nav";
+import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
   const whatsappHref = buildWhatsAppUrl(phone, message);
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-40 isolate border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="border-b border-secondary/20 bg-muted/40 px-4 py-1.5 text-center text-xs text-muted-foreground xl:hidden">
         {tDisclaimer("short")}
       </div>
@@ -50,14 +51,9 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
       <div className="container-site flex min-h-16 items-center justify-between gap-3 py-2">
         <Link
           href="/"
-          className="flex min-w-0 max-w-[45%] shrink-0 flex-col text-start sm:max-w-none"
+          className="flex min-w-0 max-w-[55%] shrink-0 items-center text-start sm:max-w-none"
         >
-          <span className="truncate text-base font-bold text-primary sm:text-lg">
-            {tCommon("brandName")}
-          </span>
-          <span className="hidden truncate text-xs text-muted-foreground sm:block">
-            {tCommon("tagline")}
-          </span>
+          <SiteLogo priority imageClassName="max-h-9 sm:max-h-10" />
         </Link>
 
         <nav

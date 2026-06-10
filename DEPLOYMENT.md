@@ -15,7 +15,6 @@ Use this checklist before going live. `.env.example` lists every variable; fill 
 - [ ] Generate `BETTER_AUTH_SECRET` (32+ random bytes)
 - [ ] Set `BETTER_AUTH_URL` to production URL (`https://your-domain.com`)
 - [ ] Configure Google OAuth redirect URIs if used
-- [ ] Configure Facebook OAuth redirect: `https://your-domain.com/api/auth/callback/facebook`
 - [ ] Set `ENCRYPTION_KEY` (32-byte base64) for sensitive field encryption
 - [ ] Set `OTP_PEPPER`, `IP_HASH_PEPPER`, `NOTIFICATION_RECIPIENT_PEPPER`
 

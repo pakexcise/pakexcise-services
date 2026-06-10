@@ -10,9 +10,9 @@ import { signIn } from "@/lib/auth-client";
 
 type SocialAuthButtonsProps = {
   providers: SocialProviderId[];
+  errorCallbackPath?: string;
   labels: {
     google: string;
-    facebook: string;
     socialFailed: string;
     notConfigured: string;
   };
@@ -41,34 +41,28 @@ function GoogleIcon() {
   );
 }
 
-function FacebookIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-      <path
-        fill="#1877F2"
-        d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.253h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"
-      />
-    </svg>
-  );
-}
-
-const ALL_PROVIDERS: SocialProviderId[] = ["google", "facebook"];
-
-export function SocialAuthButtons({ providers, labels }: SocialAuthButtonsProps) {
+export function SocialAuthButtons({
+  providers,
+  errorCallbackPath = "/login",
+  labels,
+}: SocialAuthButtonsProps) {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [pendingProvider, setPendingProvider] =
-    useState<SocialProviderId | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSocial(provider: SocialProviderId) {
-    if (!providers.includes(provider)) {
+  if (providers.length === 0) {
+    return null;
+  }
+
+  function handleGoogleSignIn() {
+    if (!providers.includes("google")) {
       setError(labels.notConfigured);
       return;
     }
 
     setError(null);
-    setPendingProvider(provider);
+    setIsSubmitting(true);
 
     const callbackUrl = searchParams.get("callbackUrl");
     const callbackURL = buildAuthRedirectUrl(callbackUrl);
@@ -76,14 +70,14 @@ export function SocialAuthButtons({ providers, labels }: SocialAuthButtonsProps)
     startTransition(async () => {
       try {
         const result = await signIn.social({
-          provider,
+          provider: "google",
           callbackURL,
-          errorCallbackURL: "/login",
+          errorCallbackURL: `${errorCallbackPath}?error=social_auth_failed`,
         });
 
         if (result.error) {
           setError(result.error.message ?? labels.socialFailed);
-          setPendingProvider(null);
+          setIsSubmitting(false);
         }
       } catch (socialError) {
         setError(
@@ -91,7 +85,7 @@ export function SocialAuthButtons({ providers, labels }: SocialAuthButtonsProps)
             ? socialError.message
             : labels.socialFailed,
         );
-        setPendingProvider(null);
+        setIsSubmitting(false);
       }
     });
   }
@@ -104,29 +98,17 @@ export function SocialAuthButtons({ providers, labels }: SocialAuthButtonsProps)
         </p>
       ) : null}
 
-      <div className="grid gap-2 sm:grid-cols-2">
-        {ALL_PROVIDERS.map((provider) => {
-          const enabled = providers.includes(provider);
-          const label = provider === "google" ? labels.google : labels.facebook;
-          const Icon = provider === "google" ? GoogleIcon : FacebookIcon;
-
-          return (
-            <Button
-              key={provider}
-              type="button"
-              variant="outline"
-              className="w-full"
-              disabled={isPending}
-              onClick={() => handleSocial(provider)}
-              title={enabled ? undefined : labels.notConfigured}
-            >
-              <Icon />
-              {label}
-              {pendingProvider === provider ? "..." : ""}
-            </Button>
-          );
-        })}
-      </div>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        disabled={isPending || isSubmitting}
+        onClick={handleGoogleSignIn}
+      >
+        <GoogleIcon />
+        {labels.google}
+        {isPending || isSubmitting ? "..." : ""}
+      </Button>
     </div>
   );
 }

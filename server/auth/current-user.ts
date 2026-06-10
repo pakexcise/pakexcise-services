@@ -2,6 +2,7 @@ import "server-only";
 
 import type { AgentProfile, UserRole, UserStatus } from "@prisma/client";
 
+import { ensureAgentProfileForUser } from "@/features/agents/lib/ensure-agent-profile";
 import { AuthError } from "@/lib/errors/auth-errors";
 import {
   getServerSession,
@@ -43,6 +44,12 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     return null;
   }
 
+  const agentProfile = await ensureAgentProfileForUser({
+    userId: user.id,
+    role: user.role,
+    agentProfile: user.agentProfile,
+  });
+
   const sessionTwoFactorVerifiedAt = await getSessionTwoFactorVerifiedAt(
     session.session.id,
   );
@@ -55,7 +62,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     status: user.status,
     phone: user.phone,
     twoFactorEnabled: user.twoFactorEnabled,
-    agentProfile: user.agentProfile,
+    agentProfile,
     sessionId: session.session.id,
     sessionTwoFactorVerifiedAt,
   };

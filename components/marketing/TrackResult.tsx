@@ -17,12 +17,12 @@ type TrackResultProps = {
     status: string;
     updated: string;
     publicStatusDescription: string;
-    loginPrompt: string;
-    loginCta: string;
+    accountPrompt: string;
+    accountCta: string;
   };
   statusLabel: string;
   publicStatusMessage: string;
-  loginHref: string;
+  accountHref: string;
 };
 
 export function TrackResult({
@@ -34,7 +34,7 @@ export function TrackResult({
   labels,
   statusLabel,
   publicStatusMessage,
-  loginHref,
+  accountHref,
 }: TrackResultProps) {
   return (
     <div className="space-y-4 rounded-xl border bg-card p-6">
@@ -63,12 +63,12 @@ export function TrackResult({
         </div>
       </dl>
       <p className="text-sm text-muted-foreground">{publicStatusMessage}</p>
-      <p className="text-sm">{labels.loginPrompt}</p>
+      <p className="text-sm">{labels.accountPrompt}</p>
       <Link
-        href={loginHref}
+        href={accountHref}
         className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium shadow-sm transition-colors hover:bg-muted"
       >
-        {labels.loginCta}
+        {labels.accountCta}
       </Link>
     </div>
   );

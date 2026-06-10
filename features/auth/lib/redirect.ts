@@ -5,7 +5,7 @@ export const AUTH_REDIRECT_PATH = "/auth/redirect";
 const defaultDashboardByRole: Record<UserRole, string> = {
   CUSTOMER: "/customer/dashboard",
   AGENT: "/agent/dashboard",
-  SUPPORT: "/admin/applications",
+  SUPPORT: "/support/dashboard",
   ADMIN: "/admin/dashboard",
   SUPER_ADMIN: "/admin/dashboard",
 };

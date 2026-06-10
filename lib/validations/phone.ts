@@ -42,3 +42,12 @@ export function formatPhoneHint(input: string): string {
   const normalized = normalizePakistanPhone(input);
   return normalized ?? input;
 }
+
+export function formatPhoneForDisplay(input: string): string {
+  const normalized = normalizePakistanPhone(input);
+  if (!normalized) {
+    return input;
+  }
+
+  return `0${normalized.slice(3)}`;
+}

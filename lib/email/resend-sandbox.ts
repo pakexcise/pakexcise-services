@@ -1,5 +1,7 @@
 export function getResendSandboxOwnerEmail(): string | null {
-  const value = process.env.NEXT_PUBLIC_RESEND_SANDBOX_OWNER_EMAIL?.trim();
+  const value =
+    process.env.NEXT_PUBLIC_RESEND_SANDBOX_OWNER_EMAIL?.trim() ??
+    process.env.NEXT_PUBLIC_RESEND_OWNER_EMAIL?.trim();
   return value ? value.toLowerCase() : null;
 }
 

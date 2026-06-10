@@ -1,29 +1,41 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import {
+  checkEmailAuthEligibility,
+  getEmailOtpDeliveryMeta,
+  sendEmailVerificationOtp,
+} from "@/features/auth/actions/otp-flow-actions";
+import { resolveEmailOtpSentMessage } from "@/features/auth/lib/otp-delivery-messages";
+import { OtpCodeInput } from "@/features/auth/components/otp-code-input";
+import { PasswordInput } from "@/features/auth/components/password-input";
+import { buildAuthRedirectUrl } from "@/features/auth/lib/redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { OtpCodeInput } from "@/features/auth/components/otp-code-input";
-import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
-import { authClient, signIn } from "@/lib/auth-client";
-import { getUserRole } from "@/lib/auth-types";
-import {
-  formatResendSandboxMessage,
-  getResendSandboxOwnerEmail,
-  isResendSandboxRecipient,
-} from "@/lib/email/resend-sandbox";
+import { authClient, signIn, signUp } from "@/lib/auth-client";
+
+const MIN_PASSWORD_LENGTH = 8;
 
 type EmailOtpAuthFormLabels = {
   email: string;
+  password: string;
+  confirmPassword?: string;
+  passwordHint: string;
+  passwordMismatch?: string;
+  invalidPassword?: string;
+  showPassword?: string;
   name?: string;
   otp: string;
   otpHint: string;
-  sendOtp: string;
-  sendingOtp: string;
+  signIn?: string;
+  signingIn?: string;
+  createAccount?: string;
+  creatingAccount?: string;
   verifyOtp: string;
   verifyingOtp: string;
   resendOtp: string;
@@ -34,7 +46,14 @@ type EmailOtpAuthFormLabels = {
   sendFailed: string;
   verifyFailed: string;
   invalidEmail: string;
+  signInFailed?: string;
   nameRequired?: string;
+  accountNotFound?: string;
+  accountExists?: string;
+  signupPrompt?: string;
+  loginPrompt?: string;
+  signupLink?: string;
+  loginLink?: string;
 };
 
 type EmailOtpAuthFormProps = {
@@ -42,81 +61,157 @@ type EmailOtpAuthFormProps = {
   labels: EmailOtpAuthFormLabels;
 };
 
+function isValidPassword(password: string): boolean {
+  return password.length >= MIN_PASSWORD_LENGTH;
+}
+
 export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [step, setStep] = useState<"identifier" | "otp">("identifier");
+  const [step, setStep] = useState<"credentials" | "otp">("credentials");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
-  function resolveOtpSentMessage(trimmedEmail: string): string {
-    const sandboxOwner = getResendSandboxOwnerEmail();
-
-    if (sandboxOwner && isResendSandboxRecipient(trimmedEmail)) {
-      return formatResendSandboxMessage(
-        labels.otpSentEmailSandbox,
-        sandboxOwner,
-        trimmedEmail,
-      );
-    }
-
-    return labels.otpSentEmail;
+  async function resolveDeliveryMessage(targetEmail: string): Promise<string> {
+    const delivery = await getEmailOtpDeliveryMeta(targetEmail);
+    return resolveEmailOtpSentMessage(targetEmail, labels, delivery);
   }
 
-  function sendOtpCode(targetEmail: string, advanceStep = true) {
-    const trimmedEmail = targetEmail.trim().toLowerCase();
+  function handleCredentialsSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmedEmail = email.trim().toLowerCase();
 
     if (!trimmedEmail.includes("@")) {
       setError(labels.invalidEmail);
       return;
     }
 
-    if (mode === "signup" && !name.trim()) {
-      setError(labels.nameRequired ?? labels.verifyFailed);
+    if (!isValidPassword(password)) {
+      setError(labels.invalidPassword ?? labels.verifyFailed);
       return;
     }
 
-    setError(null);
-    if (advanceStep) {
-      setInfo(null);
+    if (mode === "signup") {
+      if (!name.trim()) {
+        setError(labels.nameRequired ?? labels.verifyFailed);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError(labels.passwordMismatch ?? labels.verifyFailed);
+        return;
+      }
     }
+
+    setError(null);
+    setInfo(null);
 
     startTransition(async () => {
       try {
-        const result = await authClient.emailOtp.sendVerificationOtp({
+        const eligibility = await checkEmailAuthEligibility(trimmedEmail, mode);
+
+        if (!eligibility.ok) {
+          if (eligibility.code === "ACCOUNT_NOT_FOUND") {
+            setError(labels.accountNotFound ?? labels.signInFailed ?? labels.verifyFailed);
+            return;
+          }
+
+          if (eligibility.code === "ACCOUNT_EXISTS") {
+            setError(labels.accountExists ?? labels.sendFailed);
+            return;
+          }
+
+          setError(labels.invalidEmail);
+          return;
+        }
+
+        if (mode === "login") {
+          const result = await signIn.email({
+            email: trimmedEmail,
+            password,
+          });
+
+          if (result.error) {
+            setError(result.error.message ?? labels.signInFailed ?? labels.verifyFailed);
+            return;
+          }
+
+          const callbackUrl = searchParams.get("callbackUrl");
+          router.push(buildAuthRedirectUrl(callbackUrl));
+          router.refresh();
+          return;
+        }
+
+        const signupResult = await signUp.email({
           email: trimmedEmail,
-          type: "sign-in",
+          password,
+          name: name.trim(),
         });
 
-        if (result.error) {
-          setError(result.error.message ?? labels.sendFailed);
+        if (signupResult.error) {
+          if (
+            signupResult.error.message?.toLowerCase().includes("already") ||
+            signupResult.error.message?.toLowerCase().includes("exists")
+          ) {
+            setError(labels.accountExists ?? labels.sendFailed);
+            return;
+          }
+
+          setError(signupResult.error.message ?? labels.sendFailed);
+          return;
+        }
+
+        const otpResult = await sendEmailVerificationOtp(trimmedEmail);
+
+        if (!otpResult.ok) {
+          setError(labels.sendFailed);
           return;
         }
 
         setEmail(trimmedEmail);
-        if (advanceStep) {
-          setStep("otp");
-        }
-        setInfo(resolveOtpSentMessage(trimmedEmail));
-      } catch (sendError) {
+        setStep("otp");
+        setInfo(
+          resolveEmailOtpSentMessage(trimmedEmail, labels, otpResult.delivery),
+        );
+      } catch (submitError) {
         setError(
-          sendError instanceof Error ? sendError.message : labels.sendFailed,
+          submitError instanceof Error
+            ? submitError.message
+            : mode === "login"
+              ? (labels.signInFailed ?? labels.verifyFailed)
+              : labels.sendFailed,
         );
       }
     });
   }
 
-  function handleSendOtp(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    sendOtpCode(email, true);
-  }
-
   function handleResendOtp() {
-    sendOtpCode(email, false);
+    setError(null);
+
+    startTransition(async () => {
+      try {
+        const otpResult = await sendEmailVerificationOtp(email);
+
+        if (!otpResult.ok) {
+          setError(labels.sendFailed);
+          return;
+        }
+
+        setInfo(
+          resolveEmailOtpSentMessage(email, labels, otpResult.delivery),
+        );
+      } catch (resendError) {
+        setError(
+          resendError instanceof Error ? resendError.message : labels.sendFailed,
+        );
+      }
+    });
   }
 
   function handleVerifyOtp(event: React.FormEvent<HTMLFormElement>) {
@@ -130,10 +225,9 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
 
     startTransition(async () => {
       try {
-        const result = await signIn.emailOtp({
+        const result = await authClient.emailOtp.verifyEmail({
           email,
           otp,
-          ...(mode === "signup" && name.trim() ? { name: name.trim() } : {}),
         });
 
         if (result.error) {
@@ -141,13 +235,8 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           return;
         }
 
-        const session = await authClient.getSession();
-        const user = result.data?.user ?? session.data?.user;
-        const role = getUserRole(user);
         const callbackUrl = searchParams.get("callbackUrl");
-        const destination = resolvePostLoginPath(role, callbackUrl);
-
-        router.push(destination);
+        router.push(buildAuthRedirectUrl(callbackUrl));
         router.refresh();
       } catch (verifyError) {
         setError(
@@ -159,9 +248,9 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
     });
   }
 
-  if (step === "otp") {
+  if (mode === "signup" && step === "otp") {
     return (
-      <form onSubmit={handleVerifyOtp} className="space-y-4">
+      <form onSubmit={handleVerifyOtp} className="w-full space-y-4">
         {error ? (
           <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
@@ -185,14 +274,14 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           {isPending ? labels.verifyingOtp : labels.verifyOtp}
         </Button>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex w-full flex-col gap-2">
           <Button
             type="button"
             variant="outline"
             className="w-full"
             disabled={isPending}
             onClick={() => {
-              setStep("identifier");
+              setStep("credentials");
               setOtp("");
               setError(null);
               setInfo(null);
@@ -215,11 +304,27 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
   }
 
   return (
-    <form onSubmit={handleSendOtp} className="space-y-4">
+    <form onSubmit={handleCredentialsSubmit} className="w-full space-y-4">
       {error ? (
-        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error}
-        </p>
+        <div className="space-y-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p>{error}</p>
+          {mode === "login" && error === labels.accountNotFound ? (
+            <p className="text-foreground">
+              {labels.signupPrompt}{" "}
+              <Link href="/signup" className="font-medium text-primary hover:underline">
+                {labels.signupLink}
+              </Link>
+            </p>
+          ) : null}
+          {mode === "signup" && error === labels.accountExists ? (
+            <p className="text-foreground">
+              {labels.loginPrompt}{" "}
+              <Link href="/login" className="font-medium text-primary hover:underline">
+                {labels.loginLink}
+              </Link>
+            </p>
+          ) : null}
+        </div>
       ) : null}
 
       {mode === "signup" && labels.name ? (
@@ -250,8 +355,47 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
         />
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="password">{labels.password}</Label>
+        <PasswordInput
+          id="password"
+          name="password"
+          autoComplete={mode === "login" ? "current-password" : "new-password"}
+          required
+          minLength={MIN_PASSWORD_LENGTH}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          toggleLabel={labels.showPassword}
+        />
+        {mode === "signup" ? (
+          <p className="text-xs text-muted-foreground">{labels.passwordHint}</p>
+        ) : null}
+      </div>
+
+      {mode === "signup" && labels.confirmPassword ? (
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">{labels.confirmPassword}</Label>
+          <PasswordInput
+            id="confirmPassword"
+            name="confirmPassword"
+            autoComplete="new-password"
+            required
+            minLength={MIN_PASSWORD_LENGTH}
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            toggleLabel={labels.showPassword}
+          />
+        </div>
+      ) : null}
+
       <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? labels.sendingOtp : labels.sendOtp}
+        {isPending
+          ? mode === "login"
+            ? (labels.signingIn ?? labels.verifyOtp)
+            : (labels.creatingAccount ?? labels.verifyOtp)
+          : mode === "login"
+            ? (labels.signIn ?? labels.verifyOtp)
+            : (labels.createAccount ?? labels.verifyOtp)}
       </Button>
     </form>
   );

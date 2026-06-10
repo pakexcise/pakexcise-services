@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 
+import { AuthUrlErrorAlert } from "@/features/auth/components/auth-url-error-alert";
 import { AuthDivider } from "@/features/auth/components/auth-divider";
 import {
   AuthMethodTabs,
@@ -16,37 +17,45 @@ import { Link } from "@/i18n/navigation";
 type LoginFormLabels = {
   email: string;
   phone: string;
+  phoneOrCnic: string;
   phoneHint: string;
+  phoneLoginHint: string;
+  password: string;
+  passwordHint: string;
+  invalidPassword: string;
+  showPassword: string;
   otp: string;
   otpHint: string;
-  sendOtp: string;
-  sendingOtp: string;
+  signIn: string;
+  signingIn: string;
   verifyOtp: string;
   verifyingOtp: string;
   resendOtp: string;
   changeEmail: string;
-  changePhone: string;
   otpSentEmail: string;
   otpSentEmailSandbox: string;
   otpSentEmailDevConsole: string;
-  otpSentPhone: string;
-  whatsappUnavailable: string;
-  whatsappNotConfigured: string;
-  whatsappRecipientNotAllowed: string;
-  whatsappTokenExpired: string;
   sendFailed: string;
   verifyFailed: string;
+  signInFailed: string;
   invalidEmail: string;
   invalidPhone: string;
+  invalidIdentifier: string;
+  accountNotFound: string;
+  accountExists: string;
+  signupPrompt: string;
+  loginPrompt: string;
   noAccount: string;
   signupLink: string;
+  loginLink: string;
   orContinueWith: string;
   google: string;
-  facebook: string;
   socialFailed: string;
   socialNotConfigured: string;
   methodEmail: string;
   methodPhone: string;
+  forgotPassword: string;
+  authError: string;
 };
 
 type LoginFormProps = {
@@ -57,46 +66,81 @@ type LoginFormProps = {
 function LoginFormContent({ labels, socialProviders }: LoginFormProps) {
   const [method, setMethod] = useState<AuthMethod>("email");
 
-  const otpLabels = {
+  const emailLabels = {
     email: labels.email,
-    phone: labels.phone,
-    phoneHint: labels.phoneHint,
+    password: labels.password,
+    passwordHint: labels.passwordHint,
+    invalidPassword: labels.invalidPassword,
+    showPassword: labels.showPassword,
     otp: labels.otp,
     otpHint: labels.otpHint,
-    sendOtp: labels.sendOtp,
-    sendingOtp: labels.sendingOtp,
+    signIn: labels.signIn,
+    signingIn: labels.signingIn,
     verifyOtp: labels.verifyOtp,
     verifyingOtp: labels.verifyingOtp,
     resendOtp: labels.resendOtp,
     changeEmail: labels.changeEmail,
-    changePhone: labels.changePhone,
     otpSentEmail: labels.otpSentEmail,
     otpSentEmailSandbox: labels.otpSentEmailSandbox,
     otpSentEmailDevConsole: labels.otpSentEmailDevConsole,
-    otpSentPhone: labels.otpSentPhone,
-    whatsappUnavailable: labels.whatsappUnavailable,
-    whatsappNotConfigured: labels.whatsappNotConfigured,
-    whatsappRecipientNotAllowed: labels.whatsappRecipientNotAllowed,
-    whatsappTokenExpired: labels.whatsappTokenExpired,
     sendFailed: labels.sendFailed,
     verifyFailed: labels.verifyFailed,
+    signInFailed: labels.signInFailed,
     invalidEmail: labels.invalidEmail,
+    accountNotFound: labels.accountNotFound,
+    accountExists: labels.accountExists,
+    signupPrompt: labels.signupPrompt,
+    loginPrompt: labels.loginPrompt,
+    signupLink: labels.signupLink,
+    loginLink: labels.loginLink,
+  };
+
+  const phoneLabels = {
+    phone: labels.phone,
+    phoneOrCnic: labels.phoneOrCnic,
+    phoneHint: labels.phoneHint,
+    phoneLoginHint: labels.phoneLoginHint,
+    password: labels.password,
+    invalidPassword: labels.invalidPassword,
+    showPassword: labels.showPassword,
+    signIn: labels.signIn,
+    signingIn: labels.signingIn,
+    sendFailed: labels.sendFailed,
+    verifyFailed: labels.verifyFailed,
     invalidPhone: labels.invalidPhone,
+    invalidIdentifier: labels.invalidIdentifier,
+    signInFailed: labels.signInFailed,
+    accountNotFound: labels.accountNotFound,
+    accountExists: labels.accountExists,
+    signupPrompt: labels.signupPrompt,
+    loginPrompt: labels.loginPrompt,
+    signupLink: labels.signupLink,
+    loginLink: labels.loginLink,
   };
 
   return (
     <div className="space-y-5">
-      <SocialAuthButtons
-        providers={socialProviders}
+      <AuthUrlErrorAlert
         labels={{
-          google: labels.google,
-          facebook: labels.facebook,
+          authError: labels.authError,
           socialFailed: labels.socialFailed,
-          notConfigured: labels.socialNotConfigured,
         }}
       />
 
-      <AuthDivider label={labels.orContinueWith} />
+      {socialProviders.length > 0 ? (
+        <>
+          <SocialAuthButtons
+            providers={socialProviders}
+            errorCallbackPath="/login"
+            labels={{
+              google: labels.google,
+              socialFailed: labels.socialFailed,
+              notConfigured: labels.socialNotConfigured,
+            }}
+          />
+          <AuthDivider label={labels.orContinueWith} />
+        </>
+      ) : null}
 
       <AuthMethodTabs
         value={method}
@@ -106,9 +150,19 @@ function LoginFormContent({ labels, socialProviders }: LoginFormProps) {
       />
 
       {method === "email" ? (
-        <EmailOtpAuthForm mode="login" labels={otpLabels} />
+        <div className="space-y-3">
+          <EmailOtpAuthForm mode="login" labels={emailLabels} />
+          <p className="text-center text-sm">
+            <Link
+              href="/forgot-password"
+              className="font-medium text-primary hover:underline"
+            >
+              {labels.forgotPassword}
+            </Link>
+          </p>
+        </div>
       ) : (
-        <PhoneOtpAuthForm mode="login" labels={otpLabels} />
+        <PhoneOtpAuthForm mode="login" labels={phoneLabels} />
       )}
 
       <p className="text-center text-sm text-muted-foreground">
@@ -125,7 +179,7 @@ export function LoginForm(props: LoginFormProps) {
   return (
     <Suspense
       fallback={
-        <p className="text-sm text-muted-foreground">{props.labels.sendingOtp}</p>
+        <p className="text-sm text-muted-foreground">{props.labels.signingIn}</p>
       }
     >
       <LoginFormContent {...props} />

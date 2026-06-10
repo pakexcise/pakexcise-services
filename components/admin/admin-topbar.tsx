@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { AdminSearch } from "@/components/admin/admin-search";
 import { AdminUserMenu, type AdminUserSummary } from "@/components/admin/admin-user-menu";
+import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -17,10 +18,9 @@ type AdminTopbarProps = {
 
 export function AdminTopbar({ user, onMenuClick }: AdminTopbarProps) {
   const t = useTranslations("admin");
-  const tCommon = useTranslations("common");
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:px-6">
+    <header className="z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-3 sm:gap-3 sm:px-4 lg:px-6">
       <Button
         type="button"
         variant="outline"
@@ -33,17 +33,15 @@ export function AdminTopbar({ user, onMenuClick }: AdminTopbarProps) {
       </Button>
 
       <Link href="/admin/dashboard" className="hidden min-w-0 lg:block">
-        <span className="text-sm font-semibold text-primary">
-          {tCommon("brandName")}
-        </span>
-        <span className="block text-xs text-muted-foreground">{t("panel")}</span>
+        <SiteLogo imageClassName="max-h-7" />
+        <span className="mt-0.5 block text-xs text-muted-foreground">{t("panel")}</span>
       </Link>
 
-      <div className="hidden flex-1 justify-center md:flex">
+      <div className="hidden min-w-0 flex-1 justify-center md:flex">
         <AdminSearch />
       </div>
 
-      <div className="ms-auto flex items-center gap-2">
+      <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-2">
         <LanguageSwitcher />
         <ThemeToggle />
         <AdminUserMenu user={user} />

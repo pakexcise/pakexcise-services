@@ -1,5 +1,6 @@
 import "server-only";
 
+import { rememberOtpDelivery } from "@/server/notifications/otp-delivery-cache";
 import { sendTransactionalEmail } from "@/server/notifications/send-email";
 import { enforceRateLimit, otpRateLimit } from "@/server/security/rate-limit";
 
@@ -35,7 +36,7 @@ export async function sendEmailOtp(
 
   const subject = getSubject(type);
 
-  await sendTransactionalEmail({
+  const delivery = await sendTransactionalEmail({
     to: email,
     subject,
     text: `Your PakExcise.com verification code is ${otp}. It expires in 5 minutes. Do not share this code. PakExcise.com is a private facilitation service — not a government website.`,
@@ -47,4 +48,6 @@ export async function sendEmailOtp(
       <p><small>PakExcise.com is a private facilitation service — not a government website.</small></p>
     `,
   });
+
+  rememberOtpDelivery(email, delivery);
 }

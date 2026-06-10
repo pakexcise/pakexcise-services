@@ -3,8 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { authConfig, buildLoginRedirectUrl } from "@/config/auth";
 import { LOCALE_COOKIE_NAME, routing } from "./i18n/routing";
-import { isValidLocale } from "./i18n/locale";
+import { isValidLocale, resolveLocaleFromCookie } from "./i18n/locale";
 import { applySecurityHeaders } from "@/server/security/headers";
+
+const LOCALE_HEADER_NAME = "X-NEXT-INTL-LOCALE";
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -13,6 +15,7 @@ const legacyLocalePrefixPattern = /^\/(en|ur)(\/.*)?$/;
 const protectedRoutePrefixes = [
   authConfig.customerPathPrefix,
   authConfig.agentPathPrefix,
+  authConfig.supportPathPrefix,
   authConfig.adminPathPrefix,
 ] as const;
 
@@ -89,6 +92,63 @@ function protectPrivateRoutes(request: NextRequest): NextResponse | null {
   return NextResponse.redirect(loginUrl);
 }
 
+function getRewritePathname(
+  response: NextResponse,
+  request: NextRequest,
+): string | null {
+  const rewrite =
+    response.headers.get("x-middleware-rewrite") ??
+    response.headers.get("x-nextjs-rewrite");
+
+  if (!rewrite) {
+    return null;
+  }
+
+  try {
+    return new URL(rewrite, request.url).pathname;
+  } catch {
+    return null;
+  }
+}
+
+function ensureLocaleRewrite(
+  request: NextRequest,
+  response: NextResponse,
+): NextResponse {
+  if (getRewritePathname(response, request)) {
+    return response;
+  }
+
+  if (response.status >= 300 && response.status < 400) {
+    return response;
+  }
+
+  const { pathname } = request.nextUrl;
+  const firstSegment = pathname.split("/").filter(Boolean)[0];
+
+  if (firstSegment && isValidLocale(firstSegment)) {
+    return response;
+  }
+
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
+  const locale = resolveLocaleFromCookie(cookieLocale);
+  const url = request.nextUrl.clone();
+  url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
+
+  const headers = new Headers(request.headers);
+  headers.set(LOCALE_HEADER_NAME, locale);
+
+  const rewriteResponse = NextResponse.rewrite(url, {
+    request: { headers },
+  });
+
+  for (const cookie of response.cookies.getAll()) {
+    rewriteResponse.cookies.set(cookie);
+  }
+
+  return rewriteResponse;
+}
+
 export default function proxy(request: NextRequest) {
   const legacyRedirect = redirectLegacyLocalePrefix(request);
 
@@ -96,12 +156,16 @@ export default function proxy(request: NextRequest) {
     return applySecurityHeaders(legacyRedirect);
   }
 
-  const response = handleI18nRouting(withoutAcceptLanguage(request));
   const authRedirect = protectPrivateRoutes(request);
 
   if (authRedirect) {
     return applySecurityHeaders(authRedirect);
   }
+
+  const response = ensureLocaleRewrite(
+    request,
+    handleI18nRouting(withoutAcceptLanguage(request)),
+  );
 
   return applySecurityHeaders(syncLocaleCookie(response, request));
 }

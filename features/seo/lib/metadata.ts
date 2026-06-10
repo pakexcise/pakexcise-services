@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { brandingAssets, getDefaultOgImagePath } from "@/config/branding";
 import type { SeoSettings } from "@/features/settings/types";
 import { absoluteUrl, publicPath } from "@/lib/utils";
 
@@ -24,7 +25,11 @@ export function buildMetadata(input: SeoInput): Metadata {
   const canonical = input.canonical ?? absoluteUrl(publicPath(input.path));
   const ogTitle = input.ogTitle ?? input.title;
   const ogDescription = input.ogDescription ?? input.description;
-  const ogImage = input.ogImage ?? absoluteUrl("/og-default.png");
+  const ogImage = input.ogImage
+    ? input.ogImage.startsWith("http")
+      ? input.ogImage
+      : absoluteUrl(input.ogImage)
+    : absoluteUrl(getDefaultOgImagePath(input.locale));
 
   return {
     title: input.title,
@@ -80,7 +85,10 @@ export function buildOrganizationJsonLd(
     "@type": "Organization",
     name: seo?.organizationName ?? "PakExcise.com",
     url: baseUrl,
-    logo: resolveLogoUrl(baseUrl, seo?.organizationLogoPath ?? "/logo.png"),
+    logo: resolveLogoUrl(
+      baseUrl,
+      seo?.organizationLogoPath ?? brandingAssets.logo,
+    ),
     description:
       seo?.organizationDescriptionEn ??
       "Private excise facilitation service for Pakistan. Not affiliated with any government body.",

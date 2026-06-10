@@ -83,6 +83,10 @@ export async function requireApprovedAgent(): Promise<CurrentUser> {
   return user;
 }
 
+export async function requireSupportPortal(): Promise<CurrentUser> {
+  return requireRole(...portalRoles.support);
+}
+
 export async function requireAdminPortal(): Promise<CurrentUser> {
   const user = await requireRole(...portalRoles.admin);
   return assertAdminTwoFactor(user);

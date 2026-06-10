@@ -21,15 +21,19 @@ type ApplicationFiltersProps = {
   currentDateTo?: string;
   services: ServiceOption[];
   locale: string;
+  applicationsBasePath?: string;
 };
 
-function buildFilterHref(input: {
-  status?: ApplicationStatus;
-  search?: string;
-  serviceId?: string;
-  dateFrom?: string;
-  dateTo?: string;
-}): string {
+function buildFilterHref(
+  input: {
+    status?: ApplicationStatus;
+    search?: string;
+    serviceId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  },
+  applicationsBasePath = "/admin/applications",
+): string {
   const params = new URLSearchParams();
 
   if (input.status) {
@@ -53,7 +57,9 @@ function buildFilterHref(input: {
   }
 
   const query = params.toString();
-  return query ? `/admin/applications?${query}` : "/admin/applications";
+  return query
+    ? `${applicationsBasePath}?${query}`
+    : applicationsBasePath;
 }
 
 export async function ApplicationFilters({
@@ -64,6 +70,7 @@ export async function ApplicationFilters({
   currentDateTo,
   services,
   locale,
+  applicationsBasePath = "/admin/applications",
 }: ApplicationFiltersProps) {
   const t = await getTranslations("admin");
 
@@ -114,7 +121,7 @@ export async function ApplicationFilters({
             {t("search")}
           </Button>
           <Button asChild variant="outline">
-            <Link href="/admin/applications">{t("applications.filters.reset")}</Link>
+            <Link href={applicationsBasePath}>{t("applications.filters.reset")}</Link>
           </Button>
         </div>
       </form>
@@ -125,7 +132,7 @@ export async function ApplicationFilters({
           size="sm"
           variant={currentStatus ? "outline" : "default"}
         >
-          <Link href={buildFilterHref(sharedParams)}>
+          <Link href={buildFilterHref(sharedParams, applicationsBasePath)}>
             {t("applications.filters.all")}
           </Link>
         </Button>
@@ -137,10 +144,13 @@ export async function ApplicationFilters({
             variant={currentStatus === status ? "default" : "outline"}
           >
             <Link
-              href={buildFilterHref({
-                ...sharedParams,
-                status,
-              })}
+              href={buildFilterHref(
+                {
+                  ...sharedParams,
+                  status,
+                },
+                applicationsBasePath,
+              )}
             >
               {t(getApplicationStatusLabelKey(status))}
             </Link>

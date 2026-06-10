@@ -133,6 +133,8 @@ model User {
   phone               String?
   phoneNumber         String?    @unique
   phoneNumberVerified Boolean    @default(false)
+  cnicEncrypted       String?
+  cnicHash            String?    @unique
   role              UserRole   @default(CUSTOMER)
   status            UserStatus @default(ACTIVE)
   twoFactorEnabled  Boolean    @default(false)

@@ -1,18 +1,12 @@
 import "server-only";
 
 import { betterAuth } from "better-auth";
-import { APIError } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP } from "better-auth/plugins";
-import { phoneNumber } from "better-auth/plugins";
 
 import { authConfig } from "@/config/auth";
-import { getFacebookSocialProvider } from "@/server/auth/facebook-provider";
-import { isPhoneOtpDeliveryError } from "@/lib/errors/phone-otp-errors";
-import { normalizePakistanPhone } from "@/lib/validations/phone";
 import { prisma } from "@/server/db/client";
 import { sendEmailOtp } from "@/server/notifications/send-email-otp";
-import { sendPhoneOtp } from "@/server/notifications/send-phone-otp";
 import { sendTransactionalEmail } from "@/server/notifications/send-email";
 
 function getGoogleSocialProvider():
@@ -32,11 +26,9 @@ function getGoogleSocialProvider():
 }
 
 const googleProvider = getGoogleSocialProvider();
-const facebookProvider = getFacebookSocialProvider();
 
 const socialProviders = {
   ...(googleProvider ? { google: googleProvider } : {}),
-  ...(facebookProvider ? { facebook: facebookProvider } : {}),
 };
 
 export const auth = betterAuth({
@@ -64,49 +56,18 @@ export const auth = betterAuth({
       });
     },
   },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+  },
   ...(Object.keys(socialProviders).length > 0 ? { socialProviders } : {}),
   plugins: [
     emailOTP({
       otpLength: 6,
       expiresIn: 300,
       allowedAttempts: 3,
+      disableSignUp: true,
       async sendVerificationOTP({ email, otp, type }) {
         await sendEmailOtp(email, otp, type);
-      },
-    }),
-    phoneNumber({
-      otpLength: 6,
-      expiresIn: 300,
-      allowedAttempts: 3,
-      requireVerification: true,
-      phoneNumberValidator: (value) => normalizePakistanPhone(value) !== null,
-      signUpOnVerification: {
-        getTempEmail: (phone) => {
-          const digits = phone.replace(/\D/g, "");
-          return `phone+${digits}@otp.pakexcise.com`;
-        },
-        getTempName: (phone) => phone,
-      },
-      async sendOTP({ phoneNumber: phone, code }) {
-        try {
-          await sendPhoneOtp(phone, code);
-        } catch (error) {
-          if (isPhoneOtpDeliveryError(error)) {
-            throw new APIError("BAD_REQUEST", { message: error.code });
-          }
-
-          throw error;
-        }
-      },
-      async callbackOnVerification({ phoneNumber: phone, user }) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            phone,
-            phoneNumber: phone,
-            phoneNumberVerified: true,
-          },
-        });
       },
     }),
   ],

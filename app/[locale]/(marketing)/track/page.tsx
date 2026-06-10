@@ -130,6 +130,7 @@ export default async function TrackPage({ searchParams }: TrackPageProps) {
             submitLabel={t("track.submitLabel")}
             helpText={t("track.helpText")}
             loginLabel={tNav("login")}
+            dashboardLabel={tNav("dashboard")}
             locale={locale === "ur" ? "ur" : "en"}
             initialTrackingId={trackingId ?? ""}
             labels={{
@@ -146,6 +147,8 @@ export default async function TrackPage({ searchParams }: TrackPageProps) {
               resultPublicStatusDescription: t("track.result.publicStatusDescription"),
               resultLoginPrompt: t("track.result.loginPrompt"),
               resultLoginCta: t("track.result.loginCta"),
+              resultDashboardPrompt: t("track.result.dashboardPrompt"),
+              resultDashboardCta: t("track.result.dashboardCta"),
               publicStatus,
               statusLabels,
             }}

@@ -1,3 +1,4 @@
+import { brandingAssets } from "@/config/branding";
 import { siteConfig } from "@/config/site";
 
 import type {
@@ -61,12 +62,12 @@ export function defaultSeoSettings(): SeoSettings {
     defaultMetaDescriptionEn: siteConfig.description,
     defaultMetaDescriptionUr:
       "پاکستان کے لیے نجی ایکسائز سہولت سروس۔ کسی بھی سرکاری ادارے سے وابستہ نہیں۔",
-    defaultOgImage: "/og-default.png",
+    defaultOgImage: brandingAssets.ogEn,
     organizationName: siteConfig.name,
     organizationDescriptionEn: siteConfig.description,
     organizationDescriptionUr:
       "پاکستان کے لیے نجی ایکسائز سہولت سروس۔ کسی بھی سرکاری ادارے سے وابستہ نہیں۔",
-    organizationLogoPath: "/logo.png",
+    organizationLogoPath: brandingAssets.logo,
     organizationAreaServed: "Pakistan",
     localBusinessName: siteConfig.name,
     localBusinessDescriptionEn: siteConfig.description,

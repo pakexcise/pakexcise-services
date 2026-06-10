@@ -1,5 +1,7 @@
-import { CustomerPortalNav } from "@/components/customer/CustomerPortalNav";
-import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
+import { CustomerShell } from "@/components/customer/customer-shell";
+import { isTempPhoneEmail } from "@/features/auth/lib/user-identity";
+import { formatPhoneForDisplay } from "@/lib/validations/phone";
+import { getCurrentUser } from "@/server/auth/current-user";
 import { requireCustomerPortal } from "@/server/permissions/guards";
 import { enforcePortalAccess } from "@/server/permissions/portal-access";
 
@@ -9,14 +11,18 @@ export default async function CustomerLayout({
   children: React.ReactNode;
 }) {
   await enforcePortalAccess(requireCustomerPortal, "/customer/dashboard");
+  const user = await getCurrentUser();
+
+  const displayEmail =
+    user?.email && !isTempPhoneEmail(user.email) ? user.email : "";
+  const rawPhone = user?.phone ?? "";
+  const displayPhone = rawPhone ? formatPhoneForDisplay(rawPhone) : "";
+  const contactLine = displayEmail || displayPhone;
+  const displayName = user?.name?.trim() || contactLine || "Customer";
 
   return (
-    <div className="min-h-screen bg-background">
-      <LegalDisclaimer />
-      <div className="container-site space-y-6 py-8">
-        <CustomerPortalNav />
-        {children}
-      </div>
-    </div>
+    <CustomerShell userName={displayName} userContactLine={contactLine}>
+      {children}
+    </CustomerShell>
   );
 }

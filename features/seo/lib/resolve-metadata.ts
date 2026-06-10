@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { SeoMeta } from "@prisma/client";
 
+import { getDefaultOgImagePath } from "@/config/branding";
 import { buildMetadata } from "@/features/seo/lib/metadata";
 import { buildHreflangAlternates } from "@/features/seo/lib/hreflang";
 import type { Locale } from "@/i18n/config";
@@ -61,7 +62,7 @@ export function resolveMetadataFromSeo(input: {
       en: input.seo?.ogDescriptionEn ?? resolved.description,
       ur: input.seo?.ogDescriptionUr ?? resolved.description,
     }),
-    ogImage: input.seo?.ogImage,
+    ogImage: input.seo?.ogImage ?? getDefaultOgImagePath(input.locale),
     twitterCard:
       input.seo?.twitterCard === "summary" ? "summary" : "summary_large_image",
     robots: {

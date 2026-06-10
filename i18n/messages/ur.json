@@ -50,8 +50,18 @@
       "title": "اپنے اکاؤنٹ میں سائن ان کریں",
       "description": "اپنی درخواستیں، دستاویزات، اور ڈیش بورڈ تک رسائی حاصل کریں۔",
       "email": "ای میل ایڈریس",
+      "password": "پاس ورڈ",
+      "passwordHint": "کم از کم 8 حروف۔",
+      "invalidPassword": "پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے۔",
+      "signIn": "سائن ان",
+      "signingIn": "سائن ان ہو رہا ہے...",
+      "signInFailed": "ای میل یا پاس ورڈ غلط ہے۔ دوبارہ کوشش کریں۔",
       "phone": "موبائل نمبر",
-      "phoneHint": "وہ پاکستانی موبائل نمبر درج کریں جس پر WhatsApp فعال ہو (مثال: 03XX XXXXXXX)۔",
+      "phoneOrCnic": "موبائل نمبر یا شناختی کارڈ",
+      "phoneHint": "اپنے رجسٹرڈ پاکستانی موبائل نمبر اور پاس ورڈ سے سائن ان کریں۔",
+      "phoneLoginHint": "رجسٹرڈ موبائل نمبر (03XX XXXXXXX) یا شناختی کارڈ (12345-1234567-1) درج کریں۔",
+      "showPassword": "پاس ورڈ دکھائیں",
+      "invalidIdentifier": "درست موبائل نمبر یا شناختی کارڈ درج کریں۔",
       "otp": "تصدیقی کوڈ",
       "otpHint": "6 ہندسوں کا کوڈ درج کریں۔ یہ 5 منٹ میں ختم ہو جائے گا۔",
       "sendOtp": "تصدیقی کوڈ بھیجیں",
@@ -61,13 +71,19 @@
       "resendOtp": "کوڈ دوبارہ بھیجیں",
       "changeEmail": "ای میل تبدیل کریں",
       "changePhone": "نمبر تبدیل کریں",
-      "otpSentEmail": "ہم نے آپ کے ای میل پر تصدیقی کوڈ بھیج دیا ہے۔",
+      "otpSentEmail": "ہم نے __EMAIL__ پر تصدیقی کوڈ بھیج دیا ہے۔",
       "otpSentEmailSandbox": "Resend ٹیسٹ موڈ: کوڈ __OWNER_EMAIL__ پر بھیجا گیا ہے (__REQUESTED_EMAIL__ پر نہیں)۔ 6 ہندسوں کا OTP اس ان باکس میں دیکھیں۔",
+      "accountNotFound": "اس ای میل سے کوئی اکاؤنٹ نہیں ملا۔ پہلے اکاؤنٹ بنائیں۔",
+      "accountExists": "اس ای میل سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "signupPrompt": "نیا صارف ہیں؟",
+      "loginPrompt": "پہلے سے رجسٹرڈ ہیں؟",
+      "tryOtherMethods": "ای میل یا Google سے سائن ان کرنے کی کوشش کریں۔",
+      "loginLink": "سائن ان",
       "otpSentEmailDevConsole": "ڈیولپمنٹ موڈ: اگر ای میل نہ آئے تو سرور ٹرمینل میں [email:dev:fallback] سے OTP دیکھیں۔",
       "otpSentPhone": "ہم نے آپ کے WhatsApp نمبر پر تصدیقی کوڈ بھیج دیا ہے۔",
-      "whatsappUnavailable": "یہ نمبر WhatsApp پر رجسٹرڈ نہیں ہے۔ براہ کرم ای میل، Google یا Facebook سے اکاؤنٹ بنائیں یا سائن ان کریں۔",
-      "whatsappNotConfigured": "WhatsApp تصدیق فی الحال دستیاب نہیں ہے۔ براہ کرم ای میل، Google یا Facebook استعمال کریں۔",
-      "whatsappRecipientNotAllowed": "یہ نمبر Meta WhatsApp API Testing میں شامل نہیں ہے۔ WhatsApp > API Testing میں شامل کریں، یا ای میل/Google/Facebook استعمال کریں۔",
+      "whatsappUnavailable": "یہ نمبر WhatsApp پر رجسٹرڈ نہیں ہے۔ براہ کرم ای میل یا Google سے اکاؤنٹ بنائیں یا سائن ان کریں۔",
+      "whatsappNotConfigured": "WhatsApp تصدیق فی الحال دستیاب نہیں ہے۔ براہ کرم ای میل یا Google استعمال کریں۔",
+      "whatsappRecipientNotAllowed": "یہ نمبر Meta WhatsApp API Testing میں شامل نہیں ہے۔ WhatsApp > API Testing میں شامل کریں، یا ای میل یا Google استعمال کریں۔",
       "whatsappTokenExpired": "WhatsApp access token کی میعاد ختم ہو گئی ہے۔ Meta WhatsApp API Setup سے نیا token بنائیں اور WHATSAPP_ACCESS_TOKEN اپ ڈیٹ کریں۔",
       "otpSentPhoneDevFallback": "ڈیولپمنٹ موڈ: WhatsApp پر کوڈ نہیں بھیجا جا سکا، لیکن OTP سرور ٹرمینل میں [whatsapp-otp:dev-fallback] کے طور پر لاگ ہو گیا ہے۔",
       "sendFailed": "تصدیقی کوڈ نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔",
@@ -76,13 +92,14 @@
       "invalidPhone": "درست پاکستانی موبائل نمبر درج کریں۔",
       "methodEmail": "ای میل",
       "methodPhone": "فون",
+      "forgotPassword": "پاس ورڈ بھول گئے؟",
+      "authError": "سائن ان کے دوران کوئی مسئلہ پیش آیا۔ دوبارہ کوشش کریں۔",
       "noAccount": "اکاؤنٹ نہیں ہے؟",
       "signupLink": "اکاؤنٹ بنائیں",
       "orContinueWith": "یا ای میل یا فون سے جاری رکھیں",
       "google": "Google کے ساتھ جاری رکھیں",
-      "facebook": "Facebook کے ساتھ جاری رکھیں",
       "socialFailed": "سوشل سائن ان ناکام۔ دوبارہ کوشش کریں۔",
-      "socialNotConfigured": "سوشل لاگ ان ابھی ترتیب نہیں ہوا۔ ای میل یا فون OTP استعمال کریں۔"
+      "socialNotConfigured": "سوشل لاگ ان ابھی ترتیب نہیں ہوا۔ ای میل یا فون اور پاس ورڈ استعمال کریں۔"
     },
     "signup": {
       "metaTitle": "اکاؤنٹ بنائیں | PakExcise.com",
@@ -90,8 +107,22 @@
       "description": "درخواستیں جمع کرانے اور پیش رفت ٹریک کرنے کے لیے کسٹمر کے طور پر رجسٹر کریں۔",
       "name": "مکمل نام",
       "email": "ای میل ایڈریس",
+      "password": "پاس ورڈ",
+      "confirmPassword": "پاس ورڈ کی تصدیق",
+      "passwordHint": "کم از کم 8 حروف۔ سائن ان کے لیے یہی پاس ورڈ استعمال کریں گے۔",
+      "passwordMismatch": "پاس ورڈ مماثل نہیں ہیں۔",
+      "invalidPassword": "پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے۔",
+      "createAccount": "اکاؤنٹ بنائیں",
+      "creatingAccount": "اکاؤنٹ بنایا جا رہا ہے...",
+      "signupVerifyHint": "پاس ورڈ سیٹ کریں، پھر اکاؤنٹ فعال کرنے کے لیے ایک بار ای میل کی تصدیق کریں۔",
       "phone": "موبائل نمبر",
-      "phoneHint": "وہ پاکستانی موبائل نمبر درج کریں جس پر WhatsApp فعال ہو (مثال: 03XX XXXXXXX)۔",
+      "phoneHint": "پاکستانی موبائل نمبر (مثال: 03XX XXXXXXX)۔",
+      "cnic": "شناختی کارڈ نمبر",
+      "cnicHint": "فارمیٹ: 12345-1234567-1",
+      "cnicVerificationNote": "فون نمبر سے رجسٹریشن کے لیے شناختی کارڈ کی شناخت کی تصدیق ضروری ہے۔ یہ محفوظ طریقے سے محفوظ کیا جاتا ہے اور تیسرے فریق کے ساتھ شیئر نہیں ہوتا۔",
+      "cnicExists": "اس شناختی کارڈ سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "invalidCnic": "درست شناختی کارڈ فارمیٹ 12345-1234567-1 درج کریں۔",
+      "showPassword": "پاس ورڈ دکھائیں",
       "otp": "تصدیقی کوڈ",
       "otpHint": "6 ہندسوں کا کوڈ درج کریں۔ یہ 5 منٹ میں ختم ہو جائے گا۔",
       "sendOtp": "تصدیقی کوڈ بھیجیں",
@@ -101,13 +132,20 @@
       "resendOtp": "کوڈ دوبارہ بھیجیں",
       "changeEmail": "ای میل تبدیل کریں",
       "changePhone": "نمبر تبدیل کریں",
-      "otpSentEmail": "ہم نے آپ کے ای میل پر تصدیقی کوڈ بھیج دیا ہے۔",
+      "otpSentEmail": "ہم نے __EMAIL__ پر تصدیقی کوڈ بھیج دیا ہے۔",
       "otpSentEmailSandbox": "Resend ٹیسٹ موڈ: کوڈ __OWNER_EMAIL__ پر بھیجا گیا ہے (__REQUESTED_EMAIL__ پر نہیں)۔ 6 ہندسوں کا OTP اس ان باکس میں دیکھیں۔",
+      "accountNotFound": "اس ای میل سے کوئی اکاؤنٹ نہیں ملا۔ پہلے اکاؤنٹ بنائیں۔",
+      "accountExists": "اس ای میل سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "signupPrompt": "نیا صارف ہیں؟",
+      "loginPrompt": "پہلے سے رجسٹرڈ ہیں؟",
+      "tryOtherMethods": "ای میل یا Google سے سائن ان کرنے کی کوشش کریں۔",
+      "loginLink": "سائن ان",
+      "signupLink": "اکاؤنٹ بنائیں",
       "otpSentEmailDevConsole": "ڈیولپمنٹ موڈ: اگر ای میل نہ آئے تو سرور ٹرمینل میں [email:dev:fallback] سے OTP دیکھیں۔",
       "otpSentPhone": "ہم نے آپ کے WhatsApp نمبر پر تصدیقی کوڈ بھیج دیا ہے۔",
-      "whatsappUnavailable": "یہ نمبر WhatsApp پر رجسٹرڈ نہیں ہے۔ براہ کرم ای میل، Google یا Facebook سے اکاؤنٹ بنائیں یا سائن ان کریں۔",
-      "whatsappNotConfigured": "WhatsApp تصدیق فی الحال دستیاب نہیں ہے۔ براہ کرم ای میل، Google یا Facebook استعمال کریں۔",
-      "whatsappRecipientNotAllowed": "یہ نمبر Meta WhatsApp API Testing میں شامل نہیں ہے۔ WhatsApp > API Testing میں شامل کریں، یا ای میل/Google/Facebook استعمال کریں۔",
+      "whatsappUnavailable": "یہ نمبر WhatsApp پر رجسٹرڈ نہیں ہے۔ براہ کرم ای میل یا Google سے اکاؤنٹ بنائیں یا سائن ان کریں۔",
+      "whatsappNotConfigured": "WhatsApp تصدیق فی الحال دستیاب نہیں ہے۔ براہ کرم ای میل یا Google استعمال کریں۔",
+      "whatsappRecipientNotAllowed": "یہ نمبر Meta WhatsApp API Testing میں شامل نہیں ہے۔ WhatsApp > API Testing میں شامل کریں، یا ای میل یا Google استعمال کریں۔",
       "whatsappTokenExpired": "WhatsApp access token کی میعاد ختم ہو گئی ہے۔ Meta WhatsApp API Setup سے نیا token بنائیں اور WHATSAPP_ACCESS_TOKEN اپ ڈیٹ کریں۔",
       "otpSentPhoneDevFallback": "ڈیولپمنٹ موڈ: WhatsApp پر کوڈ نہیں بھیجا جا سکا، لیکن OTP سرور ٹرمینل میں [whatsapp-otp:dev-fallback] کے طور پر لاگ ہو گیا ہے۔",
       "sendFailed": "تصدیقی کوڈ نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔",
@@ -118,16 +156,13 @@
       "methodEmail": "ای میل",
       "methodPhone": "فون",
       "hasAccount": "پہلے سے اکاؤنٹ ہے؟",
-      "loginLink": "سائن ان",
       "orContinueWith": "یا ای میل یا فون سے جاری رکھیں",
       "google": "Google کے ساتھ جاری رکھیں",
-      "facebook": "Facebook کے ساتھ جاری رکھیں",
       "socialFailed": "سوشل سائن ان ناکام۔ دوبارہ کوشش کریں۔",
-      "socialNotConfigured": "سوشل لاگ ان ابھی ترتیب نہیں ہوا۔ ای میل یا فون OTP استعمال کریں۔"
+      "socialNotConfigured": "سوشل لاگ ان ابھی ترتیب نہیں ہوا۔ ای میل یا فون اور پاس ورڈ استعمال کریں۔"
     },
     "social": {
       "google": "Google کے ساتھ جاری رکھیں",
-      "facebook": "Facebook کے ساتھ جاری رکھیں",
       "failed": "سوشل سائن ان ناکام۔ دوبارہ کوشش کریں۔",
       "notConfigured": "سوشل لاگ ان ابھی ترتیب نہیں دیا گیا۔ OAuth keys شامل کریں یا ای میل سے سائن ان کریں۔"
     },
@@ -161,10 +196,20 @@
     }
   },
   "customer": {
+    "shell": {
+      "portalLabel": "کسٹمر پورٹل",
+      "openMenu": "کسٹمر مینو کھولیں",
+      "signOut": "سائن آؤٹ"
+    },
     "nav": {
       "ariaLabel": "کسٹمر پورٹل نیویگیشن",
+      "accountSection": "میرا اکاؤنٹ",
+      "quickSection": "فوری لنکس",
       "dashboard": "ڈیش بورڈ",
-      "profile": "پروفائل"
+      "profile": "پروفائل",
+      "newApplication": "نئی درخواست",
+      "services": "خدمات دیکھیں",
+      "track": "درخواست ٹریک کریں"
     },
     "nextAction": {
       "upload_docs": "غائب دستاویزات اپ لوڈ کریں",
@@ -178,10 +223,30 @@
     },
     "dashboard": {
       "metaTitle": "میرا ڈیش بورڈ | PakExcise.com",
+      "eyebrow": "کسٹمر پورٹل",
       "title": "میرا ڈیش بورڈ",
       "welcome": "خوش آمدید، {name}",
+      "subtitle": "درخواستیں ٹریک کریں، دستاویزات اپ لوڈ کریں، اور اپنی سہولت درخواستیں ایک جگہ منظم کریں۔",
+      "accountLabel": "سائن ان",
       "applicationsTitle": "میری درخواستیں",
+      "applicationsCount": "{count, plural, =0 {کوئی درخواست نہیں} one {# درخواست} other {# درخواستیں}}",
       "applicationsEmpty": "آپ نے ابھی تک کوئی درخواست جمع نہیں کروائی۔",
+      "steps": {
+        "chooseService": {
+          "title": "خدمت منتخب کریں",
+          "description": "اپنے صوبے یا علاقے کی ایکسائز سہولت خدمات دیکھیں۔"
+        },
+        "submitApplication": {
+          "title": "درخواست جمع کروائیں",
+          "description": "فارم مکمل کریں اور ضروری دستاویزات محفوظ طریقے سے اپ لوڈ کریں۔"
+        },
+        "trackProgress": {
+          "title": "پیشرفت ٹریک کریں",
+          "description": "اس ڈیش بورڈ سے اسٹیٹس، انوائس اور ادائیگی کے مراحل دیکھیں۔"
+        }
+      },
+      "emptyTitle": "اپنی پہلی درخواست شروع کریں",
+      "emptyCta": "خدمات دیکھیں",
       "viewApplication": "تفصیل دیکھیں",
       "statusCards": {
         "total": "کل درخواستیں",
@@ -204,12 +269,24 @@
       "trackCta": "ٹریک صفحے پر جائیں",
       "servicesTitle": "خدمات دیکھیں",
       "servicesDescription": "نئی ایکسائز سہولت درخواست شروع کریں۔",
-      "servicesCta": "خدمات دیکھیں"
+      "servicesCta": "خدمات دیکھیں",
+      "supportTitle": "مدد چاہیے؟",
+      "supportDescription": "خدمات، دستاویزات یا درخواست کی صورتحال کے لیے سپورٹ سے رابطہ کریں۔",
+      "supportCta": "سپورٹ سے رابطہ"
     },
     "profile": {
       "metaTitle": "میری پروفائل | PakExcise.com",
       "title": "میری پروفائل",
       "description": "درخواست اپڈیٹس کے لیے اپنے رابطے کی تفصیلات اپ ڈیٹ کریں۔",
+      "personalSection": "ذاتی تفصیلات",
+      "securitySection": "سائن ان کے طریقے",
+      "securityDescription": "آپ کا اکاؤنٹ پاس ورڈ سے محفوظ ہے۔ آپ اس صفحے سے کسی بھی وقت پاس ورڈ اپ ڈیٹ کر سکتے ہیں۔",
+      "setPasswordCta": "پاس ورڈ سیٹ یا ری سیٹ کریں",
+      "phoneOnlySecurity": "فون سائن ان والے صارف WhatsApp OTP یا سوشل لاگ ان جاری رکھ سکتے ہیں۔",
+      "signInMethodsTitle": "فعال سائن ان طریقے",
+      "methodEmail": "ای میل OTP",
+      "methodPhone": "WhatsApp OTP",
+      "methodOtp": "ون ٹائم تصدیقی کوڈ (پاس ورڈ درکار نہیں)",
       "name": "پورا نام",
       "phone": "موبائل نمبر",
       "email": "ای میل",
@@ -421,6 +498,64 @@
       "error": "پروفائل اپ ڈیٹ نہیں ہو سکی۔"
     }
   },
+  "support": {
+    "shell": {
+      "portalLabel": "سپورٹ پورٹل",
+      "openMenu": "سپورٹ مینو کھولیں",
+      "signOut": "سائن آؤٹ"
+    },
+    "nav": {
+      "ariaLabel": "سپورٹ پورٹل نیویگیشن",
+      "section": "سپورٹ ورک اسپیس",
+      "dashboard": "ڈیش بورڈ",
+      "applications": "درخواستیں",
+      "contact": "کسٹمرز سے رابطہ"
+    },
+    "dashboard": {
+      "metaTitle": "سپورٹ ڈیش بورڈ | PakExcise.com",
+      "eyebrow": "سپورٹ پورٹل",
+      "title": "سپورٹ ڈیش بورڈ",
+      "welcome": "خوش آمدید، {name}",
+      "subtitle": "کسٹمر درخواستیں دیکھیں، اندرونی نوٹس شامل کریں، اور کیسز آگے بڑھائیں۔",
+      "queueCta": "درخواستوں کی قطار کھولیں",
+      "trackCta": "ٹریکنگ آئی ڈی سے تلاش",
+      "recentApplications": "حالیہ درخواستیں",
+      "recentApplicationsDescription": "تمام سروسز میں تازہ ترین کسٹمر درخواستیں۔",
+      "viewAll": "تمام درخواستیں دیکھیں",
+      "applicationsEmpty": "ابھی قطار میں کوئی درخواست نہیں۔",
+      "guidanceTitle": "سپورٹ ورک فلو",
+      "guidanceDescription": "کیسز دیکھنے، دستاویزات کی کمی پر کسٹمر سے رابطہ کرنے، اور آپریشنز ٹیم کے لیے نوٹس چھوڑنے کے لیے درخواستوں کی قطار استعمال کریں۔",
+      "permissionsTitle": "آپ کی رسائی",
+      "permissions": {
+        "readApplications": "تمام کسٹمر درخواستیں دیکھیں",
+        "addNotes": "اندرونی سپورٹ نوٹس شامل کریں",
+        "viewDocuments": "اپ لوڈ شدہ دستاویزات محفوظ طریقے سے دیکھیں",
+        "noPayments": "ادائیگی کی تصدیق یا درخواست کی صورتحال تبدیل نہیں کر سکتے"
+      },
+      "statusCards": {
+        "total": "تمام درخواستیں",
+        "review": "جائزے کی ضرورت",
+        "docsRequired": "دستاویزات درکار",
+        "needsAttention": "انوائس / ادائیگی زیر التوا",
+        "inProgress": "جاری",
+        "completed": "مکمل"
+      }
+    },
+    "applications": {
+      "metaTitle": "سپورٹ درخواستیں | PakExcise.com",
+      "title": "درخواستوں کی جائزہ قطار",
+      "description": "کسٹمر درخواستیں تلاش اور فلٹر کریں۔ تفصیلات، دستاویزات، اور نوٹس کے لیے کیس کھولیں۔",
+      "emptyTitle": "کوئی درخواست نہیں ملی",
+      "emptyDescription": "فلٹرز یا تلاش کی شرائط تبدیل کر کے دوبارہ کوشش کریں۔"
+    },
+    "application": {
+      "metaTitle": "درخواست | PakExcise.com",
+      "title": "درخواست کی تفصیل",
+      "backToList": "قطار پر واپس",
+      "updated": "آخری اپ ڈیٹ",
+      "limitedAccessNote": "ادائیگی کی تصدیق، انوائس بنانا، اور صورتحال کی تبدیلی ایڈمن اسٹاف کرتا ہے۔"
+    }
+  },
   "footer": {
     "description": "PakExcise.com پاکستان میں ایکسائز سے متعلق عملوں میں نجی سہولت کے ذریعے مدد فراہم کرتا ہے۔",
     "legal": "قانونی",
@@ -529,7 +664,9 @@
         "updated": "آخری اپڈیٹ",
         "publicStatusDescription": "یہ محدود عوامی اسٹیٹس ویو ہے۔ حساس تفصیلات نہیں دکھائی جاتیں۔",
         "loginPrompt": "انوائس، دستاویزات، ادائیگی ثبوت اور تکمیل دستاویزات کے لیے لاگ ان کریں۔",
-        "loginCta": "مکمل تفصیلات کے لیے لاگ ان"
+        "loginCta": "مکمل تفصیلات کے لیے لاگ ان",
+        "dashboardPrompt": "انوائس، دستاویزات، ادائیگی ثبوت اور تکمیل دستاویزات کے لیے اپنا ڈیش بورڈ کھولیں۔",
+        "dashboardCta": "ڈیش بورڈ پر جائیں"
       },
       "publicStatus": {
         "SUBMITTED": "آپ کی درخواست جمع ہو گئی ہے اور جائزے کا انتظار ہے۔",

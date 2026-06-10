@@ -20,33 +20,37 @@ export function AdminShell({ children, navItems, user }: AdminShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <aside className="hidden w-64 shrink-0 border-r bg-sidebar lg:block">
-        <div className="border-b px-4 py-4">
+    <div className="flex h-dvh overflow-hidden bg-background">
+      <aside className="hidden w-64 shrink-0 flex-col border-r bg-sidebar lg:flex">
+        <div className="shrink-0 border-b px-4 py-4">
           <p className="text-sm font-semibold text-sidebar-primary">
             {t("panel")}
           </p>
-          <p className="text-xs text-muted-foreground">{t("privateNotice")}</p>
         </div>
-        <AdminSidebar items={navItems} />
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <AdminSidebar items={navItems} />
+        </div>
       </aside>
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="p-0">
-          <div className="border-b px-4 py-4">
+        <SheetContent side="left" className="flex w-[min(100vw-2rem,18rem)] flex-col p-0">
+          <div className="shrink-0 border-b px-4 py-4">
             <p className="text-sm font-semibold text-primary">{t("panel")}</p>
-            <p className="text-xs text-muted-foreground">{t("privateNotice")}</p>
           </div>
-          <AdminSidebar
-            items={navItems}
-            onNavigate={() => setMobileOpen(false)}
-          />
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <AdminSidebar
+              items={navItems}
+              onNavigate={() => setMobileOpen(false)}
+            />
+          </div>
         </SheetContent>
       </Sheet>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <AdminTopbar user={user} onMenuClick={() => setMobileOpen(true)} />
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

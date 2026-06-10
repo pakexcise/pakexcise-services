@@ -50,8 +50,18 @@
       "title": "Sign in to your account",
       "description": "Access your applications, documents, and account dashboard.",
       "email": "Email address",
+      "password": "Password",
+      "passwordHint": "At least 8 characters.",
+      "invalidPassword": "Password must be at least 8 characters.",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signInFailed": "Invalid email or password. Please try again.",
       "phone": "Mobile number",
-      "phoneHint": "Pakistani mobile number with WhatsApp active (e.g. 03XX XXXXXXX).",
+      "phoneOrCnic": "Mobile number or CNIC",
+      "phoneHint": "Sign in with your registered Pakistani mobile number and password.",
+      "phoneLoginHint": "Enter your registered mobile number (03XX XXXXXXX) or CNIC (12345-1234567-1).",
+      "showPassword": "Show password",
+      "invalidIdentifier": "Enter a valid mobile number or CNIC.",
       "otp": "Verification code",
       "otpHint": "Enter the 6-digit code. It expires in 5 minutes.",
       "sendOtp": "Send verification code",
@@ -61,13 +71,19 @@
       "resendOtp": "Resend code",
       "changeEmail": "Change email",
       "changePhone": "Change number",
-      "otpSentEmail": "We sent a verification code to your email inbox.",
+      "otpSentEmail": "We sent a verification code to __EMAIL__.",
       "otpSentEmailSandbox": "Resend test mode: the code was sent to __OWNER_EMAIL__ (not __REQUESTED_EMAIL__). Open that inbox to get your 6-digit OTP.",
+      "accountNotFound": "No account found with this email. Please create an account first.",
+      "accountExists": "An account with this email already exists. Sign in instead.",
+      "signupPrompt": "New to PakExcise?",
+      "loginPrompt": "Already registered?",
+      "tryOtherMethods": "Try signing in with email or Google instead.",
+      "loginLink": "Sign in",
       "otpSentEmailDevConsole": "Development mode: if the email does not arrive, check your server terminal for [email:dev:fallback] with the OTP code.",
       "otpSentPhone": "We sent a verification code to your WhatsApp number.",
-      "whatsappUnavailable": "This number is not on WhatsApp. Create an account or sign in with email, Google, or Facebook instead.",
-      "whatsappNotConfigured": "WhatsApp verification is not available right now. Please use email, Google, or Facebook to continue.",
-      "whatsappRecipientNotAllowed": "This number is not added in Meta WhatsApp API Testing. Add it under WhatsApp > API Testing, or use email, Google, or Facebook.",
+      "whatsappUnavailable": "This number is not on WhatsApp. Create an account or sign in with email or Google instead.",
+      "whatsappNotConfigured": "WhatsApp verification is not available right now. Please use email or Google to continue.",
+      "whatsappRecipientNotAllowed": "This number is not added in Meta WhatsApp API Testing. Add it under WhatsApp > API Testing, or use email or Google.",
       "whatsappTokenExpired": "WhatsApp access token expired. Generate a new token in Meta WhatsApp API Setup and update WHATSAPP_ACCESS_TOKEN.",
       "otpSentPhoneDevFallback": "Development mode: WhatsApp delivery failed, but your OTP was logged in the server terminal as [whatsapp-otp:dev-fallback].",
       "sendFailed": "Could not send verification code. Please try again.",
@@ -76,13 +92,14 @@
       "invalidPhone": "Enter a valid Pakistani mobile number.",
       "methodEmail": "Email",
       "methodPhone": "Phone",
+      "forgotPassword": "Forgot password?",
+      "authError": "Something went wrong while signing you in. Please try again.",
       "noAccount": "Don't have an account?",
       "signupLink": "Create account",
       "orContinueWith": "Or continue with email or phone",
       "google": "Continue with Google",
-      "facebook": "Continue with Facebook",
       "socialFailed": "Social sign-in failed. Please try again.",
-      "socialNotConfigured": "Social login is not configured yet. Use email or phone OTP."
+      "socialNotConfigured": "Social login is not configured yet. Use email or phone with your password."
     },
     "signup": {
       "metaTitle": "Create account | PakExcise.com",
@@ -90,8 +107,22 @@
       "description": "Register as a customer to submit applications and track progress.",
       "name": "Full name",
       "email": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passwordHint": "At least 8 characters. You will use this password to sign in.",
+      "passwordMismatch": "Passwords do not match.",
+      "invalidPassword": "Password must be at least 8 characters.",
+      "createAccount": "Create account",
+      "creatingAccount": "Creating account...",
+      "signupVerifyHint": "Set a password, then verify your email once to activate your account.",
       "phone": "Mobile number",
-      "phoneHint": "Pakistani mobile number with WhatsApp active (e.g. 03XX XXXXXXX).",
+      "phoneHint": "Pakistani mobile number (e.g. 03XX XXXXXXX).",
+      "cnic": "CNIC number",
+      "cnicHint": "Format: 12345-1234567-1",
+      "cnicVerificationNote": "CNIC is required for identity verification when registering with a phone number. It is stored securely and is not shared with third parties.",
+      "cnicExists": "An account with this CNIC already exists. Sign in instead.",
+      "invalidCnic": "Enter a valid CNIC in the format 12345-1234567-1.",
+      "showPassword": "Show password",
       "otp": "Verification code",
       "otpHint": "Enter the 6-digit code. It expires in 5 minutes.",
       "sendOtp": "Send verification code",
@@ -101,13 +132,20 @@
       "resendOtp": "Resend code",
       "changeEmail": "Change email",
       "changePhone": "Change number",
-      "otpSentEmail": "We sent a verification code to your email inbox.",
+      "otpSentEmail": "We sent a verification code to __EMAIL__.",
       "otpSentEmailSandbox": "Resend test mode: the code was sent to __OWNER_EMAIL__ (not __REQUESTED_EMAIL__). Open that inbox to get your 6-digit OTP.",
+      "accountNotFound": "No account found with this email. Please create an account first.",
+      "accountExists": "An account with this email already exists. Sign in instead.",
+      "signupPrompt": "New to PakExcise?",
+      "loginPrompt": "Already registered?",
+      "tryOtherMethods": "Try signing in with email or Google instead.",
+      "loginLink": "Sign in",
+      "signupLink": "Create account",
       "otpSentEmailDevConsole": "Development mode: if the email does not arrive, check your server terminal for [email:dev:fallback] with the OTP code.",
       "otpSentPhone": "We sent a verification code to your WhatsApp number.",
-      "whatsappUnavailable": "This number is not on WhatsApp. Create an account or sign in with email, Google, or Facebook instead.",
-      "whatsappNotConfigured": "WhatsApp verification is not available right now. Please use email, Google, or Facebook to continue.",
-      "whatsappRecipientNotAllowed": "This number is not added in Meta WhatsApp API Testing. Add it under WhatsApp > API Testing, or use email, Google, or Facebook.",
+      "whatsappUnavailable": "This number is not on WhatsApp. Create an account or sign in with email or Google instead.",
+      "whatsappNotConfigured": "WhatsApp verification is not available right now. Please use email or Google to continue.",
+      "whatsappRecipientNotAllowed": "This number is not added in Meta WhatsApp API Testing. Add it under WhatsApp > API Testing, or use email or Google.",
       "whatsappTokenExpired": "WhatsApp access token expired. Generate a new token in Meta WhatsApp API Setup and update WHATSAPP_ACCESS_TOKEN.",
       "otpSentPhoneDevFallback": "Development mode: WhatsApp delivery failed, but your OTP was logged in the server terminal as [whatsapp-otp:dev-fallback].",
       "sendFailed": "Could not send verification code. Please try again.",
@@ -118,16 +156,13 @@
       "methodEmail": "Email",
       "methodPhone": "Phone",
       "hasAccount": "Already have an account?",
-      "loginLink": "Sign in",
       "orContinueWith": "Or continue with email or phone",
       "google": "Continue with Google",
-      "facebook": "Continue with Facebook",
       "socialFailed": "Social sign-in failed. Please try again.",
-      "socialNotConfigured": "Social login is not configured yet. Use email or phone OTP."
+      "socialNotConfigured": "Social login is not configured yet. Use email or phone with your password."
     },
     "social": {
       "google": "Continue with Google",
-      "facebook": "Continue with Facebook",
       "failed": "Social sign-in failed. Please try again.",
       "notConfigured": "Social login is not configured yet. Add OAuth keys in your environment or use email sign-in."
     },
@@ -161,10 +196,20 @@
     }
   },
   "customer": {
+    "shell": {
+      "portalLabel": "Customer portal",
+      "openMenu": "Open customer menu",
+      "signOut": "Sign out"
+    },
     "nav": {
       "ariaLabel": "Customer portal navigation",
+      "accountSection": "My account",
+      "quickSection": "Quick links",
       "dashboard": "Dashboard",
-      "profile": "Profile"
+      "profile": "Profile",
+      "newApplication": "New application",
+      "services": "Browse services",
+      "track": "Track application"
     },
     "nextAction": {
       "upload_docs": "Upload missing documents",
@@ -178,10 +223,30 @@
     },
     "dashboard": {
       "metaTitle": "My dashboard | PakExcise.com",
+      "eyebrow": "Customer portal",
       "title": "My dashboard",
       "welcome": "Welcome, {name}",
+      "subtitle": "Track applications, upload documents, and manage your facilitation requests in one place.",
+      "accountLabel": "Signed in as",
       "applicationsTitle": "My applications",
+      "applicationsCount": "{count, plural, =0 {No applications} one {# application} other {# applications}}",
       "applicationsEmpty": "You have not submitted any applications yet.",
+      "steps": {
+        "chooseService": {
+          "title": "Choose a service",
+          "description": "Browse excise facilitation services for your province or region."
+        },
+        "submitApplication": {
+          "title": "Submit your application",
+          "description": "Complete the form and upload the required documents securely."
+        },
+        "trackProgress": {
+          "title": "Track your progress",
+          "description": "Follow status updates, invoices, and payment steps from this dashboard."
+        }
+      },
+      "emptyTitle": "Start your first application",
+      "emptyCta": "Browse services",
       "viewApplication": "View details",
       "statusCards": {
         "total": "Total applications",
@@ -204,12 +269,24 @@
       "trackCta": "Go to track page",
       "servicesTitle": "Browse services",
       "servicesDescription": "Start a new excise facilitation application.",
-      "servicesCta": "View services"
+      "servicesCta": "View services",
+      "supportTitle": "Need help?",
+      "supportDescription": "Contact our support team for guidance on services, documents, or application status.",
+      "supportCta": "Contact support"
     },
     "profile": {
       "metaTitle": "My profile | PakExcise.com",
       "title": "My profile",
       "description": "Update your contact details used for application updates.",
+      "personalSection": "Personal details",
+      "securitySection": "Sign-in options",
+      "securityDescription": "Your account is secured with a password. You can update your password anytime from this page.",
+      "setPasswordCta": "Set or reset password",
+      "phoneOnlySecurity": "Phone sign-in accounts can continue with WhatsApp OTP or social login.",
+      "signInMethodsTitle": "Active sign-in methods",
+      "methodEmail": "Email OTP",
+      "methodPhone": "WhatsApp OTP",
+      "methodOtp": "One-time verification codes (no password required)",
       "name": "Full name",
       "phone": "Mobile number",
       "email": "Email address",
@@ -421,6 +498,64 @@
       "error": "Could not update profile."
     }
   },
+  "support": {
+    "shell": {
+      "portalLabel": "Support portal",
+      "openMenu": "Open support menu",
+      "signOut": "Sign out"
+    },
+    "nav": {
+      "ariaLabel": "Support portal navigation",
+      "section": "Support workspace",
+      "dashboard": "Dashboard",
+      "applications": "Applications",
+      "contact": "Contact customers"
+    },
+    "dashboard": {
+      "metaTitle": "Support dashboard | PakExcise.com",
+      "eyebrow": "Support portal",
+      "title": "Support dashboard",
+      "welcome": "Welcome, {name}",
+      "subtitle": "Review customer applications, add internal notes, and help customers move cases forward.",
+      "queueCta": "Open application queue",
+      "trackCta": "Track by ID",
+      "recentApplications": "Recent applications",
+      "recentApplicationsDescription": "Latest customer submissions across all services.",
+      "viewAll": "View all applications",
+      "applicationsEmpty": "No applications in the queue yet.",
+      "guidanceTitle": "Support workflow",
+      "guidanceDescription": "Use the application queue to review cases, contact customers when documents are missing, and leave internal notes for the operations team.",
+      "permissionsTitle": "Your access",
+      "permissions": {
+        "readApplications": "View all customer applications",
+        "addNotes": "Add internal support notes",
+        "viewDocuments": "View uploaded documents securely",
+        "noPayments": "Cannot verify payments or change application status"
+      },
+      "statusCards": {
+        "total": "All applications",
+        "review": "Needs review",
+        "docsRequired": "Documents required",
+        "needsAttention": "Invoice / payment pending",
+        "inProgress": "In progress",
+        "completed": "Completed"
+      }
+    },
+    "applications": {
+      "metaTitle": "Support applications | PakExcise.com",
+      "title": "Application review queue",
+      "description": "Search and filter customer applications. Open a case to view details, documents, and add support notes.",
+      "emptyTitle": "No applications found",
+      "emptyDescription": "Try adjusting your filters or search terms."
+    },
+    "application": {
+      "metaTitle": "Application | PakExcise.com",
+      "title": "Application details",
+      "backToList": "Back to queue",
+      "updated": "Last updated",
+      "limitedAccessNote": "Payment verification, invoice generation, and status changes are handled by admin staff."
+    }
+  },
   "footer": {
     "description": "PakExcise.com helps customers navigate Pakistan excise-related processes through a private facilitation service.",
     "legal": "Legal",
@@ -529,7 +664,9 @@
         "updated": "Last updated",
         "publicStatusDescription": "This is a limited public status view. Sensitive details are not shown.",
         "loginPrompt": "Log in to view invoices, upload documents, payment proof, and completion documents.",
-        "loginCta": "Log in for full details"
+        "loginCta": "Log in for full details",
+        "dashboardPrompt": "Open your dashboard to view invoices, upload documents, payment proof, and completion documents.",
+        "dashboardCta": "Go to dashboard"
       },
       "publicStatus": {
         "SUBMITTED": "Your application has been submitted and is awaiting review.",

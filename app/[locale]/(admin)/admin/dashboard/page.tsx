@@ -85,7 +85,7 @@ export default async function AdminDashboardPage() {
         ))}
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <RecentApplicationsTable
           applications={recentApplications}
           title={t("dashboard.recentApplications")}

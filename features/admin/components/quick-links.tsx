@@ -31,12 +31,22 @@ export function QuickLinks({ title, links }: QuickLinksProps) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-2 sm:grid-cols-2">
+      <CardContent className="grid grid-cols-1 gap-2">
         {links.map((link) => (
-          <Button key={link.href} asChild variant="outline" className="justify-start">
-            <Link href={link.href}>
-              {link.icon}
-              {link.label}
+          <Button
+            key={link.href}
+            asChild
+            variant="outline"
+            className="h-auto min-h-10 w-full min-w-0 justify-start whitespace-normal py-2.5"
+          >
+            <Link
+              href={link.href}
+              className="flex w-full min-w-0 items-start gap-2 text-left"
+            >
+              <span className="mt-0.5 shrink-0">{link.icon}</span>
+              <span className="min-w-0 flex-1 break-words leading-snug">
+                {link.label}
+              </span>
             </Link>
           </Button>
         ))}

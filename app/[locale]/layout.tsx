@@ -1,9 +1,11 @@
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
+import { JsonLd } from "@/components/marketing/json-ld";
+import { DocumentLocaleSync } from "@/components/shared/DocumentLocaleSync";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import {
@@ -41,7 +43,10 @@ export default async function LocaleLayout({
   const locale: Locale = await getCurrentLocale();
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const [messages, tCommon] = await Promise.all([
+    getMessages(),
+    getTranslations("common"),
+  ]);
 
   const publicSettings = await getPublicSettings();
   const { business, seo, tracking } = publicSettings;
@@ -56,12 +61,10 @@ export default async function LocaleLayout({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
-      />
-      <ThemeProvider>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+      <JsonLd data={siteJsonLd} />
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <DocumentLocaleSync />
+        <ThemeProvider>
           <Suspense fallback={null}>
             <AnalyticsProvider tracking={trackingRuntime}>
               {children}
@@ -70,9 +73,10 @@ export default async function LocaleLayout({
           <WhatsAppFAB
             phoneNumber={business.whatsappNumber}
             message={business.whatsappDefaultMessage}
+            ariaLabel={tCommon("whatsappHelp")}
           />
-        </NextIntlClientProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </NextIntlClientProvider>
     </>
   );
 }

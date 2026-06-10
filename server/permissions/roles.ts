@@ -68,5 +68,6 @@ export function roleHasPermission(
 export const portalRoles = {
   customer: ["CUSTOMER"] as const satisfies readonly UserRole[],
   agent: ["AGENT"] as const satisfies readonly UserRole[],
+  support: ["SUPPORT"] as const satisfies readonly UserRole[],
   admin: ["ADMIN", "SUPER_ADMIN"] as const satisfies readonly UserRole[],
 };

@@ -18,7 +18,7 @@ export function StatCard({ title, value, href, className }: StatCardProps) {
   const card = (
     <Card className={cn(href && "transition-colors hover:bg-muted/30", className)}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-sm font-medium break-words text-muted-foreground">
           {title}
         </CardTitle>
       </CardHeader>

@@ -2,11 +2,11 @@
 
 import { Loader2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState } from "react";
 
 import { siteConfig } from "@/config/site";
 import { setLocaleCookie } from "@/features/i18n/actions/set-locale";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 
@@ -15,38 +15,58 @@ const localeLabels: Record<Locale, string> = {
   ur: "اردو",
 };
 
-function applyDocumentLocale(locale: Locale): void {
-  document.documentElement.lang = locale;
-  document.documentElement.dir = locale === "ur" ? "rtl" : "ltr";
-  document.documentElement.dataset.locale = locale;
+function setLocaleSwitchingState(isSwitching: boolean): void {
+  document.documentElement.dataset.localeSwitching = isSwitching
+    ? "true"
+    : "false";
 }
 
 export function LanguageSwitcher() {
   const locale = useLocale() as Locale;
+  const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("common");
-  const [isPending, startTransition] = useTransition();
+  const [targetLocale, setTargetLocale] = useState<Locale | null>(null);
+
+  const isSwitching = targetLocale !== null;
 
   useEffect(() => {
-    applyDocumentLocale(locale);
-  }, [locale]);
-
-  useEffect(() => {
-    document.documentElement.dataset.localeSwitching = isPending
-      ? "true"
-      : "false";
-  }, [isPending]);
-
-  function handleSelect(nextLocale: Locale) {
-    if (nextLocale === locale || isPending) {
+    if (!targetLocale || locale !== targetLocale) {
       return;
     }
 
-    startTransition(async () => {
-      applyDocumentLocale(nextLocale);
+    setTargetLocale(null);
+    setLocaleSwitchingState(false);
+  }, [locale, targetLocale]);
+
+  useEffect(() => {
+    if (!targetLocale) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setTargetLocale(null);
+      setLocaleSwitchingState(false);
+    }, 12_000);
+
+    return () => window.clearTimeout(timeout);
+  }, [targetLocale]);
+
+  async function handleSelect(nextLocale: Locale) {
+    if (nextLocale === locale || isSwitching) {
+      return;
+    }
+
+    setTargetLocale(nextLocale);
+    setLocaleSwitchingState(true);
+
+    try {
       await setLocaleCookie(nextLocale);
-      router.refresh();
-    });
+      router.replace(pathname, { locale: nextLocale });
+    } catch {
+      setTargetLocale(null);
+      setLocaleSwitchingState(false);
+    }
   }
 
   return (
@@ -54,16 +74,18 @@ export function LanguageSwitcher() {
       className="relative inline-flex items-center"
       role="group"
       aria-label={t("language")}
+      aria-busy={isSwitching}
     >
       <div className="inline-flex rounded-lg border bg-muted/40 p-0.5">
         {siteConfig.locales.map((option) => {
           const isActive = locale === option;
+          const isTarget = targetLocale === option;
 
           return (
             <button
               key={option}
               type="button"
-              disabled={isPending}
+              disabled={isSwitching}
               aria-pressed={isActive}
               aria-label={option === "en" ? t("english") : t("urdu")}
               onClick={() => handleSelect(option)}
@@ -74,6 +96,7 @@ export function LanguageSwitcher() {
                 isActive
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
+                isTarget && !isActive && "text-foreground/80",
                 option === "ur" && "font-[family-name:var(--font-urdu)]",
               )}
             >
@@ -83,7 +106,7 @@ export function LanguageSwitcher() {
         })}
       </div>
 
-      {isPending ? (
+      {isSwitching ? (
         <Loader2
           className="text-primary ms-1 size-3.5 shrink-0 animate-spin"
           aria-hidden="true"

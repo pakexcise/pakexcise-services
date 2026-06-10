@@ -121,13 +121,9 @@
     @apply border-border outline-ring/50;
   }
 
-  html {
-    overflow-x: clip;
-  }
-
   body {
     @apply bg-background text-foreground antialiased;
-    overflow-x: clip;
+    overflow-x: hidden;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
@@ -135,9 +131,48 @@
     @apply min-w-0;
   }
 
+  html[dir="rtl"] {
+    --foreground: oklch(0.13 0 0);
+    --card-foreground: oklch(0.13 0 0);
+    --popover-foreground: oklch(0.13 0 0);
+    --muted-foreground: oklch(0.26 0 0);
+    --accent-foreground: oklch(0.2 0.08 258);
+  }
+
+  html.dark[dir="rtl"] {
+    --foreground: oklch(0.97 0 0);
+    --card-foreground: oklch(0.97 0 0);
+    --popover-foreground: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.82 0 0);
+    --accent-foreground: oklch(0.97 0 0);
+  }
+
   html[dir="rtl"] body,
   .font-urdu {
     font-family: var(--font-urdu), var(--font-sans), system-ui, sans-serif;
+    font-weight: 500;
+    line-height: 1.8;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+  }
+
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3,
+  html[dir="rtl"] h4,
+  html[dir="rtl"] [data-slot="card-title"] {
+    font-weight: 700;
+    color: var(--foreground);
+  }
+
+  html[dir="rtl"] .text-sm {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+
+  html[dir="rtl"] .text-xs {
+    font-size: 0.8125rem;
+    line-height: 1.65;
   }
 }
 
