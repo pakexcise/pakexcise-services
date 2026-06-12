@@ -40,6 +40,7 @@ type ApplicationDocumentsPanelProps = {
     title: string;
     empty: string;
     status: string;
+    statusLabels: Record<string, string>;
     rejectionReason: string;
     uploadSection: string;
     required: string;
@@ -94,6 +95,10 @@ export function ApplicationDocumentsPanel({
 
   const canUpload = applicationStatus === "DOCS_REQUIRED";
 
+  function resolveDocumentStatusLabel(status: string): string {
+    return labels.statusLabels[status] ?? status;
+  }
+
   return (
     <div className="space-y-4 rounded-xl border p-5">
       <h2 className="font-semibold">{labels.title}</h2>
@@ -116,7 +121,9 @@ export function ApplicationDocumentsPanel({
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-medium">{label}</p>
                   {document ? (
-                    <Badge variant="outline">{document.status}</Badge>
+                    <Badge variant="outline">
+                      {resolveDocumentStatusLabel(document.status)}
+                    </Badge>
                   ) : (
                     <Badge variant="secondary">
                       {requirement.isRequired ? labels.required : labels.optional}
@@ -127,7 +134,8 @@ export function ApplicationDocumentsPanel({
                 {document ? (
                   <div className="text-sm text-muted-foreground">
                     <p>
-                      {labels.status}: {document.status} — {document.fileName}
+                      {labels.status}: {resolveDocumentStatusLabel(document.status)} —{" "}
+                      {document.fileName}
                     </p>
                     {document.rejectionReason ? (
                       <p className="mt-1 text-destructive">
@@ -189,7 +197,9 @@ export function ApplicationDocumentsPanel({
                   className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 text-sm"
                 >
                   <span>{document.fileName}</span>
-                  <Badge variant="outline">{document.status}</Badge>
+                  <Badge variant="outline">
+                    {resolveDocumentStatusLabel(document.status)}
+                  </Badge>
                 </div>
               ))
             : null}

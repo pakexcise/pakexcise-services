@@ -5,6 +5,8 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
+import { CheckCircle2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { buildDynamicFieldsSchema } from "@/features/applications/lib/build-field-schema";
 import { DynamicFieldInput } from "@/features/applications/components/dynamic-field-input";
@@ -17,6 +19,7 @@ type DynamicFieldsStepProps = {
     title: string;
     description: string;
     empty: string;
+    emptyTitle: string;
     back: string;
     continue: string;
     saving: string;
@@ -57,9 +60,13 @@ export function DynamicFieldsStep({
           <h2 className="text-xl font-semibold">{labels.title}</h2>
           <p className="text-sm text-muted-foreground">{labels.description}</p>
         </div>
-        <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-          {labels.empty}
-        </p>
+        <div className="rounded-lg border border-dashed bg-muted/20 p-6 text-center">
+          <div className="mx-auto mb-3 flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <CheckCircle2 className="size-5" aria-hidden="true" />
+          </div>
+          <p className="font-medium">{labels.emptyTitle}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{labels.empty}</p>
+        </div>
         <div className="flex justify-between gap-3">
           <Button type="button" variant="outline" onClick={onBack}>
             {labels.back}

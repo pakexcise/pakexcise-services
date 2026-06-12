@@ -12,6 +12,20 @@ export const adminServiceDetailSelect = {
   id: true,
   slug: true,
   regionId: true,
+  serviceRegions: {
+    orderBy: { displayOrder: "asc" },
+    select: {
+      regionId: true,
+      region: {
+        select: {
+          id: true,
+          slug: true,
+          nameEn: true,
+          nameUr: true,
+        },
+      },
+    },
+  },
   nameEn: true,
   nameUr: true,
   shortDescriptionEn: true,
@@ -89,11 +103,16 @@ export const adminServiceListSelect = {
   displayOrder: true,
   updatedAt: true,
   deletedAt: true,
-  region: {
+  serviceRegions: {
+    orderBy: { displayOrder: "asc" },
     select: {
-      id: true,
-      nameEn: true,
-      nameUr: true,
+      region: {
+        select: {
+          id: true,
+          nameEn: true,
+          nameUr: true,
+        },
+      },
     },
   },
 } as const satisfies Prisma.ServiceSelect;
@@ -123,7 +142,12 @@ export class AdminServiceRepository extends Repository {
     }
 
     if (filters.regionId) {
-      where.regionId = filters.regionId;
+      where.serviceRegions = {
+        some: {
+          regionId: filters.regionId,
+          isActive: true,
+        },
+      };
     }
 
     if (filters.q?.trim()) {

@@ -24,6 +24,8 @@ export type {
 
 export { faqRepository, FaqRepository } from "./faq-repository";
 export { regionRepository, RegionRepository } from "./region-repository";
+export { cityRepository, CityRepository } from "./city-repository";
+export { reviewRepository, ReviewRepository } from "./review-repository";
 export {
   getActiveSocialLinks,
   socialLinkRepository,
@@ -72,6 +74,18 @@ export {
   adminServiceRepository,
   AdminServiceRepository,
 } from "./admin-service-repository";
+export {
+  adminRegionRepository,
+  AdminRegionRepository,
+} from "./admin-region-repository";
+export {
+  adminCityRepository,
+  AdminCityRepository,
+} from "./admin-city-repository";
+export {
+  serviceRegionRepository,
+  ServiceRegionRepository,
+} from "./service-region-repository";
 export {
   adminFaqRepository,
   AdminFaqRepository,

@@ -1,3 +1,5 @@
+import { buildLoginUrl } from "@/features/auth/lib/auth-url";
+
 export const authConfig = {
   sessionCookieNames: [
     "better-auth.session_token",
@@ -23,6 +25,5 @@ export type AdminRoleRequiringTwoFactor =
   (typeof authConfig.adminRolesRequiringTwoFactor)[number];
 
 export function buildLoginRedirectUrl(callbackPath: string): string {
-  const params = new URLSearchParams({ callbackUrl: callbackPath });
-  return `${authConfig.loginPath}?${params.toString()}`;
+  return buildLoginUrl({ callbackUrl: callbackPath });
 }

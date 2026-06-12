@@ -4,6 +4,7 @@ import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-
 import { absoluteUrl } from "@/lib/utils";
 import {
   blogPostRepository,
+  cityRepository,
   guideRepository,
   regionRepository,
   serviceRepository,
@@ -19,22 +20,30 @@ const staticPaths: Array<{
   { path: "/regions", priority: 0.8, changeFrequency: "weekly" },
   { path: "/guides", priority: 0.7, changeFrequency: "weekly" },
   { path: "/blog", priority: 0.7, changeFrequency: "weekly" },
+  { path: "/how-it-works", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/documents", priority: 0.6, changeFrequency: "monthly" },
   { path: "/faqs", priority: 0.7, changeFrequency: "weekly" },
   { path: "/track", priority: 0.6, changeFrequency: "monthly" },
   { path: "/about", priority: 0.5, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.6, changeFrequency: "monthly" },
-  { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
-  { path: "/terms", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/reviews", priority: 0.5, changeFrequency: "monthly" },
+  { path: "/agents", priority: 0.4, changeFrequency: "monthly" },
+  { path: "/agent-register", priority: 0.4, changeFrequency: "monthly" },
+  { path: "/privacy-policy", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/terms-and-conditions", priority: 0.3, changeFrequency: "yearly" },
   { path: "/disclaimer", priority: 0.3, changeFrequency: "yearly" },
-  { path: "/refund", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/refund-policy", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/payment-policy", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/cookie-policy", priority: 0.3, changeFrequency: "yearly" },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const featureFlags = await getFeatureFlagSettings();
 
-  const [services, regions, guides, posts] = await Promise.all([
+  const [services, regions, cities, guides, posts] = await Promise.all([
     serviceRepository.listActiveSlugs().catch(() => []),
     regionRepository.listActiveSlugs().catch(() => []),
+    cityRepository.listActiveSlugs().catch(() => []),
     featureFlags.guidesEnabled
       ? guideRepository.listPublished().catch(() => [])
       : Promise.resolve([]),
@@ -76,6 +85,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  const cityEntries: MetadataRoute.Sitemap = cities.map((city) => ({
+    url: absoluteUrl(`/regions/${city.regionSlug}/${city.citySlug}`),
+    lastModified: city.updatedAt,
+    changeFrequency: "weekly",
+    priority: 0.65,
+  }));
+
   const guideEntries: MetadataRoute.Sitemap = guides.map((guide) => ({
     url: absoluteUrl(`/guides/${guide.slug}`),
     lastModified: guide.updatedAt,
@@ -94,6 +110,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticEntries,
     ...serviceEntries,
     ...regionEntries,
+    ...cityEntries,
     ...guideEntries,
     ...blogEntries,
   ];

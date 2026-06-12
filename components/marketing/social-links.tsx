@@ -1,6 +1,7 @@
 import * as LucideIcons from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+import { BrandSocialIcon } from "@/components/shared/brand-social-icon";
 import { pickLocalized } from "@/lib/i18n/content";
 
 export type PublicSocialLink = {
@@ -21,9 +22,41 @@ type SocialLinksProps = {
   className?: string;
 };
 
+const BRAND_PLATFORMS = new Set([
+  "facebook",
+  "instagram",
+  "tiktok",
+  "youtube",
+  "linkedin",
+  "x",
+  "twitter",
+]);
+
 function resolveSocialIcon(iconName: string): LucideIcon {
   const icons = LucideIcons as unknown as Record<string, LucideIcon | undefined>;
   return icons[iconName] ?? LucideIcons.Link;
+}
+
+function SocialIcon({
+  platform,
+  iconName,
+  className,
+}: {
+  platform: string;
+  iconName: string;
+  className?: string;
+}) {
+  if (BRAND_PLATFORMS.has(platform.toLowerCase())) {
+    return (
+      <BrandSocialIcon
+        platform={platform}
+        className={className ?? "size-5 shrink-0 text-primary"}
+      />
+    );
+  }
+
+  const Icon = resolveSocialIcon(iconName);
+  return <Icon className={className ?? "size-5 shrink-0 text-primary"} aria-hidden="true" />;
 }
 
 export function SocialLinks({
@@ -53,7 +86,6 @@ export function SocialLinks({
         {title ? <h2 className="mb-4 text-lg font-semibold">{title}</h2> : null}
         <ul className="grid gap-3 sm:grid-cols-2">
           {links.map((link) => {
-            const Icon = resolveSocialIcon(link.iconName);
             const label = pickLocalized(locale, {
               en: link.labelEn,
               ur: link.labelUr,
@@ -65,11 +97,12 @@ export function SocialLinks({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={label}
                   className="flex items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted/50"
                   data-analytics-event="click_social_link"
                   data-platform={link.platform}
                 >
-                  <Icon className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                  <SocialIcon platform={link.platform} iconName={link.iconName} />
                   <span>{label}</span>
                 </a>
               </li>

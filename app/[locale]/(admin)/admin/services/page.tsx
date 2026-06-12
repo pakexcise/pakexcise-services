@@ -154,9 +154,13 @@ export default async function AdminServicesPage({
                     {locale === "ur" ? service.nameUr : service.nameEn}
                   </TableCell>
                   <TableCell>
-                    {locale === "ur"
-                      ? service.region.nameUr
-                      : service.region.nameEn}
+                    {service.serviceRegions
+                      .map((entry) =>
+                        locale === "ur"
+                          ? entry.region.nameUr
+                          : entry.region.nameEn,
+                      )
+                      .join(", ") || "—"}
                   </TableCell>
                   <TableCell className="font-mono text-xs">{service.slug}</TableCell>
                   <TableCell>

@@ -20,24 +20,32 @@ const publishedPostSelect = {
 
 export class BlogPostRepository extends Repository {
   async listPublished(limit = 50) {
-    return this.db.blogPost.findMany({
-      where: {
-        isPublished: true,
-      },
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      take: limit,
-      select: publishedPostSelect,
-    });
+    return this.query(
+      () =>
+        this.db.blogPost.findMany({
+          where: {
+            isPublished: true,
+          },
+          orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+          take: limit,
+          select: publishedPostSelect,
+        }),
+      [],
+    );
   }
 
   async findPublishedBySlug(slug: string) {
-    return this.db.blogPost.findFirst({
-      where: {
-        slug,
-        isPublished: true,
-      },
-      select: publishedPostSelect,
-    });
+    return this.query(
+      () =>
+        this.db.blogPost.findFirst({
+          where: {
+            slug,
+            isPublished: true,
+          },
+          select: publishedPostSelect,
+        }),
+      null,
+    );
   }
 }
 

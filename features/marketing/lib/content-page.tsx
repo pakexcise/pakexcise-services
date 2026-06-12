@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { CTASection } from "@/components/marketing/cta-section";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { SocialLinks } from "@/components/marketing/social-links";
+import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import {
   buildBreadcrumbJsonLd,
 } from "@/features/seo/lib/metadata";
@@ -24,6 +26,9 @@ type ContentPageConfig = {
   path: string;
   breadcrumbLabel: { en: string; ur: string };
   showSocialLinks?: boolean;
+  showDisclaimer?: boolean;
+  showCta?: boolean;
+  applyHref?: string;
 };
 
 export function createContentPage(config: ContentPageConfig) {
@@ -58,10 +63,14 @@ export function createContentPage(config: ContentPageConfig) {
     const locale = await getCurrentLocale();
     setRequestLocale(locale);
 
-    const [seo, content, socialLinks] = await Promise.all([
+    const tMarketing = await getTranslations("marketing");
+    const tCommon = await getTranslations("common");
+
+    const [seo, content, socialLinks, business] = await Promise.all([
       seoMetaRepository.findByPageKey(config.pageKey),
       getPageContent(config.pageKey),
       config.showSocialLinks ? getActiveSocialLinks() : Promise.resolve([]),
+      config.showCta ? getBusinessSettings() : Promise.resolve(null),
     ]);
 
     if (!content) {
@@ -105,6 +114,17 @@ export function createContentPage(config: ContentPageConfig) {
               links={socialLinks}
               locale={locale}
               variant="cards"
+            />
+          ) : null}
+          {config.showCta && business ? (
+            <CTASection
+              title={tMarketing("service.ctaTitle")}
+              description={tMarketing("service.ctaDescription")}
+              applyLabel={tMarketing("service.applyNow")}
+              applyHref={config.applyHref ?? "/services"}
+              whatsappLabel={tCommon("whatsappHelp")}
+              whatsappPhone={business.whatsappNumber}
+              whatsappMessage={business.whatsappDefaultMessage}
             />
           ) : null}
         </div>

@@ -1,10 +1,10 @@
 "use client";
 
 import { LogOut, Menu } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
+import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -15,15 +15,17 @@ import { signOut } from "@/lib/auth-client";
 type CustomerTopbarProps = {
   userName: string;
   userContactLine: string;
+  labels: CustomerShellLabels["shell"];
   onMenuClick: () => void;
 };
 
 export function CustomerTopbar({
   userName,
   userContactLine,
+  labels,
   onMenuClick,
 }: CustomerTopbarProps) {
-  const t = useTranslations("customer.shell");
+  const t = labels;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -43,7 +45,7 @@ export function CustomerTopbar({
         size="icon"
         className="lg:hidden"
         onClick={onMenuClick}
-        aria-label={t("openMenu")}
+        aria-label={t.openMenu}
       >
         <Menu className="size-4" aria-hidden="true" />
       </Button>
@@ -75,7 +77,7 @@ export function CustomerTopbar({
           onClick={handleSignOut}
         >
           <LogOut className="size-4" aria-hidden="true" />
-          {t("signOut")}
+          {t.signOut}
         </Button>
         <Button
           type="button"
@@ -84,7 +86,7 @@ export function CustomerTopbar({
           className="sm:hidden"
           disabled={isPending}
           onClick={handleSignOut}
-          aria-label={t("signOut")}
+          aria-label={t.signOut}
         >
           <LogOut className="size-4" aria-hidden="true" />
         </Button>

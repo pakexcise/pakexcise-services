@@ -11,6 +11,17 @@ export abstract class Repository {
   protected query<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
     return safeDbQuery(operation, fallback);
   }
+
+  protected paginateQuery<T>(
+    findMany: (args: { skip: number; take: number }) => Promise<T[]>,
+    count: () => Promise<number>,
+    input: PaginationInput = {},
+  ): Promise<PaginatedResult<T>> {
+    return this.query(
+      () => paginate(findMany, count, input),
+      emptyPaginatedResult<T>(input),
+    );
+  }
 }
 
 export type PaginationInput = {
@@ -37,6 +48,20 @@ export function resolvePagination(input: PaginationInput = {}): {
   const skip = (page - 1) * pageSize;
 
   return { page, pageSize, skip, take: pageSize };
+}
+
+export function emptyPaginatedResult<T>(
+  input: PaginationInput = {},
+): PaginatedResult<T> {
+  const { page, pageSize } = resolvePagination(input);
+
+  return {
+    items: [],
+    page,
+    pageSize,
+    total: 0,
+    totalPages: 1,
+  };
 }
 
 export async function paginate<T>(
@@ -79,6 +104,20 @@ export function isActiveOnly<T extends { isActive?: boolean }>(
   };
 }
 
+const publicServiceRegionSelect = {
+  where: { isActive: true },
+  orderBy: { displayOrder: "asc" },
+  select: {
+    region: {
+      select: {
+        slug: true,
+        nameEn: true,
+        nameUr: true,
+      },
+    },
+  },
+} as const satisfies Prisma.ServiceRegionFindManyArgs;
+
 export type PublicServiceSelect = Prisma.ServiceGetPayload<{
   select: {
     id: true;
@@ -89,13 +128,7 @@ export type PublicServiceSelect = Prisma.ServiceGetPayload<{
     shortDescriptionUr: true;
     requiresProof: true;
     displayOrder: true;
-    region: {
-      select: {
-        slug: true;
-        nameEn: true;
-        nameUr: true;
-      };
-    };
+    serviceRegions: typeof publicServiceRegionSelect;
   };
 }>;
 
@@ -108,11 +141,15 @@ export const publicServiceSelect = {
   shortDescriptionUr: true,
   requiresProof: true,
   displayOrder: true,
-  region: {
-    select: {
-      slug: true,
-      nameEn: true,
-      nameUr: true,
+  serviceRegions: publicServiceRegionSelect,
+} as const satisfies Prisma.ServiceSelect;
+
+export const publicServiceWhere = {
+  ...activeOnly(),
+  serviceRegions: {
+    some: {
+      isActive: true,
+      region: activeOnly(),
     },
   },
-} as const satisfies Prisma.ServiceSelect;
+} as const satisfies Prisma.ServiceWhereInput;

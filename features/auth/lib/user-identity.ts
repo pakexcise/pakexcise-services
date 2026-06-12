@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getTempPhoneEmail } from "@/features/auth/lib/temp-phone-email";
 import { normalizeCnic } from "@/lib/validations/cnic";
 import { prisma } from "@/server/db/client";
 import { hashCnic } from "@/server/security/cnic-hash";
@@ -42,6 +43,32 @@ export async function findUserByPhone(phoneNumber: string) {
       status: true,
       phoneNumber: true,
       phoneNumberVerified: true,
+    },
+  });
+}
+
+export async function findUserByPhoneOrTempEmail(phoneNumber: string) {
+  const phoneUser = await findUserByPhone(phoneNumber);
+  if (phoneUser) {
+    return phoneUser;
+  }
+
+  return findUserByEmail(getTempPhoneEmail(phoneNumber));
+}
+
+export async function findGoogleAccountByEmail(email: string) {
+  const normalized = email.trim().toLowerCase();
+
+  return prisma.account.findFirst({
+    where: {
+      providerId: "google",
+      user: {
+        email: normalized,
+        deletedAt: null,
+      },
+    },
+    select: {
+      userId: true,
     },
   });
 }

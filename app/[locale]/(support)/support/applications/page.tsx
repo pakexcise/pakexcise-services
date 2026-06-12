@@ -9,7 +9,7 @@ import { ApplicationFilters } from "@/features/admin/components/application-filt
 import { ApplicationQueueStats } from "@/features/admin/components/application-queue-stats";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
-import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
@@ -115,7 +115,7 @@ export default async function SupportApplicationsPage({
         : application.service.nameEn,
     customerName: application.user.name ?? "—",
     customerEmail: application.user.email,
-    statusLabel: tAdmin(getApplicationStatusLabelKey(application.status)),
+    statusLabel: tAdmin(getAdminApplicationStatusLabelKey(application.status)),
   }));
 
   return (

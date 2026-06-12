@@ -11,6 +11,8 @@ import {
 import { EmailOtpAuthForm } from "@/features/auth/components/email-otp-auth-form";
 import { PhoneOtpAuthForm } from "@/features/auth/components/phone-otp-auth-form";
 import { SocialAuthButtons } from "@/features/auth/components/social-auth-buttons";
+import { useAuthPageQuery } from "@/features/auth/hooks/use-auth-page-query";
+import { buildLoginUrl } from "@/features/auth/lib/auth-url";
 import type { SocialProviderId } from "@/features/auth/lib/social-providers";
 import { Link } from "@/i18n/navigation";
 
@@ -49,6 +51,9 @@ type SignupFormLabels = {
   nameRequired: string;
   accountNotFound: string;
   accountExists: string;
+  emailExists: string;
+  phoneExists: string;
+  googleAccountExists: string;
   signupPrompt: string;
   loginPrompt: string;
   hasAccount: string;
@@ -67,10 +72,13 @@ type SignupFormLabels = {
 type SignupFormProps = {
   labels: SignupFormLabels;
   socialProviders: SocialProviderId[];
+  unified?: boolean;
 };
 
-function SignupFormContent({ labels, socialProviders }: SignupFormProps) {
+function SignupFormContent({ labels, socialProviders, unified = false }: SignupFormProps) {
   const [method, setMethod] = useState<AuthMethod>("email");
+  const { callbackUrl, intent } = useAuthPageQuery();
+  const loginHref = buildLoginUrl({ callbackUrl, intent });
 
   const emailLabels = {
     name: labels.name,
@@ -98,6 +106,8 @@ function SignupFormContent({ labels, socialProviders }: SignupFormProps) {
     nameRequired: labels.nameRequired,
     accountNotFound: labels.accountNotFound,
     accountExists: labels.accountExists,
+    emailExists: labels.emailExists,
+    googleAccountExists: labels.googleAccountExists,
     signupPrompt: labels.signupPrompt,
     loginPrompt: labels.loginPrompt,
     signupLink: labels.signupLink,
@@ -127,6 +137,7 @@ function SignupFormContent({ labels, socialProviders }: SignupFormProps) {
     nameRequired: labels.nameRequired,
     accountNotFound: labels.accountNotFound,
     accountExists: labels.accountExists,
+    phoneExists: labels.phoneExists,
     signupPrompt: labels.signupPrompt,
     loginPrompt: labels.loginPrompt,
     signupLink: labels.signupLink,
@@ -145,7 +156,7 @@ function SignupFormContent({ labels, socialProviders }: SignupFormProps) {
         <>
           <SocialAuthButtons
             providers={socialProviders}
-            errorCallbackPath="/signup"
+            authMode="signup"
             labels={{
               google: labels.google,
               socialFailed: labels.socialFailed,
@@ -172,12 +183,14 @@ function SignupFormContent({ labels, socialProviders }: SignupFormProps) {
         <PhoneOtpAuthForm mode="signup" labels={phoneLabels} />
       )}
 
-      <p className="text-center text-sm text-muted-foreground">
-        {labels.hasAccount}{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
-          {labels.loginLink}
-        </Link>
-      </p>
+      {unified ? null : (
+        <p className="text-center text-sm text-muted-foreground">
+          {labels.hasAccount}{" "}
+          <Link href={loginHref} className="font-medium text-primary hover:underline">
+            {labels.loginLink}
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

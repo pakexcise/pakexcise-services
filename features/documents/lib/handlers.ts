@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 
 import {
   buildApplicationDocumentKey,
+  COMPLETION_PROOF_DOC_TYPE,
   DEFAULT_ACCEPTED_MIME_TYPES,
   DEFAULT_MAX_FILE_SIZE_BYTES,
   type UploadValidationErrorCode,
@@ -12,6 +13,7 @@ import {
 import { auditDocumentEvent } from "@/features/documents/lib/audit";
 import {
   canDeleteDocument,
+  canUploadCompletionProof,
   canUploadToApplication,
   canVerifyDocument,
   canViewDocument,
@@ -28,10 +30,16 @@ import { parseInput } from "@/lib/validations/common";
 import type { CurrentUser } from "@/server/auth/current-user";
 import { prisma } from "@/server/db/client";
 import { documentRepository } from "@/server/repositories/document-repository";
-import { deleteR2Object, headR2Object } from "@/server/r2/object";
 import { createPresignedDownloadUrl } from "@/server/r2/presign-download";
 import { createPresignedUploadUrl } from "@/server/r2/presign-upload";
-import { isR2Configured } from "@/server/r2/client";
+import {
+  deleteStoredObject,
+  headStoredObject,
+  isObjectStorageConfigured,
+  putStoredObject,
+  readStoredObject,
+  usesLocalDevStorage,
+} from "@/server/storage/object-storage";
 import { enqueueVirusScan } from "@/server/queue/virus-scan";
 
 export type DocumentHandlerError = {
@@ -70,7 +78,7 @@ export async function handlePresignUpload(
   user: CurrentUser,
   body: unknown,
 ): Promise<PresignUploadSuccess | DocumentHandlerError> {
-  if (!isR2Configured()) {
+  if (!isObjectStorageConfigured()) {
     return { status: 503, error: "Document upload is not available" };
   }
 
@@ -95,7 +103,13 @@ export async function handlePresignUpload(
     return { status: 404, error: "Application not found" };
   }
 
-  if (!canUploadToApplication(user, application)) {
+  const isCompletionProof = parsed.data.docType === COMPLETION_PROOF_DOC_TYPE;
+
+  if (isCompletionProof) {
+    if (!canUploadCompletionProof(user, application)) {
+      return { status: 403, error: "Upload not allowed for this application" };
+    }
+  } else if (!canUploadToApplication(user, application)) {
     return { status: 403, error: "Upload not allowed for this application" };
   }
 
@@ -218,7 +232,13 @@ export async function handleConfirmUpload(
     return { status: 403, error: "Document does not belong to this application" };
   }
 
-  if (!canUploadToApplication(user, document.application)) {
+  const isCompletionProof = document.type === COMPLETION_PROOF_DOC_TYPE;
+
+  if (isCompletionProof) {
+    if (!canUploadCompletionProof(user, document.application)) {
+      return { status: 403, error: "Upload not allowed" };
+    }
+  } else if (!canUploadToApplication(user, document.application)) {
     return { status: 403, error: "Upload not allowed" };
   }
 
@@ -229,7 +249,7 @@ export async function handleConfirmUpload(
     }
   }
 
-  const head = await headR2Object(document.r2Key);
+  const head = await headStoredObject(document.r2Key);
 
   if (!head || !head.contentLength) {
     return { status: 400, error: "Uploaded file was not found in storage" };
@@ -242,6 +262,14 @@ export async function handleConfirmUpload(
     fileSize: head.contentLength,
     checksum,
   });
+
+  if (document.type === COMPLETION_PROOF_DOC_TYPE && canUploadCompletionProof(user, document.application)) {
+    await documentRepository.setStatus({
+      documentId: document.id,
+      status: "APPROVED",
+      verifiedById: user.id,
+    });
+  }
 
   await enqueueVirusScan({
     documentId: document.id,
@@ -272,6 +300,112 @@ export async function handleConfirmUpload(
   };
 }
 
+export async function handleUploadDocumentBytes(
+  user: CurrentUser,
+  documentId: string,
+  fileBuffer: Buffer,
+  contentType: string,
+): Promise<{ ok: true } | DocumentHandlerError> {
+  if (!isObjectStorageConfigured()) {
+    return { status: 503, error: "Document upload is not available" };
+  }
+
+  if (fileBuffer.length <= 0) {
+    return { status: 400, error: "File is empty" };
+  }
+
+  const document = await documentRepository.findByIdWithApplication(documentId);
+
+  if (!document) {
+    return { status: 404, error: "Document not found" };
+  }
+
+  if (document.status !== "PENDING") {
+    return { status: 400, error: "Document is not awaiting upload" };
+  }
+
+  const isCompletionProof = document.type === COMPLETION_PROOF_DOC_TYPE;
+
+  if (isCompletionProof) {
+    if (!canUploadCompletionProof(user, document.application)) {
+      return { status: 403, error: "Upload not allowed" };
+    }
+  } else if (!canUploadToApplication(user, document.application)) {
+    return { status: 403, error: "Upload not allowed" };
+  }
+
+  if (document.uploadedById && document.uploadedById !== user.id) {
+    const isStaff = canVerifyDocument(user);
+    if (!isStaff) {
+      return { status: 403, error: "Upload not allowed" };
+    }
+  }
+
+  if (fileBuffer.length > document.fileSize * 2) {
+    return { status: 400, error: "File exceeds the maximum allowed size" };
+  }
+
+  const normalizedContentType = contentType.trim();
+
+  if (
+    normalizedContentType &&
+    normalizedContentType !== "application/octet-stream" &&
+    normalizedContentType !== document.mimeType
+  ) {
+    return { status: 400, error: "File type does not match the selected document" };
+  }
+
+  try {
+    await putStoredObject({
+      key: document.r2Key,
+      body: fileBuffer,
+      contentType: document.mimeType,
+    });
+  } catch {
+    return { status: 503, error: "Could not store uploaded file" };
+  }
+
+  return { ok: true };
+}
+
+export async function handleDocumentContent(
+  user: CurrentUser,
+  documentId: string,
+): Promise<
+  | {
+      body: Buffer;
+      mimeType: string;
+      fileName: string;
+    }
+  | DocumentHandlerError
+> {
+  if (!usesLocalDevStorage()) {
+    return { status: 404, error: "Direct document content is not available" };
+  }
+
+  const document = await documentRepository.findByIdWithApplication(documentId);
+
+  if (!document) {
+    return { status: 404, error: "Document not found" };
+  }
+
+  if (!canViewDocument(user, document.application, document, "view")) {
+    return { status: 403, error: "Document access denied" };
+  }
+
+  try {
+    const body = await readStoredObject(document.r2Key);
+
+    return {
+      body,
+      mimeType: document.mimeType,
+      fileName: document.fileName,
+    };
+  } catch {
+    return { status: 404, error: "Document file was not found" };
+  }
+}
+
 export async function handleSignedUrl(
   user: CurrentUser,
   documentId: string,
@@ -285,7 +419,7 @@ export async function handleSignedUrl(
     }
   | DocumentHandlerError
 > {
-  if (!isR2Configured()) {
+  if (!isObjectStorageConfigured()) {
     return { status: 503, error: "Document viewing is not available" };
   }
 
@@ -305,6 +439,17 @@ export async function handleSignedUrl(
 
   if (!canViewDocument(user, document.application, document, purpose)) {
     return { status: 403, error: "Document access denied" };
+  }
+
+  if (usesLocalDevStorage()) {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+    return {
+      signedUrl: `${appUrl.replace(/\/$/, "")}/api/documents/${document.id}/content`,
+      expiresInSeconds: 60 * 60,
+      mimeType: document.mimeType,
+      fileName: document.fileName,
+    };
   }
 
   try {
@@ -444,7 +589,7 @@ export async function handleDeleteDocument(
   });
 
   try {
-    await deleteR2Object(document.r2Key);
+    await deleteStoredObject(document.r2Key);
   } catch {
     // Continue deleting metadata even if object removal fails.
   }

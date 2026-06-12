@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
-import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -83,7 +83,7 @@ export async function RecentApplicationsTable({
                   <TableCell>
                     <ApplicationStatusBadge
                       status={application.status}
-                      label={t(getApplicationStatusLabelKey(application.status))}
+                      label={t(getAdminApplicationStatusLabelKey(application.status))}
                     />
                   </TableCell>
                   <TableCell>

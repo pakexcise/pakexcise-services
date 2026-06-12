@@ -2,7 +2,7 @@ import type { ApplicationStatus } from "@prisma/client";
 
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
-import { formatDate } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 
 type StatusHistoryEntry = {
   id: string;
@@ -71,7 +71,7 @@ export function StatusTimeline({
                   className="text-xs text-muted-foreground"
                   dateTime={new Date(entry.createdAt).toISOString()}
                 >
-                  {formatDate(entry.createdAt, locale)}
+                  {formatDateTime(entry.createdAt, locale)}
                 </time>
               </div>
               {isLast ? (

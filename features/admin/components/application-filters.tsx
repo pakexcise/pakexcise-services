@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import type { ApplicationStatus } from "@prisma/client";
 
 import { applicationStatusOrder } from "@/features/admin/lib/application-status";
-import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/i18n/navigation";
@@ -152,7 +152,7 @@ export async function ApplicationFilters({
                 applicationsBasePath,
               )}
             >
-              {t(getApplicationStatusLabelKey(status))}
+              {t(getAdminApplicationStatusLabelKey(status))}
             </Link>
           </Button>
         ))}

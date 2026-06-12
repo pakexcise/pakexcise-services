@@ -25,8 +25,11 @@ export const createInvoiceSchema = z.object({
   serviceFee: moneyAmountSchema,
   officialFeeNote: z.string().trim().max(2000).optional(),
   lineItems: z.array(invoiceLineItemInputSchema).max(20).default([]),
-  paymentMethod: z.string().trim().min(1).max(120),
-  paymentInstructions: z.string().trim().min(1).max(2000),
+  paymentMethodIds: z
+    .array(z.string().cuid())
+    .min(1, "Select at least one payment method")
+    .max(10),
+  paymentInstructions: z.string().trim().max(2000).optional(),
   dueAt: z.string().datetime().optional(),
   notes: z.string().trim().max(2000).optional(),
   taxTotal: moneyAmountSchema.default(0),

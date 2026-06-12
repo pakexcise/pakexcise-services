@@ -1,18 +1,20 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
-import { FileUp, Loader2, X } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { ExternalLink, FileUp, Loader2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   confirmDocumentUploadAction,
+  getDocumentSignedUrlAction,
   requestPresignedUploadAction,
 } from "@/features/documents/actions";
 import {
   formatFileSize,
   validateClientUpload,
 } from "@/features/applications/lib/validate-upload";
+import { resolveClientFileMimeType } from "@/lib/utils/resolve-file-mime";
 
 export type UploadedDocumentMeta = {
   documentId: string;
@@ -46,6 +48,9 @@ type DocumentUploadProps = {
     invalidType: string;
     tooLarge: string;
     invalidName: string;
+    previewLoading?: string;
+    previewError?: string;
+    previewOpen?: string;
   };
   onUploaded: (document: UploadedDocumentMeta) => void;
   onRemoved?: () => void;
@@ -58,6 +63,126 @@ async function computeSha256Checksum(file: File): Promise<string> {
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
 }
+
+type PreviewLabels = {
+  previewLoading: string;
+  previewError: string;
+  previewOpen: string;
+};
+
+function DocumentPreview({
+  documentId,
+  mimeType,
+  fileName,
+  labels,
+}: {
+  documentId: string;
+  mimeType: string;
+  fileName: string;
+  labels: PreviewLabels;
+}) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPreview() {
+      setLoading(true);
+      setError(null);
+
+      const result = await getDocumentSignedUrlAction({
+        documentId,
+        purpose: "view",
+      });
+
+      if (cancelled) {
+        return;
+      }
+
+      if (!result.success) {
+        setError(labels.previewError);
+        setPreviewUrl(null);
+        setLoading(false);
+        return;
+      }
+
+      setPreviewUrl(result.data.signedUrl);
+      setLoading(false);
+    }
+
+    void loadPreview();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [documentId, labels.previewError]);
+
+  if (loading) {
+    return (
+      <p className="mt-3 text-xs text-muted-foreground">{labels.previewLoading}</p>
+    );
+  }
+
+  if (error || !previewUrl) {
+    return null;
+  }
+
+  if (mimeType.startsWith("image/")) {
+    return (
+      <div className="mt-3 overflow-hidden rounded-md border bg-muted/20">
+        {/* Signed R2 URLs are short-lived; use native img for private previews. */}
+        <img
+          src={previewUrl}
+          alt={fileName}
+          width={640}
+          height={360}
+          className="max-h-48 w-full object-contain"
+        />
+      </div>
+    );
+  }
+
+  if (mimeType === "application/pdf") {
+    return (
+      <div className="mt-3 space-y-2">
+        <iframe
+          src={previewUrl}
+          title={fileName}
+          className="h-48 w-full rounded-md border bg-muted/20"
+        />
+        <a
+          href={previewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+        >
+          <ExternalLink className="size-3" aria-hidden="true" />
+          {labels.previewOpen}
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={previewUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+    >
+      <ExternalLink className="size-3" aria-hidden="true" />
+      {labels.previewOpen}
+    </a>
+  );
+}
+
+const defaultPreviewLabels = {
+  previewLoading: "Loading preview...",
+  previewError: "Preview could not be loaded.",
+  previewOpen: "Open document in new tab",
+};
 
 export function DocumentUpload({
   applicationId,
@@ -76,6 +201,18 @@ export function DocumentUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const previewLabels = {
+    previewLoading:
+      labels.previewLoading ?? defaultPreviewLabels.previewLoading,
+    previewError: labels.previewError ?? defaultPreviewLabels.previewError,
+    previewOpen: labels.previewOpen ?? defaultPreviewLabels.previewOpen,
+  };
+
+  useEffect(() => {
+    if (uploaded) {
+      setError(null);
+    }
+  }, [uploaded]);
 
   function handlePickFile() {
     inputRef.current?.click();
@@ -103,6 +240,13 @@ export function DocumentUpload({
       return;
     }
 
+    const resolvedMimeType = resolveClientFileMimeType(file, acceptedMimeTypes);
+
+    if (!resolvedMimeType) {
+      setError(labels.invalidType);
+      return;
+    }
+
     setError(null);
 
     startTransition(async () => {
@@ -111,7 +255,7 @@ export function DocumentUpload({
         requirementId,
         docType,
         fileName: file.name,
-        mimeType: file.type,
+        mimeType: resolvedMimeType,
         fileSize: file.size,
       });
 
@@ -121,14 +265,23 @@ export function DocumentUpload({
       }
 
       try {
-        const uploadResponse = await fetch(requestResult.data.uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file, file.name);
+
+        const uploadResponse = await fetch(
+          `/api/documents/${requestResult.data.documentId}/upload`,
+          {
+            method: "POST",
+            body: uploadFormData,
+            credentials: "include",
+          },
+        );
 
         if (!uploadResponse.ok) {
-          setError(labels.uploadFailed);
+          const payload = (await uploadResponse.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          setError(payload?.error ?? labels.uploadFailed);
           return;
         }
 
@@ -136,6 +289,7 @@ export function DocumentUpload({
 
         const confirmResult = await confirmDocumentUploadAction({
           documentId: requestResult.data.documentId,
+          applicationId,
           checksum,
         });
 
@@ -143,6 +297,8 @@ export function DocumentUpload({
           setError(confirmResult.error ?? labels.uploadFailed);
           return;
         }
+
+        setError(null);
 
         onUploaded({
           documentId: confirmResult.data.documentId,
@@ -208,7 +364,10 @@ export function DocumentUpload({
                 type="button"
                 size="sm"
                 variant="ghost"
-                onClick={onRemoved}
+                onClick={() => {
+                  setError(null);
+                  onRemoved();
+                }}
                 disabled={isPending}
               >
                 <X className="size-4" />
@@ -237,6 +396,15 @@ export function DocumentUpload({
           </Button>
         )}
       </div>
+
+      {uploaded ? (
+        <DocumentPreview
+          documentId={uploaded.documentId}
+          mimeType={uploaded.mimeType}
+          fileName={uploaded.fileName}
+          labels={previewLabels}
+        />
+      ) : null}
 
       {error ? (
         <p className="mt-3 text-sm text-destructive" role="alert">

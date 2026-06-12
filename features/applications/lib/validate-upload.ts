@@ -1,4 +1,5 @@
-import { EXTENSION_TO_MIME, hasDoubleExtension } from "@/config/uploads";
+import { hasDoubleExtension } from "@/config/uploads";
+import { resolveClientFileMimeType } from "@/lib/utils/resolve-file-mime";
 
 export type UploadValidationResult =
   | { valid: true }
@@ -22,18 +23,12 @@ export function validateClientUpload(input: {
     return { valid: false, error: input.invalidNameMessage };
   }
 
-  const extensionMatch = fileName.toLowerCase().match(/\.([a-z0-9]+)$/i);
-  const extension = extensionMatch?.[1];
+  const resolvedMimeType = resolveClientFileMimeType(
+    input.file,
+    input.acceptedMimeTypes,
+  );
 
-  if (!extension || !EXTENSION_TO_MIME[extension]) {
-    return { valid: false, error: input.invalidTypeMessage };
-  }
-
-  if (EXTENSION_TO_MIME[extension] !== input.file.type) {
-    return { valid: false, error: input.invalidTypeMessage };
-  }
-
-  if (!input.acceptedMimeTypes.includes(input.file.type)) {
+  if (!resolvedMimeType || !input.acceptedMimeTypes.includes(resolvedMimeType)) {
     return { valid: false, error: input.invalidTypeMessage };
   }
 

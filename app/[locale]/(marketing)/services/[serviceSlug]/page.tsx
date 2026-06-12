@@ -5,12 +5,13 @@ import { notFound } from "next/navigation";
 import { ViewServiceTracker } from "@/components/analytics/ViewServiceTracker";
 import { DocumentChecklist } from "@/components/marketing/document-checklist";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
-import { HowItWorks } from "@/components/marketing/how-it-works";
+import { HowItWorksSteps } from "@/components/marketing/how-it-works-steps";
 import { JsonLd } from "@/components/marketing/json-ld";
-import { MarketingCta } from "@/components/marketing/marketing-cta";
+import { CTASection } from "@/components/marketing/cta-section";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
-import { ServiceCard } from "@/components/marketing/service-card";
+import { RelatedServices } from "@/components/marketing/related-services";
+import { ServiceApplySidebar } from "@/components/marketing/service-apply-sidebar";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
   buildBreadcrumbJsonLd,
@@ -19,6 +20,10 @@ import {
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { redirect } from "@/i18n/navigation";
+import {
+  getServiceAssignedRegions,
+  getServiceRegionLabel,
+} from "@/features/services/lib/service-regions";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import {
@@ -93,7 +98,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   const [serviceFaqs, relatedServices, businessSettings] = await Promise.all([
     faqRepository.listByServiceId(service.id),
-    serviceRepository.listRelatedServices(service.id, service.regionId, 3),
+    serviceRepository.listRelatedServices(service.id, 3),
     getBusinessSettings(),
   ]);
 
@@ -109,10 +114,25 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     en: service.contentEn ?? service.shortDescriptionEn,
     ur: service.contentUr ?? service.shortDescriptionUr,
   });
-  const regionName = pickLocalized(locale, {
-    en: service.region.nameEn,
-    ur: service.region.nameUr,
+  const processingNotes = pickLocalized(locale, {
+    en: service.processingNotesEn,
+    ur: service.processingNotesUr,
   });
+  const assignedRegions = getServiceAssignedRegions(service);
+  const regionName = getServiceRegionLabel(
+    service,
+    locale,
+    t("services.multipleRegions"),
+    t("services.allProvinces"),
+  );
+  const areaServed =
+    assignedRegions.length > 0
+      ? assignedRegions
+          .map((region) =>
+            pickLocalized(locale, { en: region.nameEn, ur: region.nameUr }),
+          )
+          .join(", ")
+      : regionName;
 
   const faqItems = mapFaqsForLocale(serviceFaqs, locale);
   const documents = service.documentReqs.map((doc) => ({
@@ -124,6 +144,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     }),
     isRequired: doc.isRequired,
   }));
+  const requiredDocumentCount = documents.filter((doc) => doc.isRequired).length;
 
   const serviceUrl = absoluteUrl(`/services/${service.slug}`);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -135,7 +156,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     name,
     description: description || name,
     url: serviceUrl,
-    areaServed: regionName,
+    areaServed,
   });
   const faqJsonLd =
     faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
@@ -160,70 +181,92 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         ]}
       />
 
-      <div className="container-site space-y-12 py-10 md:py-12">
-        <section className="space-y-2">
-          <p className="text-sm font-medium text-primary">{regionName}</p>
-          <ProseContent content={content ?? ""} />
-        </section>
+      <div className="container-site py-10 md:py-12">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
+          <div className="space-y-12">
+            {regionName ? (
+              <p className="text-sm font-medium text-primary">{regionName}</p>
+            ) : null}
 
-        <DocumentChecklist
-          title={t("service.documentsTitle")}
-          items={documents}
-          requiredLabel={t("service.required")}
-          optionalLabel={t("service.optional")}
-          emptyMessage={t("service.documentsEmpty")}
-        />
+            <ProseContent content={content ?? ""} />
 
-        <HowItWorks
-          title={tHome("howItWorksTitle")}
-          steps={[
-            {
-              title: tHome("howItWorksStep1Title"),
-              description: tHome("howItWorksStep1Description"),
-            },
-            {
-              title: tHome("howItWorksStep2Title"),
-              description: tHome("howItWorksStep2Description"),
-            },
-            {
-              title: tHome("howItWorksStep3Title"),
-              description: tHome("howItWorksStep3Description"),
-            },
-          ]}
-        />
+            {processingNotes?.trim() ? (
+              <section className="space-y-3 rounded-xl border bg-muted/30 p-5">
+                <h2 className="text-xl font-bold">{t("service.importantNotes")}</h2>
+                <ProseContent content={processingNotes} />
+              </section>
+            ) : null}
 
-        <FaqAccordion
-          title={t("service.faqsTitle")}
-          items={faqItems}
-          emptyMessage={t("service.faqsEmpty")}
-        />
+            <DocumentChecklist
+              title={t("service.documentsTitle")}
+              items={documents}
+              requiredLabel={t("service.required")}
+              optionalLabel={t("service.optional")}
+              emptyMessage={t("service.documentsEmpty")}
+            />
 
-        <MarketingCta
-          title={t("service.ctaTitle")}
-          description={t("service.ctaDescription")}
-          applyLabel={t("service.applyNow")}
-          applyHref={`/apply/${service.slug}`}
-          whatsappLabel={tCommon("whatsappHelp")}
-          whatsappPhone={businessSettings.whatsappNumber}
-          whatsappMessage={businessSettings.whatsappDefaultMessage}
-        />
+            <HowItWorksSteps
+              title={tHome("howItWorksTitle")}
+              steps={[
+                {
+                  title: tHome("howItWorksStep1Title"),
+                  description: tHome("howItWorksStep1Description"),
+                },
+                {
+                  title: tHome("howItWorksStep2Title"),
+                  description: tHome("howItWorksStep2Description"),
+                },
+                {
+                  title: tHome("howItWorksStep3Title"),
+                  description: tHome("howItWorksStep3Description"),
+                },
+              ]}
+            />
 
-        {relatedServices.length > 0 ? (
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold">{t("service.relatedTitle")}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {relatedServices.map((related) => (
-                <ServiceCard
-                  key={related.id}
-                  service={related}
-                  locale={locale}
-                  learnMoreLabel={tCommon("learnMore")}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
+            <FaqAccordion
+              title={t("service.faqsTitle")}
+              items={faqItems}
+              emptyMessage={t("service.faqsEmpty")}
+            />
 
+            <RelatedServices
+              title={t("service.relatedTitle")}
+              services={relatedServices}
+              locale={locale}
+              learnMoreLabel={tCommon("learnMore")}
+              multipleRegionsLabel={t("services.multipleRegions")}
+              allProvincesLabel={t("services.allProvinces")}
+            />
+          </div>
+
+          <ServiceApplySidebar
+            serviceName={name}
+            regionLabel={regionName}
+            documentCount={documents.length}
+            requiredDocumentCount={requiredDocumentCount}
+            applyHref={`/apply/${service.slug}`}
+            applyLabel={t("service.applyNow")}
+            whatsappLabel={tCommon("whatsappHelp")}
+            whatsappPhone={businessSettings.whatsappNumber}
+            whatsappMessage={businessSettings.whatsappDefaultMessage}
+            documentsLabel={t("service.documentsTitle")}
+            regionLabelTitle={t("service.availableIn")}
+            ctaTitle={t("service.ctaTitle")}
+            ctaDescription={t("service.ctaDescription")}
+          />
+        </div>
+
+        <div className="mt-12 lg:hidden">
+          <CTASection
+            title={t("service.ctaTitle")}
+            description={t("service.ctaDescription")}
+            applyLabel={t("service.applyNow")}
+            applyHref={`/apply/${service.slug}`}
+            whatsappLabel={tCommon("whatsappHelp")}
+            whatsappPhone={businessSettings.whatsappNumber}
+            whatsappMessage={businessSettings.whatsappDefaultMessage}
+          />
+        </div>
       </div>
     </>
   );

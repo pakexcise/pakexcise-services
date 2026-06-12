@@ -12,7 +12,9 @@ import { StatusTimeline } from "@/components/customer/StatusTimeline";
 import { SubmittedDataSummary } from "@/components/customer/SubmittedDataSummary";
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { buildDocumentStatusLabels } from "@/features/documents/lib/build-document-status-labels";
 import { resolveAdminFieldDisplayValues } from "@/features/applications/lib/resolve-admin-display";
+import { serializeCustomerInvoiceForView } from "@/features/invoices/lib/serialize-customer-invoice";
 import { resolveCustomerNextAction } from "@/features/customer/lib/next-action";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +23,7 @@ import {
   PAYMENT_SCREENSHOT_MAX_BYTES,
 } from "@/config/uploads";
 import { Link } from "@/i18n/navigation";
-import { formatDate } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { customerApplicationRepository } from "@/server/repositories/customer-application-repository";
@@ -54,6 +56,7 @@ export default async function CustomerApplicationPage({
 
   const t = await getTranslations("customer.application");
   const tStatus = await getTranslations("admin.statuses");
+  const tDocStatus = await getTranslations("customer.application.documents.statuses");
   const tNextAction = await getTranslations("customer.nextAction");
 
   const application = await customerApplicationRepository.findOwnedById({
@@ -99,6 +102,11 @@ export default async function CustomerApplicationPage({
   const statusLabel = (status: Parameters<typeof getApplicationStatusLabelKey>[0]) =>
     tStatus(getApplicationStatusLabelKey(status));
 
+  const documentStatusLabels = buildDocumentStatusLabels((key) => tDocStatus(key));
+  const serializedInvoice = invoice
+    ? serializeCustomerInvoiceForView(invoice)
+    : null;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -139,11 +147,11 @@ export default async function CustomerApplicationPage({
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-muted-foreground">{t("submitted")}</dt>
-            <dd>{formatDate(application.createdAt, locale)}</dd>
+            <dd>{formatDateTime(application.createdAt, locale)}</dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-muted-foreground">{t("updated")}</dt>
-            <dd>{formatDate(application.updatedAt, locale)}</dd>
+            <dd>{formatDateTime(application.updatedAt, locale)}</dd>
           </div>
         </dl>
       </div>
@@ -179,6 +187,7 @@ export default async function CustomerApplicationPage({
           title: t("documents.title"),
           empty: t("documents.empty"),
           status: t("documents.status"),
+          statusLabels: documentStatusLabels,
           rejectionReason: t("documents.rejectionReason"),
           uploadSection: t("documents.uploadSection"),
           required: t("documents.required"),
@@ -203,10 +212,10 @@ export default async function CustomerApplicationPage({
         />
       ) : null}
 
-      {invoice ? (
+      {serializedInvoice ? (
         <InvoiceView
           applicationId={application.id}
-          invoice={invoice}
+          invoice={serializedInvoice}
           locale={locale === "ur" ? "ur" : "en"}
           labels={{
             title: t("invoice.title"),
@@ -215,8 +224,13 @@ export default async function CustomerApplicationPage({
             subtotal: t("invoice.subtotal"),
             tax: t("invoice.tax"),
             officialFeeNote: t("invoice.officialFeeNote"),
-            paymentMethod: t("invoice.paymentMethod"),
+            paymentMethods: t("invoice.paymentMethods"),
             paymentInstructions: t("invoice.paymentInstructions"),
+            accountTitle: t("invoice.accountTitle"),
+            accountNumber: t("invoice.accountNumber"),
+            iban: t("invoice.iban"),
+            bankName: t("invoice.bankName"),
+            instructions: t("invoice.instructions"),
             dueDate: t("invoice.dueDate"),
             notes: t("invoice.notes"),
             lineItems: t("invoice.lineItems"),
@@ -242,6 +256,7 @@ export default async function CustomerApplicationPage({
           applicationId={application.id}
           paymentId={payment.id}
           paymentStatus={payment.status}
+          screenshotFileName={payment.screenshotFileName}
           rejectionReason={payment.rejectionReason}
           maxSizeBytes={PAYMENT_SCREENSHOT_MAX_BYTES}
           acceptedMimeTypes={[...DEFAULT_ACCEPTED_MIME_TYPES]}
@@ -262,6 +277,13 @@ export default async function CustomerApplicationPage({
             verified: t("payment.verified"),
             rejected: t("payment.rejected"),
             rejectionReason: t("payment.rejectionReason"),
+            viewer: {
+              loading: t("payment.viewer.loading"),
+              error: t("payment.viewer.error"),
+              retry: t("payment.viewer.retry"),
+              openNewTab: t("payment.viewer.openNewTab"),
+              unsupported: t("payment.viewer.unsupported"),
+            },
           }}
         />
       ) : null}

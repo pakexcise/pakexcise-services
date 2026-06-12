@@ -1,10 +1,11 @@
 "use client";
 
+import type { PaymentMethodType } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useState, useTransition } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Building2, Plus, Smartphone, Trash2, Wallet } from "lucide-react";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createAndSendInvoiceAction } from "@/features/invoices/actions";
+import { getPaymentMethodName } from "@/features/payment-methods/lib/format-payment-method";
+import { cn } from "@/lib/utils";
+
 const invoiceLineItemFormSchema = z.object({
   label: z.string().trim().min(1).max(120),
   description: z.string().trim().max(500).optional(),
@@ -22,8 +26,8 @@ const invoiceLineItemFormSchema = z.object({
 const invoiceFormSchema = z.object({
   serviceFee: z.coerce.number().min(0.01),
   officialFeeNote: z.string().optional(),
-  paymentMethod: z.string().trim().min(1),
-  paymentInstructions: z.string().trim().min(1),
+  paymentMethodIds: z.array(z.string()).min(1, "Select at least one payment method"),
+  paymentInstructions: z.string().optional(),
   dueAt: z.string().optional(),
   notes: z.string().optional(),
   taxTotal: z.coerce.number().min(0),
@@ -33,16 +37,33 @@ const invoiceFormSchema = z.object({
 
 type InvoiceFormValues = z.infer<typeof invoiceFormSchema>;
 
+export type InvoiceGeneratorPaymentMethod = {
+  id: string;
+  type: PaymentMethodType;
+  nameEn: string;
+  nameUr: string;
+  accountTitleEn: string | null;
+  accountTitleUr: string | null;
+  accountNumber: string | null;
+  iban: string | null;
+  bankNameEn: string | null;
+  bankNameUr: string | null;
+};
+
 type InvoiceGeneratorProps = {
   applicationId: string;
   locale: "en" | "ur";
+  paymentMethods: InvoiceGeneratorPaymentMethod[];
   labels: {
     title: string;
     description: string;
     serviceFee: string;
     officialFeeNote: string;
-    paymentMethod: string;
+    paymentMethods: string;
+    paymentMethodsHint: string;
+    noPaymentMethods: string;
     paymentInstructions: string;
+    paymentInstructionsHint: string;
     dueDate: string;
     notes: string;
     taxTotal: string;
@@ -58,12 +79,31 @@ type InvoiceGeneratorProps = {
     submitting: string;
     success: string;
     error: string;
+    accountTitle: string;
+    accountNumber: string;
+    iban: string;
+    bankName: string;
   };
 };
+
+function methodIcon(type: PaymentMethodType) {
+  switch (type) {
+    case "BANK_TRANSFER":
+      return Building2;
+    case "JAZZCASH":
+    case "EASYPAISA":
+    case "NAYAPAY":
+    case "SADAPAY":
+      return Smartphone;
+    default:
+      return Wallet;
+  }
+}
 
 export function InvoiceGenerator({
   applicationId,
   locale,
+  paymentMethods,
   labels,
 }: InvoiceGeneratorProps) {
   const router = useRouter();
@@ -75,6 +115,7 @@ export function InvoiceGenerator({
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceFormSchema),
@@ -83,15 +124,29 @@ export function InvoiceGenerator({
       taxTotal: 0,
       lineItems: [],
       statusNote: "",
-      paymentMethod: "",
+      paymentMethodIds: paymentMethods.length === 1 ? [paymentMethods[0]!.id] : [],
       paymentInstructions: "",
     },
+  });
+
+  const selectedPaymentMethodIds = useWatch({
+    control,
+    name: "paymentMethodIds",
+    defaultValue: [],
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "lineItems",
   });
+
+  function togglePaymentMethod(id: string) {
+    const current = selectedPaymentMethodIds ?? [];
+    const next = current.includes(id)
+      ? current.filter((value) => value !== id)
+      : [...current, id];
+    setValue("paymentMethodIds", next, { shouldValidate: true });
+  }
 
   function onSubmit(values: InvoiceFormValues) {
     setMessage(null);
@@ -160,12 +215,80 @@ export function InvoiceGenerator({
           <Textarea id="officialFeeNote" rows={2} {...register("officialFeeNote")} />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="paymentMethod">{labels.paymentMethod}</Label>
-          <Input id="paymentMethod" {...register("paymentMethod")} />
-          {errors.paymentMethod ? (
+        <div className="space-y-3 sm:col-span-2">
+          <div>
+            <Label>{labels.paymentMethods}</Label>
+            <p className="text-xs text-muted-foreground">{labels.paymentMethodsHint}</p>
+          </div>
+
+          {paymentMethods.length === 0 ? (
+            <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+              {labels.noPaymentMethods}
+            </p>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {paymentMethods.map((method) => {
+                const Icon = methodIcon(method.type);
+                const selected = selectedPaymentMethodIds?.includes(method.id) ?? false;
+                const name = getPaymentMethodName(method, locale);
+                const bankName =
+                  locale === "ur"
+                    ? method.bankNameUr ?? method.bankNameEn
+                    : method.bankNameEn ?? method.bankNameUr;
+                const accountTitle =
+                  locale === "ur"
+                    ? method.accountTitleUr ?? method.accountTitleEn
+                    : method.accountTitleEn ?? method.accountTitleUr;
+
+                return (
+                  <button
+                    key={method.id}
+                    type="button"
+                    onClick={() => togglePaymentMethod(method.id)}
+                    className={cn(
+                      "rounded-xl border p-4 text-start text-sm transition-colors",
+                      selected
+                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                        : "hover:border-primary/30 hover:bg-muted/30",
+                    )}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-lg bg-background p-2 shadow-sm">
+                        <Icon className="size-4 text-primary" aria-hidden="true" />
+                      </div>
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <p className="font-semibold">{name}</p>
+                        {bankName ? (
+                          <p className="text-muted-foreground">
+                            {labels.bankName}: {bankName}
+                          </p>
+                        ) : null}
+                        {accountTitle ? (
+                          <p className="text-muted-foreground">
+                            {labels.accountTitle}: {accountTitle}
+                          </p>
+                        ) : null}
+                        {method.accountNumber ? (
+                          <p className="break-all text-muted-foreground">
+                            {labels.accountNumber}: {method.accountNumber}
+                          </p>
+                        ) : null}
+                        {method.iban ? (
+                          <p className="break-all text-muted-foreground">
+                            {labels.iban}: {method.iban}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {errors.paymentMethodIds ? (
             <p className="text-sm text-destructive">
-              {errors.paymentMethod.message}
+              {errors.paymentMethodIds.message}
             </p>
           ) : null}
         </div>
@@ -177,16 +300,14 @@ export function InvoiceGenerator({
 
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="paymentInstructions">{labels.paymentInstructions}</Label>
+          <p className="text-xs text-muted-foreground">
+            {labels.paymentInstructionsHint}
+          </p>
           <Textarea
             id="paymentInstructions"
             rows={3}
             {...register("paymentInstructions")}
           />
-          {errors.paymentInstructions ? (
-            <p className="text-sm text-destructive">
-              {errors.paymentInstructions.message}
-            </p>
-          ) : null}
         </div>
 
         <div className="space-y-2 sm:col-span-2">
@@ -279,7 +400,10 @@ export function InvoiceGenerator({
         </p>
       ) : null}
 
-      <Button type="submit" disabled={isPending}>
+      <Button
+        type="submit"
+        disabled={isPending || paymentMethods.length === 0}
+      >
         {isPending ? labels.submitting : labels.submit}
       </Button>
     </form>

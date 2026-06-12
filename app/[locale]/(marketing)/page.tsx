@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getServiceRegionLabel } from "@/features/services/lib/service-regions";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { Link } from "@/i18n/navigation";
 import { getActiveServices, seoMetaRepository } from "@/server/repositories";
@@ -51,6 +52,7 @@ export default async function HomePage() {
   const t = await getTranslations("home");
   const tCommon = await getTranslations("common");
   const tNav = await getTranslations("nav");
+  const tMarketing = await getTranslations("marketing");
 
   let services: Awaited<ReturnType<typeof getActiveServices>> = [];
 
@@ -151,8 +153,12 @@ export default async function HomePage() {
               const name = locale === "ur" ? service.nameUr : service.nameEn;
               const summary =
                 locale === "ur" ? service.shortDescriptionUr : service.shortDescriptionEn;
-              const regionName =
-                locale === "ur" ? service.region.nameUr : service.region.nameEn;
+              const regionName = getServiceRegionLabel(
+                service,
+                locale,
+                tMarketing("services.multipleRegions"),
+                tMarketing("services.allProvinces"),
+              );
 
               return (
                 <Card key={service.id} className="h-full">

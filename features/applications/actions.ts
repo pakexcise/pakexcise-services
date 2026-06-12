@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 
+import { hasUploadedCompletionProof } from "@/features/applications/lib/completion-proof";
 import { COMPLETION_PROOF_DOC_TYPE } from "@/config/uploads";
 import {
   canTransitionApplicationStatus,
@@ -37,17 +38,6 @@ async function requireApplicationWritePermission() {
   return requirePermission("application:write");
 }
 
-async function hasCompletionProof(applicationId: string): Promise<boolean> {
-  const proof = await prisma.document.findFirst({
-    where: {
-      applicationId,
-      type: COMPLETION_PROOF_DOC_TYPE,
-    },
-    select: { id: true },
-  });
-
-  return Boolean(proof);
-}
 
 export async function getAllowedStatusTransitionsAction(
   input: unknown,
@@ -109,7 +99,7 @@ export async function transitionApplicationStatusAction(
   }
 
   if (parsed.data.toStatus === "COMPLETED" && application.service.requiresProof) {
-    const hasProof = await hasCompletionProof(application.id);
+    const hasProof = await hasUploadedCompletionProof(application.id);
 
     if (!hasProof) {
       return errorResult(

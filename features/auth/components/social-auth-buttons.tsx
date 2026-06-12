@@ -5,12 +5,19 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { SocialProviderId } from "@/features/auth/lib/social-providers";
+import {
+  appendSearchParams,
+  buildChooseRoleUrl,
+  buildLoginUrl,
+  buildSignupUrl,
+  parseAuthIntent,
+} from "@/features/auth/lib/auth-url";
 import { buildAuthRedirectUrl } from "@/features/auth/lib/redirect";
 import { signIn } from "@/lib/auth-client";
 
 type SocialAuthButtonsProps = {
   providers: SocialProviderId[];
-  errorCallbackPath?: string;
+  authMode?: "login" | "signup";
   labels: {
     google: string;
     socialFailed: string;
@@ -43,7 +50,7 @@ function GoogleIcon() {
 
 export function SocialAuthButtons({
   providers,
-  errorCallbackPath = "/login",
+  authMode = "login",
   labels,
 }: SocialAuthButtonsProps) {
   const searchParams = useSearchParams();
@@ -65,14 +72,24 @@ export function SocialAuthButtons({
     setIsSubmitting(true);
 
     const callbackUrl = searchParams.get("callbackUrl");
+    const intent = parseAuthIntent(searchParams.get("intent"));
     const callbackURL = buildAuthRedirectUrl(callbackUrl);
+    const errorBase =
+      authMode === "signup"
+        ? buildSignupUrl({ callbackUrl, intent })
+        : buildLoginUrl({ callbackUrl, intent });
+    const errorCallbackURL = appendSearchParams(errorBase, {
+      error: "social_auth_failed",
+    });
+    const newUserCallbackURL = buildChooseRoleUrl({ intent, callbackUrl });
 
     startTransition(async () => {
       try {
         const result = await signIn.social({
           provider: "google",
           callbackURL,
-          errorCallbackURL: `${errorCallbackPath}?error=social_auth_failed`,
+          errorCallbackURL,
+          newUserCallbackURL,
         });
 
         if (result.error) {

@@ -8,6 +8,10 @@ import { formatPkr, roundMoney } from "@/features/invoices/lib/format-pkr";
 import { generateInvoiceNumber } from "@/features/invoices/lib/generate-invoice-number";
 import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligibility";
 import { invoicePdfLabels } from "@/features/invoices/lib/invoice-labels";
+import {
+  buildPaymentMethodSnapshot,
+  formatPaymentMethodsSummary,
+} from "@/features/payment-methods/lib/format-payment-method";
 import { renderInvoicePdfBuffer } from "@/features/invoices/lib/render-invoice-pdf";
 import { createInvoiceSchema } from "@/features/invoices/validators";
 import { applicationIdParamSchema } from "@/lib/validations/route-params";
@@ -20,6 +24,7 @@ import {
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { queueInvoiceSentNotifications } from "@/server/notifications/queue-invoice-notification";
+import { adminPaymentMethodRepository } from "@/server/repositories/admin-payment-method-repository";
 import { invoiceRepository } from "@/server/repositories/invoice-repository";
 import { requirePermission } from "@/server/permissions/guards";
 import { putR2Object } from "@/server/r2/put-object";
@@ -96,6 +101,21 @@ export async function createAndSendInvoiceAction(
     return errorResult("Invoice total must be greater than zero");
   }
 
+  const selectedMethods = await adminPaymentMethodRepository.findActiveByIds(
+    parsed.data.paymentMethodIds,
+  );
+
+  if (selectedMethods.length !== parsed.data.paymentMethodIds.length) {
+    return errorResult("One or more selected payment methods are invalid or inactive");
+  }
+
+  const orderedMethods = parsed.data.paymentMethodIds
+    .map((id) => selectedMethods.find((method) => method.id === id))
+    .filter((method): method is NonNullable<typeof method> => Boolean(method));
+
+  const paymentMethodSummary = formatPaymentMethodsSummary(orderedMethods, locale);
+  const paymentInstructions = parsed.data.paymentInstructions?.trim() || null;
+
   const invoiceNumber = generateInvoiceNumber();
   const dueAt = parsed.data.dueAt ? new Date(parsed.data.dueAt) : null;
   const serviceName =
@@ -112,8 +132,8 @@ export async function createAndSendInvoiceAction(
       currency: "PKR",
       notes: parsed.data.notes ?? null,
       officialFeeNote: parsed.data.officialFeeNote ?? null,
-      paymentMethod: parsed.data.paymentMethod,
-      paymentInstructions: parsed.data.paymentInstructions,
+      paymentMethod: paymentMethodSummary,
+      paymentInstructions,
       locale,
       dueAt,
       lineItems: {
@@ -124,6 +144,11 @@ export async function createAndSendInvoiceAction(
           isOfficialFee: item.isOfficialFee,
           displayOrder: index,
         })),
+      },
+      paymentMethods: {
+        create: orderedMethods.map((method, index) =>
+          buildPaymentMethodSnapshot(method, index),
+        ),
       },
     },
     include: {
@@ -151,8 +176,20 @@ export async function createAndSendInvoiceAction(
       subtotal,
       taxTotal,
       total,
-      paymentMethod: parsed.data.paymentMethod,
-      paymentInstructions: parsed.data.paymentInstructions,
+      paymentMethods: orderedMethods.map((method) => ({
+        type: method.type,
+        nameEn: method.nameEn,
+        nameUr: method.nameUr,
+        accountTitleEn: method.accountTitleEn,
+        accountTitleUr: method.accountTitleUr,
+        accountNumber: method.accountNumber,
+        iban: method.iban,
+        bankNameEn: method.bankNameEn,
+        bankNameUr: method.bankNameUr,
+        instructionsEn: method.instructionsEn,
+        instructionsUr: method.instructionsUr,
+      })),
+      paymentInstructions,
       officialFeeNote: parsed.data.officialFeeNote ?? null,
       notes: parsed.data.notes ?? null,
     });

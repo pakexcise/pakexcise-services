@@ -30,7 +30,7 @@ export default async function NewServicePage() {
     getServiceEditorLabels(),
   ]);
 
-  const defaultRegionId = regions[0]?.id ?? "";
+  const defaultRegionIds = regions[0]?.id ? [regions[0].id] : [];
 
   return (
     <div className="space-y-6">
@@ -40,7 +40,7 @@ export default async function NewServicePage() {
       />
       <ServiceEditorForm
         mode="create"
-        initialValues={emptyServiceEditorValues(defaultRegionId, nextOrder)}
+        initialValues={emptyServiceEditorValues(defaultRegionIds, nextOrder)}
         regions={regions}
         labels={labels}
       />

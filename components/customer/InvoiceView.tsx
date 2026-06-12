@@ -7,34 +7,14 @@ import { Download, FileText, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { InvoicePaymentMethodsDisplay } from "@/components/shared/InvoicePaymentMethodsDisplay";
 import { formatPkr } from "@/features/invoices/lib/format-pkr";
 
-type InvoiceLineItem = {
-  id: string;
-  label: string;
-  description: string | null;
-  amount: { toString(): string };
-  isOfficialFee: boolean;
-};
+import type { CustomerInvoiceViewData } from "@/features/invoices/lib/serialize-customer-invoice";
 
 type InvoiceViewProps = {
   applicationId: string;
-  invoice: {
-    id: string;
-    invoiceNumber: string;
-    status: string;
-    subtotal: { toString(): string };
-    taxTotal: { toString(): string };
-    total: { toString(): string };
-    currency: string;
-    notes: string | null;
-    officialFeeNote: string | null;
-    paymentMethod: string | null;
-    paymentInstructions: string | null;
-    sentAt: Date | string | null;
-    dueAt: Date | string | null;
-    lineItems: InvoiceLineItem[];
-  };
+  invoice: CustomerInvoiceViewData;
   locale: "en" | "ur";
   labels: {
     title: string;
@@ -43,8 +23,13 @@ type InvoiceViewProps = {
     subtotal: string;
     tax: string;
     officialFeeNote: string;
-    paymentMethod: string;
+    paymentMethods: string;
     paymentInstructions: string;
+    accountTitle: string;
+    accountNumber: string;
+    iban: string;
+    bankName: string;
+    instructions: string;
     dueDate: string;
     notes: string;
     lineItems: string;
@@ -134,19 +119,19 @@ export function InvoiceView({
         <div>
           <dt className="text-muted-foreground">{labels.subtotal}</dt>
           <dd className="font-medium">
-            {formatPkr(invoice.subtotal.toString(), locale)}
+            {formatPkr(invoice.subtotal, locale)}
           </dd>
         </div>
         <div>
           <dt className="text-muted-foreground">{labels.tax}</dt>
           <dd className="font-medium">
-            {formatPkr(invoice.taxTotal.toString(), locale)}
+            {formatPkr(invoice.taxTotal, locale)}
           </dd>
         </div>
         <div className="sm:col-span-2">
           <dt className="text-muted-foreground">{labels.total}</dt>
           <dd className="text-lg font-semibold text-primary">
-            {formatPkr(invoice.total.toString(), locale)}
+            {formatPkr(invoice.total, locale)}
           </dd>
         </div>
       </dl>
@@ -176,7 +161,7 @@ export function InvoiceView({
                   ) : null}
                 </span>
                 <span className="font-medium">
-                  {formatPkr(item.amount.toString(), locale)}
+                  {formatPkr(item.amount, locale)}
                 </span>
               </li>
             ))}
@@ -184,9 +169,22 @@ export function InvoiceView({
         </div>
       ) : null}
 
-      {invoice.paymentMethod ? (
+      {invoice.paymentMethods.length > 0 ? (
+        <InvoicePaymentMethodsDisplay
+          methods={invoice.paymentMethods}
+          locale={locale}
+          labels={{
+            title: labels.paymentMethods,
+            accountTitle: labels.accountTitle,
+            accountNumber: labels.accountNumber,
+            iban: labels.iban,
+            bankName: labels.bankName,
+            instructions: labels.instructions,
+          }}
+        />
+      ) : invoice.paymentMethod ? (
         <div className="text-sm">
-          <p className="font-medium">{labels.paymentMethod}</p>
+          <p className="font-medium">{labels.paymentMethods}</p>
           <p className="text-muted-foreground">{invoice.paymentMethod}</p>
         </div>
       ) : null}

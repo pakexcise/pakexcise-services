@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { AuthModeTabs } from "@/features/auth/components/auth-mode-tabs";
 import { AuthShell } from "@/features/auth/components/auth-shell";
 import { SignupForm } from "@/features/auth/components/signup-form";
+import { getSignupFormLabels } from "@/features/auth/lib/auth-form-labels";
+import {
+  parseAuthIntent,
+} from "@/features/auth/lib/auth-url";
 import { getEnabledSocialProviders } from "@/features/auth/lib/social-providers";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+
+type SignupPageProps = {
+  searchParams: Promise<{ intent?: string }>;
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("auth.signup");
@@ -14,72 +23,35 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function SignupPage() {
+export default async function SignupPage({ searchParams }: SignupPageProps) {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
+  const params = await searchParams;
+  const intent = parseAuthIntent(params.intent);
+
   const t = await getTranslations("auth.signup");
-  const tSocial = await getTranslations("auth.social");
   const tDisclaimer = await getTranslations("disclaimer");
+  const labels = await getSignupFormLabels();
   const socialProviders = getEnabledSocialProviders();
 
-  const labels = {
-    name: t("name"),
-    email: t("email"),
-    password: t("password"),
-    confirmPassword: t("confirmPassword"),
-    passwordHint: t("passwordHint"),
-    passwordMismatch: t("passwordMismatch"),
-    invalidPassword: t("invalidPassword"),
-    showPassword: t("showPassword"),
-    createAccount: t("createAccount"),
-    creatingAccount: t("creatingAccount"),
-    signupVerifyHint: t("signupVerifyHint"),
-    phone: t("phone"),
-    phoneHint: t("phoneHint"),
-    cnic: t("cnic"),
-    cnicHint: t("cnicHint"),
-    cnicVerificationNote: t("cnicVerificationNote"),
-    cnicExists: t("cnicExists"),
-    invalidCnic: t("invalidCnic"),
-    otp: t("otp"),
-    otpHint: t("otpHint"),
-    verifyOtp: t("verifyOtp"),
-    verifyingOtp: t("verifyingOtp"),
-    resendOtp: t("resendOtp"),
-    changeEmail: t("changeEmail"),
-    changePhone: t("changePhone"),
-    otpSentEmail: t("otpSentEmail"),
-    accountNotFound: t("accountNotFound"),
-    accountExists: t("accountExists"),
-    signupPrompt: t("signupPrompt"),
-    loginPrompt: t("loginPrompt"),
-    signupLink: t("signupLink"),
-    otpSentEmailSandbox: t("otpSentEmailSandbox"),
-    otpSentEmailDevConsole: t("otpSentEmailDevConsole"),
-    sendFailed: t("sendFailed"),
-    verifyFailed: t("verifyFailed"),
-    invalidEmail: t("invalidEmail"),
-    invalidPhone: t("invalidPhone"),
-    nameRequired: t("nameRequired"),
-    methodEmail: t("methodEmail"),
-    methodPhone: t("methodPhone"),
-    hasAccount: t("hasAccount"),
-    loginLink: t("loginLink"),
-    orContinueWith: t("orContinueWith"),
-    google: tSocial("google"),
-    socialFailed: tSocial("failed"),
-    authError: tSocial("failed"),
-    socialNotConfigured: tSocial("notConfigured"),
-  };
+  const description =
+    intent === "agent" ? t("agentDescription") : t("description");
 
   return (
     <AuthShell
       title={t("title")}
-      description={t("description")}
+      description={description}
       disclaimer={tDisclaimer("banner")}
     >
-      <SignupForm labels={labels} socialProviders={socialProviders} />
+      <div className="space-y-5">
+        <AuthModeTabs
+          mode="signup"
+          loginLabel={t("loginLink")}
+          signupLabel={t("signupLink")}
+        />
+        <SignupForm labels={labels} socialProviders={socialProviders} unified />
+      </div>
     </AuthShell>
   );
 }

@@ -8,7 +8,7 @@ import { ApplicationsBulkSelectTable } from "@/features/admin/components/applica
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
-import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { adminDefaultPageSize } from "@/config/admin";
 import { applicationRepository } from "@/server/repositories/application-repository";
@@ -112,7 +112,7 @@ export default async function AdminApplicationsPage({
         : application.service.nameEn,
     customerName: application.user.name ?? "—",
     customerEmail: application.user.email,
-    statusLabel: t(getApplicationStatusLabelKey(application.status)),
+    statusLabel: t(getAdminApplicationStatusLabelKey(application.status)),
   }));
 
   return (

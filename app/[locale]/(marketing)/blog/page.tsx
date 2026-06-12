@@ -1,22 +1,14 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { BlogCard } from "@/components/marketing/blog-card";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
-import { absoluteUrl, formatDate } from "@/lib/utils";
 import { requireBlogEnabled } from "@/features/settings/lib/feature-gates";
+import { pickLocalized } from "@/lib/i18n/content";
+import { absoluteUrl } from "@/lib/utils";
 import { blogPostRepository, seoMetaRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
@@ -83,42 +75,19 @@ export default async function BlogPage() {
           { label: title },
         ]}
       />
-      <div className="container-site py-10 md:py-12">
+      <div className="container-site space-y-8 py-10 md:py-12">
         {posts.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("blog.empty")}</p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {posts.map((post) => {
-              const postTitle = pickLocalized(locale, {
-                en: post.titleEn,
-                ur: post.titleUr,
-              });
-              const excerpt = pickLocalized(locale, {
-                en: post.excerptEn,
-                ur: post.excerptUr,
-              });
-
-              return (
-                <Card key={post.id} className="h-full">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{postTitle}</CardTitle>
-                    {excerpt ? <CardDescription>{excerpt}</CardDescription> : null}
-                    {post.publishedAt ? (
-                      <p className="text-xs text-muted-foreground">
-                        {formatDate(post.publishedAt, locale)}
-                      </p>
-                    ) : null}
-                  </CardHeader>
-                  <CardContent>
-                    <Button asChild variant="link" className="px-0">
-                      <Link href={`/blog/${post.slug}`}>
-                        {tCommon("learnMore")}
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {posts.map((post) => (
+              <BlogCard
+                key={post.id}
+                post={post}
+                locale={locale}
+                readMoreLabel={tCommon("learnMore")}
+              />
+            ))}
           </div>
         )}
       </div>

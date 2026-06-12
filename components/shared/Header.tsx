@@ -15,6 +15,8 @@ import { siteConfig } from "@/config/site";
 
 const navItems = [
   { href: "/services", key: "services" },
+  { href: "/regions", key: "regions" },
+  { href: "/blog", key: "blog" },
   { href: "/track", key: "track" },
   { href: "/faqs", key: "faqs" },
   { href: "/about", key: "about" },

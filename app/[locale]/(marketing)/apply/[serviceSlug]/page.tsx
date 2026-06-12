@@ -4,13 +4,16 @@ import { notFound } from "next/navigation";
 
 import { PageHero } from "@/components/marketing/page-hero";
 import { ApplicationWizard } from "@/features/applications/components/application-wizard";
-import { ApplyAccessDenied } from "@/features/applications/components/apply-access-denied";
+import { ApplyPageShell } from "@/features/applications/components/apply-page-shell";
 import {
   loadDraftDocuments,
   parseDraftJson,
 } from "@/features/applications/lib/load-draft-state";
 import { mapServiceApplyConfig } from "@/features/applications/lib/map-service-config";
-import { buildLoginRedirectUrl } from "@/config/auth";
+import {
+  getApplyUser,
+  resolveApplyRedirectHref,
+} from "@/features/applications/lib/resolve-apply-redirect";
 import { redirect } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { applicationWizardRepository } from "@/server/repositories/application-wizard-repository";
@@ -63,48 +66,19 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   }
 
   const access = await getApplyAccess();
-  const t = await getTranslations("apply");
-  const tNav = await getTranslations("nav");
   const callbackPath = `/apply/${serviceSlug}`;
 
-  if (!access.allowed) {
-    if (access.reason === "UNAUTHORIZED") {
-      redirect({
-        href: buildLoginRedirectUrl(callbackPath),
-        locale,
-      });
-    }
+  const user = getApplyUser(access);
 
-    const loginHref =
-      access.reason === "AGENT_NOT_APPROVED"
-        ? "/login"
-        : buildLoginRedirectUrl(callbackPath);
-
-    return (
-      <div className="container-site py-10 md:py-14">
-        <ApplyAccessDenied
-          title={
-            access.reason === "AGENT_NOT_APPROVED"
-              ? t("agentNotApprovedTitle")
-              : t("forbiddenTitle")
-          }
-          description={
-            access.reason === "AGENT_NOT_APPROVED"
-              ? t("agentNotApprovedDescription")
-              : t("forbiddenDescription")
-          }
-          loginLabel={tNav("login")}
-          dashboardLabel={t("goToDashboard")}
-          loginHref={loginHref}
-          dashboardHref={
-            access.reason === "AGENT_NOT_APPROVED"
-              ? "/agent/dashboard"
-              : "/customer/dashboard"
-          }
-        />
-      </div>
-    );
+  if (!user) {
+    redirect({
+      href: resolveApplyRedirectHref(access, callbackPath),
+      locale,
+    });
+    notFound();
   }
+  const t = await getTranslations("apply");
+  const tNav = await getTranslations("nav");
 
   const service = mapServiceApplyConfig(serviceRecord, locale);
   const serviceName = service.name;
@@ -112,7 +86,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   const existingDraft = await applicationWizardRepository.findDraftByServiceForUser(
     {
       serviceId: service.id,
-      userId: access.user.id,
+      userId: user.id,
     },
   );
 
@@ -156,9 +130,9 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   }
 
   const userDefaults = {
-    fullName: access.user.name ?? undefined,
-    email: access.user.email,
-    phone: access.user.phone ?? undefined,
+    fullName: user.name ?? undefined,
+    email: user.email,
+    phone: user.phone ?? undefined,
   };
 
   const labels = {
@@ -179,11 +153,20 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       cnicHint: t("basic.cnicHint"),
       continue: t("actions.continue"),
       saving: t("actions.saving"),
+      validationSummary: t("basic.validationSummary"),
+      errors: {
+        fullNameRequired: t("basic.errors.fullNameRequired"),
+        fullNameTooLong: t("basic.errors.fullNameTooLong"),
+        emailInvalid: t("basic.errors.emailInvalid"),
+        phoneInvalid: t("basic.errors.phoneInvalid"),
+        cnicInvalid: t("basic.errors.cnicInvalid"),
+      },
     },
     fields: {
       title: t("fields.title"),
       description: t("fields.description"),
       empty: t("fields.empty"),
+      emptyTitle: t("fields.emptyTitle"),
       back: t("actions.back"),
       continue: t("actions.continue"),
       saving: t("actions.saving"),
@@ -208,6 +191,9 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       invalidType: t("documents.invalidType"),
       tooLarge: t("documents.tooLarge"),
       invalidName: t("documents.invalidName"),
+      previewLoading: t("documents.previewLoading"),
+      previewError: t("documents.previewError"),
+      previewOpen: t("documents.previewOpen"),
     },
     review: {
       title: t("review.title"),
@@ -220,6 +206,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       phone: t("basic.phone"),
       cnic: t("basic.cnic"),
       noDocuments: t("review.noDocuments"),
+      incompleteDetails: t("review.incompleteDetails"),
       back: t("actions.back"),
       submit: t("actions.submit"),
       submitting: t("actions.submitting"),
@@ -243,7 +230,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
         ]}
       />
 
-      <div className="container-site py-8 md:py-12">
+      <ApplyPageShell serviceName={serviceName} regionLabel={service.region}>
         <ApplicationWizard
           service={service}
           locale={locale}
@@ -251,7 +238,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
           initialDraft={initialDraft}
           userDefaults={userDefaults}
         />
-      </div>
+      </ApplyPageShell>
     </>
   );
 }

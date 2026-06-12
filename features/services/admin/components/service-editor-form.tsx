@@ -133,19 +133,35 @@ export function ServiceEditorForm({
               onChange={(event) => updateField("slug", event.target.value)}
             />
           </Field>
-          <Field label={labels.region} error={fieldErrors.regionId?.[0]}>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              value={values.regionId}
-              onChange={(event) => updateField("regionId", event.target.value)}
-            >
-              <option value="">{labels.selectRegion}</option>
-              {regions.map((region) => (
-                <option key={region.id} value={region.id}>
-                  {region.nameEn}
-                </option>
-              ))}
-            </select>
+          <Field
+            label={labels.regions}
+            error={fieldErrors.regionIds?.[0]}
+            className="lg:col-span-2"
+          >
+            <div className="grid gap-2 rounded-md border p-3 sm:grid-cols-2">
+              {regions.map((region) => {
+                const checked = values.regionIds.includes(region.id);
+
+                return (
+                  <label
+                    key={region.id}
+                    className="flex items-center gap-2 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(event) => {
+                        const next = event.target.checked
+                          ? [...values.regionIds, region.id]
+                          : values.regionIds.filter((id) => id !== region.id);
+                        updateField("regionIds", next);
+                      }}
+                    />
+                    <span>{region.nameEn}</span>
+                  </label>
+                );
+              })}
+            </div>
           </Field>
           <Field label={labels.nameEn} error={fieldErrors.nameEn?.[0]}>
             <Input

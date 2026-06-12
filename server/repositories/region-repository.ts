@@ -63,14 +63,18 @@ export class RegionRepository extends Repository {
   }
 
   async listActiveSlugs(): Promise<Array<{ slug: string; updatedAt: Date }>> {
-    return this.db.region.findMany({
-      where: activeOnly(),
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-      orderBy: { updatedAt: "desc" },
-    });
+    return this.query(
+      () =>
+        this.db.region.findMany({
+          where: activeOnly(),
+          select: {
+            slug: true,
+            updatedAt: true,
+          },
+          orderBy: { updatedAt: "desc" },
+        }),
+      [],
+    );
   }
 }
 

@@ -74,8 +74,8 @@ export async function requireApprovedAgent(): Promise<CurrentUser> {
 
   if (
     !user.agentProfile ||
-    user.agentProfile.approvalStatus !== "APPROVED" ||
-    !user.agentProfile.isActive
+    !user.agentProfile.isActive ||
+    user.agentProfile.approvalStatus === "REJECTED"
   ) {
     throw new AuthError("AGENT_NOT_APPROVED", "Agent account is not approved");
   }
@@ -136,10 +136,12 @@ export function canAccessApplication(
   application: Pick<Application, "userId" | "agentId">,
 ): boolean {
   if (user.role === "AGENT") {
+    const profile = user.agentProfile;
+
     return (
       application.agentId === user.id &&
-      user.agentProfile?.approvalStatus === "APPROVED" &&
-      user.agentProfile.isActive
+      Boolean(profile?.isActive) &&
+      profile?.approvalStatus !== "REJECTED"
     );
   }
 

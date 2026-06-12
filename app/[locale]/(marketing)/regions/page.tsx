@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { MapPin } from "lucide-react";
-
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { ProvinceCard } from "@/components/marketing/province-card";
 import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
-import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import { regionRepository, seoMetaRepository } from "@/server/repositories";
@@ -81,43 +71,19 @@ export default async function RegionsPage() {
           { label: title },
         ]}
       />
-      <div className="container-site py-10 md:py-12">
+      <div className="container-site space-y-8 py-10 md:py-12">
         {regions.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("regions.empty")}</p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {regions.map((region) => {
-              const name = pickLocalized(locale, {
-                en: region.nameEn,
-                ur: region.nameUr,
-              });
-              const regionDescription = pickLocalized(locale, {
-                en: region.descriptionEn,
-                ur: region.descriptionUr,
-              });
-
-              return (
-                <Card key={region.id} className="h-full">
-                  <CardHeader>
-                    <MapPin
-                      className="mb-2 size-5 text-primary"
-                      aria-hidden="true"
-                    />
-                    <CardTitle>{name}</CardTitle>
-                    {regionDescription ? (
-                      <CardDescription>{regionDescription}</CardDescription>
-                    ) : null}
-                  </CardHeader>
-                  <CardContent>
-                    <Button asChild variant="outline">
-                      <Link href={`/regions/${region.slug}`}>
-                        {t("regions.viewServices")}
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {regions.map((region) => (
+              <ProvinceCard
+                key={region.id}
+                region={region}
+                locale={locale}
+                viewLabel={t("regions.viewServices")}
+              />
+            ))}
           </div>
         )}
       </div>

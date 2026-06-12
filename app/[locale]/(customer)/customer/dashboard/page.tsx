@@ -9,7 +9,7 @@ import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-s
 import { resolveCustomerNextAction } from "@/features/customer/lib/next-action";
 import { customerDashboardStatusCards } from "@/config/customer";
 import { isTempPhoneEmail } from "@/features/auth/lib/user-identity";
-import { formatDate } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 import { formatPhoneForDisplay } from "@/lib/validations/phone";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
@@ -84,7 +84,7 @@ export default async function CustomerDashboardPage() {
       statusLabel: tStatus(getApplicationStatusLabelKey(application.status)),
       nextAction,
       nextActionLabel: tNextAction(nextAction),
-      updatedAt: formatDate(application.updatedAt, locale),
+      updatedAt: formatDateTime(application.updatedAt, locale),
     };
   });
 

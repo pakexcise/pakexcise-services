@@ -29,6 +29,32 @@ export async function headR2Object(key: string): Promise<R2ObjectHead | null> {
   }
 }
 
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+/** R2 can be briefly inconsistent right after a PUT; retry before failing confirm. */
+export async function headR2ObjectWithRetry(
+  key: string,
+  attempts = 4,
+): Promise<R2ObjectHead | null> {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const head = await headR2Object(key);
+
+    if (head?.contentLength) {
+      return head;
+    }
+
+    if (attempt < attempts - 1) {
+      await wait(350 * (attempt + 1));
+    }
+  }
+
+  return null;
+}
+
 export async function deleteR2Object(key: string): Promise<void> {
   await getR2Client().send(
     new DeleteObjectCommand({

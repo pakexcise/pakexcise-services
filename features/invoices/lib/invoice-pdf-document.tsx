@@ -11,6 +11,10 @@ import {
   invoicePdfLabels,
   type InvoiceLocale,
 } from "@/features/invoices/lib/invoice-labels";
+import {
+  formatPaymentMethodDetails,
+  type PaymentMethodDisplayFields,
+} from "@/features/payment-methods/lib/format-payment-method";
 
 export type InvoicePdfLineItem = {
   label: string;
@@ -32,6 +36,7 @@ export type InvoicePdfData = {
   taxTotal: number;
   total: number;
   paymentMethod?: string | null;
+  paymentMethods?: PaymentMethodDisplayFields[];
   paymentInstructions?: string | null;
   officialFeeNote?: string | null;
   notes?: string | null;
@@ -199,7 +204,28 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
           </View>
         </View>
 
-        {data.paymentMethod ? (
+        {data.paymentMethods && data.paymentMethods.length > 0 ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{labels.paymentMethod}</Text>
+            {data.paymentMethods.map((method, index) => {
+              const lines = formatPaymentMethodDetails(method, data.locale, {
+                accountTitle: labels.accountTitle,
+                accountNumber: labels.accountNumber,
+                iban: labels.iban,
+                bankName: labels.bankName,
+                instructions: labels.instructions,
+              });
+
+              return (
+                <View key={`payment-method-${index}`} style={{ marginBottom: 8 }}>
+                  {lines.map((line, lineIndex) => (
+                    <Text key={`payment-method-${index}-${lineIndex}`}>{line}</Text>
+                  ))}
+                </View>
+              );
+            })}
+          </View>
+        ) : data.paymentMethod ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{labels.paymentMethod}</Text>
             <Text>{data.paymentMethod}</Text>

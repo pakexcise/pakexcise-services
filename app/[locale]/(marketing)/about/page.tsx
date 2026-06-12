@@ -5,6 +5,8 @@ const { generateMetadata, default: AboutPage } = createContentPage({
   path: "/about",
   breadcrumbLabel: { en: "About", ur: "ہمارے بارے میں" },
   showSocialLinks: true,
+  showDisclaimer: true,
+  showCta: true,
 });
 
 export { generateMetadata };

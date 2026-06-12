@@ -27,8 +27,10 @@ import {
 import { queueApplicationStatusNotifications } from "@/server/notifications/queue-application-status-notification";
 import { requirePermission, requireUser } from "@/server/permissions/guards";
 import { createPresignedUploadUrl } from "@/server/r2/presign-upload";
-import { headR2Object } from "@/server/r2/object";
-import { isR2Configured } from "@/server/r2/client";
+import {
+  headStoredObject,
+  isObjectStorageConfigured,
+} from "@/server/storage/object-storage";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
 
 async function getOwnedPayment(paymentId: string, userId: string) {
@@ -63,7 +65,7 @@ export async function requestPaymentScreenshotUploadAction(
     expiresInSeconds: number;
   }>
 > {
-  if (!isR2Configured()) {
+  if (!isObjectStorageConfigured()) {
     return errorResult("Payment upload is not available");
   }
 
@@ -154,7 +156,7 @@ export async function confirmPaymentScreenshotUploadAction(
     return errorResult("Payment upload not found");
   }
 
-  const head = await headR2Object(payment.screenshotR2Key);
+  const head = await headStoredObject(payment.screenshotR2Key);
 
   if (!head?.contentLength) {
     return errorResult("Uploaded screenshot was not found in storage");

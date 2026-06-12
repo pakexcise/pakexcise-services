@@ -35,6 +35,7 @@
     "home": "ہوم",
     "services": "خدمات",
     "regions": "علاقے",
+    "blog": "بلاگ",
     "guides": "رہنما",
     "faqs": "سوالات",
     "track": "ٹریک",
@@ -74,7 +75,11 @@
       "otpSentEmail": "ہم نے __EMAIL__ پر تصدیقی کوڈ بھیج دیا ہے۔",
       "otpSentEmailSandbox": "Resend ٹیسٹ موڈ: کوڈ __OWNER_EMAIL__ پر بھیجا گیا ہے (__REQUESTED_EMAIL__ پر نہیں)۔ 6 ہندسوں کا OTP اس ان باکس میں دیکھیں۔",
       "accountNotFound": "اس ای میل سے کوئی اکاؤنٹ نہیں ملا۔ پہلے اکاؤنٹ بنائیں۔",
+      "phoneAccountNotFound": "اس موبائل نمبر یا شناختی کارڈ سے کوئی اکاؤنٹ نہیں ملا۔ پہلے اکاؤنٹ بنائیں۔",
       "accountExists": "اس ای میل سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "emailExists": "اس ای میل سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "phoneExists": "اس موبائل نمبر سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "googleAccountExists": "یہ ای میل Google کے ساتھ پہلے سے رجسٹرڈ ہے۔ Google کے ساتھ جاری رکھیں۔",
       "signupPrompt": "نیا صارف ہیں؟",
       "loginPrompt": "پہلے سے رجسٹرڈ ہیں؟",
       "tryOtherMethods": "ای میل یا Google سے سائن ان کرنے کی کوشش کریں۔",
@@ -101,10 +106,25 @@
       "socialFailed": "سوشل سائن ان ناکام۔ دوبارہ کوشش کریں۔",
       "socialNotConfigured": "سوشل لاگ ان ابھی ترتیب نہیں ہوا۔ ای میل یا فون اور پاس ورڈ استعمال کریں۔"
     },
+    "chooseRole": {
+      "metaTitle": "اکاؤنٹ کی قسم منتخب کریں | PakExcise.com",
+      "title": "آپ PakExcise کو کیسے استعمال کریں گے؟",
+      "description": "منتخب کریں کہ آپ خود درخواستیں جمع کرائیں گے یا بطور ایجنٹ رجسٹر ہوں گے۔",
+      "customerTitle": "کسٹمر",
+      "customerDescription": "اپنی ایکسائز درخواستیں جمع کرائیں اور ٹریک کریں۔",
+      "agentTitle": "ایجنٹ",
+      "agentDescription": "کسٹمرز کی طرف سے درخواستیں جمع کرائیں اور کمیشن ٹریک کریں۔",
+      "agentNote": "ایجنٹ اکاؤنٹس کو کسٹمرز کی درخواستیں جمع کرانے سے پہلے ایڈمن کی منظوری درکار ہوتی ہے۔",
+      "continueLabel": "جاری رکھیں",
+      "continuing": "جاری ہے...",
+      "selectRole": "براہ کرم اکاؤنٹ کی قسم منتخب کریں۔",
+      "failed": "اکاؤنٹ کی قسم محفوظ نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
+    },
     "signup": {
       "metaTitle": "اکاؤنٹ بنائیں | PakExcise.com",
       "title": "اپنا اکاؤنٹ بنائیں",
-      "description": "درخواستیں جمع کرانے اور پیش رفت ٹریک کرنے کے لیے کسٹمر کے طور پر رجسٹر کریں۔",
+      "description": "درخواستیں جمع کرانے اور پیش رفت ٹریک کرنے کے لیے رجسٹر کریں۔",
+      "agentDescription": "PakExcise سہولت ایجنٹ کے طور پر درخواست دینے کے لیے اپنا اکاؤنٹ بنائیں۔",
       "name": "مکمل نام",
       "email": "ای میل ایڈریس",
       "password": "پاس ورڈ",
@@ -135,7 +155,11 @@
       "otpSentEmail": "ہم نے __EMAIL__ پر تصدیقی کوڈ بھیج دیا ہے۔",
       "otpSentEmailSandbox": "Resend ٹیسٹ موڈ: کوڈ __OWNER_EMAIL__ پر بھیجا گیا ہے (__REQUESTED_EMAIL__ پر نہیں)۔ 6 ہندسوں کا OTP اس ان باکس میں دیکھیں۔",
       "accountNotFound": "اس ای میل سے کوئی اکاؤنٹ نہیں ملا۔ پہلے اکاؤنٹ بنائیں۔",
+      "phoneAccountNotFound": "اس موبائل نمبر یا شناختی کارڈ سے کوئی اکاؤنٹ نہیں ملا۔ پہلے اکاؤنٹ بنائیں۔",
       "accountExists": "اس ای میل سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "emailExists": "اس ای میل سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "phoneExists": "اس موبائل نمبر سے اکاؤنٹ پہلے سے موجود ہے۔ سائن ان کریں۔",
+      "googleAccountExists": "یہ ای میل Google کے ساتھ پہلے سے رجسٹرڈ ہے۔ Google کے ساتھ جاری رکھیں۔",
       "signupPrompt": "نیا صارف ہیں؟",
       "loginPrompt": "پہلے سے رجسٹرڈ ہیں؟",
       "tryOtherMethods": "ای میل یا Google سے سائن ان کرنے کی کوشش کریں۔",
@@ -319,6 +343,12 @@
         "title": "دستاویزات",
         "empty": "ابھی کوئی دستاویز اپ لوڈ نہیں ہوئی۔",
         "status": "اسٹیٹس",
+        "statuses": {
+          "PENDING": "اپ لوڈ ہو گئی — جائزے کا انتظار",
+          "APPROVED": "تصدیق شدہ",
+          "REJECTED": "مسترد",
+          "MISSING": "اپ لوڈ نہیں ہوئی"
+        },
         "rejectionReason": "مستردی کی وجہ",
         "uploadSection": "ہماری ٹیم کی درخواست پر دستاویزات اپ لوڈ یا تبدیل کریں۔",
         "required": "لازمی",
@@ -350,8 +380,13 @@
         "subtotal": "ذیلی کل",
         "tax": "ٹیکس",
         "officialFeeNote": "سرکاری / سرکاری فیسیں",
-        "paymentMethod": "ادائیگی کا طریقہ",
-        "paymentInstructions": "ادائیگی کی ہدایات",
+        "paymentMethods": "ادائیگی کے طریقے",
+        "paymentInstructions": "اضافی ادائیگی کی ہدایات",
+        "accountTitle": "اکاؤنٹ کا نام",
+        "accountNumber": "اکاؤنٹ نمبر",
+        "iban": "IBAN",
+        "bankName": "بینک",
+        "instructions": "ہدایات",
         "dueDate": "آخری تاریخ",
         "notes": "نوٹس",
         "lineItems": "لائن آئٹمز",
@@ -379,16 +414,30 @@
         "waitingVerification": "آپ کے ادائیگی اسکرین شاٹ کا جائزہ ہو رہا ہے۔",
         "verified": "ادائیگی تصدیق شدہ۔ ہماری ٹیم آپ کی درخواست پر کام جاری رکھے گی۔",
         "rejected": "ادائیگی مسترد",
-        "rejectionReason": "وجہ"
+        "rejectionReason": "وجہ",
+        "viewer": {
+          "loading": "ادائیگی اسکرین شاٹ لوڈ ہو رہا ہے…",
+          "error": "ادائیگی اسکرین شاٹ لوڈ نہیں ہو سکا۔",
+          "retry": "دوبارہ کوشش",
+          "openNewTab": "نئی ٹیب میں کھولیں",
+          "unsupported": "اس فائل قسم کے لیے ان لائن پیش نظارہ دستیاب نہیں۔"
+        }
       }
     }
   },
   "agent": {
+    "shell": {
+      "portalLabel": "ایجنٹ پورٹل",
+      "openMenu": "ایجنٹ مینو کھولیں",
+      "signOut": "سائن آؤٹ"
+    },
     "nav": {
       "ariaLabel": "ایجنٹ پورٹل نیویگیشن",
+      "workspaceSection": "ورک اسپیس",
       "dashboard": "ڈیش بورڈ",
       "applications": "درخواستیں",
       "newApplication": "نئی درخواست",
+      "verification": "تصدیق حاصل کریں",
       "commissions": "کمیشن",
       "profile": "پروفائل"
     },
@@ -399,16 +448,57 @@
     },
     "dashboard": {
       "metaTitle": "ایجنٹ ڈیش بورڈ | PakExcise.com",
+      "eyebrow": "ایجنٹ پورٹل",
       "title": "ایجنٹ ڈیش بورڈ",
       "welcome": "خوش آمدید، {name}",
-      "description": "منظوری کے بعد آپ کسٹمرز کی جانب سے درخواستیں جمع کرا سکتے ہیں۔",
-      "pendingTitle": "ایجنٹ اکاؤنٹ منظوری کا انتظار",
-      "pendingDescription": "ایڈمن کی منظوری سے پہلے درخواستیں جمع نہیں کر سکتے۔",
+      "subtitle": "کسٹمرز کی درخواستیں جمع کرائیں، تفویض شدہ کیسز ٹریک کریں، اور کمیشنز ایک جگہ دیکھیں۔",
+      "accountLabel": "سائن ان بطور",
+      "commissionRateLabel": "کمیشن شرح",
+      "newApplicationCta": "نئی درخواست",
+      "applicationsCta": "درخواستیں دیکھیں",
+      "description": "کسٹمرز کی جانب سے درخواستیں جمع کرائیں اور تفویض شدہ کیسز ٹریک کریں۔",
+      "pendingTitle": "ایجنٹ اکاؤنٹ عارضی طور پر محدود",
+      "pendingDescription": "مدد کے لیے PakExcise سپورٹ سے رابطہ کریں۔",
       "rejectedTitle": "ایجنٹ اکاؤنٹ مسترد",
       "rejectedDescription": "اگر یہ غلطی لگے تو PakExcise سپورٹ سے رابطہ کریں۔",
+      "applicationsTitle": "حالیہ درخواستیں",
+      "applicationsCount": "{count, plural, =0 {کوئی درخواست نہیں} one {# درخواست} other {# درخواستیں}}",
       "recentApplications": "حالیہ درخواستیں",
       "viewAll": "سب دیکھیں",
-      "applicationsEmpty": "ابھی کوئی تفویض شدہ درخواست نہیں۔",
+      "applicationsEmpty": "ابھی کوئی تفویض شدہ درخواست نہیں۔ پہلی کسٹمر درخواست شروع کریں۔",
+      "emptyTitle": "اپنی پہلی ایجنٹ درخواست شروع کریں",
+      "emptyCta": "درخواست شروع کریں",
+      "viewApplication": "تفصیلات دیکھیں",
+      "commissionsTitle": "کمیشن",
+      "commissionsDescription": "مکمل شدہ کام کے کمیشن لائن آئٹمز اور ادائیگی کی صورتحال دیکھیں۔",
+      "commissionsCta": "کمیشن دیکھیں",
+      "profileTitle": "ایجنٹ پروفائل",
+      "profileDescription": "رابطے کی تفصیلات اپ ڈیٹ کریں اور اپنے ایجنٹ اکاؤنٹ کی صورتحال دیکھیں۔",
+      "profileCta": "پروفائل میں ترمیم",
+      "supportTitle": "سپورٹ سے رابطہ",
+      "supportDescription": "درخواست یا ادائیگی میں مدد چاہیے؟ ہماری ٹیم مدد کر سکتی ہے۔",
+      "supportCta": "سپورٹ سے رابطہ",
+      "steps": {
+        "chooseService": {
+          "title": "خدمت منتخب کریں",
+          "description": "وہ ایکسائز سہولت خدمت منتخب کریں جو آپ کے کسٹمر کو درکار ہے۔"
+        },
+        "submitApplication": {
+          "title": "کسٹمر کی جانب سے جمع کرائیں",
+          "description": "درخواست فارم مکمل کریں اور ضروری دستاویزات محفوظ طریقے سے اپ لوڈ کریں۔"
+        },
+        "trackCommissions": {
+          "title": "پیشرفت اور کمیشن ٹریک کریں",
+          "description": "درخواست کی صورتحال اور کمیشن ادائیگیاں اپنے ڈیش بورڈ سے دیکھیں۔"
+        }
+      },
+      "commissionSummary": {
+        "title": "کمیشن کا جائزہ",
+        "description": "ایڈمن لائن آئٹمز سے زیر التوا اور ادا شدہ کمیشن کا مجموعہ۔",
+        "pending": "زیر التوا ادائیگی",
+        "paid": "ادا شدہ",
+        "viewAll": "تمام کمیشن دیکھیں"
+      },
       "statusCards": {
         "total": "تفویض شدہ درخواستیں",
         "inProgress": "جاری",
@@ -417,9 +507,11 @@
       },
       "columns": {
         "trackingId": "ٹریکنگ ID",
+        "customer": "کسٹمر",
         "service": "خدمت",
         "status": "اسٹیٹس",
-        "updated": "اپڈیٹ"
+        "updated": "اپڈیٹ",
+        "actions": "اقدامات"
       }
     },
     "applications": {
@@ -496,6 +588,58 @@
       "saving": "محفوظ ہو رہا ہے…",
       "saved": "پروفائل اپ ڈیٹ ہو گئی۔",
       "error": "پروفائل اپ ڈیٹ نہیں ہو سکی۔"
+    },
+    "verification": {
+      "metaTitle": "ایجنٹ تصدیق | PakExcise.com",
+      "title": "PakExcise پر تصدیق حاصل کریں",
+      "description": "عوامی تصدیق کے لیے تفصیلات جمع کرائیں۔ یہ درخواستیں جمع کرانے کی صلاحیت پر اثر نہیں ڈالتا۔",
+      "listingType": "لسٹنگ کی قسم",
+      "individual": "انفرادی ایجنٹ",
+      "shop": "دکان / دفتر ایجنٹ",
+      "fullName": "پورا نام",
+      "cnic": "شناختی کارڈ نمبر",
+      "phone": "فعال فون نمبر",
+      "email": "ای میل",
+      "emailOptional": "اختیاری",
+      "currentAddress": "موجودہ پتہ",
+      "permanentAddress": "مستقل پتہ",
+      "region": "صوبہ / علاقہ",
+      "city": "شہر",
+      "selectRegion": "صوبہ منتخب کریں",
+      "selectCity": "شہر منتخب کریں",
+      "cnicFront": "شناختی کارڈ سامنے کی تصویر",
+      "cnicBack": "شناختی کارڈ پیچھے کی تصویر",
+      "shopPhoto": "دکان / دفتر کی تصویر",
+      "location": "مقام کا لیبل",
+      "locationOptional": "اختیاری: عرض البلد اور طول البلد درج کریں۔",
+      "latitude": "عرض البلد",
+      "longitude": "طول البلد",
+      "submit": "تصدیق کے لیے جمع کرائیں",
+      "submitting": "جمع ہو رہا ہے…",
+      "success": "تصدیق جمع ہو گئی۔ ایڈمن جائزہ لے گا۔",
+      "error": "تصدیق جمع نہیں ہو سکی۔",
+      "upload": "فائل اپ لوڈ کریں",
+      "uploading": "اپ لوڈ ہو رہا ہے…",
+      "uploaded": "اپ لوڈ شدہ",
+      "replace": "فائل تبدیل کریں",
+      "maxSize": "زیادہ سے زیادہ {size}",
+      "allowedTypes": "JPG، PNG، یا WebP",
+      "uploadFailed": "اپ لوڈ ناکام۔",
+      "invalidType": "غلط فائل کی قسم۔",
+      "tooLarge": "فائل بہت بڑی ہے۔",
+      "invalidName": "غلط فائل نام۔",
+      "card": {
+        "title": "ہماری ویب سائٹ پر تصدیق شدہ ایجنٹ بنیں",
+        "description": "اختیاری تصدیق سے کسٹمرز قابل اعتماد ایجنٹس اور دکانیں تلاش کر سکتے ہیں۔",
+        "draftCta": "تصدیق شروع کریں",
+        "cta": "تصدیق اپ ڈیٹ کریں",
+        "pendingTitle": "تصدیق زیر جائزہ",
+        "pendingDescription": "ایڈمن آپ کی عوامی لسٹنگ کا جائزہ لے رہا ہے۔",
+        "verifiedTitle": "آپ تصدیق شدہ ایجنٹ ہیں",
+        "verifiedDescription": "آپ کی پروفائل عوامی تصدیق شدہ ایجنٹس کے صفحے پر ظاہر ہو سکتی ہے۔",
+        "rejectedTitle": "تصدیق میں تبدیلی درکار",
+        "rejectedDescription": "تفصیلات دیکھیں اور دوبارہ جمع کرائیں۔"
+      }
     }
   },
   "support": {
@@ -563,6 +707,8 @@
     "terms": "شرائط و ضوابط",
     "disclaimer": "اعلان دستبرداری",
     "refund": "واپسی کی پالیسی",
+    "paymentPolicy": "ادائیگی کی پالیسی",
+    "cookiePolicy": "کوکی پالیسی",
     "quickLinks": "فوری لنکس",
     "servicesTitle": "خدمات",
     "servicesEmpty": "ایڈمن کی ترتیب کے بعد خدمات یہاں ظاہر ہوں گی۔",
@@ -595,14 +741,33 @@
     "trustItem3": "انگریزی اور اردو سپورٹ، موبائل فرسٹ ڈیزائن",
     "ctaTitle": "خدمت منتخب کرنے میں مدد چاہیے؟",
     "ctaDescription": "ہماری ٹیم آپ کو درست درخواست کے راستے میں رہنمائی کر سکتی ہے۔",
-    "ctaButton": "سپورٹ سے رابطہ"
+    "ctaButton": "سپورٹ سے رابطہ",
+    "verifiedAgentsTitle": "تصدیق شدہ ایجنٹس اور دکان پارٹنرز",
+    "verifiedAgentsDescription": "PakExcise کی جانب سے جائزہ شدہ قابل اعتماد سہولت پارٹنرز۔",
+    "verifiedBadge": "تصدیق شدہ",
+    "verifiedShop": "دکان پارٹنر",
+    "verifiedAgent": "ایجنٹ"
   },
   "marketing": {
+    "verifiedAgents": {
+      "title": "تصدیق شدہ ایجنٹس اور دکان پارٹنرز",
+      "description": "پاکستان بھر میں PakExcise کے تصدیق شدہ سہولت ایجنٹس اور دکان پارٹنرز دیکھیں۔",
+      "empty": "ایڈمن کی منظوری کے بعد تصدیق شدہ ایجنٹس یہاں ظاہر ہوں گے۔",
+      "verifiedBadge": "تصدیق شدہ",
+      "shop": "دکان پارٹنر",
+      "agent": "ایجنٹ",
+      "ctaTitle": "PakExcise ایجنٹ بننا چاہتے ہیں؟",
+      "ctaDescription": "ایجنٹ کے طور پر رجسٹر کریں، فوراً درخواستیں جمع کرائیں، اور اختیاری عوامی تصدیق کے لیے درخواست دیں۔",
+      "ctaPrimary": "ایجنٹ پروگرام کے بارے میں",
+      "ctaSecondary": "واٹس ایپ پر بات کریں"
+    },
     "services": {
       "title": "ایکسائز سہولت خدمات",
       "metaTitle": "خدمات | PakExcise.com",
       "metaDescription": "پنجاب، اسلام آباد ICT اور دیگر علاقوں کے لیے فعال ایکسائز سہولت خدمات دیکھیں۔ نجی سروس — سرکاری ویب سائٹ نہیں۔",
-      "empty": "فی الحال کوئی فعال خدمات دستیاب نہیں ہیں۔"
+      "empty": "فی الحال کوئی فعال خدمات دستیاب نہیں ہیں۔",
+      "multipleRegions": "متعدد صوبے",
+      "allProvinces": "تمام صوبے"
     },
     "service": {
       "documentsTitle": "دستاویزات کی فہرست",
@@ -614,7 +779,9 @@
       "ctaTitle": "درخواست دینے کے لیے تیار ہیں؟",
       "ctaDescription": "اپنی درخواست آن لائن شروع کریں۔ ہماری ٹیم آپ کی جمع کرائی گئی درخواست کا جائزہ لے گی اور اگلے مراحل میں رہنمائی کرے گی۔",
       "applyNow": "ابھی درخواست دیں",
-      "relatedTitle": "متعلقہ خدمات"
+      "relatedTitle": "متعلقہ خدمات",
+      "importantNotes": "اہم نوٹس",
+      "availableIn": "دستیاب علاقے"
     },
     "regions": {
       "title": "علاقے",
@@ -623,7 +790,12 @@
       "empty": "فی الحال کوئی فعال علاقے دستیاب نہیں ہیں۔",
       "emptyServices": "اس علاقے میں ابھی کوئی فعال خدمات نہیں ہیں۔",
       "viewServices": "خدمات دیکھیں",
+      "viewCity": "شہر دیکھیں",
+      "citiesTitle": "اس علاقے کے شہر",
       "servicesInRegion": "اس علاقے کی خدمات"
+    },
+    "reviews": {
+      "empty": "ایڈمن کی اشاعت کے بعد رائے یہاں ظاہر ہوں گی۔"
     },
     "faqs": {
       "title": "اکثر پوچھے گئے سوالات",
@@ -701,7 +873,9 @@
       "regions": "علاقے",
       "faqs": "سوالات",
       "social": "سوشل لنکس",
+      "paymentMethods": "ادائیگی کے طریقے",
       "agents": "ایجنٹس",
+      "agentVerifications": "ایجنٹ تصدیقات",
       "customers": "کسٹمرز",
       "notifications": "اطلاعات",
       "seo": "SEO",
@@ -847,8 +1021,16 @@
         "description": "کسٹمر کے لیے انوائس بنائیں اور بھیجیں۔ جائزے کے بعد دستیاب جب دستاویزات قابل قبول ہوں۔",
         "serviceFee": "PakExcise سروس فیس (PKR)",
         "officialFeeNote": "سرکاری / سرکاری فیس نوٹ",
-        "paymentMethod": "ادائیگی کا طریقہ",
-        "paymentInstructions": "ادائیگی کی ہدایات",
+        "paymentMethods": "ادائیگی کے طریقے",
+        "paymentMethodsHint": "اس انوائس پر شامل کرنے کے لیے ایک یا زیادہ ادائیگی کے طریقے منتخب کریں۔",
+        "noPaymentMethods": "کوئی فعال ادائیگی کا طریقہ نہیں ملا۔ پہلے ایڈمن → ادائیگی کے طریقے میں شامل کریں۔",
+        "paymentInstructions": "اضافی ادائیگی کی ہدایات",
+        "paymentInstructionsHint": "کسٹمر کے لیے اختیاری اضافی نوٹ (منتخب ادائیگی کے طریقوں کے نیچے دکھایا جائے گا)۔",
+        "accountTitle": "اکاؤنٹ کا نام",
+        "accountNumber": "اکاؤنٹ نمبر",
+        "iban": "IBAN",
+        "bankName": "بینک",
+        "instructions": "ہدایات",
         "dueDate": "آخری تاریخ",
         "notes": "انوائس نوٹس",
         "taxTotal": "ٹیکس کل (PKR)",
@@ -864,6 +1046,38 @@
         "submitting": "بن رہی ہے…",
         "success": "انوائس بھیج دی گئی:",
         "error": "انوائس نہیں بن سکی۔"
+      }
+    },
+    "agentVerifications": {
+      "title": "ایجنٹ تصدیقات",
+      "description": "ایجنٹس اور دکان پارٹنرز کی اختیاری عوامی تصدیق کی درخواستوں کا جائزہ لیں۔",
+      "empty": "ابھی کوئی تصدیق جمع نہیں ہوئی۔",
+      "shop": "دکان",
+      "agent": "ایجنٹ",
+      "columns": {
+        "name": "نام",
+        "type": "قسم",
+        "location": "مقام",
+        "status": "اسٹیٹس",
+        "submitted": "جمع شدہ",
+        "actions": "اقدامات"
+      },
+      "statuses": {
+        "DRAFT": "ڈرافٹ",
+        "PENDING": "زیر التوا",
+        "VERIFIED": "تصدیق شدہ",
+        "REJECTED": "مسترد"
+      },
+      "actions": {
+        "approve": "لسٹنگ منظور کریں",
+        "approving": "منظور ہو رہی ہے…",
+        "reject": "لسٹنگ مسترد کریں",
+        "rejecting": "مسترد ہو رہی ہے…",
+        "rejectionReason": "مسترد کرنے کی وجہ",
+        "unlist": "عوامی صفحے سے ہٹائیں",
+        "unlisting": "ہٹایا جا رہا ہے…",
+        "success": "تصدیق اپ ڈیٹ ہو گئی۔",
+        "error": "تصدیق اپ ڈیٹ نہیں ہو سکی۔"
       }
     },
     "agents": {
@@ -1215,6 +1429,7 @@
         },
         "slug": "Slug",
         "region": "علاقہ",
+        "regions": "تفویض شدہ صوبے",
         "selectRegion": "علاقہ منتخب کریں",
         "nameEn": "نام (انگریزی)",
         "nameUr": "نام (اردو)",
@@ -1300,6 +1515,73 @@
         "invalidJson": "غلط JSON فارمیٹ"
       }
     },
+    "regions": {
+      "title": "علاقوں کا انتظام",
+      "description": "صوبے، شہر، SEO، اور علاقے کے لحاظ سے خدمات منظم کریں۔",
+      "create": "علاقہ شامل کریں",
+      "createTitle": "نیا علاقہ",
+      "createDescription": "نیا صوبہ یا علاقہ شامل کریں۔ محفوظ کرنے کے بعد شہر منظم کریں۔",
+      "editTitle": "علاقہ میں ترمیم",
+      "editDescription": "{name} اپ ڈیٹ کریں اور اس علاقے کے شہر منظم کریں۔",
+      "searchPlaceholder": "نام یا slug سے تلاش",
+      "emptyTitle": "کوئی علاقہ نہیں ملا",
+      "emptyDescription": "پہلا علاقہ بنائیں یا فلٹرز ایڈجسٹ کریں۔",
+      "columns": {
+        "name": "علاقہ",
+        "slug": "Slug",
+        "cities": "شہر",
+        "services": "خدمات",
+        "status": "اسٹیٹس",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "filters": {
+        "all": "تمام اسٹیٹس",
+        "apply": "فلٹرز لگائیں"
+      },
+      "actions": {
+        "edit": "ترمیم"
+      },
+      "form": {
+        "tabs": {
+          "general": "عمومی",
+          "seo": "SEO"
+        },
+        "slug": "Slug",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "descriptionEn": "تعارفی مواد (انگریزی)",
+        "descriptionUr": "تعارفی مواد (اردو)",
+        "isActive": "فعال",
+        "displayOrder": "ترتیب",
+        "metaTitleEn": "میٹا عنوان (انگریزی)",
+        "metaTitleUr": "میٹا عنوان (اردو)",
+        "metaDescriptionEn": "میٹا تفصیل (انگریزی)",
+        "metaDescriptionUr": "میٹا تفصیل (اردو)",
+        "h1En": "H1 (انگریزی)",
+        "h1Ur": "H1 (اردو)",
+        "save": "علاقہ محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "saveFailed": "علاقہ محفوظ نہیں ہو سکا"
+      },
+      "cities": {
+        "title": "اس علاقے کے شہر",
+        "add": "شہر شامل کریں",
+        "slug": "شہر slug",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "descriptionEn": "تعارفی مواد (انگریزی)",
+        "isActive": "فعال",
+        "save": "شہر محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "delete": "حذف",
+        "confirmDelete": "یہ شہر حذف کریں؟",
+        "empty": "ابھی اس علاقے میں کوئی شہر نہیں۔"
+      }
+    },
     "faqs": {
       "title": "FAQ کا انتظام",
       "description": "عوامی صفحات اور schema کے لیے عمومی اور سروس مخصوص FAQs منظم کریں۔",
@@ -1350,6 +1632,52 @@
         "saving": "محفوظ ہو رہا ہے...",
         "saveFailed": "FAQ محفوظ نہیں ہو سکا",
         "cancel": "منسوخ"
+      }
+    },
+    "paymentMethods": {
+      "title": "ادائیگی کے طریقے",
+      "description": "بینک، JazzCash، Easypaisa اور دیگر ادائیگی کے اختیارات منظم کریں جو کسٹمر انوائسز پر دکھائے جاتے ہیں۔",
+      "existing": "موجودہ ادائیگی کے طریقے",
+      "empty": "ابھی کوئی ادائیگی کا طریقہ ترتیب نہیں دیا گیا۔",
+      "addMethod": "ادائیگی کا طریقہ شامل کریں",
+      "editMethod": "ادائیگی کا طریقہ ترمیم کریں",
+      "code": "کوڈ",
+      "type": "قسم",
+      "nameEn": "ڈسپلے نام (انگریزی)",
+      "nameEnHint": "انوائس پر کسٹمر کو دکھایا جانے والا نام، جیسے Meezan Bank، Easypaisa، NayaPay۔",
+      "nameUr": "ڈسپلے نام (اردو)",
+      "nameUrHint": "اردو انوائسز پر دکھایا جانے والا اردو نام۔",
+      "accountTitleEn": "اکاؤنٹ کا نام (انگریزی)",
+      "accountTitleUr": "اکاؤنٹ کا نام (اردو)",
+      "accountNumber": "اکاؤنٹ / والیٹ نمبر",
+      "iban": "IBAN",
+      "bankNameEn": "بینک کا نام (انگریزی)",
+      "bankNameUr": "بینک کا نام (اردو)",
+      "instructionsEn": "ہدایات (انگریزی)",
+      "instructionsUr": "ہدایات (اردو)",
+      "isActive": "فعال",
+      "displayOrder": "ترتیب",
+      "saveMethod": "ادائیگی کا طریقہ محفوظ کریں",
+      "clear": "فارم صاف کریں",
+      "edit": "ترمیم",
+      "delete": "حذف",
+      "confirmDelete": "یہ ادائیگی کا طریقہ حذف کریں؟",
+      "saveFailed": "ادائیگی کا طریقہ محفوظ نہیں ہو سکا",
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "actions": {
+        "moveUp": "اوپر",
+        "moveDown": "نیچے"
+      },
+      "types": {
+        "bankTransfer": "بینک ٹرانسفر",
+        "jazzcash": "JazzCash",
+        "easypaisa": "Easypaisa",
+        "nayapay": "NayaPay",
+        "sadapay": "SadaPay",
+        "other": "دیگر"
       }
     },
     "social": {
@@ -1411,11 +1739,20 @@
       "phone": "موبائل نمبر",
       "phoneHint": "پاکستانی موبائل (مثال: 03001234567)",
       "cnic": "شناختی کارڈ",
-      "cnicHint": "فارمیٹ: 12345-1234567-1"
+      "cnicHint": "فارمیٹ: 12345-1234567-1",
+      "validationSummary": "جاری رکھنے سے پہلے درج ذیل درست کریں:",
+      "errors": {
+        "fullNameRequired": "مکمل نام درکار ہے",
+        "fullNameTooLong": "مکمل نام بہت لمبا ہے",
+        "emailInvalid": "درست ای میل درج کریں",
+        "phoneInvalid": "غلط پاکستانی موبائل نمبر",
+        "cnicInvalid": "غلط شناختی کارڈ فارمیٹ"
+      }
     },
     "fields": {
       "title": "خدمت سے متعلق معلومات",
       "description": "اس خدمت کے لیے درکار تفصیلات فراہم کریں۔",
+      "emptyTitle": "یہاں مزید کچھ درکار نہیں",
       "empty": "اس خدمت کے لیے کوئی اضافی فیلڈ درکار نہیں۔ دستاویزات کے مرحلے پر جائیں۔"
     },
     "documents": {
@@ -1434,7 +1771,10 @@
       "uploadFailed": "اپ لوڈ ناکام۔ دوبارہ کوشش کریں۔",
       "invalidType": "یہ فائل قسم مجاز نہیں۔",
       "tooLarge": "فائل بہت بڑی ہے۔",
-      "invalidName": "غلط فائل نام۔"
+      "invalidName": "غلط فائل نام۔",
+      "previewLoading": "پیش نظارہ لوڈ ہو رہا ہے...",
+      "previewError": "پیش نظارہ لوڈ نہیں ہو سکی۔",
+      "previewOpen": "دستاویز نئی ٹیب میں کھولیں"
     },
     "review": {
       "title": "جائزہ اور جمع کرائیں",
@@ -1443,6 +1783,7 @@
       "fieldsSection": "خدمت کی تفصیلات",
       "documentsSection": "اپ لوڈ شدہ دستاویزات",
       "noDocuments": "کوئی دستاویز اپ لوڈ نہیں ہوئی۔",
+      "incompleteDetails": "کچھ لازمی تفصیلات موجود نہیں ہیں۔ واپس جا کر درخواست گزار کی معلومات مکمل کریں۔",
       "disclaimer": "جمع کرا کر آپ تصدیق کرتے ہیں کہ {service} سہولت درخواست کے لیے فراہم کردہ معلومات درست ہیں۔ PakExcise.com نجی سروس ہے اور سرکاری ویب سائٹ نہیں۔"
     },
     "actions": {

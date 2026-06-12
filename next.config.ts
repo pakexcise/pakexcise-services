@@ -3,6 +3,8 @@ import bundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
 
+import { REGION_SLUG_ALIASES } from "./config/region-slugs";
+
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -25,6 +27,24 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-dropdown-menu"],
+  },
+  async redirects() {
+    const regionRedirects = Object.entries(REGION_SLUG_ALIASES).flatMap(
+      ([legacySlug, canonicalSlug]) => [
+        {
+          source: `/regions/${legacySlug}`,
+          destination: `/regions/${canonicalSlug}`,
+          permanent: true,
+        },
+        {
+          source: `/regions/${legacySlug}/:city`,
+          destination: `/regions/${canonicalSlug}/:city`,
+          permanent: true,
+        },
+      ],
+    );
+
+    return regionRedirects;
   },
 };
 

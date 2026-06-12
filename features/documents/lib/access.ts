@@ -15,6 +15,23 @@ const uploadAllowedStatuses: ApplicationStatus[] = [
   "PAYMENT_UPLOADED",
 ];
 
+const completionProofUploadStatuses: ApplicationStatus[] = [
+  "PAYMENT_VERIFIED",
+  "IN_PROGRESS",
+  "AT_OFFICE",
+];
+
+export function canUploadCompletionProof(
+  user: CurrentUser,
+  application: Pick<Application, "userId" | "agentId" | "status">,
+): boolean {
+  if (!roleHasPermission(user.role, "application:write")) {
+    return false;
+  }
+
+  return completionProofUploadStatuses.includes(application.status);
+}
+
 export function canUploadToApplication(
   user: CurrentUser,
   application: Pick<Application, "userId" | "agentId" | "status">,
@@ -28,10 +45,12 @@ export function canUploadToApplication(
   }
 
   if (user.role === "AGENT") {
+    const profile = user.agentProfile;
+
     return (
       application.agentId === user.id &&
-      user.agentProfile?.approvalStatus === "APPROVED" &&
-      user.agentProfile.isActive
+      Boolean(profile?.isActive) &&
+      profile?.approvalStatus !== "REJECTED"
     );
   }
 

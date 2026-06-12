@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { CustomerSidebar } from "@/components/customer/customer-sidebar";
+import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { CustomerTopbar } from "@/components/customer/customer-topbar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
@@ -10,12 +11,14 @@ type CustomerShellProps = {
   children: React.ReactNode;
   userName: string;
   userContactLine: string;
+  labels: CustomerShellLabels;
 };
 
 export function CustomerShell({
   children,
   userName,
   userContactLine,
+  labels,
 }: CustomerShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -25,6 +28,7 @@ export function CustomerShell({
         <CustomerSidebar
           userName={userName}
           userContactLine={userContactLine}
+          labels={labels}
         />
       </aside>
 
@@ -36,6 +40,7 @@ export function CustomerShell({
           <CustomerSidebar
             userName={userName}
             userContactLine={userContactLine}
+            labels={labels}
             onNavigate={() => setMobileOpen(false)}
           />
         </SheetContent>
@@ -45,6 +50,7 @@ export function CustomerShell({
         <CustomerTopbar
           userName={userName}
           userContactLine={userContactLine}
+          labels={labels.shell}
           onMenuClick={() => setMobileOpen(true)}
         />
         <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 p-4 md:p-6">

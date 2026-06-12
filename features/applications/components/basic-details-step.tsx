@@ -1,13 +1,16 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { AlertCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { basicApplicantDetailsSchema } from "@/features/applications/lib/basic-details-schema";
+import { createBasicApplicantDetailsSchema } from "@/features/applications/lib/basic-details-schema";
 import type { BasicApplicantDetails } from "@/features/applications/types";
+import { formatCnicInput } from "@/lib/validations/cnic";
 
 type BasicDetailsStepProps = {
   defaultValues: Partial<BasicApplicantDetails>;
@@ -22,6 +25,14 @@ type BasicDetailsStepProps = {
     cnicHint: string;
     continue: string;
     saving: string;
+    validationSummary: string;
+    errors: {
+      fullNameRequired: string;
+      fullNameTooLong: string;
+      emailInvalid: string;
+      phoneInvalid: string;
+      cnicInvalid: string;
+    };
   };
   isSaving: boolean;
   onSubmit: (values: BasicApplicantDetails) => Promise<void>;
@@ -33,12 +44,22 @@ export function BasicDetailsStep({
   isSaving,
   onSubmit,
 }: BasicDetailsStepProps) {
+  const [showValidationSummary, setShowValidationSummary] = useState(false);
+
+  const schema = useMemo(
+    () => createBasicApplicantDetailsSchema(labels.errors),
+    [labels.errors],
+  );
+
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<BasicApplicantDetails>({
-    resolver: zodResolver(basicApplicantDetailsSchema),
+    resolver: zodResolver(schema),
+    mode: "onTouched",
+    reValidateMode: "onChange",
     defaultValues: {
       fullName: defaultValues.fullName ?? "",
       email: defaultValues.email ?? "",
@@ -47,9 +68,30 @@ export function BasicDetailsStep({
     },
   });
 
+  const fieldLabels: Record<keyof BasicApplicantDetails, string> = {
+    fullName: labels.fullName,
+    email: labels.email,
+    phone: labels.phone,
+    cnic: labels.cnic,
+  };
+
+  const errorEntries = (
+    Object.entries(errors) as Array<
+      [keyof BasicApplicantDetails, { message?: string } | undefined]
+    >
+  ).filter(([, error]) => Boolean(error?.message));
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(
+        async (values) => {
+          setShowValidationSummary(false);
+          await onSubmit(values);
+        },
+        () => {
+          setShowValidationSummary(true);
+        },
+      )}
       className="space-y-6"
       noValidate
     >
@@ -57,6 +99,28 @@ export function BasicDetailsStep({
         <h2 className="text-xl font-semibold">{labels.title}</h2>
         <p className="text-sm text-muted-foreground">{labels.description}</p>
       </div>
+
+      {showValidationSummary && errorEntries.length > 0 ? (
+        <div
+          role="alert"
+          className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
+          <div className="flex items-start gap-2">
+            <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            <div className="space-y-2">
+              <p className="font-medium">{labels.validationSummary}</p>
+              <ul className="list-disc space-y-1 ps-4">
+                {errorEntries.map(([field, error]) => (
+                  <li key={field}>
+                    <span className="font-medium">{fieldLabels[field]}:</span>{" "}
+                    {error?.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
@@ -103,12 +167,24 @@ export function BasicDetailsStep({
 
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="cnic">{labels.cnic}</Label>
-          <Input
-            id="cnic"
-            inputMode="numeric"
-            autoComplete="off"
-            {...register("cnic")}
-            aria-invalid={Boolean(errors.cnic)}
+          <Controller
+            name="cnic"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="cnic"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="12345-1234567-1"
+                maxLength={15}
+                value={field.value}
+                onChange={(event) =>
+                  field.onChange(formatCnicInput(event.target.value))
+                }
+                onBlur={field.onBlur}
+                aria-invalid={Boolean(errors.cnic)}
+              />
+            )}
           />
           <p className="text-xs text-muted-foreground">{labels.cnicHint}</p>
           {errors.cnic ? (

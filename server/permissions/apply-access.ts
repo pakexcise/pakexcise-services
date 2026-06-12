@@ -5,7 +5,9 @@ import { getCurrentUser } from "@/server/auth/current-user";
 
 export type ApplyAccessResult =
   | { allowed: true; user: CurrentUser }
-  | { allowed: false; reason: "UNAUTHORIZED" | "FORBIDDEN" | "AGENT_NOT_APPROVED" };
+  | { allowed: false; reason: "UNAUTHORIZED" }
+  | { allowed: false; reason: "AGENT_NOT_APPROVED"; user: CurrentUser }
+  | { allowed: false; reason: "FORBIDDEN"; user: CurrentUser };
 
 export async function getApplyAccess(): Promise<ApplyAccessResult> {
   const user = await getCurrentUser();
@@ -20,14 +22,14 @@ export async function getApplyAccess(): Promise<ApplyAccessResult> {
 
   if (user.role === "AGENT") {
     if (
-      user.agentProfile?.approvalStatus === "APPROVED" &&
-      user.agentProfile.isActive
+      user.agentProfile?.isActive &&
+      user.agentProfile.approvalStatus !== "REJECTED"
     ) {
       return { allowed: true, user };
     }
 
-    return { allowed: false, reason: "AGENT_NOT_APPROVED" };
+    return { allowed: false, reason: "AGENT_NOT_APPROVED", user };
   }
 
-  return { allowed: false, reason: "FORBIDDEN" };
+  return { allowed: false, reason: "FORBIDDEN", user };
 }

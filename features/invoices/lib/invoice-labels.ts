@@ -17,6 +17,12 @@ export type InvoicePdfLabels = {
   tax: string;
   total: string;
   paymentMethod: string;
+  paymentMethods: string;
+  accountTitle: string;
+  accountNumber: string;
+  iban: string;
+  bankName: string;
+  instructions: string;
   paymentInstructions: string;
   officialFeeNote: string;
   notes: string;
@@ -43,7 +49,13 @@ export const invoicePdfLabels: Record<InvoiceLocale, InvoicePdfLabels> = {
     tax: "Tax",
     total: "Total due",
     paymentMethod: "Payment method",
-    paymentInstructions: "Payment instructions",
+    paymentMethods: "Payment methods",
+    accountTitle: "Account title",
+    accountNumber: "Account number",
+    iban: "IBAN",
+    bankName: "Bank",
+    instructions: "Instructions",
+    paymentInstructions: "Additional payment instructions",
     officialFeeNote: "Official fee note",
     notes: "Notes",
     disclaimer:
@@ -68,7 +80,13 @@ export const invoicePdfLabels: Record<InvoiceLocale, InvoicePdfLabels> = {
     tax: "ٹیکس",
     total: "کل واجب الادا",
     paymentMethod: "ادائیگی کا طریقہ",
-    paymentInstructions: "ادائیگی کی ہدایات",
+    paymentMethods: "ادائیگی کے طریقے",
+    accountTitle: "اکاؤنٹ کا نام",
+    accountNumber: "اکاؤنٹ نمبر",
+    iban: "IBAN",
+    bankName: "بینک",
+    instructions: "ہدایات",
+    paymentInstructions: "اضافی ادائیگی کی ہدایات",
     officialFeeNote: "آفیشل فیس نوٹ",
     notes: "نوٹس",
     disclaimer:

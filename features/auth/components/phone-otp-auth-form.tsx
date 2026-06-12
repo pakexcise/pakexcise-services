@@ -2,7 +2,6 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import {
@@ -13,18 +12,26 @@ import {
 } from "@/features/auth/actions/otp-flow-actions";
 import { PasswordInput } from "@/features/auth/components/password-input";
 import { getTempPhoneEmail } from "@/features/auth/lib/temp-phone-email";
+import { useAuthPageQuery } from "@/features/auth/hooks/use-auth-page-query";
+import {
+  buildLoginUrl,
+  buildSignupUrl,
+  buildPostSignupRedirectUrl,
+} from "@/features/auth/lib/auth-url";
 import { buildAuthRedirectUrl } from "@/features/auth/lib/redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authClient, signIn, signUp } from "@/lib/auth-client";
-import { isValidCnicInput } from "@/lib/validations/cnic";
+import { signIn, signUp } from "@/lib/auth-client";
+import { formatCnicInput, isValidCnicInput } from "@/lib/validations/cnic";
 import {
   isValidPakistanPhone,
   normalizePakistanPhone,
 } from "@/lib/validations/phone";
 
 const MIN_PASSWORD_LENGTH = 8;
+
+type SignupErrorCode = "PHONE_EXISTS" | "CNIC_EXISTS" | null;
 
 type PhoneOtpAuthFormLabels = {
   phone: string;
@@ -35,6 +42,7 @@ type PhoneOtpAuthFormLabels = {
   cnicHint?: string;
   cnicVerificationNote?: string;
   cnicExists?: string;
+  phoneExists?: string;
   invalidCnic?: string;
   password: string;
   confirmPassword?: string;
@@ -73,7 +81,7 @@ function isValidPassword(password: string): boolean {
 
 export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { callbackUrl, intent } = useAuthPageQuery();
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
@@ -82,6 +90,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<SignupErrorCode>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -90,6 +99,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
 
     if (!isValidPassword(password)) {
       setError(labels.invalidPassword ?? fallbackError);
+      setErrorCode(null);
       return;
     }
 
@@ -98,29 +108,35 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
 
       if (!normalized || !isValidPakistanPhone(phoneInput)) {
         setError(labels.invalidPhone);
+        setErrorCode(null);
         return;
       }
 
       if (!name.trim()) {
         setError(labels.nameRequired ?? fallbackError);
+        setErrorCode(null);
         return;
       }
 
       if (!isValidCnicInput(cnicInput)) {
         setError(labels.invalidCnic ?? fallbackError);
+        setErrorCode(null);
         return;
       }
 
       if (password !== confirmPassword) {
         setError(labels.passwordMismatch ?? fallbackError);
+        setErrorCode(null);
         return;
       }
     } else if (!loginIdentifier.trim()) {
       setError(labels.invalidIdentifier ?? labels.invalidPhone);
+      setErrorCode(null);
       return;
     }
 
     setError(null);
+    setErrorCode(null);
 
     startTransition(async () => {
       try {
@@ -160,7 +176,6 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             return;
           }
 
-          const callbackUrl = searchParams.get("callbackUrl");
           router.push(buildAuthRedirectUrl(callbackUrl));
           router.refresh();
           return;
@@ -178,12 +193,14 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
         );
 
         if (!eligibility.ok) {
-          if (eligibility.code === "ACCOUNT_EXISTS") {
-            setError(labels.accountExists ?? labels.sendFailed);
+          if (eligibility.code === "PHONE_EXISTS") {
+            setErrorCode("PHONE_EXISTS");
+            setError(labels.phoneExists ?? labels.accountExists ?? labels.sendFailed);
             return;
           }
 
           if (eligibility.code === "CNIC_EXISTS") {
+            setErrorCode("CNIC_EXISTS");
             setError(labels.cnicExists ?? labels.sendFailed);
             return;
           }
@@ -204,7 +221,8 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             signupResult.error.message?.toLowerCase().includes("already") ||
             signupResult.error.message?.toLowerCase().includes("exists")
           ) {
-            setError(labels.accountExists ?? labels.sendFailed);
+            setErrorCode("PHONE_EXISTS");
+            setError(labels.phoneExists ?? labels.sendFailed);
             return;
           }
 
@@ -220,7 +238,14 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
 
         if (!linkResult.ok) {
           if (linkResult.code === "CNIC_EXISTS") {
+            setErrorCode("CNIC_EXISTS");
             setError(labels.cnicExists ?? labels.sendFailed);
+            return;
+          }
+
+          if (linkResult.code === "PHONE_EXISTS") {
+            setErrorCode("PHONE_EXISTS");
+            setError(labels.phoneExists ?? labels.sendFailed);
             return;
           }
 
@@ -228,8 +253,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
           return;
         }
 
-        const callbackUrl = searchParams.get("callbackUrl");
-        router.push(buildAuthRedirectUrl(callbackUrl));
+        router.push(buildPostSignupRedirectUrl({ intent, callbackUrl }));
         router.refresh();
       } catch (submitError) {
         const message =
@@ -244,6 +268,10 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
     });
   }
 
+  const showSignupLoginPrompt =
+    mode === "signup" &&
+    (errorCode === "PHONE_EXISTS" || errorCode === "CNIC_EXISTS");
+
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-4">
       {error ? (
@@ -252,15 +280,21 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
           {mode === "login" && error === labels.accountNotFound ? (
             <p className="text-foreground">
               {labels.signupPrompt}{" "}
-              <Link href="/signup" className="font-medium text-primary hover:underline">
+              <Link
+                href={buildSignupUrl({ callbackUrl, intent })}
+                className="font-medium text-primary hover:underline"
+              >
                 {labels.signupLink}
               </Link>
             </p>
           ) : null}
-          {mode === "signup" && error === labels.accountExists ? (
+          {showSignupLoginPrompt ? (
             <p className="text-foreground">
               {labels.loginPrompt}{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">
+              <Link
+                href={buildLoginUrl({ callbackUrl, intent })}
+                className="font-medium text-primary hover:underline"
+              >
                 {labels.loginLink}
               </Link>
             </p>
@@ -332,8 +366,9 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             inputMode="numeric"
             placeholder="12345-1234567-1"
             required
+            maxLength={15}
             value={cnicInput}
-            onChange={(event) => setCnicInput(event.target.value)}
+            onChange={(event) => setCnicInput(formatCnicInput(event.target.value))}
           />
           <p className="text-xs text-muted-foreground">{labels.cnicHint}</p>
           {labels.cnicVerificationNote ? (

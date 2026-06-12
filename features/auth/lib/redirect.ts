@@ -2,6 +2,8 @@ import type { UserRole } from "@prisma/client";
 
 export const AUTH_REDIRECT_PATH = "/auth/redirect";
 
+const staffRoles = new Set<UserRole>(["ADMIN", "SUPER_ADMIN", "SUPPORT"]);
+
 const defaultDashboardByRole: Record<UserRole, string> = {
   CUSTOMER: "/customer/dashboard",
   AGENT: "/agent/dashboard",
@@ -44,4 +46,15 @@ export function buildAuthRedirectUrl(callbackUrl?: string | null): string {
 
   const params = new URLSearchParams({ callbackUrl });
   return `${AUTH_REDIRECT_PATH}?${params.toString()}`;
+}
+
+export function needsRoleChoice(user: {
+  role: UserRole;
+  roleChosenAt: Date | null;
+}): boolean {
+  if (user.roleChosenAt) {
+    return false;
+  }
+
+  return !staffRoles.has(user.role);
 }

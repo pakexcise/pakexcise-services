@@ -6,7 +6,7 @@ import { SecureDocViewer } from "@/components/admin/SecureDocViewer";
 import { supportApplicationsBasePath } from "@/config/support";
 import { AdminNotesForm } from "@/features/admin/components/admin-notes-form";
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
-import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import {
   resolveAdminFieldDisplayValues,
   resolveCustomerContactDisplay,
@@ -85,10 +85,11 @@ export default async function SupportApplicationDetailPage({
     locale === "ur"
       ? application.service.nameUr
       : application.service.nameEn;
-  const regionName =
-    locale === "ur"
+  const regionName = application.service.region
+    ? locale === "ur"
       ? application.service.region.nameUr
-      : application.service.region.nameEn;
+      : application.service.region.nameEn
+    : "—";
 
   const applicantDocuments = application.documents.filter(
     (doc) => doc.type !== COMPLETION_PROOF_DOC_TYPE,
@@ -129,7 +130,7 @@ export default async function SupportApplicationDetailPage({
               </span>
               <ApplicationStatusBadge
                 status={application.status}
-                label={tAdmin(getApplicationStatusLabelKey(application.status))}
+                label={tAdmin(getAdminApplicationStatusLabelKey(application.status))}
               />
             </div>
             <div className="flex justify-between gap-3">
@@ -310,7 +311,7 @@ export default async function SupportApplicationDetailPage({
                     <TableCell>
                       <ApplicationStatusBadge
                         status={entry.toStatus}
-                        label={tAdmin(getApplicationStatusLabelKey(entry.toStatus))}
+                        label={tAdmin(getAdminApplicationStatusLabelKey(entry.toStatus))}
                       />
                     </TableCell>
                     <TableCell>{entry.note}</TableCell>

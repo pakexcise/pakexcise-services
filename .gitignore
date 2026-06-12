@@ -18,6 +18,9 @@
 # production
 /build
 
+# local dev uploads (when R2 is not configured)
+.local-uploads/
+
 # misc
 .DS_Store
 *.pem

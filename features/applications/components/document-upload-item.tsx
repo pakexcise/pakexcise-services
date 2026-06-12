@@ -24,6 +24,9 @@ type DocumentUploadItemProps = {
     invalidType: string;
     tooLarge: string;
     invalidName: string;
+    previewLoading: string;
+    previewError: string;
+    previewOpen: string;
   };
   onUploaded: (document: SavedDocumentMeta) => void;
   onRemoved: () => void;

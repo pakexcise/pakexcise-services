@@ -2,7 +2,6 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import {
@@ -13,6 +12,12 @@ import {
 import { resolveEmailOtpSentMessage } from "@/features/auth/lib/otp-delivery-messages";
 import { OtpCodeInput } from "@/features/auth/components/otp-code-input";
 import { PasswordInput } from "@/features/auth/components/password-input";
+import { useAuthPageQuery } from "@/features/auth/hooks/use-auth-page-query";
+import {
+  buildLoginUrl,
+  buildSignupUrl,
+  buildPostSignupRedirectUrl,
+} from "@/features/auth/lib/auth-url";
 import { buildAuthRedirectUrl } from "@/features/auth/lib/redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +55,8 @@ type EmailOtpAuthFormLabels = {
   nameRequired?: string;
   accountNotFound?: string;
   accountExists?: string;
+  emailExists?: string;
+  googleAccountExists?: string;
   signupPrompt?: string;
   loginPrompt?: string;
   signupLink?: string;
@@ -67,7 +74,7 @@ function isValidPassword(password: string): boolean {
 
 export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { callbackUrl, intent } = useAuthPageQuery();
   const [isPending, startTransition] = useTransition();
   const [step, setStep] = useState<"credentials" | "otp">("credentials");
   const [name, setName] = useState("");
@@ -122,8 +129,13 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
             return;
           }
 
+          if (eligibility.code === "GOOGLE_ACCOUNT_EXISTS") {
+            setError(labels.googleAccountExists ?? labels.sendFailed);
+            return;
+          }
+
           if (eligibility.code === "ACCOUNT_EXISTS") {
-            setError(labels.accountExists ?? labels.sendFailed);
+            setError(labels.emailExists ?? labels.accountExists ?? labels.sendFailed);
             return;
           }
 
@@ -142,7 +154,6 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
             return;
           }
 
-          const callbackUrl = searchParams.get("callbackUrl");
           router.push(buildAuthRedirectUrl(callbackUrl));
           router.refresh();
           return;
@@ -159,7 +170,7 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
             signupResult.error.message?.toLowerCase().includes("already") ||
             signupResult.error.message?.toLowerCase().includes("exists")
           ) {
-            setError(labels.accountExists ?? labels.sendFailed);
+            setError(labels.emailExists ?? labels.accountExists ?? labels.sendFailed);
             return;
           }
 
@@ -235,8 +246,11 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           return;
         }
 
-        const callbackUrl = searchParams.get("callbackUrl");
-        router.push(buildAuthRedirectUrl(callbackUrl));
+        const redirectTarget =
+          mode === "signup"
+            ? buildPostSignupRedirectUrl({ intent, callbackUrl })
+            : buildAuthRedirectUrl(callbackUrl);
+        router.push(redirectTarget);
         router.refresh();
       } catch (verifyError) {
         setError(
@@ -311,7 +325,10 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           {mode === "login" && error === labels.accountNotFound ? (
             <p className="text-foreground">
               {labels.signupPrompt}{" "}
-              <Link href="/signup" className="font-medium text-primary hover:underline">
+              <Link
+                href={buildSignupUrl({ callbackUrl, intent })}
+                className="font-medium text-primary hover:underline"
+              >
                 {labels.signupLink}
               </Link>
             </p>
@@ -319,7 +336,10 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           {mode === "signup" && error === labels.accountExists ? (
             <p className="text-foreground">
               {labels.loginPrompt}{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">
+              <Link
+                href={buildLoginUrl({ callbackUrl, intent })}
+                className="font-medium text-primary hover:underline"
+              >
                 {labels.loginLink}
               </Link>
             </p>

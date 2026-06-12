@@ -70,17 +70,32 @@ const initialState = {
 
 export const useWizardStore = create<WizardState>((set) => ({
   ...initialState,
-  initialize: (input) =>
-    set({
+  initialize: (input) => {
+    const basic = {
+      ...input.userDefaults,
+      ...input.basic,
+    };
+
+    const hasCompleteBasic = Boolean(
+      basic.fullName?.trim() &&
+        basic.email?.trim() &&
+        basic.phone?.trim() &&
+        basic.cnic?.trim(),
+    );
+
+    let currentStep = input.currentStep ?? 1;
+
+    if (currentStep > 1 && !hasCompleteBasic) {
+      currentStep = 1;
+    }
+
+    return set({
       service: input.service,
       locale: input.locale,
       applicationId: input.applicationId ?? null,
       trackingId: input.trackingId ?? null,
-      currentStep: input.currentStep ?? 1,
-      basic: {
-        ...input.userDefaults,
-        ...input.basic,
-      },
+      currentStep,
+      basic,
       fields: input.fields ?? {},
       documents: input.documents ?? {},
       isSaving: false,
@@ -88,7 +103,8 @@ export const useWizardStore = create<WizardState>((set) => ({
       isSubmitting: false,
       submitError: null,
       hasTrackedStart: false,
-    }),
+    });
+  },
   setStep: (step) => set({ currentStep: step }),
   setBasic: (basic) =>
     set((state) => ({

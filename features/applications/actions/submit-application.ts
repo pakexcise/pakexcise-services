@@ -3,6 +3,7 @@
 import type { Prisma } from "@prisma/client";
 
 import { buildDynamicFieldsSchema, serializeFieldValue } from "@/features/applications/lib/build-field-schema";
+import { filterServiceSpecificFields } from "@/features/applications/lib/basic-field-keys";
 import { mapServiceApplyConfig } from "@/features/applications/lib/map-service-config";
 import type { ApplicationDraftJson } from "@/features/applications/types";
 import {
@@ -63,14 +64,18 @@ export async function submitApplicationAction(
   }
 
   const service = mapServiceApplyConfig(serviceRecord, parsed.data.locale);
-  const dynamicSchema = buildDynamicFieldsSchema(service.formFields);
+  const serviceSpecificFields = filterServiceSpecificFields(service.formFields);
+  const dynamicSchema = buildDynamicFieldsSchema(serviceSpecificFields);
   const dynamicResult = dynamicSchema.safeParse(parsed.data.fields);
 
   if (!dynamicResult.success) {
-    return errorResult(
-      "Validation failed",
-      dynamicResult.error.flatten().fieldErrors as Record<string, string[]>,
-    );
+    const fieldErrors = dynamicResult.error.flatten().fieldErrors as Record<
+      string,
+      string[]
+    >;
+    const firstMessage = Object.values(fieldErrors).flat()[0];
+
+    return errorResult(firstMessage ?? "Validation failed", fieldErrors);
   }
 
   const documents = await prisma.document.findMany({
@@ -107,7 +112,7 @@ export async function submitApplicationAction(
 
   const fieldValueRows: Prisma.ApplicationFieldValueCreateManyInput[] = [];
 
-  for (const field of service.formFields) {
+  for (const field of serviceSpecificFields) {
     const rawValue = parsed.data.fields[field.fieldKey];
 
     if (

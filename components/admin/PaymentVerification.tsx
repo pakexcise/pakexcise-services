@@ -6,7 +6,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { SecurePaymentViewer } from "@/components/admin/SecurePaymentViewer";
+import { SecurePaymentViewer } from "@/components/shared/SecurePaymentViewer";
 import {
   rejectPaymentAction,
   verifyPaymentAction,

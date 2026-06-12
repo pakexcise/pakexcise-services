@@ -29,6 +29,7 @@ import { prisma } from "@/server/db/client";
 import { requirePermission } from "@/server/permissions/guards";
 import { toPrismaNullableJson } from "@/lib/utils/prisma-json";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
+import { serviceRegionRepository } from "@/server/repositories/service-region-repository";
 
 const ADMIN_SERVICES_PATH = "/admin/services";
 
@@ -139,7 +140,7 @@ export async function createServiceAction(
   const service = await prisma.service.create({
     data: {
       slug: data.slug,
-      regionId: data.regionId,
+      regionId: data.regionIds[0],
       nameEn: data.nameEn,
       nameUr: data.nameUr,
       shortDescriptionEn: data.shortDescriptionEn,
@@ -155,6 +156,8 @@ export async function createServiceAction(
       displayOrder,
     },
   });
+
+  await serviceRegionRepository.syncForService(service.id, data.regionIds);
 
   if (data.seo) {
     await upsertServiceSeo(service.id, service.slug, normalizeSeoInput(data.seo));
@@ -220,7 +223,7 @@ export async function updateServiceAction(
     where: { id: data.id },
     data: {
       slug: data.slug,
-      regionId: data.regionId,
+      regionId: data.regionIds[0],
       nameEn: data.nameEn,
       nameUr: data.nameUr,
       shortDescriptionEn: data.shortDescriptionEn,
@@ -236,6 +239,8 @@ export async function updateServiceAction(
       displayOrder: data.displayOrder,
     },
   });
+
+  await serviceRegionRepository.syncForService(service.id, data.regionIds);
 
   if (data.seo) {
     await upsertServiceSeo(service.id, service.slug, normalizeSeoInput(data.seo));

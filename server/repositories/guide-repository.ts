@@ -20,24 +20,32 @@ const publishedGuideSelect = {
 
 export class GuideRepository extends Repository {
   async listPublished(limit = 50) {
-    return this.db.guide.findMany({
-      where: {
-        isPublished: true,
-      },
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      take: limit,
-      select: publishedGuideSelect,
-    });
+    return this.query(
+      () =>
+        this.db.guide.findMany({
+          where: {
+            isPublished: true,
+          },
+          orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+          take: limit,
+          select: publishedGuideSelect,
+        }),
+      [],
+    );
   }
 
   async findPublishedBySlug(slug: string) {
-    return this.db.guide.findFirst({
-      where: {
-        slug,
-        isPublished: true,
-      },
-      select: publishedGuideSelect,
-    });
+    return this.query(
+      () =>
+        this.db.guide.findFirst({
+          where: {
+            slug,
+            isPublished: true,
+          },
+          select: publishedGuideSelect,
+        }),
+      null,
+    );
   }
 }
 

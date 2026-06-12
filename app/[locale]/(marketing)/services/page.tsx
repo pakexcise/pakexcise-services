@@ -88,6 +88,8 @@ export default async function ServicesPage() {
                 service={service}
                 locale={locale}
                 learnMoreLabel={tCommon("learnMore")}
+                multipleRegionsLabel={t("services.multipleRegions")}
+                allProvincesLabel={t("services.allProvinces")}
               />
             ))}
           </div>

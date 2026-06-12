@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 
 import { saveApplicationDraftAction } from "@/features/applications/actions/save-application-draft";
@@ -16,7 +16,8 @@ import {
   captureAttributionFromUrl,
   getStoredAttribution,
 } from "@/features/applications/lib/attribution";
-import { isBasicApplicantFieldKey } from "@/features/applications/lib/basic-field-keys";
+import { filterServiceSpecificFields } from "@/features/applications/lib/basic-field-keys";
+import { formatActionErrorMessage } from "@/features/applications/lib/format-action-error";
 import { useWizardStore } from "@/features/applications/store/wizard-store";
 import type {
   ApplyServiceConfig,
@@ -24,6 +25,8 @@ import type {
   SavedDocumentMeta,
   WizardStep,
 } from "@/features/applications/types";
+import { normalizePakistanPhone } from "@/lib/validations/phone";
+
 type ApplicationWizardLabels = {
   steps: {
     step1: string;
@@ -42,11 +45,20 @@ type ApplicationWizardLabels = {
     cnicHint: string;
     continue: string;
     saving: string;
+    validationSummary: string;
+    errors: {
+      fullNameRequired: string;
+      fullNameTooLong: string;
+      emailInvalid: string;
+      phoneInvalid: string;
+      cnicInvalid: string;
+    };
   };
   fields: {
     title: string;
     description: string;
     empty: string;
+    emptyTitle: string;
     back: string;
     continue: string;
     saving: string;
@@ -71,6 +83,9 @@ type ApplicationWizardLabels = {
     invalidType: string;
     tooLarge: string;
     invalidName: string;
+    previewLoading: string;
+    previewError: string;
+    previewOpen: string;
   };
   review: {
     title: string;
@@ -83,6 +98,7 @@ type ApplicationWizardLabels = {
     phone: string;
     cnic: string;
     noDocuments: string;
+    incompleteDetails: string;
     back: string;
     submit: string;
     submitting: string;
@@ -91,6 +107,12 @@ type ApplicationWizardLabels = {
   resumeNotice: string;
   saveFailed: string;
   autoSaved: string;
+};
+
+type DraftSnapshot = {
+  basic?: Partial<BasicApplicantDetails>;
+  fields?: Record<string, string | string[] | boolean>;
+  documents?: Record<string, SavedDocumentMeta>;
 };
 
 type ApplicationWizardProps = {
@@ -108,6 +130,15 @@ type ApplicationWizardProps = {
   userDefaults?: Partial<BasicApplicantDetails>;
 };
 
+function hasCompleteBasic(basic: Partial<BasicApplicantDetails>): boolean {
+  return Boolean(
+    basic.fullName?.trim() &&
+      basic.email?.trim() &&
+      basic.phone?.trim() &&
+      basic.cnic?.trim(),
+  );
+}
+
 export function ApplicationWizard({
   service,
   locale,
@@ -116,6 +147,7 @@ export function ApplicationWizard({
   userDefaults,
 }: ApplicationWizardProps) {
   const router = useRouter();
+  const initKeyRef = useRef<string | null>(null);
   const [documentsValidationError, setDocumentsValidationError] = useState<
     string | null
   >(null);
@@ -148,14 +180,22 @@ export function ApplicationWizard({
   } = useWizardStore();
 
   const serviceSpecificFields = useMemo(
-    () =>
-      service.formFields.filter(
-        (field) => !isBasicApplicantFieldKey(field.fieldKey),
-      ),
+    () => filterServiceSpecificFields(service.formFields),
     [service.formFields],
   );
 
+  const fieldsStepNumber = serviceSpecificFields.length === 0 ? null : 2;
+  const documentsBackStep: WizardStep =
+    serviceSpecificFields.length === 0 ? 1 : 2;
+
+  const initKey = `${service.id}:${initialDraft?.applicationId ?? "new"}`;
+
   useEffect(() => {
+    if (initKeyRef.current === initKey) {
+      return;
+    }
+
+    initKeyRef.current = initKey;
     initialize({
       service,
       locale,
@@ -168,6 +208,7 @@ export function ApplicationWizard({
       userDefaults,
     });
   }, [
+    initKey,
     initialize,
     service,
     locale,
@@ -192,7 +233,10 @@ export function ApplicationWizard({
     markStartTracked();
   }, [hasTrackedStart, markStartTracked, service.id, service.slug]);
 
-  async function persistDraft(nextStep: WizardStep) {
+  async function persistDraft(
+    nextStep: WizardStep,
+    snapshot: DraftSnapshot = {},
+  ) {
     setSaving(true, null);
 
     const attribution = getStoredAttribution();
@@ -201,9 +245,9 @@ export function ApplicationWizard({
       serviceSlug: service.slug,
       currentStep: nextStep,
       locale,
-      basic,
-      fields,
-      documents,
+      basic: snapshot.basic ?? basic,
+      fields: snapshot.fields ?? fields,
+      documents: snapshot.documents ?? documents,
       attribution,
     });
 
@@ -222,18 +266,36 @@ export function ApplicationWizard({
   }
 
   async function handleBasicSubmit(values: BasicApplicantDetails) {
-    setBasic(values);
-    const saved = await persistDraft(2);
+    const normalizedPhone = normalizePakistanPhone(values.phone);
+    const normalized: BasicApplicantDetails = {
+      ...values,
+      phone: normalizedPhone ?? values.phone.trim(),
+    };
+
+    setBasic(normalized);
+
+    const nextStep: WizardStep =
+      serviceSpecificFields.length === 0 ? 3 : 2;
+
+    const saved = await persistDraft(nextStep, { basic: normalized });
 
     if (!saved) {
       return;
     }
 
-    setStep(2);
+    setStep(nextStep);
     trackApplicationEvent("complete_step", {
       service_slug: service.slug,
       step: 1,
     });
+
+    if (nextStep === 3) {
+      trackApplicationEvent("complete_step", {
+        service_slug: service.slug,
+        step: 2,
+      });
+    }
+
     setShowResumeNotice(false);
   }
 
@@ -241,7 +303,7 @@ export function ApplicationWizard({
     values: Record<string, string | string[] | boolean>,
   ) {
     setFields(values);
-    const saved = await persistDraft(3);
+    const saved = await persistDraft(3, { fields: values });
 
     if (!saved) {
       return;
@@ -277,9 +339,17 @@ export function ApplicationWizard({
     });
   }
 
+  function handleDocumentUploaded(
+    requirementId: string,
+    document: SavedDocumentMeta,
+  ) {
+    setDocument(requirementId, document);
+    setDocumentsValidationError(null);
+  }
+
   async function handleSubmit() {
-    if (!applicationId || !basic.fullName || !basic.email || !basic.phone || !basic.cnic) {
-      setSubmitting(false, labels.saveFailed);
+    if (!applicationId || !hasCompleteBasic(basic)) {
+      setSubmitting(false, labels.review.incompleteDetails);
       return;
     }
 
@@ -287,14 +357,16 @@ export function ApplicationWizard({
 
     const attribution = getStoredAttribution();
     const analyticsEventId = generateEventId();
+    const normalizedPhone = normalizePakistanPhone(basic.phone!.trim());
+
     const result = await submitApplicationAction({
       applicationId,
       locale,
       basic: {
-        fullName: basic.fullName,
-        email: basic.email,
-        phone: basic.phone,
-        cnic: basic.cnic,
+        fullName: basic.fullName!.trim(),
+        email: basic.email!.trim(),
+        phone: normalizedPhone ?? basic.phone!.trim(),
+        cnic: basic.cnic!.trim(),
       },
       fields,
       attribution,
@@ -302,7 +374,10 @@ export function ApplicationWizard({
     });
 
     if (!result.success) {
-      setSubmitting(false, result.error ?? labels.saveFailed);
+      setSubmitting(
+        false,
+        formatActionErrorMessage(result, labels.saveFailed),
+      );
       return;
     }
 
@@ -326,6 +401,8 @@ export function ApplicationWizard({
     phone: basic.phone ?? "",
     cnic: basic.cnic ?? "",
   };
+
+  const basicComplete = hasCompleteBasic(resolvedBasic);
 
   return (
     <div className="space-y-8">
@@ -356,7 +433,7 @@ export function ApplicationWizard({
         />
       ) : null}
 
-      {currentStep === 2 ? (
+      {currentStep === 2 && fieldsStepNumber === 2 ? (
         <DynamicFieldsStep
           fields={serviceSpecificFields}
           defaultValues={fields}
@@ -375,22 +452,17 @@ export function ApplicationWizard({
           labels={labels.documents}
           isSaving={isSaving}
           validationError={documentsValidationError}
-          onBack={() => setStep(2)}
-          onDocumentUploaded={(requirementId, document) =>
-            setDocument(requirementId, document)
-          }
+          onBack={() => setStep(documentsBackStep)}
+          onDocumentUploaded={handleDocumentUploaded}
           onDocumentRemoved={(requirementId) => removeDocument(requirementId)}
           onSubmit={handleDocumentsSubmit}
         />
       ) : null}
 
-      {currentStep === 4 &&
-      resolvedBasic.fullName &&
-      resolvedBasic.email &&
-      resolvedBasic.phone &&
-      resolvedBasic.cnic ? (
+      {currentStep === 4 ? (
         <ReviewStep
           basic={resolvedBasic}
+          basicComplete={basicComplete}
           fields={serviceSpecificFields}
           fieldValues={fields}
           documentRequirements={service.documentRequirements}
@@ -399,6 +471,7 @@ export function ApplicationWizard({
           isSubmitting={isSubmitting}
           submitError={submitError}
           onBack={() => setStep(3)}
+          onEditDetails={() => setStep(1)}
           onSubmit={handleSubmit}
         />
       ) : null}

@@ -2,7 +2,7 @@ import type { AdminServiceDetail } from "@/server/repositories/admin-service-rep
 
 export type ServiceEditorValues = {
   slug: string;
-  regionId: string;
+  regionIds: string[];
   nameEn: string;
   nameUr: string;
   shortDescriptionEn: string;
@@ -38,12 +38,12 @@ export type ServiceEditorValues = {
 };
 
 export function emptyServiceEditorValues(
-  regionId = "",
+  regionIds: string[] = [],
   displayOrder = 0,
 ): ServiceEditorValues {
   return {
     slug: "",
-    regionId,
+    regionIds,
     nameEn: "",
     nameUr: "",
     shortDescriptionEn: "",
@@ -96,7 +96,7 @@ export function serviceToEditorValues(
 ): ServiceEditorValues {
   return {
     slug: service.slug,
-    regionId: service.regionId,
+    regionIds: service.serviceRegions.map((entry) => entry.regionId),
     nameEn: service.nameEn,
     nameUr: service.nameUr,
     shortDescriptionEn: service.shortDescriptionEn ?? "",

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { AuthModeTabs } from "@/features/auth/components/auth-mode-tabs";
 import { AuthShell } from "@/features/auth/components/auth-shell";
 import { LoginForm } from "@/features/auth/components/login-form";
+import { getLoginFormLabels } from "@/features/auth/lib/auth-form-labels";
 import { getEnabledSocialProviders } from "@/features/auth/lib/social-providers";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
@@ -19,53 +21,9 @@ export default async function LoginPage() {
   setRequestLocale(locale);
 
   const t = await getTranslations("auth.login");
-  const tSocial = await getTranslations("auth.social");
   const tDisclaimer = await getTranslations("disclaimer");
+  const labels = await getLoginFormLabels();
   const socialProviders = getEnabledSocialProviders();
-
-  const labels = {
-    email: t("email"),
-    password: t("password"),
-    passwordHint: t("passwordHint"),
-    invalidPassword: t("invalidPassword"),
-    showPassword: t("showPassword"),
-    signIn: t("signIn"),
-    signingIn: t("signingIn"),
-    signInFailed: t("signInFailed"),
-    phone: t("phone"),
-    phoneOrCnic: t("phoneOrCnic"),
-    phoneHint: t("phoneHint"),
-    phoneLoginHint: t("phoneLoginHint"),
-    otp: t("otp"),
-    otpHint: t("otpHint"),
-    verifyOtp: t("verifyOtp"),
-    verifyingOtp: t("verifyingOtp"),
-    resendOtp: t("resendOtp"),
-    changeEmail: t("changeEmail"),
-    otpSentEmail: t("otpSentEmail"),
-    accountNotFound: t("accountNotFound"),
-    accountExists: t("accountExists"),
-    signupPrompt: t("signupPrompt"),
-    loginPrompt: t("loginPrompt"),
-    loginLink: t("loginLink"),
-    otpSentEmailSandbox: t("otpSentEmailSandbox"),
-    otpSentEmailDevConsole: t("otpSentEmailDevConsole"),
-    sendFailed: t("sendFailed"),
-    verifyFailed: t("verifyFailed"),
-    invalidEmail: t("invalidEmail"),
-    invalidPhone: t("invalidPhone"),
-    invalidIdentifier: t("invalidIdentifier"),
-    methodEmail: t("methodEmail"),
-    methodPhone: t("methodPhone"),
-    forgotPassword: t("forgotPassword"),
-    authError: t("authError"),
-    noAccount: t("noAccount"),
-    signupLink: t("signupLink"),
-    orContinueWith: t("orContinueWith"),
-    google: tSocial("google"),
-    socialFailed: tSocial("failed"),
-    socialNotConfigured: tSocial("notConfigured"),
-  };
 
   return (
     <AuthShell
@@ -73,7 +31,14 @@ export default async function LoginPage() {
       description={t("description")}
       disclaimer={tDisclaimer("banner")}
     >
-      <LoginForm labels={labels} socialProviders={socialProviders} />
+      <div className="space-y-5">
+        <AuthModeTabs
+          mode="login"
+          loginLabel={t("loginLink")}
+          signupLabel={t("signupLink")}
+        />
+        <LoginForm labels={labels} socialProviders={socialProviders} unified />
+      </div>
     </AuthShell>
   );
 }

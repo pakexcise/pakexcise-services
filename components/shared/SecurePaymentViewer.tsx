@@ -1,13 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
+import { AlertTriangle, FileText, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type SecurePaymentViewerProps = {
   paymentId: string;
+  fileName?: string | null;
   labels: {
     loading: string;
     error: string;
@@ -15,18 +16,21 @@ type SecurePaymentViewerProps = {
     openNewTab: string;
     unsupported: string;
   };
+  className?: string;
 };
 
 type ScreenshotPayload = {
   signedUrl: string;
   expiresInSeconds: number;
-  mimeType?: string;
-  fileName?: string;
+  mimeType?: string | null;
+  fileName?: string | null;
 };
 
 export function SecurePaymentViewer({
   paymentId,
+  fileName,
   labels,
+  className,
 }: SecurePaymentViewerProps) {
   const [payload, setPayload] = useState<ScreenshotPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -67,19 +71,23 @@ export function SecurePaymentViewer({
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="size-4 animate-spin" />
-        {labels.loading}
-        <Skeleton className="h-48 w-full rounded-lg" />
+      <div className={className}>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin" />
+          {labels.loading}
+        </div>
+        <Skeleton className="mt-3 h-48 w-full rounded-lg" />
       </div>
     );
   }
 
   if (error || !payload) {
     return (
-      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+      <div
+        className={`rounded-lg border border-destructive/30 bg-destructive/5 p-4 ${className ?? ""}`}
+      >
         <div className="flex items-start gap-2 text-sm text-destructive">
-          <AlertTriangle className="mt-0.5 size-4" />
+          <AlertTriangle className="mt-0.5 size-4 shrink-0" />
           <p>{error ?? labels.error}</p>
         </div>
         <Button
@@ -96,25 +104,47 @@ export function SecurePaymentViewer({
     );
   }
 
-  const isImage = payload.mimeType?.startsWith("image/");
+  const displayName = fileName ?? payload.fileName ?? "Payment screenshot";
+  const mimeType = payload.mimeType ?? "image/jpeg";
+  const isImage = mimeType.startsWith("image/");
+  const isPdf = mimeType === "application/pdf";
 
   return (
-    <div className="space-y-3">
-      <Button asChild size="sm" variant="outline">
-        <a href={payload.signedUrl} target="_blank" rel="noopener noreferrer">
-          {labels.openNewTab}
-        </a>
-      </Button>
+    <div className={className}>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <FileText className="size-4 shrink-0" />
+          <span className="truncate">{displayName}</span>
+        </div>
+        <Button asChild size="sm" variant="outline">
+          <a href={payload.signedUrl} target="_blank" rel="noopener noreferrer">
+            {labels.openNewTab}
+          </a>
+        </Button>
+      </div>
+
       {isImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={payload.signedUrl}
-          alt={payload.fileName ?? "Payment screenshot"}
+          alt={displayName}
           className="max-h-[60vh] w-full rounded-lg border object-contain"
         />
-      ) : (
-        <p className="text-sm text-muted-foreground">{labels.unsupported}</p>
-      )}
+      ) : null}
+
+      {isPdf ? (
+        <iframe
+          src={payload.signedUrl}
+          title={displayName}
+          className="h-[60vh] w-full rounded-lg border bg-muted/20"
+        />
+      ) : null}
+
+      {!isImage && !isPdf ? (
+        <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
+          {labels.unsupported}
+        </p>
+      ) : null}
     </div>
   );
 }

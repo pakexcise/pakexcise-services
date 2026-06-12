@@ -48,7 +48,7 @@ export const serviceSeoSchema = z.object({
 
 export const serviceCoreSchema = z.object({
   slug: serviceSlugSchema,
-  regionId: z.string().cuid(),
+  regionIds: z.array(z.string().cuid()).min(1, "Select at least one province"),
   nameEn: z.string().trim().min(2).max(200),
   nameUr: z.string().trim().min(2).max(200),
   shortDescriptionEn: z.string().trim().max(5000).optional().nullable(),

@@ -1,4 +1,5 @@
 import type { Locale } from "@/i18n/config";
+import { getServiceRegionLabel } from "@/features/services/lib/service-regions";
 import { pickLocalized } from "@/lib/i18n/content";
 import type {
   ApplyDocumentRequirement,
@@ -122,10 +123,12 @@ export function mapServiceApplyConfig(
           })
         : null,
     requiresProof: service.requiresProof,
-    region: pickLocalized(locale, {
-      en: service.region.nameEn,
-      ur: service.region.nameUr,
-    }),
+    region: getServiceRegionLabel(
+      service,
+      locale,
+      "Multiple provinces",
+      "All Provinces",
+    ),
     formFields,
     documentRequirements,
   };

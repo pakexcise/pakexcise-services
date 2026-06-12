@@ -8,27 +8,28 @@ import {
   Search,
   UserRound,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
+import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { Button } from "@/components/ui/button";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/customer/dashboard", key: "dashboard", icon: LayoutDashboard },
-  { href: "/customer/profile", key: "profile", icon: UserRound },
+  { href: "/customer/dashboard", key: "dashboard" as const, icon: LayoutDashboard },
+  { href: "/customer/profile", key: "profile" as const, icon: UserRound },
 ] as const;
 
 const externalItems = [
-  { href: "/services", key: "services", icon: ClipboardList },
-  { href: "/track", key: "track", icon: Search },
+  { href: "/services", key: "services" as const, icon: ClipboardList },
+  { href: "/track", key: "track" as const, icon: Search },
 ] as const;
 
 type CustomerSidebarProps = {
   userName: string;
   userContactLine: string;
+  labels: CustomerShellLabels;
   onNavigate?: () => void;
   className?: string;
 };
@@ -36,12 +37,13 @@ type CustomerSidebarProps = {
 export function CustomerSidebar({
   userName,
   userContactLine,
+  labels,
   onNavigate,
   className,
 }: CustomerSidebarProps) {
   const pathname = usePathname();
-  const t = useTranslations("customer.nav");
-  const tShell = useTranslations("customer.shell");
+  const t = labels.nav;
+  const tShell = labels.shell;
 
   return (
     <div className={cn("flex h-full flex-col", className)}>
@@ -49,7 +51,7 @@ export function CustomerSidebar({
         <Link href="/customer/dashboard" onClick={onNavigate} className="block">
           <SiteLogo imageClassName="max-h-7" />
           <span className="mt-1 block text-xs text-muted-foreground">
-            {tShell("portalLabel")}
+            {tShell.portalLabel}
           </span>
         </Link>
       </div>
@@ -58,18 +60,18 @@ export function CustomerSidebar({
         <Button asChild className="w-full justify-start gap-2">
           <Link href="/services" onClick={onNavigate}>
             <Plus className="size-4" aria-hidden="true" />
-            {t("newApplication")}
+            {t.newApplication}
           </Link>
         </Button>
       </div>
 
       <nav
         className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-3"
-        aria-label={t("ariaLabel")}
+        aria-label={t.ariaLabel}
       >
         <div className="space-y-1">
           <p className="px-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            {t("accountSection")}
+            {t.accountSection}
           </p>
           {navItems.map((item) => {
             const isActive =
@@ -89,7 +91,7 @@ export function CustomerSidebar({
                 )}
               >
                 <Icon className="size-4 shrink-0" aria-hidden="true" />
-                <span>{t(item.key)}</span>
+                <span>{t[item.key]}</span>
               </Link>
             );
           })}
@@ -97,7 +99,7 @@ export function CustomerSidebar({
 
         <div className="space-y-1">
           <p className="px-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            {t("quickSection")}
+            {t.quickSection}
           </p>
           {externalItems.map((item) => {
             const Icon = item.icon;
@@ -110,7 +112,7 @@ export function CustomerSidebar({
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 <Icon className="size-4 shrink-0" aria-hidden="true" />
-                <span className="flex-1">{t(item.key)}</span>
+                <span className="flex-1">{t[item.key]}</span>
                 <ExternalLink
                   className="size-3.5 shrink-0 opacity-60"
                   aria-hidden="true"

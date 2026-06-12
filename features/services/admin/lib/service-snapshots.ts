@@ -8,7 +8,7 @@ export function serviceAuditSnapshot(service: AdminServiceDetail | null) {
   return {
     id: service.id,
     slug: service.slug,
-    regionId: service.regionId,
+    regionIds: service.serviceRegions.map((entry) => entry.regionId),
     nameEn: service.nameEn,
     isActive: service.isActive,
     displayOrder: service.displayOrder,

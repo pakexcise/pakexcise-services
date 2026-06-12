@@ -14,6 +14,7 @@ import {
   validateClientUpload,
 } from "@/features/applications/lib/validate-upload";
 import { DEFAULT_ACCEPTED_MIME_TYPES, DEFAULT_MAX_FILE_SIZE_BYTES } from "@/config/uploads";
+import { resolveClientFileMimeType } from "@/lib/utils/resolve-file-mime";
 
 type ProofUploadSectionProps = {
   applicationId: string;
@@ -81,13 +82,22 @@ export function ProofUploadSection({
       return;
     }
 
+    const resolvedMimeType = resolveClientFileMimeType(file, [
+      ...DEFAULT_ACCEPTED_MIME_TYPES,
+    ]);
+
+    if (!resolvedMimeType) {
+      setError(labels.invalidType);
+      return;
+    }
+
     setError(null);
 
     startTransition(async () => {
       const requestResult = await requestCompletionProofUploadAction({
         applicationId,
         fileName: file.name,
-        mimeType: file.type,
+        mimeType: resolvedMimeType,
         fileSize: file.size,
       });
 
@@ -97,14 +107,23 @@ export function ProofUploadSection({
       }
 
       try {
-        const uploadResponse = await fetch(requestResult.data.uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file, file.name);
+
+        const uploadResponse = await fetch(
+          `/api/documents/${requestResult.data.documentId}/upload`,
+          {
+            method: "POST",
+            body: uploadFormData,
+            credentials: "include",
+          },
+        );
 
         if (!uploadResponse.ok) {
-          setError(labels.uploadFailed);
+          const payload = (await uploadResponse.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          setError(payload?.error ?? labels.uploadFailed);
           return;
         }
 
@@ -172,7 +191,7 @@ export function ProofUploadSection({
         ) : (
           <>
             <FileUp className="size-4" />
-            {existingProof ? labels.upload : labels.upload}
+            {labels.upload}
           </>
         )}
       </Button>

@@ -5,14 +5,17 @@ import { notFound } from "next/navigation";
 import { AdminInvoicePdfButton } from "@/components/admin/AdminInvoicePdfButton";
 import { InvoiceGenerator } from "@/components/admin/InvoiceGenerator";
 import { PaymentVerification } from "@/components/admin/PaymentVerification";
+import { InvoicePaymentMethodsDisplay } from "@/components/shared/InvoicePaymentMethodsDisplay";
+import { SecurePaymentViewer } from "@/components/shared/SecurePaymentViewer";
 import { SecureDocViewer } from "@/components/admin/SecureDocViewer";
 import { StatusManager } from "@/components/admin/StatusManager";
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { AdminNotesForm } from "@/features/admin/components/admin-notes-form";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { ProofUploadSection } from "@/features/admin/components/proof-upload-section";
-import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { adminMetadata } from "@/features/admin/lib/metadata";
+import { isUploadedCompletionProof } from "@/features/applications/lib/completion-proof";
 import { getAllowedNextStatuses } from "@/features/applications/status-machine";
 import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligibility";
 import { formatPkr } from "@/features/invoices/lib/format-pkr";
@@ -39,6 +42,7 @@ import {
 } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
+import { adminPaymentMethodRepository } from "@/server/repositories/admin-payment-method-repository";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { getCurrentUser } from "@/server/auth/current-user";
@@ -64,9 +68,10 @@ export default async function AdminApplicationDetailPage({
   setRequestLocale(locale);
   const t = await getTranslations("admin");
 
-  const [application, user] = await Promise.all([
+  const [application, user, activePaymentMethods] = await Promise.all([
     applicationRepository.findAdminById(id),
     getCurrentUser(),
+    adminPaymentMethodRepository.listActive(),
   ]);
 
   if (!application) {
@@ -100,14 +105,14 @@ export default async function AdminApplicationDetailPage({
     application.statusHistory
       .flatMap((entry) => [entry.fromStatus, entry.toStatus])
       .filter(Boolean)
-      .map((status) => [status, t(getApplicationStatusLabelKey(status!))]),
+      .map((status) => [status, t(getAdminApplicationStatusLabelKey(status!))]),
   ) as Record<string, string>;
 
   for (const status of getAllowedNextStatuses(application.status)) {
-    statusLabels[status] = t(getApplicationStatusLabelKey(status));
+    statusLabels[status] = t(getAdminApplicationStatusLabelKey(status));
   }
   statusLabels[application.status] = t(
-    getApplicationStatusLabelKey(application.status),
+    getAdminApplicationStatusLabelKey(application.status),
   );
 
   const customer = resolveCustomerContactDisplay({
@@ -122,10 +127,11 @@ export default async function AdminApplicationDetailPage({
     locale === "ur"
       ? application.service.nameUr
       : application.service.nameEn;
-  const regionName =
-    locale === "ur"
+  const regionName = application.service.region
+    ? locale === "ur"
       ? application.service.region.nameUr
-      : application.service.region.nameEn;
+      : application.service.region.nameEn
+    : "—";
 
   const completionProof = application.documents.find(
     (doc) => doc.type === COMPLETION_PROOF_DOC_TYPE,
@@ -170,7 +176,7 @@ export default async function AdminApplicationDetailPage({
               </span>
               <ApplicationStatusBadge
                 status={application.status}
-                label={t(getApplicationStatusLabelKey(application.status))}
+                label={t(getAdminApplicationStatusLabelKey(application.status))}
               />
             </div>
             <div className="flex justify-between gap-3">
@@ -245,7 +251,7 @@ export default async function AdminApplicationDetailPage({
                 allowedStatuses={getAllowedNextStatuses(application.status)}
                 statusLabels={statusLabels}
                 requiresProof={application.service.requiresProof}
-                hasProof={Boolean(completionProof)}
+                hasProof={isUploadedCompletionProof(completionProof)}
                 labels={{
                   title: t("applications.detail.statusManager"),
                   description: t("applications.detail.statusManagerDescription"),
@@ -414,13 +420,17 @@ export default async function AdminApplicationDetailPage({
             <InvoiceGenerator
               applicationId={application.id}
               locale={application.locale === "ur" ? "ur" : "en"}
+              paymentMethods={activePaymentMethods}
               labels={{
                 title: t("invoices.generator.title"),
                 description: t("invoices.generator.description"),
                 serviceFee: t("invoices.generator.serviceFee"),
                 officialFeeNote: t("invoices.generator.officialFeeNote"),
-                paymentMethod: t("invoices.generator.paymentMethod"),
+                paymentMethods: t("invoices.generator.paymentMethods"),
+                paymentMethodsHint: t("invoices.generator.paymentMethodsHint"),
+                noPaymentMethods: t("invoices.generator.noPaymentMethods"),
                 paymentInstructions: t("invoices.generator.paymentInstructions"),
+                paymentInstructionsHint: t("invoices.generator.paymentInstructionsHint"),
                 dueDate: t("invoices.generator.dueDate"),
                 notes: t("invoices.generator.notes"),
                 taxTotal: t("invoices.generator.taxTotal"),
@@ -436,6 +446,10 @@ export default async function AdminApplicationDetailPage({
                 submitting: t("invoices.generator.submitting"),
                 success: t("invoices.generator.success"),
                 error: t("invoices.generator.error"),
+                accountTitle: t("invoices.generator.accountTitle"),
+                accountNumber: t("invoices.generator.accountNumber"),
+                iban: t("invoices.generator.iban"),
+                bankName: t("invoices.generator.bankName"),
               }}
             />
           </CardContent>
@@ -464,9 +478,24 @@ export default async function AdminApplicationDetailPage({
                       {t("applications.detail.invoiceTotal")}:{" "}
                       {formatPkr(invoice.total.toString(), locale === "ur" ? "ur" : "en")}
                     </p>
-                    {invoice.paymentMethod ? (
+                    {invoice.paymentMethods.length > 0 ? (
+                      <div className="mt-4">
+                        <InvoicePaymentMethodsDisplay
+                          methods={invoice.paymentMethods}
+                          locale={locale === "ur" ? "ur" : "en"}
+                          labels={{
+                            title: t("invoices.generator.paymentMethods"),
+                            accountTitle: t("invoices.generator.accountTitle"),
+                            accountNumber: t("invoices.generator.accountNumber"),
+                            iban: t("invoices.generator.iban"),
+                            bankName: t("invoices.generator.bankName"),
+                            instructions: t("invoices.generator.instructions"),
+                          }}
+                        />
+                      </div>
+                    ) : invoice.paymentMethod ? (
                       <p className="mt-2 text-xs text-muted-foreground">
-                        {t("invoices.generator.paymentMethod")}: {invoice.paymentMethod}
+                        {t("invoices.generator.paymentMethods")}: {invoice.paymentMethod}
                       </p>
                     ) : null}
                     {invoice.officialFeeNote ? (
@@ -525,7 +554,21 @@ export default async function AdminApplicationDetailPage({
                       {t("applications.detail.paymentAmount")}:{" "}
                       {formatPkr(payment.amount.toString(), locale === "ur" ? "ur" : "en")}
                     </p>
-                    {payment.screenshotFileName ? (
+                    {payment.screenshotR2Key ? (
+                      <div className="mt-4">
+                        <SecurePaymentViewer
+                          paymentId={payment.id}
+                          fileName={payment.screenshotFileName}
+                          labels={{
+                            loading: t("payments.verification.viewerLoading"),
+                            error: t("payments.verification.viewerError"),
+                            retry: t("payments.verification.viewerRetry"),
+                            openNewTab: t("payments.verification.viewerOpen"),
+                            unsupported: t("payments.verification.viewerUnsupported"),
+                          }}
+                        />
+                      </div>
+                    ) : payment.screenshotFileName ? (
                       <p className="mt-1 text-xs text-muted-foreground">
                         {payment.screenshotFileName}
                       </p>
@@ -607,7 +650,7 @@ export default async function AdminApplicationDetailPage({
                     <TableCell>
                       <ApplicationStatusBadge
                         status={entry.toStatus}
-                        label={t(getApplicationStatusLabelKey(entry.toStatus))}
+                        label={t(getAdminApplicationStatusLabelKey(entry.toStatus))}
                       />
                     </TableCell>
                     <TableCell>{entry.note}</TableCell>

@@ -1,7 +1,7 @@
 import type { ApplicationStatus } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 
-import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
+import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -97,7 +97,7 @@ export async function ApplicationQueueStats({
           )}
         >
           <p className="truncate text-xs text-muted-foreground">
-            {t(getApplicationStatusLabelKey(status))}
+            {t(getAdminApplicationStatusLabelKey(status))}
           </p>
           <p className="text-lg font-semibold">{counts[status] ?? 0}</p>
         </Link>

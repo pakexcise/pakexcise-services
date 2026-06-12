@@ -1,5 +1,7 @@
 "use client";
 
+import { AlertCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { formatFileSize } from "@/features/applications/lib/validate-upload";
 import type {
@@ -8,9 +10,11 @@ import type {
   BasicApplicantDetails,
   SavedDocumentMeta,
 } from "@/features/applications/types";
+import { formatPhoneForDisplay } from "@/lib/validations/phone";
 
 type ReviewStepProps = {
   basic: BasicApplicantDetails;
+  basicComplete: boolean;
   fields: ApplyFormFieldConfig[];
   fieldValues: Record<string, string | string[] | boolean>;
   documentRequirements: ApplyDocumentRequirement[];
@@ -26,6 +30,7 @@ type ReviewStepProps = {
     phone: string;
     cnic: string;
     noDocuments: string;
+    incompleteDetails: string;
     back: string;
     submit: string;
     submitting: string;
@@ -34,6 +39,7 @@ type ReviewStepProps = {
   isSubmitting: boolean;
   submitError: string | null;
   onBack: () => void;
+  onEditDetails: () => void;
   onSubmit: () => Promise<void>;
 };
 
@@ -76,8 +82,13 @@ function maskCnic(cnic: string): string {
   return `${parts[0]}-*******-${parts[2]}`;
 }
 
+function displayValue(value: string): string {
+  return value.trim() || "—";
+}
+
 export function ReviewStep({
   basic,
+  basicComplete,
   fields,
   fieldValues,
   documentRequirements,
@@ -86,11 +97,20 @@ export function ReviewStep({
   isSubmitting,
   submitError,
   onBack,
+  onEditDetails,
   onSubmit,
 }: ReviewStepProps) {
   const uploadedDocuments = documentRequirements
     .map((req) => documents[req.id])
     .filter((doc): doc is SavedDocumentMeta => Boolean(doc));
+
+  const requiredDocuments = documentRequirements.filter((doc) => doc.isRequired);
+  const missingRequiredDocuments = requiredDocuments.filter(
+    (doc) => !documents[doc.id],
+  );
+
+  const canSubmit =
+    basicComplete && missingRequiredDocuments.length === 0;
 
   return (
     <div className="space-y-6">
@@ -99,24 +119,48 @@ export function ReviewStep({
         <p className="text-sm text-muted-foreground">{labels.description}</p>
       </div>
 
+      {!basicComplete ? (
+        <div
+          role="alert"
+          className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
+          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <div className="space-y-2">
+            <p>{labels.incompleteDetails}</p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={onEditDetails}
+            >
+              {labels.back}
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
       <section className="space-y-3 rounded-lg border p-4">
         <h3 className="font-medium">{labels.basicSection}</h3>
         <dl className="grid gap-3 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-muted-foreground">{labels.fullName}</dt>
-            <dd className="font-medium">{basic.fullName}</dd>
+            <dd className="font-medium">{displayValue(basic.fullName)}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">{labels.email}</dt>
-            <dd className="font-medium">{basic.email}</dd>
+            <dd className="font-medium">{displayValue(basic.email)}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">{labels.phone}</dt>
-            <dd className="font-medium">{basic.phone}</dd>
+            <dd className="font-medium">
+              {basic.phone ? formatPhoneForDisplay(basic.phone) : "—"}
+            </dd>
           </div>
           <div>
             <dt className="text-muted-foreground">{labels.cnic}</dt>
-            <dd className="font-medium">{maskCnic(basic.cnic)}</dd>
+            <dd className="font-medium">
+              {basic.cnic ? maskCnic(basic.cnic) : "—"}
+            </dd>
           </div>
         </dl>
       </section>
@@ -179,7 +223,11 @@ export function ReviewStep({
         <Button type="button" variant="outline" onClick={onBack} disabled={isSubmitting}>
           {labels.back}
         </Button>
-        <Button type="button" onClick={onSubmit} disabled={isSubmitting}>
+        <Button
+          type="button"
+          onClick={onSubmit}
+          disabled={isSubmitting || !canSubmit}
+        >
           {isSubmitting ? labels.submitting : labels.submit}
         </Button>
       </div>

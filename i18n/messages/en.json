@@ -35,6 +35,7 @@
     "home": "Home",
     "services": "Services",
     "regions": "Regions",
+    "blog": "Blog",
     "guides": "Guides",
     "faqs": "FAQs",
     "track": "Track",
@@ -74,7 +75,11 @@
       "otpSentEmail": "We sent a verification code to __EMAIL__.",
       "otpSentEmailSandbox": "Resend test mode: the code was sent to __OWNER_EMAIL__ (not __REQUESTED_EMAIL__). Open that inbox to get your 6-digit OTP.",
       "accountNotFound": "No account found with this email. Please create an account first.",
+      "phoneAccountNotFound": "No account found with this mobile number or CNIC. Please create an account first.",
       "accountExists": "An account with this email already exists. Sign in instead.",
+      "emailExists": "An account with this email already exists. Sign in instead.",
+      "phoneExists": "An account with this mobile number already exists. Sign in instead.",
+      "googleAccountExists": "This email is already registered with Google. Continue with Google instead.",
       "signupPrompt": "New to PakExcise?",
       "loginPrompt": "Already registered?",
       "tryOtherMethods": "Try signing in with email or Google instead.",
@@ -101,10 +106,25 @@
       "socialFailed": "Social sign-in failed. Please try again.",
       "socialNotConfigured": "Social login is not configured yet. Use email or phone with your password."
     },
+    "chooseRole": {
+      "metaTitle": "Choose account type | PakExcise.com",
+      "title": "How will you use PakExcise?",
+      "description": "Choose whether you are applying for services yourself or registering as a facilitation agent.",
+      "customerTitle": "Customer",
+      "customerDescription": "Submit and track your own excise applications.",
+      "agentTitle": "Agent",
+      "agentDescription": "Submit applications on behalf of customers and track commissions.",
+      "agentNote": "Agent accounts require admin approval before you can submit applications for customers.",
+      "continueLabel": "Continue",
+      "continuing": "Continuing...",
+      "selectRole": "Please select an account type.",
+      "failed": "Could not save your account type. Please try again."
+    },
     "signup": {
       "metaTitle": "Create account | PakExcise.com",
       "title": "Create your account",
-      "description": "Register as a customer to submit applications and track progress.",
+      "description": "Register to submit applications and track progress.",
+      "agentDescription": "Create your account to apply as a PakExcise facilitation agent.",
       "name": "Full name",
       "email": "Email address",
       "password": "Password",
@@ -135,7 +155,11 @@
       "otpSentEmail": "We sent a verification code to __EMAIL__.",
       "otpSentEmailSandbox": "Resend test mode: the code was sent to __OWNER_EMAIL__ (not __REQUESTED_EMAIL__). Open that inbox to get your 6-digit OTP.",
       "accountNotFound": "No account found with this email. Please create an account first.",
+      "phoneAccountNotFound": "No account found with this mobile number or CNIC. Please create an account first.",
       "accountExists": "An account with this email already exists. Sign in instead.",
+      "emailExists": "An account with this email already exists. Sign in instead.",
+      "phoneExists": "An account with this mobile number already exists. Sign in instead.",
+      "googleAccountExists": "This email is already registered with Google. Continue with Google instead.",
       "signupPrompt": "New to PakExcise?",
       "loginPrompt": "Already registered?",
       "tryOtherMethods": "Try signing in with email or Google instead.",
@@ -319,6 +343,12 @@
         "title": "Documents",
         "empty": "No documents uploaded yet.",
         "status": "Status",
+        "statuses": {
+          "PENDING": "Uploaded — awaiting review",
+          "APPROVED": "Verified",
+          "REJECTED": "Rejected",
+          "MISSING": "Not uploaded"
+        },
         "rejectionReason": "Rejection reason",
         "uploadSection": "Upload or replace documents requested by our team.",
         "required": "Required",
@@ -350,8 +380,13 @@
         "subtotal": "Subtotal",
         "tax": "Tax",
         "officialFeeNote": "Government / official fees",
-        "paymentMethod": "Payment method",
-        "paymentInstructions": "Payment instructions",
+        "paymentMethods": "Payment methods",
+        "paymentInstructions": "Additional payment instructions",
+        "accountTitle": "Account title",
+        "accountNumber": "Account number",
+        "iban": "IBAN",
+        "bankName": "Bank",
+        "instructions": "Instructions",
         "dueDate": "Due date",
         "notes": "Notes",
         "lineItems": "Line items",
@@ -379,16 +414,30 @@
         "waitingVerification": "Your payment screenshot is being reviewed.",
         "verified": "Payment verified. Our team will continue processing your application.",
         "rejected": "Payment rejected",
-        "rejectionReason": "Reason"
+        "rejectionReason": "Reason",
+        "viewer": {
+          "loading": "Loading payment screenshot…",
+          "error": "Could not load payment screenshot.",
+          "retry": "Retry",
+          "openNewTab": "Open in new tab",
+          "unsupported": "Inline preview is not available for this file type."
+        }
       }
     }
   },
   "agent": {
+    "shell": {
+      "portalLabel": "Agent portal",
+      "openMenu": "Open agent menu",
+      "signOut": "Sign out"
+    },
     "nav": {
       "ariaLabel": "Agent portal navigation",
+      "workspaceSection": "Workspace",
       "dashboard": "Dashboard",
       "applications": "Applications",
       "newApplication": "New application",
+      "verification": "Get verified",
       "commissions": "Commissions",
       "profile": "Profile"
     },
@@ -399,16 +448,57 @@
     },
     "dashboard": {
       "metaTitle": "Agent dashboard | PakExcise.com",
+      "eyebrow": "Agent portal",
       "title": "Agent dashboard",
       "welcome": "Welcome, {name}",
-      "description": "Once approved, you can submit applications on behalf of customers and track assigned cases.",
+      "subtitle": "Submit applications for customers, track assigned cases, and monitor your commissions in one place.",
+      "accountLabel": "Signed in as",
+      "commissionRateLabel": "Commission rate",
+      "newApplicationCta": "New application",
+      "applicationsCta": "View applications",
+      "description": "Submit applications on behalf of customers and track assigned cases.",
       "pendingTitle": "Agent account pending approval",
-      "pendingDescription": "You cannot submit applications until an admin approves your agent profile.",
+      "pendingDescription": "Your agent account is temporarily restricted. Contact PakExcise support for help.",
       "rejectedTitle": "Agent account rejected",
       "rejectedDescription": "Contact PakExcise support if you believe this is a mistake.",
+      "applicationsTitle": "Recent applications",
+      "applicationsCount": "{count, plural, =0 {No applications} one {# application} other {# applications}}",
       "recentApplications": "Recent applications",
       "viewAll": "View all",
-      "applicationsEmpty": "No assigned applications yet.",
+      "applicationsEmpty": "No assigned applications yet. Start your first customer application to see it here.",
+      "emptyTitle": "Start your first agent application",
+      "emptyCta": "Start application",
+      "viewApplication": "View details",
+      "commissionsTitle": "Commissions",
+      "commissionsDescription": "View commission line items and payout status for completed facilitation work.",
+      "commissionsCta": "View commissions",
+      "profileTitle": "Agent profile",
+      "profileDescription": "Update your contact details and review your agent account status.",
+      "profileCta": "Edit profile",
+      "supportTitle": "Contact support",
+      "supportDescription": "Need help with an application or payout? Our team can assist you.",
+      "supportCta": "Contact support",
+      "steps": {
+        "chooseService": {
+          "title": "Choose a service",
+          "description": "Pick the excise facilitation service your customer needs."
+        },
+        "submitApplication": {
+          "title": "Submit on behalf of customer",
+          "description": "Complete the application form and upload required documents securely."
+        },
+        "trackCommissions": {
+          "title": "Track progress and commissions",
+          "description": "Follow application status updates and view commission payouts from your dashboard."
+        }
+      },
+      "commissionSummary": {
+        "title": "Commission overview",
+        "description": "Pending and paid commission totals from admin line items.",
+        "pending": "Pending payout",
+        "paid": "Paid out",
+        "viewAll": "View all commissions"
+      },
       "statusCards": {
         "total": "Assigned applications",
         "inProgress": "In progress",
@@ -417,9 +507,11 @@
       },
       "columns": {
         "trackingId": "Tracking ID",
+        "customer": "Customer",
         "service": "Service",
         "status": "Status",
-        "updated": "Updated"
+        "updated": "Updated",
+        "actions": "Actions"
       }
     },
     "applications": {
@@ -496,6 +588,58 @@
       "saving": "Saving…",
       "saved": "Profile updated.",
       "error": "Could not update profile."
+    },
+    "verification": {
+      "metaTitle": "Agent verification | PakExcise.com",
+      "title": "Get verified on PakExcise",
+      "description": "Submit your details for optional public verification. This does not affect your ability to submit applications.",
+      "listingType": "Listing type",
+      "individual": "Individual agent",
+      "shop": "Shop / office agent",
+      "fullName": "Full name",
+      "cnic": "CNIC number",
+      "phone": "Active phone number",
+      "email": "Email address",
+      "emailOptional": "optional",
+      "currentAddress": "Current address",
+      "permanentAddress": "Permanent address",
+      "region": "Province / region",
+      "city": "City",
+      "selectRegion": "Select province",
+      "selectCity": "Select city",
+      "cnicFront": "CNIC front photo",
+      "cnicBack": "CNIC back photo",
+      "shopPhoto": "Shop / office photo",
+      "location": "Location label",
+      "locationOptional": "Optional: add a map pin using latitude and longitude.",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "submit": "Submit for verification",
+      "submitting": "Submitting…",
+      "success": "Verification submitted. Admin will review your details.",
+      "error": "Could not submit verification.",
+      "upload": "Upload file",
+      "uploading": "Uploading…",
+      "uploaded": "Uploaded",
+      "replace": "Replace file",
+      "maxSize": "Max {size}",
+      "allowedTypes": "JPG, PNG, or WebP",
+      "uploadFailed": "Upload failed.",
+      "invalidType": "Invalid file type.",
+      "tooLarge": "File is too large.",
+      "invalidName": "Invalid file name.",
+      "card": {
+        "title": "Become a verified agent on our website",
+        "description": "Optional verification helps customers find trusted agents and shops on PakExcise.com.",
+        "draftCta": "Start verification",
+        "cta": "Update verification",
+        "pendingTitle": "Verification under review",
+        "pendingDescription": "Admin is reviewing your submitted details for public listing.",
+        "verifiedTitle": "You are a verified agent",
+        "verifiedDescription": "Your profile can appear on the public verified agents page.",
+        "rejectedTitle": "Verification needs updates",
+        "rejectedDescription": "Please review your details and submit again."
+      }
     }
   },
   "support": {
@@ -563,6 +707,8 @@
     "terms": "Terms of Service",
     "disclaimer": "Disclaimer",
     "refund": "Refund Policy",
+    "paymentPolicy": "Payment Policy",
+    "cookiePolicy": "Cookie Policy",
     "quickLinks": "Quick links",
     "servicesTitle": "Services",
     "servicesEmpty": "Services will appear here once configured by admin.",
@@ -595,14 +741,33 @@
     "trustItem3": "English and Urdu support with mobile-first design",
     "ctaTitle": "Need help choosing a service?",
     "ctaDescription": "Our team can guide you through the right application path.",
-    "ctaButton": "Contact support"
+    "ctaButton": "Contact support",
+    "verifiedAgentsTitle": "Verified agents & shop partners",
+    "verifiedAgentsDescription": "Trusted PakExcise facilitation partners reviewed by our team.",
+    "verifiedBadge": "Verified",
+    "verifiedShop": "Shop partner",
+    "verifiedAgent": "Agent"
   },
   "marketing": {
+    "verifiedAgents": {
+      "title": "Verified agents & shop partners",
+      "description": "Browse PakExcise verified facilitation agents and shop partners across Pakistan.",
+      "empty": "Verified agents will appear here after admin approval.",
+      "verifiedBadge": "Verified",
+      "shop": "Shop partner",
+      "agent": "Agent",
+      "ctaTitle": "Want to become a PakExcise agent?",
+      "ctaDescription": "Register as an agent, submit applications immediately, and optionally apply for public verification.",
+      "ctaPrimary": "Learn about the agent program",
+      "ctaSecondary": "Chat on WhatsApp"
+    },
     "services": {
       "title": "Excise facilitation services",
       "metaTitle": "Services | PakExcise.com",
       "metaDescription": "Browse active excise facilitation services for Punjab, Islamabad ICT, and more. Private service — not a government website.",
-      "empty": "No active services are available right now."
+      "empty": "No active services are available right now.",
+      "multipleRegions": "Multiple provinces",
+      "allProvinces": "All Provinces"
     },
     "service": {
       "documentsTitle": "Document checklist",
@@ -614,7 +779,9 @@
       "ctaTitle": "Ready to apply?",
       "ctaDescription": "Start your application online. Our team will review your submission and guide you through the next steps.",
       "applyNow": "Apply now",
-      "relatedTitle": "Related services"
+      "relatedTitle": "Related services",
+      "importantNotes": "Important notes",
+      "availableIn": "Available in"
     },
     "regions": {
       "title": "Regions",
@@ -623,7 +790,12 @@
       "empty": "No active regions are available right now.",
       "emptyServices": "No active services are available in this region yet.",
       "viewServices": "View services",
+      "viewCity": "View city",
+      "citiesTitle": "Cities in this region",
       "servicesInRegion": "Services in this region"
+    },
+    "reviews": {
+      "empty": "Reviews will appear here once published by admin."
     },
     "faqs": {
       "title": "Frequently asked questions",
@@ -701,7 +873,9 @@
       "regions": "Regions",
       "faqs": "FAQs",
       "social": "Social links",
+      "paymentMethods": "Payment methods",
       "agents": "Agents",
+      "agentVerifications": "Agent verifications",
       "customers": "Customers",
       "notifications": "Notifications",
       "seo": "SEO",
@@ -847,8 +1021,16 @@
         "description": "Create and send the customer-facing invoice. Only available after review when documents are acceptable.",
         "serviceFee": "PakExcise service fee (PKR)",
         "officialFeeNote": "Government / official fee note",
-        "paymentMethod": "Payment method",
-        "paymentInstructions": "Payment instructions",
+        "paymentMethods": "Payment methods",
+        "paymentMethodsHint": "Select one or more payment methods to include on this invoice.",
+        "noPaymentMethods": "No active payment methods found. Add payment methods in Admin → Payment methods first.",
+        "paymentInstructions": "Additional payment instructions",
+        "paymentInstructionsHint": "Optional extra note for the customer (shown below the selected payment methods).",
+        "accountTitle": "Account title",
+        "accountNumber": "Account number",
+        "iban": "IBAN",
+        "bankName": "Bank",
+        "instructions": "Instructions",
         "dueDate": "Due date",
         "notes": "Invoice notes",
         "taxTotal": "Tax total (PKR)",
@@ -864,6 +1046,38 @@
         "submitting": "Generating…",
         "success": "Invoice sent:",
         "error": "Could not create invoice."
+      }
+    },
+    "agentVerifications": {
+      "title": "Agent verifications",
+      "description": "Review optional public verification submissions from agents and shop partners.",
+      "empty": "No verification submissions yet.",
+      "shop": "Shop",
+      "agent": "Agent",
+      "columns": {
+        "name": "Name",
+        "type": "Type",
+        "location": "Location",
+        "status": "Status",
+        "submitted": "Submitted",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "DRAFT": "Draft",
+        "PENDING": "Pending",
+        "VERIFIED": "Verified",
+        "REJECTED": "Rejected"
+      },
+      "actions": {
+        "approve": "Approve listing",
+        "approving": "Approving…",
+        "reject": "Reject listing",
+        "rejecting": "Rejecting…",
+        "rejectionReason": "Rejection reason",
+        "unlist": "Remove from public page",
+        "unlisting": "Removing…",
+        "success": "Verification updated.",
+        "error": "Could not update verification."
       }
     },
     "agents": {
@@ -1215,6 +1429,7 @@
         },
         "slug": "Slug",
         "region": "Region",
+        "regions": "Assigned provinces",
         "selectRegion": "Select region",
         "nameEn": "Name (English)",
         "nameUr": "Name (Urdu)",
@@ -1300,6 +1515,73 @@
         "invalidJson": "Invalid JSON format"
       }
     },
+    "regions": {
+      "title": "Region management",
+      "description": "Manage provinces, cities, SEO, and service availability by region.",
+      "create": "Add region",
+      "createTitle": "Create region",
+      "createDescription": "Add a new province or region. Cities can be managed after saving.",
+      "editTitle": "Edit region",
+      "editDescription": "Update {name} and manage cities in this region.",
+      "searchPlaceholder": "Search by name or slug",
+      "emptyTitle": "No regions found",
+      "emptyDescription": "Create your first region or adjust filters.",
+      "columns": {
+        "name": "Region",
+        "slug": "Slug",
+        "cities": "Cities",
+        "services": "Services",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "filters": {
+        "all": "All statuses",
+        "apply": "Apply filters"
+      },
+      "actions": {
+        "edit": "Edit"
+      },
+      "form": {
+        "tabs": {
+          "general": "General",
+          "seo": "SEO"
+        },
+        "slug": "Slug",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "descriptionEn": "Intro content (English)",
+        "descriptionUr": "Intro content (Urdu)",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "metaTitleEn": "Meta title (English)",
+        "metaTitleUr": "Meta title (Urdu)",
+        "metaDescriptionEn": "Meta description (English)",
+        "metaDescriptionUr": "Meta description (Urdu)",
+        "h1En": "H1 (English)",
+        "h1Ur": "H1 (Urdu)",
+        "save": "Save region",
+        "saving": "Saving...",
+        "saveFailed": "Failed to save region"
+      },
+      "cities": {
+        "title": "Cities in this region",
+        "add": "Add city",
+        "slug": "City slug",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "descriptionEn": "Intro content (English)",
+        "isActive": "Active",
+        "save": "Save city",
+        "saving": "Saving...",
+        "delete": "Delete",
+        "confirmDelete": "Soft delete this city?",
+        "empty": "No cities in this region yet."
+      }
+    },
     "faqs": {
       "title": "FAQ management",
       "description": "Manage global and service-specific FAQs for public pages and schema.",
@@ -1350,6 +1632,52 @@
         "saving": "Saving...",
         "saveFailed": "Could not save FAQ",
         "cancel": "Cancel"
+      }
+    },
+    "paymentMethods": {
+      "title": "Payment methods",
+      "description": "Manage bank, JazzCash, Easypaisa, and other payment options shown on customer invoices.",
+      "existing": "Existing payment methods",
+      "empty": "No payment methods configured yet.",
+      "addMethod": "Add payment method",
+      "editMethod": "Edit payment method",
+      "code": "Code",
+      "type": "Type",
+      "nameEn": "Display name (English)",
+      "nameEnHint": "Customer-facing label on the invoice, e.g. Meezan Bank, Easypaisa, NayaPay.",
+      "nameUr": "Display name (Urdu)",
+      "nameUrHint": "Urdu label shown on Urdu invoices.",
+      "accountTitleEn": "Account title (English)",
+      "accountTitleUr": "Account title (Urdu)",
+      "accountNumber": "Account / wallet number",
+      "iban": "IBAN",
+      "bankNameEn": "Bank name (English)",
+      "bankNameUr": "Bank name (Urdu)",
+      "instructionsEn": "Instructions (English)",
+      "instructionsUr": "Instructions (Urdu)",
+      "isActive": "Active",
+      "displayOrder": "Display order",
+      "saveMethod": "Save payment method",
+      "clear": "Clear form",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Delete this payment method?",
+      "saveFailed": "Could not save payment method",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "moveUp": "Move up",
+        "moveDown": "Move down"
+      },
+      "types": {
+        "bankTransfer": "Bank transfer",
+        "jazzcash": "JazzCash",
+        "easypaisa": "Easypaisa",
+        "nayapay": "NayaPay",
+        "sadapay": "SadaPay",
+        "other": "Other"
       }
     },
     "social": {
@@ -1411,11 +1739,20 @@
       "phone": "Mobile number",
       "phoneHint": "Pakistani mobile number (e.g. 03001234567)",
       "cnic": "CNIC",
-      "cnicHint": "Format: 12345-1234567-1"
+      "cnicHint": "Format: 12345-1234567-1",
+      "validationSummary": "Please fix the following before continuing:",
+      "errors": {
+        "fullNameRequired": "Full name is required",
+        "fullNameTooLong": "Full name is too long",
+        "emailInvalid": "Enter a valid email address",
+        "phoneInvalid": "Invalid Pakistani mobile number",
+        "cnicInvalid": "Invalid CNIC format"
+      }
     },
     "fields": {
       "title": "Service-specific information",
       "description": "Provide the details required for this service.",
+      "emptyTitle": "Nothing else needed here",
       "empty": "No additional fields are required for this service. Continue to documents."
     },
     "documents": {
@@ -1434,7 +1771,10 @@
       "uploadFailed": "Upload failed. Please try again.",
       "invalidType": "This file type is not allowed.",
       "tooLarge": "File is too large.",
-      "invalidName": "Invalid file name."
+      "invalidName": "Invalid file name.",
+      "previewLoading": "Loading preview...",
+      "previewError": "Preview could not be loaded.",
+      "previewOpen": "Open document in new tab"
     },
     "review": {
       "title": "Review and submit",
@@ -1443,6 +1783,7 @@
       "fieldsSection": "Service details",
       "documentsSection": "Uploaded documents",
       "noDocuments": "No documents uploaded.",
+      "incompleteDetails": "Some required details are missing. Go back and complete your applicant information.",
       "disclaimer": "By submitting, you confirm the information is accurate for your {service} facilitation request. PakExcise.com is a private service and not a government website."
     },
     "actions": {

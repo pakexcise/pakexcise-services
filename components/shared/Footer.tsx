@@ -13,10 +13,12 @@ import {
 } from "@/server/repositories";
 
 const legalLinks = [
-  { href: "/privacy", key: "privacy" },
-  { href: "/terms", key: "terms" },
+  { href: "/privacy-policy", key: "privacy" },
+  { href: "/terms-and-conditions", key: "terms" },
   { href: "/disclaimer", key: "disclaimer" },
-  { href: "/refund", key: "refund" },
+  { href: "/refund-policy", key: "refund" },
+  { href: "/payment-policy", key: "paymentPolicy" },
+  { href: "/cookie-policy", key: "cookiePolicy" },
 ] as const;
 
 export async function Footer() {

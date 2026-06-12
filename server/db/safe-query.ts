@@ -1,6 +1,41 @@
 import "server-only";
 
+import { Prisma } from "@prisma/client";
+
 import { isDatabaseConfigured } from "@/server/db/config";
+
+let hasLoggedConnectionWarning = false;
+
+function isTransientConnectionError(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return error.code === "P1001" || error.code === "P1002" || error.code === "P1017";
+  }
+
+  if (error instanceof Prisma.PrismaClientInitializationError) {
+    return true;
+  }
+
+  return false;
+}
+
+function logDatabaseError(error: unknown): void {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
+  if (isTransientConnectionError(error)) {
+    if (!hasLoggedConnectionWarning) {
+      hasLoggedConnectionWarning = true;
+      console.warn(
+        "[database] Database is unreachable. Public pages will use empty fallbacks until the connection recovers.",
+      );
+    }
+
+    return;
+  }
+
+  console.warn("[database]", error);
+}
 
 export async function safeDbQuery<T>(
   operation: () => Promise<T>,
@@ -13,10 +48,7 @@ export async function safeDbQuery<T>(
   try {
     return await operation();
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[database]", error);
-    }
-
+    logDatabaseError(error);
     return fallback;
   }
 }

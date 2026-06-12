@@ -4,9 +4,10 @@ import { headers } from "next/headers";
 import { z } from "zod";
 
 import {
+  findGoogleAccountByEmail,
   findUserByCnic,
   findUserByEmail,
-  findUserByPhone,
+  findUserByPhoneOrTempEmail,
   isTempPhoneEmail,
 } from "@/features/auth/lib/user-identity";
 import { isValidCnicInput, normalizeCnic, parsePhoneOrCnicInput } from "@/lib/validations/cnic";
@@ -27,7 +28,9 @@ export type AuthEligibilityResult =
       code:
         | "ACCOUNT_NOT_FOUND"
         | "ACCOUNT_EXISTS"
+        | "PHONE_EXISTS"
         | "CNIC_EXISTS"
+        | "GOOGLE_ACCOUNT_EXISTS"
         | "INVALID_INPUT";
     };
 
@@ -49,6 +52,11 @@ export async function checkEmailAuthEligibility(
   }
 
   const normalized = parsed.data.toLowerCase();
+
+  if (isTempPhoneEmail(normalized)) {
+    return { ok: false, code: "INVALID_INPUT" };
+  }
+
   const user = await findUserByEmail(normalized);
 
   if (mode === "login") {
@@ -58,7 +66,20 @@ export async function checkEmailAuthEligibility(
     return { ok: true };
   }
 
-  if (user && !isTempPhoneEmail(user.email)) {
+  if (user) {
+    const googleAccount = await findGoogleAccountByEmail(normalized);
+    const credentialAccount = await prisma.account.findFirst({
+      where: {
+        userId: user.id,
+        providerId: "credential",
+      },
+      select: { id: true },
+    });
+
+    if (googleAccount && !credentialAccount) {
+      return { ok: false, code: "GOOGLE_ACCOUNT_EXISTS" };
+    }
+
     return { ok: false, code: "ACCOUNT_EXISTS" };
   }
 
@@ -74,9 +95,9 @@ export async function checkPhoneSignupEligibility(
     return { ok: false, code: "INVALID_INPUT" };
   }
 
-  const phoneUser = await findUserByPhone(normalizedPhone);
+  const phoneUser = await findUserByPhoneOrTempEmail(normalizedPhone);
   if (phoneUser) {
-    return { ok: false, code: "ACCOUNT_EXISTS" };
+    return { ok: false, code: "PHONE_EXISTS" };
   }
 
   const cnicUser = await findUserByCnic(cnicInput);
@@ -97,7 +118,7 @@ export async function checkPhoneOrCnicLoginEligibility(
 
   const user =
     parsed.type === "phone"
-      ? await findUserByPhone(parsed.value)
+      ? await findUserByPhoneOrTempEmail(parsed.value)
       : await findUserByCnic(parsed.value);
 
   if (!user) {
@@ -117,7 +138,7 @@ export async function getPhoneOrCnicLoginEmail(
 
   const user =
     parsed.type === "phone"
-      ? await findUserByPhone(parsed.value)
+      ? await findUserByPhoneOrTempEmail(parsed.value)
       : await findUserByCnic(parsed.value);
 
   if (!user) {
@@ -161,7 +182,8 @@ export async function linkPhoneAndCnicToUser(
   email: string,
   cnicInput: string,
 ): Promise<
-  { ok: true } | { ok: false; code: "INVALID_INPUT" | "CNIC_EXISTS" }
+  | { ok: true }
+  | { ok: false; code: "INVALID_INPUT" | "CNIC_EXISTS" | "PHONE_EXISTS" }
 > {
   const normalizedPhone = normalizePakistanPhone(phoneInput);
   const normalizedCnic = normalizeCnic(cnicInput);
@@ -172,10 +194,18 @@ export async function linkPhoneAndCnicToUser(
     return { ok: false, code: "INVALID_INPUT" };
   }
 
+  const normalizedEmail = parsedEmail.data.toLowerCase();
+
+  const existingPhone = await findUserByPhoneOrTempEmail(normalizedPhone);
+  if (existingPhone && existingPhone.email !== normalizedEmail) {
+    return { ok: false, code: "PHONE_EXISTS" };
+  }
+
   const existingCnic = await prisma.user.findFirst({
     where: {
       cnicHash: cnicHashValue,
       deletedAt: null,
+      NOT: { email: normalizedEmail },
     },
     select: { id: true },
   });
@@ -185,7 +215,7 @@ export async function linkPhoneAndCnicToUser(
   }
 
   await prisma.user.update({
-    where: { email: parsedEmail.data.toLowerCase() },
+    where: { email: normalizedEmail },
     data: {
       phone: normalizedPhone,
       phoneNumber: normalizedPhone,

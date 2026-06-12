@@ -8,263 +8,18 @@ import {
   defaultTrackingSettings,
 } from "../features/settings/lib/defaults";
 import { SETTINGS_KEYS } from "../features/settings/lib/keys";
+import { seedMarketingData } from "./seed-marketing-data";
 
 const prisma = new PrismaClient();
-
-const DEFAULT_MIME_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "application/pdf",
-];
 
 async function main() {
   console.log("Seeding PakExcise database...");
 
-  const regions = [
-    {
-      slug: "punjab",
-      nameEn: "Punjab",
-      nameUr: "پنجاب",
-      descriptionEn: "Excise facilitation services for Punjab province.",
-      descriptionUr: "پنجاب صوبے کے لیے ایکسائز سہولت خدمات۔",
-      displayOrder: 1,
-    },
-    {
-      slug: "islamabad-ict",
-      nameEn: "Islamabad ICT",
-      nameUr: "اسلام آباد ICT",
-      descriptionEn: "Excise facilitation services for Islamabad Capital Territory.",
-      descriptionUr: "اسلام آباد دارالحکومت کے لیے ایکسائز سہولت خدمات۔",
-      displayOrder: 2,
-    },
-  ] as const;
-
-  for (const region of regions) {
-    await prisma.region.upsert({
-      where: { slug: region.slug },
-      update: {
-        nameEn: region.nameEn,
-        nameUr: region.nameUr,
-        descriptionEn: region.descriptionEn,
-        descriptionUr: region.descriptionUr,
-        displayOrder: region.displayOrder,
-        isActive: true,
-      },
-      create: {
-        ...region,
-        isActive: true,
-      },
-    });
-  }
+  await seedMarketingData(prisma);
 
   const punjab = await prisma.region.findUniqueOrThrow({
     where: { slug: "punjab" },
   });
-  const ict = await prisma.region.findUniqueOrThrow({
-    where: { slug: "islamabad-ict" },
-  });
-
-  const services = [
-    {
-      slug: "vehicle-transfer-punjab",
-      regionId: punjab.id,
-      nameEn: "Vehicle Transfer Punjab",
-      nameUr: "گاڑی منتقلی پنجاب",
-      shortDescriptionEn:
-        "Private facilitation for vehicle ownership transfer in Punjab.",
-      shortDescriptionUr: "پنجاب میں گاڑی کی ملکیت منتقلی کے لیے نجی سہولت۔",
-      displayOrder: 1,
-    },
-    {
-      slug: "vehicle-transfer-islamabad-ict",
-      regionId: ict.id,
-      nameEn: "Vehicle Transfer Islamabad ICT",
-      nameUr: "گاڑی منتقلی اسلام آباد ICT",
-      shortDescriptionEn:
-        "Private facilitation for vehicle ownership transfer in Islamabad ICT.",
-      shortDescriptionUr:
-        "اسلام آباد ICT میں گاڑی کی ملکیت منتقلی کے لیے نجی سہولت۔",
-      displayOrder: 2,
-    },
-    {
-      slug: "token-tax-all-provinces",
-      regionId: punjab.id,
-      nameEn: "Token Tax All Provinces",
-      nameUr: "ٹوکن ٹیکس تمام صوبے",
-      shortDescriptionEn: "Private facilitation support for token tax processes.",
-      shortDescriptionUr: "ٹوکن ٹیکس کے عمل کے لیے نجی سہولت سپورٹ۔",
-      displayOrder: 3,
-    },
-    {
-      slug: "new-vehicle-registration-punjab",
-      regionId: punjab.id,
-      nameEn: "New Vehicle Registration Punjab",
-      nameUr: "نئی گاڑی رجسٹریشن پنجاب",
-      shortDescriptionEn:
-        "Private facilitation for new vehicle registration in Punjab.",
-      shortDescriptionUr: "پنجاب میں نئی گاڑی رجسٹریشن کے لیے نجی سہولت۔",
-      displayOrder: 4,
-    },
-    {
-      slug: "driving-license-renewal-punjab",
-      regionId: punjab.id,
-      nameEn: "Driving License Renewal Punjab",
-      nameUr: "ڈرائیving لائسنس تجدید پنجاب",
-      shortDescriptionEn:
-        "Private facilitation for driving license renewal in Punjab.",
-      shortDescriptionUr: "پنجاب میں ڈرائیving لائسنس تجدید کے لیے نجی سہولت۔",
-      displayOrder: 5,
-    },
-    {
-      slug: "data-correction-islamabad-ict",
-      regionId: ict.id,
-      nameEn: "Data Correction Islamabad ICT",
-      nameUr: "ڈیٹا تصحیح اسلام آباد ICT",
-      shortDescriptionEn:
-        "Private facilitation for excise record data correction in Islamabad ICT.",
-      shortDescriptionUr:
-        "اسلام آباد ICT میں ایکسائز ریکارڈ تصحیح کے لیے نجی سہولت۔",
-      displayOrder: 6,
-    },
-  ] as const;
-
-  for (const service of services) {
-    const created = await prisma.service.upsert({
-      where: { slug: service.slug },
-      update: {
-        regionId: service.regionId,
-        nameEn: service.nameEn,
-        nameUr: service.nameUr,
-        shortDescriptionEn: service.shortDescriptionEn,
-        shortDescriptionUr: service.shortDescriptionUr,
-        contentEn: `${service.shortDescriptionEn}\n\nOur team helps you prepare documents, submit your application, and track progress through a private facilitation service. PakExcise.com is not affiliated with any government department.`,
-        contentUr: `${service.shortDescriptionUr}\n\nہماری ٹیم دستاویزات تیار کرنے، درخواست جمع کرانے اور پیش رفت ٹریک کرنے میں مدد کرتی ہے۔ PakExcise.com کسی سرکاری محکمے سے وابستہ نہیں ہے۔`,
-        displayOrder: service.displayOrder,
-        isActive: true,
-      },
-      create: {
-        ...service,
-        contentEn: `${service.shortDescriptionEn}\n\nOur team helps you prepare documents, submit your application, and track progress through a private facilitation service. PakExcise.com is not affiliated with any government department.`,
-        contentUr: `${service.shortDescriptionUr}\n\nہماری ٹیم دستاویزات تیار کرنے، درخواست جمع کرانے اور پیش رفت ٹریک کرنے میں مدد کرتی ہے۔ PakExcise.com کسی سرکاری محکمے سے وابستہ نہیں ہے۔`,
-        isActive: true,
-        requiresProof: true,
-      },
-    });
-
-    await prisma.serviceFormField.upsert({
-      where: {
-        serviceId_fieldKey: {
-          serviceId: created.id,
-          fieldKey: "applicant_name",
-        },
-      },
-      update: {
-        labelEn: "Applicant full name",
-        labelUr: "درخواست دہندہ کا مکمل نام",
-        fieldType: "TEXT",
-        isRequired: true,
-        displayOrder: 1,
-        isActive: true,
-      },
-      create: {
-        serviceId: created.id,
-        fieldKey: "applicant_name",
-        labelEn: "Applicant full name",
-        labelUr: "درخواست دہندہ کا مکمل نام",
-        placeholderEn: "Enter full name as per CNIC",
-        placeholderUr: "شناختی کارڈ کے مطابق مکمل نام درج کریں",
-        fieldType: "TEXT",
-        isRequired: true,
-        displayOrder: 1,
-        validationJson: { minLength: 3, maxLength: 120 },
-      },
-    });
-
-    await prisma.serviceFormField.upsert({
-      where: {
-        serviceId_fieldKey: {
-          serviceId: created.id,
-          fieldKey: "applicant_cnic",
-        },
-      },
-      update: {
-        labelEn: "CNIC number",
-        labelUr: "شناختی کارڈ نمبر",
-        fieldType: "CNIC",
-        isRequired: true,
-        isEncrypted: true,
-        displayOrder: 2,
-        isActive: true,
-      },
-      create: {
-        serviceId: created.id,
-        fieldKey: "applicant_cnic",
-        labelEn: "CNIC number",
-        labelUr: "شناختی کارڈ نمبر",
-        placeholderEn: "12345-1234567-1",
-        placeholderUr: "12345-1234567-1",
-        fieldType: "CNIC",
-        isRequired: true,
-        isEncrypted: true,
-        displayOrder: 2,
-        validationJson: { pattern: "^\\d{5}-\\d{7}-\\d$" },
-      },
-    });
-
-    await prisma.documentRequirement.upsert({
-      where: {
-        serviceId_docType: {
-          serviceId: created.id,
-          docType: "cnic_copy",
-        },
-      },
-      update: {
-        labelEn: "CNIC copy",
-        labelUr: "شناختی کارڈ کی نقول",
-        isRequired: true,
-        displayOrder: 1,
-        isActive: true,
-      },
-      create: {
-        serviceId: created.id,
-        docType: "cnic_copy",
-        labelEn: "CNIC copy",
-        labelUr: "شناختی کارڈ کی نقول",
-        instructionsEn: "Upload a clear front and back copy of the CNIC.",
-        instructionsUr: "شناختی کارڈ کی واضح سامنے اور پیچھے کی نقول اپ لوڈ کریں۔",
-        isRequired: true,
-        maxSizeBytes: 5242880,
-        acceptedMimeTypes: DEFAULT_MIME_TYPES,
-        displayOrder: 1,
-      },
-    });
-
-    await prisma.seoMeta.upsert({
-      where: { pageKey: `service:${service.slug}` },
-      update: {
-        serviceId: created.id,
-        metaTitleEn: `${service.nameEn} | PakExcise.com`,
-        metaTitleUr: `${service.nameUr} | PakExcise.com`,
-        metaDescriptionEn: service.shortDescriptionEn,
-        metaDescriptionUr: service.shortDescriptionUr,
-        h1En: service.nameEn,
-        h1Ur: service.nameUr,
-        robotsIndex: true,
-        robotsFollow: true,
-      },
-      create: {
-        pageKey: `service:${service.slug}`,
-        serviceId: created.id,
-        metaTitleEn: `${service.nameEn} | PakExcise.com`,
-        metaTitleUr: `${service.nameUr} | PakExcise.com`,
-        metaDescriptionEn: service.shortDescriptionEn,
-        metaDescriptionUr: service.shortDescriptionUr,
-        h1En: service.nameEn,
-        h1Ur: service.nameUr,
-      },
-    });
-  }
 
   await prisma.setting.upsert({
     where: { key: "site" },
@@ -407,53 +162,6 @@ async function main() {
     }
   }
 
-  await prisma.socialLink.createMany({
-    data: [
-      {
-        platform: "whatsapp",
-        labelEn: "WhatsApp",
-        labelUr: "واٹس ایپ",
-        url: "https://wa.me/923001234567",
-        iconName: "MessageCircle",
-        displayOrder: 1,
-      },
-      {
-        platform: "facebook",
-        labelEn: "Facebook",
-        labelUr: "فیس بک",
-        url: "https://facebook.com/pakexcise",
-        iconName: "Facebook",
-        displayOrder: 2,
-      },
-    ],
-    skipDuplicates: true,
-  });
-
-  for (const region of [punjab, ict]) {
-    await prisma.seoMeta.upsert({
-      where: { pageKey: `region:${region.slug}` },
-      update: {
-        regionId: region.id,
-        metaTitleEn: `${region.nameEn} Services | PakExcise.com`,
-        metaTitleUr: `${region.nameUr} خدمات | PakExcise.com`,
-        metaDescriptionEn: region.descriptionEn,
-        metaDescriptionUr: region.descriptionUr,
-        h1En: region.nameEn,
-        h1Ur: region.nameUr,
-      },
-      create: {
-        pageKey: `region:${region.slug}`,
-        regionId: region.id,
-        metaTitleEn: `${region.nameEn} Services | PakExcise.com`,
-        metaTitleUr: `${region.nameUr} خدمات | PakExcise.com`,
-        metaDescriptionEn: region.descriptionEn,
-        metaDescriptionUr: region.descriptionUr,
-        h1En: region.nameEn,
-        h1Ur: region.nameUr,
-      },
-    });
-  }
-
   const pageSeoEntries = [
     "services",
     "regions",
@@ -467,6 +175,16 @@ async function main() {
     "terms",
     "disclaimer",
     "refund",
+    "how-it-works",
+    "documents",
+    "reviews",
+    "agents",
+    "agent-register",
+    "payment-policy",
+    "cookie-policy",
+    "privacy-policy",
+    "terms-and-conditions",
+    "refund-policy",
   ] as const;
 
   for (const pageKey of pageSeoEntries) {
@@ -691,6 +409,18 @@ async function main() {
       h1Ur: "ایکسائز سہولت اب آسان",
     },
   });
+
+  await prisma.$executeRaw`
+    UPDATE users
+    SET "roleChosenAt" = "createdAt"
+    WHERE "roleChosenAt" IS NULL
+  `;
+
+  await prisma.$executeRaw`
+    UPDATE agent_profiles
+    SET "approvalStatus" = 'APPROVED'
+    WHERE "approvalStatus" = 'PENDING'
+  `;
 
   console.log("Seed completed successfully.");
 }

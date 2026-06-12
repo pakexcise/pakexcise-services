@@ -66,6 +66,15 @@ enum PaymentStatus {
   REJECTED
 }
 
+enum PaymentMethodType {
+  BANK_TRANSFER
+  JAZZCASH
+  EASYPAISA
+  NAYAPAY
+  SADAPAY
+  OTHER
+}
+
 enum DocumentStatus {
   PENDING
   APPROVED
@@ -136,6 +145,7 @@ model User {
   cnicEncrypted       String?
   cnicHash            String?    @unique
   role              UserRole   @default(CUSTOMER)
+  roleChosenAt      DateTime?
   status            UserStatus @default(ACTIVE)
   twoFactorEnabled  Boolean    @default(false)
   twoFactorSecret   String?
@@ -213,15 +223,14 @@ model Verification {
 model AgentProfile {
   id              String              @id @default(cuid())
   userId          String              @unique
-  approvalStatus  AgentApprovalStatus @default(PENDING)
+  approvalStatus  AgentApprovalStatus @default(APPROVED)
   commissionRate  Decimal             @default(0) @db.Decimal(5, 2)
   notes           String?             @db.Text
   isActive        Boolean             @default(true)
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   commissions AgentCommission[]
 
   @@index([approvalStatus, isActive])
@@ -261,17 +270,96 @@ model Region {
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?
 
-  services Service[]
-  seoMeta  SeoMeta?
+  cities         City[]
+  services       Service[]
+  serviceRegions ServiceRegion[]
+  seoMeta        SeoMeta?
 
   @@index([isActive, displayOrder])
   @@map("regions")
 }
 
+model City {
+  id            String    @id @default(cuid())
+  regionId      String
+  slug          String
+  nameEn        String
+  nameUr        String
+  descriptionEn String?   @db.Text
+  descriptionUr String?   @db.Text
+  isActive      Boolean   @default(true)
+  displayOrder  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  region  Region   @relation(fields: [regionId], references: [id])
+  seoMeta SeoMeta?
+
+  @@unique([regionId, slug])
+  @@index([regionId, isActive, displayOrder])
+  @@map("cities")
+}
+
+model ServiceCategory {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  nameEn        String
+  nameUr        String
+  descriptionEn String?  @db.Text
+  descriptionUr String?  @db.Text
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  services Service[]
+
+  @@index([isActive, displayOrder])
+  @@map("service_categories")
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  authorNameEn String
+  authorNameUr String?
+  authorRoleEn String?
+  authorRoleUr String?
+  contentEn    String   @db.Text
+  contentUr    String   @db.Text
+  rating       Int      @default(5)
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive, displayOrder])
+  @@map("reviews")
+}
+
+model ServiceRegion {
+  id           String   @id @default(cuid())
+  serviceId    String
+  regionId     String
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  region  Region  @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, regionId])
+  @@index([regionId, isActive, displayOrder])
+  @@index([serviceId, isActive])
+  @@map("service_regions")
+}
+
 model Service {
   id                  String    @id @default(cuid())
   slug                String    @unique
-  regionId            String
+  regionId            String?
+  categoryId          String?
   nameEn              String
   nameUr              String
   shortDescriptionEn  String?   @db.Text
@@ -289,7 +377,9 @@ model Service {
   updatedAt           DateTime  @updatedAt
   deletedAt           DateTime?
 
-  region          Region                @relation(fields: [regionId], references: [id])
+  region          Region?               @relation(fields: [regionId], references: [id])
+  category        ServiceCategory?      @relation(fields: [categoryId], references: [id])
+  serviceRegions  ServiceRegion[]
   formFields      ServiceFormField[]
   documentReqs    DocumentRequirement[]
   faqs            FAQ[]
@@ -300,6 +390,7 @@ model Service {
   @@index([slug])
   @@index([isActive, displayOrder])
   @@index([regionId, isActive])
+  @@index([categoryId, isActive])
   @@map("services")
 }
 
@@ -481,12 +572,64 @@ model Invoice {
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
 
-  application Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  lineItems   InvoiceLineItem[]
-  payments    Payment[]
+  application     Application            @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  lineItems       InvoiceLineItem[]
+  payments        Payment[]
+  paymentMethods  InvoicePaymentMethod[]
 
   @@index([applicationId, status])
   @@map("invoices")
+}
+
+model PaymentMethod {
+  id               String            @id @default(cuid())
+  code             String            @unique
+  type             PaymentMethodType
+  nameEn           String
+  nameUr           String
+  accountTitleEn   String?
+  accountTitleUr   String?
+  accountNumber    String?
+  iban             String?
+  bankNameEn       String?
+  bankNameUr       String?
+  instructionsEn   String?           @db.Text
+  instructionsUr   String?           @db.Text
+  isActive         Boolean           @default(true)
+  displayOrder     Int               @default(0)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  invoiceLinks InvoicePaymentMethod[]
+
+  @@index([isActive, displayOrder])
+  @@map("payment_methods")
+}
+
+model InvoicePaymentMethod {
+  id               String            @id @default(cuid())
+  invoiceId        String
+  paymentMethodId  String?
+  code             String
+  type             PaymentMethodType
+  nameEn           String
+  nameUr           String
+  accountTitleEn   String?
+  accountTitleUr   String?
+  accountNumber    String?
+  iban             String?
+  bankNameEn       String?
+  bankNameUr       String?
+  instructionsEn   String?           @db.Text
+  instructionsUr   String?           @db.Text
+  displayOrder     Int               @default(0)
+  createdAt        DateTime          @default(now())
+
+  invoice       Invoice        @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  paymentMethod PaymentMethod? @relation(fields: [paymentMethodId], references: [id], onDelete: SetNull)
+
+  @@index([invoiceId, displayOrder])
+  @@map("invoice_payment_methods")
 }
 
 model InvoiceLineItem {
@@ -667,6 +810,7 @@ model SeoMeta {
   pageKey           String   @unique
   serviceId         String?  @unique
   regionId          String?  @unique
+  cityId            String?  @unique
   blogPostId        String?  @unique
   guideId           String?  @unique
   metaTitleEn       String?
@@ -691,6 +835,7 @@ model SeoMeta {
 
   service  Service?  @relation(fields: [serviceId], references: [id])
   region   Region?   @relation(fields: [regionId], references: [id])
+  city     City?     @relation(fields: [cityId], references: [id])
   blogPost BlogPost? @relation(fields: [blogPostId], references: [id])
   guide    Guide?    @relation(fields: [guideId], references: [id])
 

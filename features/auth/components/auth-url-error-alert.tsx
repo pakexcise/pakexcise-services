@@ -17,12 +17,18 @@ export function AuthUrlErrorAlert({ labels }: AuthUrlErrorAlertProps) {
     return null;
   }
 
-  let message = labels.socialFailed;
+  const normalizedError = error.toLowerCase();
 
-  if (error === "internal_server_error" || error === "auth_error") {
-    message = labels.authError;
-  } else if (error === "social_auth_failed") {
+  let message = labels.authError;
+
+  if (
+    error === "social_auth_failed" ||
+    normalizedError.includes("callback") ||
+    normalizedError.includes("social")
+  ) {
     message = labels.socialFailed;
+  } else if (error === "internal_server_error" || error === "auth_error") {
+    message = labels.authError;
   }
 
   return (

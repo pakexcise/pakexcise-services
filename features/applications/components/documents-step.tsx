@@ -31,6 +31,9 @@ type DocumentsStepProps = {
     invalidType: string;
     tooLarge: string;
     invalidName: string;
+    previewLoading: string;
+    previewError: string;
+    previewOpen: string;
   };
   isSaving: boolean;
   validationError: string | null;
@@ -101,6 +104,9 @@ export function DocumentsStep({
               invalidType: labels.invalidType,
               tooLarge: labels.tooLarge,
               invalidName: labels.invalidName,
+              previewLoading: labels.previewLoading,
+              previewError: labels.previewError,
+              previewOpen: labels.previewOpen,
             }}
             onUploaded={(document) =>
               onDocumentUploaded(requirement.id, document)

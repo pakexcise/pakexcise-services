@@ -13,30 +13,47 @@ type RichBlock =
   | { type: "heading"; level: number; text: string }
   | { type: "list"; items: string[] };
 
+function parseListItems(lines: string[]): string[] {
+  return lines
+    .filter((line) => line.startsWith("- "))
+    .map((line) => line.slice(2).trim());
+}
+
 function parseBlocks(content: string): RichBlock[] {
   const blocks: RichBlock[] = [];
-  const chunks = content.split("\n\n").map((chunk) => chunk.trim()).filter(Boolean);
+  const chunks = content
+    .split("\n\n")
+    .map((chunk) => chunk.trim())
+    .filter(Boolean);
 
   for (const chunk of chunks) {
     const lines = chunk.split("\n").map((line) => line.trim()).filter(Boolean);
-
-    if (lines.every((line) => line.startsWith("- "))) {
-      blocks.push({
-        type: "list",
-        items: lines.map((line) => line.slice(2).trim()),
-      });
-      continue;
-    }
-
     const firstLine = lines[0] ?? "";
     const headingMatch = firstLine.match(HEADING_PREFIX);
 
-    if (headingMatch && lines.length === 1) {
+    if (headingMatch) {
       const level = firstLine.match(/^#+/)?.[0].length ?? 2;
       blocks.push({
         type: "heading",
         level: Math.min(level, 3),
         text: headingMatch[1] ?? "",
+      });
+
+      const rest = lines.slice(1);
+
+      if (rest.length > 0 && rest.every((line) => line.startsWith("- "))) {
+        blocks.push({ type: "list", items: parseListItems(rest) });
+      } else if (rest.length > 0) {
+        blocks.push({ type: "paragraph", text: rest.join(" ") });
+      }
+
+      continue;
+    }
+
+    if (lines.every((line) => line.startsWith("- "))) {
+      blocks.push({
+        type: "list",
+        items: parseListItems(lines),
       });
       continue;
     }

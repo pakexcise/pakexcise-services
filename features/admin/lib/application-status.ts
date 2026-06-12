@@ -14,7 +14,15 @@ export const applicationStatusOrder: ApplicationStatus[] = [
   "CANCELLED",
 ];
 
+/** Translation key under the `admin.statuses` namespace (e.g. tStatus("SUBMITTED")). */
 export function getApplicationStatusLabelKey(
+  status: ApplicationStatus,
+): string {
+  return status;
+}
+
+/** Translation key under the `admin` namespace (e.g. t("statuses.SUBMITTED")). */
+export function getAdminApplicationStatusLabelKey(
   status: ApplicationStatus,
 ): string {
   return `statuses.${status}`;

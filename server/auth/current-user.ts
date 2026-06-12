@@ -15,6 +15,7 @@ export type CurrentUser = {
   name: string | null;
   email: string;
   role: UserRole;
+  roleChosenAt: Date | null;
   status: UserStatus;
   phone: string | null;
   twoFactorEnabled: boolean;
@@ -44,6 +45,16 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     return null;
   }
 
+  const roleChosenAtRows = await prisma.$queryRaw<
+    Array<{ roleChosenAt: Date | null }>
+  >`
+    SELECT "roleChosenAt"
+    FROM users
+    WHERE id = ${user.id}
+    LIMIT 1
+  `;
+  const roleChosenAt = roleChosenAtRows[0]?.roleChosenAt ?? null;
+
   const agentProfile = await ensureAgentProfileForUser({
     userId: user.id,
     role: user.role,
@@ -59,6 +70,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     name: user.name,
     email: user.email,
     role: user.role,
+    roleChosenAt,
     status: user.status,
     phone: user.phone,
     twoFactorEnabled: user.twoFactorEnabled,

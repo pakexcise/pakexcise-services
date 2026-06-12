@@ -5,6 +5,8 @@ const { generateMetadata, default: ContactPage } = createContentPage({
   path: "/contact",
   breadcrumbLabel: { en: "Contact", ur: "رابطہ" },
   showSocialLinks: true,
+  showDisclaimer: true,
+  showCta: true,
 });
 
 export { generateMetadata };

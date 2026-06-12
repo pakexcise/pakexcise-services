@@ -18,6 +18,7 @@ export async function getServiceEditorLabels() {
     tabSeo: t("tabs.seo"),
     slug: t("slug"),
     region: t("region"),
+    regions: t("regions"),
     selectRegion: t("selectRegion"),
     nameEn: t("nameEn"),
     nameUr: t("nameUr"),

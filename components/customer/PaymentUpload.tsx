@@ -6,6 +6,7 @@ import { FileUp, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SecurePaymentViewer } from "@/components/shared/SecurePaymentViewer";
 import { pushAnalyticsEvent } from "@/features/analytics/data-layer";
 import {
   confirmPaymentScreenshotUploadAction,
@@ -15,11 +16,13 @@ import {
   formatFileSize,
   validateClientUpload,
 } from "@/features/applications/lib/validate-upload";
+import { resolveClientFileMimeType } from "@/lib/utils/resolve-file-mime";
 
 type PaymentUploadProps = {
   applicationId: string;
   paymentId: string;
   paymentStatus: string;
+  screenshotFileName?: string | null;
   rejectionReason?: string | null;
   maxSizeBytes: number;
   acceptedMimeTypes: string[];
@@ -40,6 +43,13 @@ type PaymentUploadProps = {
     verified: string;
     rejected: string;
     rejectionReason: string;
+    viewer: {
+      loading: string;
+      error: string;
+      retry: string;
+      openNewTab: string;
+      unsupported: string;
+    };
   };
   onUploaded?: () => void;
 };
@@ -56,6 +66,7 @@ export function PaymentUpload({
   applicationId,
   paymentId,
   paymentStatus,
+  screenshotFileName,
   rejectionReason,
   maxSizeBytes,
   acceptedMimeTypes,
@@ -65,26 +76,41 @@ export function PaymentUpload({
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(screenshotFileName ?? null);
   const [isPending, startTransition] = useTransition();
 
   const canUpload =
     paymentStatus === "PENDING" || paymentStatus === "REJECTED";
+  const showPreview =
+    paymentStatus === "UPLOADED" ||
+    paymentStatus === "VERIFIED" ||
+    Boolean(fileName);
 
   if (paymentStatus === "VERIFIED") {
     return (
-      <div className="rounded-xl border border-primary/30 bg-primary/5 p-5">
+      <div className="space-y-4 rounded-xl border border-primary/30 bg-primary/5 p-5">
         <p className="font-medium text-primary">{labels.verified}</p>
+        {showPreview ? (
+          <SecurePaymentViewer
+            paymentId={paymentId}
+            fileName={fileName}
+            labels={labels.viewer}
+          />
+        ) : null}
       </div>
     );
   }
 
   if (paymentStatus === "UPLOADED") {
     return (
-      <div className="rounded-xl border p-5">
+      <div className="space-y-4 rounded-xl border p-5">
         <p className="font-medium">{labels.waitingVerification}</p>
-        {fileName ? (
-          <p className="mt-2 text-sm text-muted-foreground">{fileName}</p>
+        {showPreview ? (
+          <SecurePaymentViewer
+            paymentId={paymentId}
+            fileName={fileName}
+            labels={labels.viewer}
+          />
         ) : null}
       </div>
     );
@@ -116,13 +142,20 @@ export function PaymentUpload({
       return;
     }
 
+    const resolvedMimeType = resolveClientFileMimeType(file, acceptedMimeTypes);
+
+    if (!resolvedMimeType) {
+      setError(labels.invalidType);
+      return;
+    }
+
     setError(null);
 
     startTransition(async () => {
       const presign = await requestPaymentScreenshotUploadAction({
         paymentId,
         fileName: file.name,
-        mimeType: file.type,
+        mimeType: resolvedMimeType,
         fileSize: file.size,
       });
 
@@ -132,14 +165,23 @@ export function PaymentUpload({
       }
 
       try {
-        const uploadResponse = await fetch(presign.data.uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file, file.name);
+
+        const uploadResponse = await fetch(
+          `/api/payments/${presign.data.paymentId}/upload`,
+          {
+            method: "POST",
+            body: uploadFormData,
+            credentials: "include",
+          },
+        );
 
         if (!uploadResponse.ok) {
-          setError(labels.uploadFailed);
+          const payload = (await uploadResponse.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          setError(payload?.error ?? labels.uploadFailed);
           return;
         }
 
@@ -154,6 +196,7 @@ export function PaymentUpload({
           return;
         }
 
+        setError(null);
         pushAnalyticsEvent("payment_uploaded", {
           application_id: applicationId,
           payment_id: paymentId,
