@@ -5,11 +5,21 @@ import { AlertTriangle, FileText, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  FILE_PREVIEW_FRAME_CLASS,
+  FILE_PREVIEW_IMAGE_CLASS,
+  FILE_PREVIEW_PDF_CLASS,
+  FilePreviewFrame,
+} from "@/components/shared/file-preview-frame";
+import { subscribeToApplicationUpdates } from "@/features/realtime/broadcast-application-update";
 
 type SecureDocViewerProps = {
   documentId: string;
   purpose?: "view" | "proof";
   fileName?: string;
+  contentVersion?: string | null;
+  refreshKey?: string | number | null;
+  syncLive?: boolean;
   labels: {
     loading: string;
     error: string;
@@ -28,10 +38,38 @@ type SignedUrlPayload = {
   fileName: string;
 };
 
+function withPreviewCacheBuster(
+  signedUrl: string,
+  refreshKey: string | number | null | undefined,
+): string {
+  if (refreshKey == null) {
+    return signedUrl;
+  }
+
+  try {
+    const url = new URL(
+      signedUrl,
+      typeof window !== "undefined" ? window.location.origin : "http://localhost",
+    );
+
+    if (url.pathname.endsWith("/content")) {
+      url.searchParams.set("v", String(refreshKey));
+      return url.toString();
+    }
+  } catch {
+    return signedUrl;
+  }
+
+  return signedUrl;
+}
+
 export function SecureDocViewer({
   documentId,
   purpose = "view",
   fileName,
+  contentVersion,
+  refreshKey,
+  syncLive = false,
   labels,
   className,
 }: SecureDocViewerProps) {
@@ -40,6 +78,12 @@ export function SecureDocViewer({
   const [isLoading, setIsLoading] = useState(true);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [syncRevision, setSyncRevision] = useState(0);
+
+  const baseRefreshKey = refreshKey ?? contentVersion ?? fileName ?? "initial";
+  const effectiveRefreshKey = syncLive
+    ? `${baseRefreshKey}:${syncRevision}`
+    : baseRefreshKey;
 
   const loadSignedUrl = useCallback(async () => {
     setIsLoading(true);
@@ -48,7 +92,7 @@ export function SecureDocViewer({
     try {
       const response = await fetch(
         `/api/documents/${documentId}/signed-url?purpose=${purpose}`,
-        { method: "GET", credentials: "include" },
+        { method: "GET", credentials: "include", cache: "no-store" },
       );
 
       const data = (await response.json()) as SignedUrlPayload & {
@@ -72,7 +116,7 @@ export function SecureDocViewer({
     } finally {
       setIsLoading(false);
     }
-  }, [documentId, purpose, labels.error]);
+  }, [documentId, purpose, labels.error, effectiveRefreshKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,6 +132,16 @@ export function SecureDocViewer({
       cancelled = true;
     };
   }, [loadSignedUrl]);
+
+  useEffect(() => {
+    if (!syncLive) {
+      return;
+    }
+
+    return subscribeToApplicationUpdates(() => {
+      setSyncRevision((current) => current + 1);
+    });
+  }, [syncLive]);
 
   useEffect(() => {
     if (!expiresAt) {
@@ -145,6 +199,8 @@ export function SecureDocViewer({
   const displayName = fileName ?? payload.fileName;
   const isImage = payload.mimeType.startsWith("image/");
   const isPdf = payload.mimeType === "application/pdf";
+  const previewSrc = withPreviewCacheBuster(payload.signedUrl, effectiveRefreshKey);
+  const previewInstanceKey = `${documentId}:${effectiveRefreshKey}:${displayName}`;
 
   return (
     <div className={className}>
@@ -160,7 +216,7 @@ export function SecureDocViewer({
             </span>
           ) : null}
           <Button asChild size="sm" variant="outline">
-            <a href={payload.signedUrl} target="_blank" rel="noopener noreferrer">
+            <a href={previewSrc} target="_blank" rel="noopener noreferrer">
               {labels.openNewTab}
             </a>
           </Button>
@@ -168,19 +224,23 @@ export function SecureDocViewer({
       </div>
 
       {isImage ? (
-        // eslint-disable-next-line @next/next/no-img-element -- signed URL is short-lived and not optimizable
-        <img
-          src={payload.signedUrl}
-          alt={displayName}
-          className="max-h-[70vh] w-full rounded-lg border object-contain"
-        />
+        <FilePreviewFrame>
+          {/* eslint-disable-next-line @next/next/no-img-element -- signed URL is short-lived and not optimizable */}
+          <img
+            key={previewInstanceKey}
+            src={previewSrc}
+            alt={displayName}
+            className={FILE_PREVIEW_IMAGE_CLASS}
+          />
+        </FilePreviewFrame>
       ) : null}
 
       {isPdf ? (
         <iframe
-          src={payload.signedUrl}
+          key={previewInstanceKey}
+          src={previewSrc}
           title={displayName}
-          className="h-[70vh] w-full rounded-lg border bg-muted/20"
+          className={FILE_PREVIEW_PDF_CLASS}
         />
       ) : null}
 

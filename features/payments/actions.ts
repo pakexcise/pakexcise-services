@@ -33,30 +33,13 @@ import {
   isObjectStorageConfigured,
 } from "@/server/storage/object-storage";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
-
-async function getOwnedPayment(paymentId: string, userId: string) {
-  return prisma.payment.findFirst({
-    where: {
-      id: paymentId,
-      application: { userId },
-    },
-    include: {
-      application: {
-        select: {
-          id: true,
-          status: true,
-          trackingId: true,
-          userId: true,
-          agentId: true,
-          locale: true,
-          service: { select: { nameEn: true, nameUr: true } },
-          user: { select: { email: true, phone: true } },
-        },
-      },
-      invoice: { select: { status: true } },
-    },
-  });
-}
+import {
+  canConfirmPaymentProofUpload,
+  canReplacePaymentProof,
+  getPaymentProofConfirmTransition,
+  paymentProofStatusHistoryNote,
+} from "@/features/payments/lib/payment-proof-state";
+import { getPaymentForUploadAccess } from "@/features/payments/lib/payment-upload-access";
 
 export async function requestPaymentScreenshotUploadAction(
   input: unknown,
@@ -80,18 +63,14 @@ export async function requestPaymentScreenshotUploadAction(
     return errorResult(parsed.error, parsed.fieldErrors);
   }
 
-  const payment = await getOwnedPayment(parsed.data.paymentId, user.id);
+  const payment = await getPaymentForUploadAccess(parsed.data.paymentId, user);
 
   if (!payment) {
     return errorResult("Payment not found");
   }
 
-  if (payment.application.status !== "INVOICE_SENT") {
-    return errorResult("Payment screenshot can only be uploaded after invoice is sent");
-  }
-
-  if (payment.status !== "PENDING" && payment.status !== "REJECTED") {
-    return errorResult("Payment proof was already submitted");
+  if (!canReplacePaymentProof(payment.application.status, payment.status)) {
+    return errorResult("Payment proof cannot be uploaded or replaced at this stage");
   }
 
   const validation = validateUploadFile({
@@ -106,7 +85,7 @@ export async function requestPaymentScreenshotUploadAction(
   }
 
   const r2Key = buildPaymentScreenshotKey({
-    applicationId: payment.applicationId,
+    trackingId: payment.application.trackingId,
     paymentId: payment.id,
     extension: validation.extension,
   });
@@ -152,7 +131,7 @@ export async function confirmPaymentScreenshotUploadAction(
     return errorResult(parsed.error, parsed.fieldErrors);
   }
 
-  const payment = await getOwnedPayment(parsed.data.paymentId, user.id);
+  const payment = await getPaymentForUploadAccess(parsed.data.paymentId, user);
 
   if (!payment || !payment.screenshotR2Key) {
     return errorResult("Payment upload not found");
@@ -164,9 +143,11 @@ export async function confirmPaymentScreenshotUploadAction(
     return errorResult("Uploaded screenshot was not found in storage");
   }
 
-  if (payment.application.status !== "INVOICE_SENT") {
+  if (!canConfirmPaymentProofUpload(payment.application.status)) {
     return errorResult("Invalid application status for payment upload");
   }
+
+  const transition = getPaymentProofConfirmTransition(payment.application.status);
 
   await prisma.$transaction(async (tx) => {
     await tx.payment.update({
@@ -174,20 +155,26 @@ export async function confirmPaymentScreenshotUploadAction(
       data: {
         status: "UPLOADED",
         screenshotFileSize: head.contentLength,
+        verifiedAt: null,
+        verifiedById: null,
+        rejectionReason: null,
       },
     });
 
     await tx.application.update({
       where: { id: payment.applicationId },
-      data: { status: "PAYMENT_UPLOADED" },
+      data: { status: transition.toStatus },
     });
 
     await tx.statusHistory.create({
       data: {
         applicationId: payment.applicationId,
-        fromStatus: "INVOICE_SENT",
-        toStatus: "PAYMENT_UPLOADED",
-        note: "Customer uploaded payment screenshot",
+        fromStatus: transition.fromStatus,
+        toStatus: transition.toStatus,
+        note: paymentProofStatusHistoryNote(user, {
+          applicationStatus: payment.application.status,
+          isReplacement: transition.isReplacement,
+        }),
         actorId: user.id,
       },
     });
@@ -214,7 +201,7 @@ export async function confirmPaymentScreenshotUploadAction(
 
   return successResult({
     paymentId: payment.id,
-    applicationStatus: "PAYMENT_UPLOADED",
+    applicationStatus: transition.toStatus,
   });
 }
 

@@ -117,6 +117,7 @@ export async function emitApplicationChange(input: {
 export async function listApplicationEventsSince(
   since: number,
   viewer: { role: UserRole; userId: string },
+  applicationId?: string | null,
 ): Promise<{ version: number; events: ApplicationRealtimeEvent[] }> {
   const redis = getRedisClient();
 
@@ -124,11 +125,13 @@ export async function listApplicationEventsSince(
     const store = getInMemoryStore();
     const events = store.events.filter(
       (event) =>
-        event.updatedAt > since && isEventVisibleToViewer(event, viewer),
+        event.updatedAt > since &&
+        isEventVisibleToViewer(event, viewer) &&
+        matchesApplicationScope(event, applicationId),
     );
 
     return {
-      version: store.version,
+      version: resolveEventsVersion(events, store.version, since),
       events,
     };
   }
@@ -137,9 +140,6 @@ export async function listApplicationEventsSince(
     redis.get<number>(VERSION_KEY),
     redis.zrange(EVENTS_KEY, since, "+inf", { byScore: true }),
   ]);
-
-  const version =
-    typeof versionValue === "number" ? versionValue : since;
 
   const events = (rawEvents ?? [])
     .map((entry) => {
@@ -156,10 +156,42 @@ export async function listApplicationEventsSince(
     .filter((event): event is ApplicationRealtimeEvent => Boolean(event))
     .filter(
       (event) =>
-        event.updatedAt > since && isEventVisibleToViewer(event, viewer),
+        event.updatedAt > since &&
+        isEventVisibleToViewer(event, viewer) &&
+        matchesApplicationScope(event, applicationId),
     );
 
-  return { version, events };
+  const storedVersion =
+    typeof versionValue === "number" ? versionValue : 0;
+
+  return {
+    version: resolveEventsVersion(events, storedVersion, since),
+    events,
+  };
+}
+
+function matchesApplicationScope(
+  event: ApplicationRealtimeEvent,
+  applicationId?: string | null,
+): boolean {
+  if (!applicationId) {
+    return true;
+  }
+
+  return event.applicationId === applicationId;
+}
+
+function resolveEventsVersion(
+  events: ApplicationRealtimeEvent[],
+  storedVersion: number,
+  since: number,
+): number {
+  const latestEventAt = events.reduce(
+    (max, event) => Math.max(max, event.updatedAt),
+    0,
+  );
+
+  return Math.max(storedVersion, latestEventAt, since);
 }
 
 function isEventVisibleToViewer(

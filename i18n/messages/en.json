@@ -413,6 +413,7 @@
         "uploading": "Uploading…",
         "uploaded": "Payment screenshot uploaded",
         "replace": "Replace screenshot",
+        "replaceHint": "Uploaded the wrong screenshot? Replace it before processing continues.",
         "maxSize": "Max size",
         "allowedTypes": "Allowed types",
         "uploadFailed": "Payment upload failed.",
@@ -505,6 +506,9 @@
         "description": "Pending and paid commission totals from admin line items.",
         "pending": "Pending payout",
         "paid": "Paid out",
+        "awaiting": "Awaiting your confirmation",
+        "payoutMethodMissing": "Add your payout method so admin can mark commissions as paid.",
+        "setupPayoutMethod": "Set up payout method",
         "viewAll": "View all commissions"
       },
       "statusCards": {
@@ -522,6 +526,17 @@
         "actions": "Actions"
       }
     },
+    "nextAction": {
+      "wait_review": "Wait for review",
+      "customer_upload_docs": "Customer to upload documents",
+      "customer_payment": "Upload payment proof",
+      "wait_payment_verification": "Payment verification in progress",
+      "in_progress": "Processing at office",
+      "view_commission": "Review commission payout",
+      "completed": "Application completed",
+      "closed": "Application closed",
+      "none": "No action required"
+    },
     "applications": {
       "metaTitle": "Agent applications | PakExcise.com",
       "title": "Assigned applications",
@@ -534,6 +549,7 @@
         "customer": "Customer",
         "service": "Service",
         "status": "Status",
+        "nextAction": "Next step",
         "updated": "Updated",
         "actions": "Actions"
       }
@@ -543,15 +559,139 @@
       "title": "Application tracking",
       "backToList": "Back to applications",
       "status": "Status",
+      "nextAction": "Next step",
       "service": "Service",
+      "region": "Region",
       "customer": "Customer contact",
       "submitted": "Submitted",
-      "updated": "Updated",
+      "updated": "Last updated",
       "trackingNote": "Invoices, payments, and sensitive documents are managed by the customer through their dashboard.",
       "timeline": {
         "title": "Status timeline",
-        "empty": "Status updates will appear here.",
+        "empty": "Status updates will appear here as the application progresses.",
         "current": "Current status"
+      },
+      "submittedData": {
+        "title": "Submitted information",
+        "empty": "No additional form data was submitted.",
+        "protected": "Sensitive field — full value is hidden"
+      },
+      "documents": {
+        "title": "Documents",
+        "empty": "No documents uploaded yet.",
+        "required": "Required",
+        "optional": "Optional",
+        "status": "Status",
+        "missing": "Not uploaded",
+        "statuses": {
+          "PENDING": "Uploaded — awaiting review",
+          "APPROVED": "Verified",
+          "REJECTED": "Rejected",
+          "MISSING": "Not uploaded"
+        },
+        "rejectionReason": "Rejection reason",
+        "readOnlyNote": "Document uploads are managed by the customer in their dashboard."
+      },
+      "invoicePending": "The invoice will appear here once admin sends it after review.",
+      "invoice": {
+        "title": "Invoice",
+        "invoiceNumber": "Invoice number",
+        "total": "Total due",
+        "subtotal": "Subtotal",
+        "tax": "Tax",
+        "officialFeeNote": "Government / official fees",
+        "paymentMethods": "Payment methods",
+        "paymentInstructions": "Additional payment instructions",
+        "accountTitle": "Account title",
+        "accountNumber": "Account number",
+        "iban": "IBAN",
+        "bankName": "Bank",
+        "instructions": "Instructions",
+        "scanQr": "Scan this QR code to pay",
+        "dueDate": "Due date",
+        "notes": "Notes",
+        "lineItems": "Fee breakdown",
+        "description": "Description",
+        "amount": "Amount",
+        "officialFee": "official fee",
+        "downloadPdf": "Download invoice PDF",
+        "loadingPdf": "Loading PDF…",
+        "pdfError": "Could not load invoice PDF.",
+        "retry": "Retry",
+        "sentOn": "Sent on",
+        "exactPaymentTitle": "Important payment notice",
+        "exactPaymentNotice": "The customer must pay the exact total amount shown above in one transfer. Partial payments are not accepted.",
+        "disclaimer": "Private facilitation service — not affiliated with any government department. Government taxes and official fees are separate from the facilitation service fee.",
+        "notAvailable": "No invoice has been sent for this application yet."
+      },
+      "payment": {
+        "title": "Payment proof",
+        "description": "After the customer pays as instructed on the invoice, upload a screenshot of the successful payment on their behalf.",
+        "upload": "Upload screenshot",
+        "uploading": "Uploading…",
+        "uploaded": "Payment screenshot uploaded",
+        "replace": "Replace screenshot",
+        "replaceHint": "Uploaded the wrong screenshot? Replace it before processing continues.",
+        "maxSize": "Max size",
+        "allowedTypes": "Allowed types",
+        "uploadFailed": "Payment upload failed.",
+        "invalidType": "File type is not allowed.",
+        "tooLarge": "File is too large.",
+        "invalidName": "Invalid file name.",
+        "waitingVerification": "Payment screenshot uploaded. Admin is verifying the payment.",
+        "verified": "Payment verified. Processing will continue.",
+        "rejected": "Payment rejected",
+        "rejectionReason": "Reason",
+        "viewer": {
+          "loading": "Loading payment screenshot…",
+          "error": "Could not load payment screenshot.",
+          "retry": "Retry",
+          "openNewTab": "Open in new tab",
+          "unsupported": "Inline preview is not available for this file type."
+        }
+      },
+      "commission": {
+        "title": "Commission payout",
+        "amount": "Amount",
+        "payoutStatus": "Payout status",
+        "receiptStatus": "Your confirmation",
+        "viewCommissions": "View all commissions",
+        "pendingAdmin": "Commission will be added by admin after this application is completed."
+      },
+      "proof": {
+        "title": "Completion proof",
+        "description": "This application is complete. Download the official completion proof for your customer using a secure signed link.",
+        "download": "Download proof",
+        "loading": "Preparing download…",
+        "error": "Could not prepare proof download.",
+        "retry": "Retry",
+        "defaultFileName": "completion-proof"
+      },
+      "guidance": {
+        "wait_review": {
+          "title": "Under review",
+          "description": "Our team is reviewing this application. No action is needed from you right now."
+        },
+        "customer_upload_docs": {
+          "title": "Customer action required",
+          "description": "The customer needs to upload or replace documents from their dashboard before processing can continue."
+        },
+        "customer_payment": {
+          "title": "Payment proof required",
+          "description": "An invoice has been sent. Upload the customer's payment screenshot here once they have paid."
+        },
+        "wait_payment_verification": {
+          "title": "Payment under verification",
+          "description": "The customer uploaded payment proof. Admin is verifying the payment before work continues."
+        },
+        "in_progress": {
+          "title": "In progress",
+          "description": "Payment is verified and the application is being processed. You will see status updates here."
+        },
+        "view_commission": {
+          "title": "Commission available",
+          "description": "This application has a commission line item. Review payout status and confirm receipt when paid."
+        }
       }
     },
     "newApplication": {
@@ -564,38 +704,124 @@
     "commissions": {
       "metaTitle": "Commissions | PakExcise.com",
       "title": "Commissions",
-      "description": "Commission line items set by admin for your facilitation work.",
-      "commissionRate": "Your commission rate",
+      "description": "Track commission line items, payout proof, and confirm received payments.",
+      "summaryPercentage": "Your default commission: {rate}% of facilitation fee per completed application.",
+      "summaryFixed": "Your default commission: PKR {amount} per completed application.",
+      "summaryManual": "Commissions are added manually by admin for each completed application.",
       "empty": "No commission line items yet.",
-      "payoutPlaceholder": "Payout processing is managed by admin. Contact support for payout questions.",
+      "payoutPlaceholder": "After admin marks a payout as paid and uploads proof, review the payment screenshot and confirm whether you received it.",
+      "viewProof": "View proof",
+      "hideProof": "Hide proof",
+      "confirmReceipt": "Mark received",
+      "notReceived": "Not received",
+      "changeReceipt": "Change status",
+      "disputeReason": "Why was payment not received?",
+      "disputePlaceholder": "Explain what is missing or incorrect about this payout.",
+      "adminResponse": "Admin response",
+      "submitDispute": "Report not received",
+      "cancelDispute": "Cancel",
+      "confirming": "Saving…",
+      "disputing": "Submitting…",
+      "confirmError": "Could not update receipt status.",
+      "paidOn": "Paid on",
+      "noTrackingId": "No application linked",
+      "filters": {
+        "all": "All",
+        "pending": "Pending",
+        "paid": "Paid",
+        "cancelled": "Cancelled"
+      },
+      "summary": {
+        "pending": "Pending",
+        "paid": "Paid total",
+        "awaiting": "Awaiting your confirmation"
+      },
+      "receiptStatus": {
+        "AWAITING": "Awaiting confirmation",
+        "RECEIVED": "Received",
+        "NOT_RECEIVED": "Not received"
+      },
       "columns": {
         "label": "Item",
         "amount": "Amount",
         "payoutStatus": "Payout status",
         "application": "Application",
-        "date": "Date"
+        "date": "Date",
+        "actions": "Actions"
       },
       "payoutStatus": {
         "PENDING": "Pending",
         "PROCESSING": "Processing",
         "PAID": "Paid",
         "CANCELLED": "Cancelled"
+      },
+      "source": {
+        "MANUAL": "Manual payout",
+        "AUTO_PERCENTAGE": "Auto percentage",
+        "AUTO_FIXED": "Auto fixed"
+      },
+      "proof": {
+        "loading": "Loading proof…",
+        "error": "Could not load proof",
+        "retry": "Retry",
+        "openNewTab": "Open in new tab",
+        "unsupported": "Preview not available for this file type"
       }
     },
     "profile": {
       "metaTitle": "Agent profile | PakExcise.com",
       "title": "Agent profile",
-      "description": "Update your contact details and view your agent status.",
+      "description": "Update your contact details, payout method, and view your agent status.",
       "name": "Full name",
       "phone": "Mobile number",
       "email": "Email address",
       "emailReadOnly": "Email cannot be changed here.",
       "commissionRate": "Commission rate",
+      "commissionMode": "Commission mode",
+      "commissionModeManual": "Manual per application",
+      "commissionModePercentage": "Percentage per completed application",
+      "commissionModeFixed": "Fixed amount per completed application",
+      "fixedAmount": "Fixed commission amount",
       "approvalStatus": "Approval status",
       "save": "Save changes",
       "saving": "Saving…",
       "saved": "Profile updated.",
-      "error": "Could not update profile."
+      "error": "Could not update profile.",
+      "payoutMethod": {
+        "title": "Payout method",
+        "description": "Add where you want to receive commission payouts. Admin uses these details when paying you.",
+        "methodType": "Payout method type",
+        "accountTitle": "Account title / name",
+        "accountNumber": "Account number",
+        "iban": "IBAN",
+        "bankName": "Bank name",
+        "walletNumber": "Mobile wallet number",
+        "notes": "Additional notes",
+        "save": "Save payout method",
+        "saving": "Saving…",
+        "saved": "Payout method saved.",
+        "error": "Could not save payout method.",
+        "cancel": "Cancel",
+        "configured": "Configured",
+        "addMethod": "Add method",
+        "editMethod": "Edit",
+        "deleteMethod": "Remove",
+        "deleteConfirm": "Remove your payout method? Admin will not be able to pay you until you add it again.",
+        "deleteConfirmButton": "Yes, remove",
+        "deleteDismiss": "Keep method",
+        "deleting": "Removing…",
+        "deleted": "Payout method removed.",
+        "emptyTitle": "Add where you want to receive payouts",
+        "emptyDescription": "Admin uses these details when marking commissions as paid.",
+        "types": {
+          "BANK_TRANSFER": "Bank transfer",
+          "JAZZCASH": "JazzCash",
+          "EASYPAISA": "Easypaisa",
+          "NAYAPAY": "NayaPay",
+          "SADAPAY": "SadaPay",
+          "OTHER": "Other"
+        }
+      }
     },
     "verification": {
       "metaTitle": "Agent verification | PakExcise.com",
@@ -883,6 +1109,7 @@
       "social": "Social links",
       "paymentMethods": "Payment methods",
       "agents": "Agents",
+      "agentPayouts": "Agent payouts",
       "agentVerifications": "Agent verifications",
       "customers": "Customers",
       "notifications": "Notifications",
@@ -991,6 +1218,7 @@
         "proofTitle": "Upload completion proof",
         "proofDescription": "Required before marking this application as completed when the service needs proof.",
         "proofUpload": "Upload proof",
+        "proofReplace": "Replace proof",
         "proofUploading": "Uploading…",
         "proofUploaded": "Proof uploaded",
         "proofRequired": "Completion proof is required for this service.",
@@ -1103,16 +1331,52 @@
     },
     "agents": {
       "title": "Agents",
-      "description": "Approve agents, set commission rates, and manage commission line items.",
+      "description": "Approve agents, manage commission rates, and review submitted applications.",
       "emptyTitle": "No agents found",
       "emptyDescription": "Promote users to the agent role to create agent profiles.",
       "active": "Active",
       "inactive": "Inactive",
+      "manage": "Manage",
+      "sheetTitle": "Manage agent",
+      "sheetDescription": "Update approval status, account access, commission settings, and payouts.",
+      "viewApplications": "View all applications",
+      "recentApplications": "Recent applications",
+      "noRecentApplications": "This agent has not submitted any applications yet.",
       "commissionRate": "Commission rate",
+      "commissionFixedPrefix": "PKR",
+      "commissionManualDisplay": "Manual",
       "applicationCount": "Submitted applications",
       "commissionItems": "Commission line items",
-      "recentApplications": "Recent agent applications",
+      "stats": {
+        "total": "Total agents",
+        "pending": "Pending approval",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "active": "Active accounts",
+        "inactive": "Inactive accounts"
+      },
+      "filters": {
+        "search": "Search",
+        "searchPlaceholder": "Name, email, or phone",
+        "approvalStatus": "Approval status",
+        "allStatuses": "All statuses",
+        "apply": "Apply filters",
+        "reset": "Reset"
+      },
+      "approvalStatus": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
       "columns": {
+        "agent": "Agent",
+        "contact": "Contact",
+        "approval": "Approval",
+        "account": "Account",
+        "commission": "Commission",
+        "applications": "Applications",
+        "commissions": "Commissions",
+        "actions": "Actions",
         "trackingId": "Tracking ID",
         "service": "Service",
         "status": "Status",
@@ -1135,7 +1399,157 @@
         "commissionDescription": "Description",
         "addingCommission": "Adding…",
         "success": "Agent updated.",
-        "error": "Could not update agent."
+        "error": "Could not update agent.",
+        "approvalSection": "Approval",
+        "accountSection": "Account access",
+        "commissionSection": "Commission rate",
+        "payoutSection": "Manual payout",
+        "showPayoutForm": "Add payout",
+        "hidePayoutForm": "Hide form",
+        "commissionHelp": "Auto commissions are created when an application is marked completed. Use manual mode to add payouts per application yourself.",
+        "commissionMode": "Commission mode",
+        "commissionModeManual": "Manual per application",
+        "commissionModePercentage": "Percentage per completed application",
+        "commissionModeFixed": "Fixed amount per completed application",
+        "fixedAmount": "Fixed amount (PKR)",
+        "saveManualMode": "Save manual mode",
+        "payoutMethodSection": "Agent payout details",
+        "payoutMethodType": "Payout method",
+        "payoutAccountTitle": "Account title",
+        "payoutAccountNumber": "Account number",
+        "payoutIban": "IBAN",
+        "payoutBankName": "Bank name",
+        "payoutWalletNumber": "Wallet number",
+        "payoutNotes": "Agent notes",
+        "payoutMethodMissing": "Agent has not added payout details yet.",
+        "commissionsLedger": "Commission ledger",
+        "noCommissions": "No commission line items yet.",
+        "markPaid": "Mark paid + upload proof",
+        "viewProof": "View proof",
+        "hideProof": "Hide proof",
+        "agentConfirmed": "Agent confirmed receipt",
+        "awaitingAgentConfirm": "Awaiting agent confirmation",
+        "invalidProof": "Invalid proof file",
+        "uploadFailed": "Proof upload failed",
+        "proofLoading": "Loading proof…",
+        "proofError": "Could not load proof",
+        "proofRetry": "Retry",
+        "proofOpen": "Open in new tab",
+        "proofUnsupported": "Preview not available for this file type"
+      },
+      "ledger": {
+        "edit": "Edit payout",
+        "save": "Save changes",
+        "saving": "Saving…",
+        "cancelEdit": "Cancel",
+        "cancelPayout": "Cancel payout",
+        "cancelling": "Cancelling…",
+        "cancelConfirm": "Cancel this payout line item? This cannot be undone.",
+        "cancelConfirmButton": "Yes, cancel payout",
+        "cancelDismiss": "Keep payout",
+        "locked": "Paid payouts cannot be edited",
+        "filterAll": "All",
+        "filterPending": "Pending",
+        "filterPaid": "Paid",
+        "filterCancelled": "Cancelled",
+        "summaryPending": "Pending",
+        "summaryPaid": "Paid",
+        "success": "Commission ledger updated.",
+        "error": "Could not update commission ledger.",
+        "markPaidShort": "Mark paid",
+        "markPaidUploading": "Uploading…",
+        "markPaidRequiresPayout": "Agent must add payout details before you can mark paid.",
+        "noTrackingId": "No application linked",
+        "completePayout": "Complete payout",
+        "completingPayout": "Completing…",
+        "reuploadProof": "Replace proof",
+        "resolveDispute": "Resolve dispute",
+        "resolvingDispute": "Resolving…",
+        "resolutionNote": "Admin response",
+        "resolutionNotePlaceholder": "Explain the new proof or payment details for the agent…",
+        "resolutionNoteRequired": "A response note is required to resolve this dispute.",
+        "cancelResolve": "Cancel",
+        "uploadNewProof": "Upload new proof",
+        "receipt_RECEIVED": "Agent confirmed receipt",
+        "receipt_NOT_RECEIVED": "Agent reported not received",
+        "receipt_AWAITING": "Awaiting agent confirmation"
+      },
+      "payouts": {
+        "title": "Agent payouts",
+        "description": "Track all agent commission line items, payment proof, and confirmation status.",
+        "emptyTitle": "No payouts found",
+        "emptyDescription": "Commission line items will appear here when created manually or automatically on completed applications.",
+        "agentConfirmed": "Agent confirmed",
+        "awaitingConfirm": "Awaiting agent confirmation",
+        "hasProof": "Proof uploaded",
+        "columns": {
+          "agent": "Agent",
+          "label": "Item",
+          "application": "Application",
+          "amount": "Amount",
+          "status": "Status",
+          "source": "Source",
+          "actions": "Actions",
+          "date": "Date"
+        },
+        "filters": {
+          "search": "Search",
+          "searchPlaceholder": "Agent, tracking ID, or label",
+          "status": "Payout status",
+          "allStatuses": "All statuses",
+          "receiptStatus": "Agent receipt",
+          "allReceiptStatuses": "All receipt statuses",
+          "apply": "Apply filters",
+          "reset": "Reset"
+        },
+        "receipt": {
+          "AWAITING": "Awaiting confirmation",
+          "RECEIVED": "Agent confirmed",
+          "NOT_RECEIVED": "Not received"
+        },
+        "source": {
+          "MANUAL": "Manual",
+          "AUTO_PERCENTAGE": "Auto %",
+          "AUTO_FIXED": "Auto fixed"
+        },
+        "status": {
+          "PENDING": "Pending",
+          "PROCESSING": "Processing",
+          "PAID": "Paid",
+          "CANCELLED": "Cancelled"
+        }
+      }
+    },
+    "customers": {
+      "title": "Customers",
+      "description": "View customer accounts and their application history.",
+      "emptyTitle": "No customers found",
+      "emptyDescription": "Customer accounts will appear here once users sign up.",
+      "verifiedEmail": "Email verified",
+      "verifiedPhone": "Phone verified",
+      "viewApplications": "View applications",
+      "filters": {
+        "search": "Search",
+        "searchPlaceholder": "Name, email, or phone",
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "apply": "Apply filters",
+        "reset": "Reset"
+      },
+      "columns": {
+        "name": "Name",
+        "email": "Email / login",
+        "phone": "Phone",
+        "status": "Status",
+        "applications": "Applications",
+        "joined": "Joined",
+        "actions": "Actions"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "DISABLED": "Disabled",
+        "PENDING": "Pending",
+        "SUSPENDED": "Suspended"
       }
     },
     "notifications": {

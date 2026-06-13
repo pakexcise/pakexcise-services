@@ -6,7 +6,7 @@ import { ApplicationRealtimeSync } from "@/components/shared/application-realtim
 import { CustomerSidebar } from "@/components/customer/customer-sidebar";
 import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { CustomerTopbar } from "@/components/customer/customer-topbar";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 type CustomerShellProps = {
   children: React.ReactNode;
@@ -41,6 +41,7 @@ export function CustomerShell({
           side="left"
           className="flex w-[min(100vw-2rem,18rem)] flex-col p-0"
         >
+          <SheetTitle className="sr-only">{labels.nav.dashboard}</SheetTitle>
           <CustomerSidebar
             userName={userName}
             userContactLine={userContactLine}

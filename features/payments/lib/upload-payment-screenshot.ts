@@ -2,7 +2,11 @@ import "server-only";
 
 import { PAYMENT_SCREENSHOT_MAX_BYTES } from "@/config/uploads";
 import type { CurrentUser } from "@/server/auth/current-user";
-import { prisma } from "@/server/db/client";
+import { canReplacePaymentProof } from "@/features/payments/lib/payment-proof-state";
+import {
+  getPaymentForUploadAccess,
+  type PaymentForUploadAccess,
+} from "@/features/payments/lib/payment-upload-access";
 import {
   isObjectStorageConfigured,
   putStoredObject,
@@ -13,26 +17,33 @@ export type PaymentUploadHandlerError = {
   error: string;
 };
 
-async function getOwnedPayment(paymentId: string, userId: string) {
-  return prisma.payment.findFirst({
-    where: {
-      id: paymentId,
-      application: { userId },
-    },
-    select: {
-      id: true,
-      applicationId: true,
-      status: true,
-      screenshotR2Key: true,
-      screenshotMimeType: true,
-      screenshotFileSize: true,
-      application: {
-        select: {
-          status: true,
-        },
-      },
-    },
-  });
+type PaymentUploadRecord = Pick<
+  PaymentForUploadAccess,
+  | "id"
+  | "applicationId"
+  | "status"
+  | "screenshotR2Key"
+  | "screenshotMimeType"
+  | "screenshotFileSize"
+> & {
+  application: { status: string };
+};
+
+function validatePaymentUploadState(
+  payment: PaymentUploadRecord,
+): PaymentUploadHandlerError | null {
+  if (!canReplacePaymentProof(payment.application.status, payment.status)) {
+    return {
+      status: 400,
+      error: "Payment proof cannot be uploaded or replaced at this stage",
+    };
+  }
+
+  if (!payment.screenshotR2Key || !payment.screenshotMimeType) {
+    return { status: 400, error: "Start upload before sending the file" };
+  }
+
+  return null;
 }
 
 export async function handleUploadPaymentScreenshotBytes(
@@ -53,25 +64,16 @@ export async function handleUploadPaymentScreenshotBytes(
     return { status: 400, error: "File exceeds the maximum allowed size" };
   }
 
-  const payment = await getOwnedPayment(paymentId, user.id);
+  const payment = await getPaymentForUploadAccess(paymentId, user);
 
   if (!payment) {
     return { status: 404, error: "Payment not found" };
   }
 
-  if (payment.application.status !== "INVOICE_SENT") {
-    return {
-      status: 400,
-      error: "Payment screenshot can only be uploaded after invoice is sent",
-    };
-  }
+  const stateError = validatePaymentUploadState(payment);
 
-  if (payment.status !== "PENDING" && payment.status !== "REJECTED") {
-    return { status: 400, error: "Payment proof was already submitted" };
-  }
-
-  if (!payment.screenshotR2Key || !payment.screenshotMimeType) {
-    return { status: 400, error: "Start upload before sending the file" };
+  if (stateError) {
+    return stateError;
   }
 
   const normalizedContentType = contentType.trim();
@@ -86,9 +88,9 @@ export async function handleUploadPaymentScreenshotBytes(
 
   try {
     await putStoredObject({
-      key: payment.screenshotR2Key,
+      key: payment.screenshotR2Key!,
       body: fileBuffer,
-      contentType: payment.screenshotMimeType,
+      contentType: payment.screenshotMimeType!,
     });
   } catch {
     return { status: 503, error: "Could not store uploaded screenshot" };

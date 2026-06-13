@@ -1,9 +1,8 @@
 import "server-only";
 
-import type { AgentApprovalStatus, Prisma } from "@prisma/client";
+import type { AgentApprovalStatus, AgentPayoutStatus, AgentReceiptStatus, Prisma } from "@prisma/client";
 
 import {
-  paginate,
   Repository,
   type PaginatedResult,
 } from "@/server/repositories/base/repository";
@@ -11,9 +10,18 @@ import {
 const adminAgentListSelect = {
   id: true,
   approvalStatus: true,
+  commissionMode: true,
   commissionRate: true,
+  commissionFixedAmount: true,
   notes: true,
   isActive: true,
+  payoutMethodType: true,
+  payoutAccountTitle: true,
+  payoutAccountNumber: true,
+  payoutIban: true,
+  payoutBankName: true,
+  payoutWalletNumber: true,
+  payoutNotes: true,
   createdAt: true,
   updatedAt: true,
   user: {
@@ -37,17 +45,30 @@ export type AdminAgentListItem = Prisma.AgentProfileGetPayload<{
   select: typeof adminAgentListSelect;
 }>;
 
-const agentCommissionSelect = {
+const agentCommissionListSelect = {
   id: true,
+  agentProfileId: true,
   label: true,
   description: true,
   amount: true,
   currency: true,
+  source: true,
   payoutStatus: true,
+  proofR2Key: true,
+  proofMimeType: true,
+  proofFileName: true,
+  paidAt: true,
+  agentReceiptStatus: true,
+  agentConfirmedAt: true,
+  agentDisputedAt: true,
+  agentDisputeReason: true,
+  adminResolutionNote: true,
+  adminResolvedAt: true,
   createdAt: true,
   updatedAt: true,
   application: {
     select: {
+      id: true,
       trackingId: true,
       service: {
         select: {
@@ -59,9 +80,61 @@ const agentCommissionSelect = {
   },
 } as const satisfies Prisma.AgentCommissionSelect;
 
+export type AgentCommissionListItem = Prisma.AgentCommissionGetPayload<{
+  select: typeof agentCommissionListSelect;
+}>;
+
+const agentCommissionSelect = {
+  ...agentCommissionListSelect,
+  agentProfile: {
+    select: {
+      id: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  },
+} as const satisfies Prisma.AgentCommissionSelect;
+
 export type AgentCommissionItem = Prisma.AgentCommissionGetPayload<{
   select: typeof agentCommissionSelect;
 }>;
+
+const activeAgentUserWhere = {
+  role: "AGENT",
+  deletedAt: null,
+} as const satisfies Prisma.UserWhereInput;
+
+function buildAdminAgentWhere(input?: {
+  status?: AgentApprovalStatus;
+  search?: string;
+}): Prisma.AgentProfileWhereInput {
+  const where: Prisma.AgentProfileWhereInput = {};
+
+  if (input?.status) {
+    where.approvalStatus = input.status;
+  }
+
+  if (input?.search?.trim()) {
+    const q = input.search.trim();
+    where.user = {
+      ...activeAgentUserWhere,
+      OR: [
+        { name: { contains: q, mode: "insensitive" } },
+        { email: { contains: q, mode: "insensitive" } },
+        { phone: { contains: q, mode: "insensitive" } },
+      ],
+    };
+  } else {
+    where.user = activeAgentUserWhere;
+  }
+
+  return where;
+}
 
 export class AgentRepository extends Repository {
   async listForAdmin(input?: {
@@ -72,25 +145,9 @@ export class AgentRepository extends Repository {
   }): Promise<PaginatedResult<AdminAgentListItem>> {
     const page = input?.page ?? 1;
     const pageSize = input?.pageSize ?? 20;
+    const where = buildAdminAgentWhere(input);
 
-    const where: Prisma.AgentProfileWhereInput = {};
-
-    if (input?.status) {
-      where.approvalStatus = input.status;
-    }
-
-    if (input?.search?.trim()) {
-      const q = input.search.trim();
-      where.user = {
-        OR: [
-          { name: { contains: q, mode: "insensitive" } },
-          { email: { contains: q, mode: "insensitive" } },
-          { phone: { contains: q, mode: "insensitive" } },
-        ],
-      };
-    }
-
-    return paginate(
+    return this.paginateQuery(
       ({ skip, take }) =>
         this.db.agentProfile.findMany({
           skip,
@@ -105,13 +162,16 @@ export class AgentRepository extends Repository {
   }
 
   async findByIdForAdmin(id: string) {
-    return this.db.agentProfile.findUnique({
-      where: { id },
+    return this.db.agentProfile.findFirst({
+      where: {
+        id,
+        user: activeAgentUserWhere,
+      },
       select: {
         ...adminAgentListSelect,
         commissions: {
           orderBy: { createdAt: "desc" },
-          select: agentCommissionSelect,
+          select: agentCommissionListSelect,
         },
       },
     });
@@ -123,12 +183,98 @@ export class AgentRepository extends Repository {
     });
   }
 
-  async listCommissionsForAgent(agentProfileId: string): Promise<AgentCommissionItem[]> {
+  async listCommissionsForAgent(
+    agentProfileId: string,
+  ): Promise<AgentCommissionListItem[]> {
     return this.db.agentCommission.findMany({
       where: { agentProfileId },
       orderBy: { createdAt: "desc" },
-      select: agentCommissionSelect,
+      select: agentCommissionListSelect,
     });
+  }
+
+  async listCommissionsByAgentProfileIds(
+    agentProfileIds: string[],
+  ): Promise<Record<string, AgentCommissionListItem[]>> {
+    if (agentProfileIds.length === 0) {
+      return {};
+    }
+
+    const rows = await this.db.agentCommission.findMany({
+      where: { agentProfileId: { in: agentProfileIds } },
+      orderBy: { createdAt: "desc" },
+      select: agentCommissionListSelect,
+    });
+
+    const grouped: Record<string, AgentCommissionListItem[]> = {};
+
+    for (const row of rows) {
+      const bucket = grouped[row.agentProfileId] ?? [];
+      bucket.push(row);
+      grouped[row.agentProfileId] = bucket;
+    }
+
+    return grouped;
+  }
+
+  async listCommissionsForAdmin(input?: {
+    page?: number;
+    pageSize?: number;
+    status?: AgentPayoutStatus;
+    receiptStatus?: AgentReceiptStatus;
+    search?: string;
+  }): Promise<PaginatedResult<AgentCommissionItem>> {
+    const page = input?.page ?? 1;
+    const pageSize = input?.pageSize ?? 20;
+
+    const where: Prisma.AgentCommissionWhereInput = {
+      agentProfile: {
+        user: activeAgentUserWhere,
+      },
+    };
+
+    if (input?.status) {
+      where.payoutStatus = input.status;
+    }
+
+    if (input?.receiptStatus) {
+      where.agentReceiptStatus = input.receiptStatus;
+      if (input.receiptStatus !== "AWAITING") {
+        where.payoutStatus = "PAID";
+      }
+    }
+
+    if (input?.search?.trim()) {
+      const q = input.search.trim();
+      where.OR = [
+        { label: { contains: q, mode: "insensitive" } },
+        { application: { trackingId: { contains: q, mode: "insensitive" } } },
+        {
+          agentProfile: {
+            user: {
+              ...activeAgentUserWhere,
+              OR: [
+                { name: { contains: q, mode: "insensitive" } },
+                { email: { contains: q, mode: "insensitive" } },
+              ],
+            },
+          },
+        },
+      ];
+    }
+
+    return this.paginateQuery(
+      ({ skip, take }) =>
+        this.db.agentCommission.findMany({
+          skip,
+          take,
+          where,
+          orderBy: { createdAt: "desc" },
+          select: agentCommissionSelect,
+        }),
+      () => this.db.agentCommission.count({ where }),
+      { page, pageSize },
+    );
   }
 
   async countApplicationsByAgent(agentUserId: string): Promise<number> {
@@ -138,6 +284,72 @@ export class AgentRepository extends Repository {
         status: { not: "DRAFT" },
       },
     });
+  }
+
+  async countApplicationsByAgentUserIds(
+    agentUserIds: string[],
+  ): Promise<Record<string, number>> {
+    if (agentUserIds.length === 0) {
+      return {};
+    }
+
+    const rows = await this.db.application.groupBy({
+      by: ["agentId"],
+      where: {
+        agentId: { in: agentUserIds },
+        status: { not: "DRAFT" },
+      },
+      _count: { _all: true },
+    });
+
+    return Object.fromEntries(
+      rows
+        .filter((row): row is typeof row & { agentId: string } =>
+          Boolean(row.agentId),
+        )
+        .map((row) => [row.agentId, row._count._all]),
+    );
+  }
+
+  async getAdminStats(): Promise<{
+    total: number;
+    pending: number;
+    approved: number;
+    rejected: number;
+    active: number;
+    inactive: number;
+  }> {
+    const baseWhere = { user: activeAgentUserWhere };
+
+    const [total, pending, approved, rejected, active, inactive] =
+      await Promise.all([
+        this.db.agentProfile.count({ where: baseWhere }),
+        this.db.agentProfile.count({
+          where: { ...baseWhere, approvalStatus: "PENDING" },
+        }),
+        this.db.agentProfile.count({
+          where: { ...baseWhere, approvalStatus: "APPROVED" },
+        }),
+        this.db.agentProfile.count({
+          where: { ...baseWhere, approvalStatus: "REJECTED" },
+        }),
+        this.db.agentProfile.count({
+          where: {
+            ...baseWhere,
+            approvalStatus: "APPROVED",
+            isActive: true,
+          },
+        }),
+        this.db.agentProfile.count({
+          where: {
+            ...baseWhere,
+            approvalStatus: "APPROVED",
+            isActive: false,
+          },
+        }),
+      ]);
+
+    return { total, pending, approved, rejected, active, inactive };
   }
 }
 

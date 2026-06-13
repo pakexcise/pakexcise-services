@@ -6,7 +6,7 @@ import { ApplicationRealtimeSync } from "@/components/shared/application-realtim
 import { SupportSidebar } from "@/components/support/support-sidebar";
 import { SupportTopbar } from "@/components/support/support-topbar";
 import type { SupportNavItem } from "@/config/support";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 type SupportShellProps = {
   children: React.ReactNode;
@@ -36,6 +36,7 @@ export function SupportShell({
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="flex w-[min(100vw-2rem,18rem)] flex-col p-0">
+          <SheetTitle className="sr-only">Support navigation</SheetTitle>
           <div className="min-h-0 flex-1 overflow-y-auto">
             <SupportSidebar
               items={navItems}

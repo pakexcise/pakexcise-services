@@ -6,6 +6,11 @@ import { ExternalLink, FileUp, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  FILE_PREVIEW_IMAGE_CLASS,
+  FILE_PREVIEW_PDF_CLASS,
+  FilePreviewFrame,
+} from "@/components/shared/file-preview-frame";
+import {
   confirmDocumentUploadAction,
   getDocumentSignedUrlAction,
   requestPresignedUploadAction,
@@ -117,7 +122,7 @@ function DocumentPreview({
     return () => {
       cancelled = true;
     };
-  }, [documentId, labels.previewError]);
+  }, [documentId, fileName, labels.previewError]);
 
   if (loading) {
     return (
@@ -131,15 +136,16 @@ function DocumentPreview({
 
   if (mimeType.startsWith("image/")) {
     return (
-      <div className="mt-3 overflow-hidden rounded-md border bg-muted/20">
-        {/* Signed R2 URLs are short-lived; use native img for private previews. */}
-        <img
-          src={previewUrl}
-          alt={fileName}
-          width={640}
-          height={360}
-          className="max-h-48 w-full object-contain"
-        />
+      <div className="mt-3">
+        <FilePreviewFrame>
+          {/* Signed R2 URLs are short-lived; use native img for private previews. */}
+          <img
+            key={`${documentId}:${fileName}`}
+            src={previewUrl}
+            alt={fileName}
+            className={FILE_PREVIEW_IMAGE_CLASS}
+          />
+        </FilePreviewFrame>
       </div>
     );
   }
@@ -148,9 +154,10 @@ function DocumentPreview({
     return (
       <div className="mt-3 space-y-2">
         <iframe
+          key={`${documentId}:${fileName}`}
           src={previewUrl}
           title={fileName}
-          className="h-48 w-full rounded-md border bg-muted/20"
+          className={FILE_PREVIEW_PDF_CLASS}
         />
         <a
           href={previewUrl}

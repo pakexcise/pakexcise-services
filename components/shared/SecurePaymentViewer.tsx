@@ -5,10 +5,23 @@ import { AlertTriangle, FileText, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  FILE_PREVIEW_FRAME_CLASS,
+  FILE_PREVIEW_IMAGE_CLASS,
+  FILE_PREVIEW_PDF_CLASS,
+  FilePreviewFrame,
+} from "@/components/shared/file-preview-frame";
+import { subscribeToApplicationUpdates } from "@/features/realtime/broadcast-application-update";
 
 type SecurePaymentViewerProps = {
   paymentId: string;
   fileName?: string | null;
+  /** Changes when the stored screenshot changes (e.g. updatedAt timestamp). */
+  contentVersion?: string | null;
+  /** Bumps when the underlying screenshot changes so preview refetches immediately. */
+  refreshKey?: string | number | null;
+  /** Refetch preview when other tabs upload/replace payment proof. */
+  syncLive?: boolean;
   labels: {
     loading: string;
     error: string;
@@ -26,15 +39,49 @@ type ScreenshotPayload = {
   fileName?: string | null;
 };
 
+function withPreviewCacheBuster(
+  signedUrl: string,
+  refreshKey: string | number | null | undefined,
+): string {
+  if (refreshKey == null) {
+    return signedUrl;
+  }
+
+  try {
+    const url = new URL(
+      signedUrl,
+      typeof window !== "undefined" ? window.location.origin : "http://localhost",
+    );
+
+    if (url.pathname.endsWith("/content")) {
+      url.searchParams.set("v", String(refreshKey));
+      return url.toString();
+    }
+  } catch {
+    return signedUrl;
+  }
+
+  return signedUrl;
+}
+
 export function SecurePaymentViewer({
   paymentId,
   fileName,
+  contentVersion,
+  refreshKey,
+  syncLive = false,
   labels,
   className,
 }: SecurePaymentViewerProps) {
   const [payload, setPayload] = useState<ScreenshotPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [syncRevision, setSyncRevision] = useState(0);
+
+  const baseRefreshKey = refreshKey ?? contentVersion ?? fileName ?? "initial";
+  const effectiveRefreshKey = syncLive
+    ? `${baseRefreshKey}:${syncRevision}`
+    : baseRefreshKey;
 
   const loadScreenshot = useCallback(async () => {
     setIsLoading(true);
@@ -43,6 +90,7 @@ export function SecurePaymentViewer({
     try {
       const response = await fetch(`/api/payments/${paymentId}/screenshot-url`, {
         credentials: "include",
+        cache: "no-store",
       });
       const data = (await response.json()) as ScreenshotPayload & { error?: string };
 
@@ -59,7 +107,7 @@ export function SecurePaymentViewer({
     } finally {
       setIsLoading(false);
     }
-  }, [paymentId, labels.error]);
+  }, [paymentId, labels.error, effectiveRefreshKey]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -69,6 +117,16 @@ export function SecurePaymentViewer({
     return () => window.clearTimeout(timer);
   }, [loadScreenshot]);
 
+  useEffect(() => {
+    if (!syncLive) {
+      return;
+    }
+
+    return subscribeToApplicationUpdates(() => {
+      setSyncRevision((current) => current + 1);
+    });
+  }, [syncLive]);
+
   if (isLoading) {
     return (
       <div className={className}>
@@ -76,7 +134,7 @@ export function SecurePaymentViewer({
           <Loader2 className="size-4 animate-spin" />
           {labels.loading}
         </div>
-        <Skeleton className="mt-3 h-48 w-full rounded-lg" />
+        <Skeleton className="mt-3 h-64 w-full rounded-lg" />
       </div>
     );
   }
@@ -108,6 +166,8 @@ export function SecurePaymentViewer({
   const mimeType = payload.mimeType ?? "image/jpeg";
   const isImage = mimeType.startsWith("image/");
   const isPdf = mimeType === "application/pdf";
+  const previewSrc = withPreviewCacheBuster(payload.signedUrl, effectiveRefreshKey);
+  const previewInstanceKey = `${paymentId}:${effectiveRefreshKey}:${displayName}`;
 
   return (
     <div className={className}>
@@ -117,26 +177,30 @@ export function SecurePaymentViewer({
           <span className="truncate">{displayName}</span>
         </div>
         <Button asChild size="sm" variant="outline">
-          <a href={payload.signedUrl} target="_blank" rel="noopener noreferrer">
+          <a href={previewSrc} target="_blank" rel="noopener noreferrer">
             {labels.openNewTab}
           </a>
         </Button>
       </div>
 
       {isImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={payload.signedUrl}
-          alt={displayName}
-          className="max-h-[60vh] w-full rounded-lg border object-contain"
-        />
+        <FilePreviewFrame>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            key={previewInstanceKey}
+            src={previewSrc}
+            alt={displayName}
+            className={FILE_PREVIEW_IMAGE_CLASS}
+          />
+        </FilePreviewFrame>
       ) : null}
 
       {isPdf ? (
         <iframe
-          src={payload.signedUrl}
+          key={previewInstanceKey}
+          src={previewSrc}
           title={displayName}
-          className="h-[60vh] w-full rounded-lg border bg-muted/20"
+          className={FILE_PREVIEW_PDF_CLASS}
         />
       ) : null}
 

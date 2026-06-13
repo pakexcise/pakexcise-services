@@ -131,31 +131,56 @@ export function validateUploadFile(input: {
   return { valid: true, extension };
 }
 
+/** Safe R2 path segment from application tracking ID (e.g. PAX-20260612-09AA64). */
+export function sanitizeApplicationStorageFolder(trackingId: string): string {
+  const normalized = trackingId.trim().toUpperCase();
+  const safe = normalized.replace(/[^A-Z0-9_-]/g, "_");
+
+  if (!safe) {
+    throw new Error("Invalid application tracking ID for storage path");
+  }
+
+  return safe;
+}
+
 export function buildApplicationDocumentKey(input: {
-  applicationId: string;
+  trackingId: string;
   docType: string;
   fileId: string;
   extension: string;
 }): string {
+  const folder = sanitizeApplicationStorageFolder(input.trackingId);
   const safeDocType = input.docType.replace(/[^a-z0-9_-]/gi, "_").toLowerCase();
   const safeExt = input.extension.replace(/[^a-z0-9]/gi, "").toLowerCase();
-  return `applications/${input.applicationId}/${safeDocType}/${input.fileId}.${safeExt || "bin"}`;
+  return `applications/${folder}/${safeDocType}/${input.fileId}.${safeExt || "bin"}`;
 }
 
 export function buildPaymentScreenshotKey(input: {
-  applicationId: string;
+  trackingId: string;
   paymentId: string;
   extension: string;
 }): string {
+  const folder = sanitizeApplicationStorageFolder(input.trackingId);
   const safeExt = input.extension.replace(/[^a-z0-9]/gi, "").toLowerCase();
-  return `applications/${input.applicationId}/payments/${input.paymentId}.${safeExt || "bin"}`;
+  return `applications/${folder}/payments/${input.paymentId}.${safeExt || "bin"}`;
 }
 
 export function buildInvoicePdfKey(input: {
-  applicationId: string;
+  trackingId: string;
   invoiceId: string;
 }): string {
-  return `applications/${input.applicationId}/invoices/${input.invoiceId}.pdf`;
+  const folder = sanitizeApplicationStorageFolder(input.trackingId);
+  return `applications/${folder}/invoices/${input.invoiceId}.pdf`;
+}
+
+export function buildCommissionProofKey(input: {
+  trackingId: string;
+  commissionId: string;
+  extension: string;
+}): string {
+  const folder = sanitizeApplicationStorageFolder(input.trackingId);
+  const safeExt = input.extension.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  return `applications/${folder}/commission-proofs/${input.commissionId}.${safeExt || "bin"}`;
 }
 
 export function buildPaymentMethodQrKey(input: {

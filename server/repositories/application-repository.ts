@@ -113,6 +113,7 @@ const adminApplicationDetailSelect = {
       status: true,
       rejectionReason: true,
       createdAt: true,
+      updatedAt: true,
       requirement: {
         select: {
           labelEn: true,
@@ -189,6 +190,7 @@ const adminApplicationDetailSelect = {
       screenshotFileSize: true,
       verifiedAt: true,
       createdAt: true,
+      updatedAt: true,
       invoice: {
         select: {
           invoiceNumber: true,

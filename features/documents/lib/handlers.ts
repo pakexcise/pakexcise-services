@@ -11,6 +11,7 @@ import {
   validateUploadFile,
 } from "@/config/uploads";
 import { auditDocumentEvent } from "@/features/documents/lib/audit";
+import { clearCompletionProofDocuments } from "@/features/applications/lib/completion-proof";
 import {
   canDeleteDocument,
   canUploadCompletionProof,
@@ -92,6 +93,7 @@ export async function handlePresignUpload(
     where: { id: parsed.data.applicationId },
     select: {
       id: true,
+      trackingId: true,
       userId: true,
       agentId: true,
       status: true,
@@ -109,6 +111,8 @@ export async function handlePresignUpload(
     if (!canUploadCompletionProof(user, application)) {
       return { status: 403, error: "Upload not allowed for this application" };
     }
+
+    await clearCompletionProofDocuments(application.id);
   } else if (!canUploadToApplication(user, application)) {
     return { status: 403, error: "Upload not allowed for this application" };
   }
@@ -163,7 +167,7 @@ export async function handlePresignUpload(
 
   const fileId = randomUUID();
   const r2Key = buildApplicationDocumentKey({
-    applicationId: application.id,
+    trackingId: application.trackingId,
     docType,
     fileId,
     extension: fileValidation.extension,

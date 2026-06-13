@@ -18,6 +18,18 @@ function isTransientConnectionError(error: unknown): boolean {
   return false;
 }
 
+function shouldUseFallback(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return error.code === "P1001" || error.code === "P1002" || error.code === "P1017";
+  }
+
+  if (error instanceof Prisma.PrismaClientInitializationError) {
+    return true;
+  }
+
+  return false;
+}
+
 function logDatabaseError(error: unknown): void {
   if (process.env.NODE_ENV !== "development") {
     return;
@@ -34,7 +46,7 @@ function logDatabaseError(error: unknown): void {
     return;
   }
 
-  console.warn("[database]", error);
+  console.error("[database]", error);
 }
 
 export async function safeDbQuery<T>(
@@ -49,6 +61,11 @@ export async function safeDbQuery<T>(
     return await operation();
   } catch (error) {
     logDatabaseError(error);
-    return fallback;
+
+    if (shouldUseFallback(error)) {
+      return fallback;
+    }
+
+    throw error;
   }
 }

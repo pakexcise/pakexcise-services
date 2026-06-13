@@ -2,11 +2,12 @@ import "server-only";
 
 import { COMPLETION_PROOF_DOC_TYPE } from "@/config/uploads";
 import { prisma } from "@/server/db/client";
-import { headStoredObject } from "@/server/storage/object-storage";
+import { deleteStoredObject, headStoredObject } from "@/server/storage/object-storage";
 
 type CompletionProofRecord = {
   id: string;
   r2Key: string;
+  fileName: string;
   checksum: string | null;
   fileSize: number;
 };
@@ -29,6 +30,7 @@ export async function findUploadedCompletionProof(
     select: {
       id: true,
       r2Key: true,
+      fileName: true,
       checksum: true,
       fileSize: true,
     },
@@ -46,4 +48,36 @@ export async function hasUploadedCompletionProof(
 
   const head = await headStoredObject(proof!.r2Key);
   return Boolean(head?.contentLength);
+}
+
+export async function clearCompletionProofDocuments(
+  applicationId: string,
+): Promise<void> {
+  const documents = await prisma.document.findMany({
+    where: {
+      applicationId,
+      type: COMPLETION_PROOF_DOC_TYPE,
+    },
+    select: {
+      id: true,
+      r2Key: true,
+    },
+  });
+
+  await Promise.all(
+    documents.map(async (document) => {
+      try {
+        await deleteStoredObject(document.r2Key);
+      } catch {
+        // Best-effort storage cleanup; DB row is still removed below.
+      }
+    }),
+  );
+
+  await prisma.document.deleteMany({
+    where: {
+      applicationId,
+      type: COMPLETION_PROOF_DOC_TYPE,
+    },
+  });
 }

@@ -88,6 +88,21 @@ export class InvoiceRepository extends Repository {
     });
   }
 
+  async findAgentInvoiceByApplication(input: {
+    applicationId: string;
+    agentId: string;
+  }): Promise<CustomerInvoiceDetail | null> {
+    return this.db.invoice.findFirst({
+      where: {
+        applicationId: input.applicationId,
+        status: "SENT",
+        application: { agentId: input.agentId },
+      },
+      orderBy: { sentAt: "desc" },
+      select: customerInvoiceSelect,
+    });
+  }
+
   async findByIdForAccess(invoiceId: string) {
     return this.db.invoice.findUnique({
       where: { id: invoiceId },

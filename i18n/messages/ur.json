@@ -413,6 +413,7 @@
         "uploading": "اپ لوڈ ہو رہا ہے…",
         "uploaded": "ادائیگی کا اسکرین شاٹ اپ لوڈ ہو گیا",
         "replace": "اسکرین شاٹ تبدیل کریں",
+        "replaceHint": "غلط اسکرین شاٹ اپ لوڈ ہو گئی؟ کارروائی شروع ہونے سے پہلے اسے تبدیل کریں۔",
         "maxSize": "زیادہ سے زیادہ سائز",
         "allowedTypes": "مجاز اقسام",
         "uploadFailed": "ادائیگی اپ لوڈ ناکام۔",
@@ -505,6 +506,9 @@
         "description": "ایڈمن لائن آئٹمز سے زیر التوا اور ادا شدہ کمیشن کا مجموعہ۔",
         "pending": "زیر التوا ادائیگی",
         "paid": "ادا شدہ",
+        "awaiting": "آپ کی تصدیق زیر التوا",
+        "payoutMethodMissing": "ایڈمن کو کمیشن ادا کرنے کے لیے اپنا ادائیگی کا طریقہ شامل کریں۔",
+        "setupPayoutMethod": "ادائیگی کا طریقہ سیٹ کریں",
         "viewAll": "تمام کمیشن دیکھیں"
       },
       "statusCards": {
@@ -522,6 +526,17 @@
         "actions": "اقدامات"
       }
     },
+    "nextAction": {
+      "wait_review": "جائزے کا انتظار",
+      "customer_upload_docs": "کسٹمر دستاویزات اپ لوڈ کرے",
+      "customer_payment": "ادائیگی کا ثبوت اپ لوڈ کریں",
+      "wait_payment_verification": "ادائیگی کی تصدیق جاری",
+      "in_progress": "دفتر میں کارروائی جاری",
+      "view_commission": "کمیشن ادائیگی دیکھیں",
+      "completed": "درخواست مکمل",
+      "closed": "درخواست بند",
+      "none": "کوئی اقدام درکار نہیں"
+    },
     "applications": {
       "metaTitle": "ایجنٹ درخواستیں | PakExcise.com",
       "title": "تفویض شدہ درخواستیں",
@@ -534,6 +549,7 @@
         "customer": "کسٹمر",
         "service": "خدمت",
         "status": "اسٹیٹس",
+        "nextAction": "اگلا قدم",
         "updated": "اپڈیٹ",
         "actions": "اقدامات"
       }
@@ -543,15 +559,139 @@
       "title": "درخواست ٹریکنگ",
       "backToList": "درخواستوں پر واپس",
       "status": "اسٹیٹس",
+      "nextAction": "اگلا قدم",
       "service": "خدمت",
+      "region": "علاقہ",
       "customer": "کسٹمر رابطہ",
       "submitted": "جمع شدہ",
-      "updated": "اپڈیٹ",
+      "updated": "آخری اپڈیٹ",
       "trackingNote": "انوائس، ادائیگیاں اور حساس دستاویزات کسٹمر اپنے ڈیش بورڈ سے منظم کرتا ہے۔",
       "timeline": {
         "title": "اسٹیٹس ٹائم لائن",
-        "empty": "اسٹیٹس اپڈیٹس یہاں ظاہر ہوں گی۔",
+        "empty": "درخواست کی پیشرفت کے ساتھ اسٹیٹس اپڈیٹس یہاں ظاہر ہوں گی۔",
         "current": "موجودہ اسٹیٹس"
+      },
+      "submittedData": {
+        "title": "جمع شدہ معلومات",
+        "empty": "کوئی اضافی فارم ڈیٹا جمع نہیں ہوا۔",
+        "protected": "حساس فیلڈ — مکمل قدر چھپائی گئی ہے"
+      },
+      "documents": {
+        "title": "دستاویزات",
+        "empty": "ابھی کوئی دستاویز اپ لوڈ نہیں ہوئی۔",
+        "required": "لازمی",
+        "optional": "اختیاری",
+        "status": "اسٹیٹس",
+        "missing": "اپ لوڈ نہیں ہوئی",
+        "statuses": {
+          "PENDING": "اپ لوڈ ہو گئی — جائزے کا انتظار",
+          "APPROVED": "تصدیق شدہ",
+          "REJECTED": "مسترد",
+          "MISSING": "اپ لوڈ نہیں ہوئی"
+        },
+        "rejectionReason": "مستردی کی وجہ",
+        "readOnlyNote": "دستاویزات کی اپ لوڈ کسٹمر اپنے ڈیش بورڈ سے کرتا ہے۔"
+      },
+      "invoicePending": "جائزے کے بعد ایڈمن انوائس بھیجے گا تو وہ یہاں ظاہر ہوگی۔",
+      "invoice": {
+        "title": "انوائس",
+        "invoiceNumber": "انوائس نمبر",
+        "total": "کل واجب الادا",
+        "subtotal": "ذیلی کل",
+        "tax": "ٹیکس",
+        "officialFeeNote": "سرکاری / سرکاری فیس",
+        "paymentMethods": "ادائیگی کے طریقے",
+        "paymentInstructions": "اضافی ادائیگی کی ہدایات",
+        "accountTitle": "اکاؤنٹ کا نام",
+        "accountNumber": "اکاؤنٹ نمبر",
+        "iban": "IBAN",
+        "bankName": "بینک",
+        "instructions": "ہدایات",
+        "scanQr": "ادائیگی کے لیے یہ QR کوڈ اسکین کریں",
+        "dueDate": "آخری تاریخ",
+        "notes": "نوٹس",
+        "lineItems": "فیس کی تفصیل",
+        "description": "تفصیل",
+        "amount": "رقم",
+        "officialFee": "سرکاری فیس",
+        "downloadPdf": "انوائس PDF ڈاؤن لوڈ کریں",
+        "loadingPdf": "PDF لوڈ ہو رہی ہے…",
+        "pdfError": "انوائس PDF لوڈ نہیں ہو سکی۔",
+        "retry": "دوبارہ کوشش",
+        "sentOn": "بھیجی گئی",
+        "exactPaymentTitle": "اہم ادائیگی نوٹس",
+        "exactPaymentNotice": "کسٹمر کو اوپر دکھائی گئی مکمل رقم ایک ہی ٹرانسفر میں ادا کرنی ہوگی۔ جزوی ادائیگی قبول نہیں۔",
+        "disclaimer": "یہ ایک نجی سہولت کی خدمت ہے — کسی سرکاری محکمے سے وابستہ نہیں۔ سرکاری ٹیکس اور فیس الگ ہیں۔",
+        "notAvailable": "ابھی تک اس درخواست کے لیے کوئی انوائس نہیں بھیجی گئی۔"
+      },
+      "payment": {
+        "title": "ادائیگی کا ثبوت",
+        "description": "کسٹمر انوائس کے مطابق ادائیگی کے بعد، کامیاب ادائیگی کا اسکرین شاٹ ان کی جانب سے یہاں اپ لوڈ کریں۔",
+        "upload": "اسکرین شاٹ اپ لوڈ کریں",
+        "uploading": "اپ لوڈ ہو رہا ہے…",
+        "uploaded": "ادائیگی کا اسکرین شاٹ اپ لوڈ ہو گیا",
+        "replace": "اسکرین شاٹ تبدیل کریں",
+        "replaceHint": "غلط اسکرین شاٹ اپ لوڈ ہو گئی؟ کارروائی شروع ہونے سے پہلے اسے تبدیل کریں۔",
+        "maxSize": "زیادہ سے زیادہ سائز",
+        "allowedTypes": "اجازت یافتہ اقسام",
+        "uploadFailed": "ادائیگی اپ لوڈ ناکام۔",
+        "invalidType": "فائل کی قسم مجاز نہیں۔",
+        "tooLarge": "فائل بہت بڑی ہے۔",
+        "invalidName": "غلط فائل نام۔",
+        "waitingVerification": "ادائیگی کا اسکرین شاٹ اپ لوڈ ہو گیا۔ ایڈمن تصدیق کر رہا ہے۔",
+        "verified": "ادائیگی کی تصدیق ہو گئی۔ کارروائی جاری رہے گی۔",
+        "rejected": "ادائیگی مسترد",
+        "rejectionReason": "وجہ",
+        "viewer": {
+          "loading": "ادائیگی کا اسکرین شاٹ لوڈ ہو رہا ہے…",
+          "error": "ادائیگی کا اسکرین شاٹ لوڈ نہیں ہو سکا۔",
+          "retry": "دوبارہ کوشش",
+          "openNewTab": "نئی ٹیب میں کھولیں",
+          "unsupported": "اس فائل کی قسم کے لیے پیش نظارہ دستیاب نہیں۔"
+        }
+      },
+      "commission": {
+        "title": "کمیشن ادائیگی",
+        "amount": "رقم",
+        "payoutStatus": "ادائیگی کی صورتحال",
+        "receiptStatus": "آپ کی تصدیق",
+        "viewCommissions": "تمام کمیشن دیکھیں",
+        "pendingAdmin": "درخواست مکمل ہونے کے بعد ایڈمن کمیشن شامل کرے گا۔"
+      },
+      "proof": {
+        "title": "تکمیل کا ثبوت",
+        "description": "یہ درخواست مکمل ہو گئی ہے۔ محفوظ لنک کے ذریعے کسٹمر کے لیے سرکاری تکمیل کا ثبوت ڈاؤن لوڈ کریں۔",
+        "download": "ثبوت ڈاؤن لوڈ کریں",
+        "loading": "ڈاؤن لوڈ تیار ہو رہا ہے…",
+        "error": "ثبوت ڈاؤن لوڈ تیار نہیں ہو سکا۔",
+        "retry": "دوبارہ کوشش",
+        "defaultFileName": "completion-proof"
+      },
+      "guidance": {
+        "wait_review": {
+          "title": "جائزے کے تحت",
+          "description": "ہماری ٹیم اس درخواست کا جائزہ لے رہی ہے۔ ابھی آپ سے کوئی اقدام درکار نہیں۔"
+        },
+        "customer_upload_docs": {
+          "title": "کسٹمر کا اقدام درکار",
+          "description": "کارروائی جاری رکھنے کے لیے کسٹمر کو اپنے ڈیش بورڈ سے دستاویزات اپ لوڈ یا تبدیل کرنی ہوں گی۔"
+        },
+        "customer_payment": {
+          "title": "ادائیگی کا ثبوت درکار",
+          "description": "انوائس بھیج دی گئی ہے۔ کسٹمر کی ادائیگی کے بعد اس کا اسکرین شاٹ یہاں اپ لوڈ کریں۔"
+        },
+        "wait_payment_verification": {
+          "title": "ادائیگی کی تصدیق جاری",
+          "description": "کسٹمر نے ادائیگی کا ثبوت اپ لوڈ کیا ہے۔ ایڈمن تصدیق کے بعد کام جاری رکھے گا۔"
+        },
+        "in_progress": {
+          "title": "کارروائی جاری",
+          "description": "ادائیگی کی تصدیق ہو گئی ہے اور درخواست پر کام جاری ہے۔ اپڈیٹس یہاں دکھائی جائیں گی۔"
+        },
+        "view_commission": {
+          "title": "کمیشن دستیاب",
+          "description": "اس درخواست کے لیے کمیشن لائن آئٹم ہے۔ ادائیگی ہونے پر اسٹیٹس دیکھیں اور وصولی کی تصدیق کریں۔"
+        }
       }
     },
     "newApplication": {
@@ -564,38 +704,124 @@
     "commissions": {
       "metaTitle": "کمیشن | PakExcise.com",
       "title": "کمیشن",
-      "description": "ایڈمن کی طرف سے مقرر کردہ کمیشن لائن آئٹمز۔",
-      "commissionRate": "آپ کی کمیشن شرح",
+      "description": "کمیشن لائن آئٹمز، ادائیگی کے ثبوت، اور وصولی کی تصدیق ٹریک کریں۔",
+      "summaryPercentage": "آپ کی ڈیفالٹ کمیشن: فی مکمل درخواست سہولت فیس کا {rate}%۔",
+      "summaryFixed": "آپ کی ڈیفالٹ کمیشن: فی مکمل درخواست PKR {amount}۔",
+      "summaryManual": "ہر مکمل درخواست کے لیے ایڈمن دستی کمیشن شامل کرتا ہے۔",
       "empty": "ابھی کوئی کمیشن لائن آئٹم نہیں۔",
-      "payoutPlaceholder": "ادائیگی کی پروسیسنگ ایڈمن منظم کرتا ہے۔",
+      "payoutPlaceholder": "ایڈمن ادائیگی مکمل اور ثبوت اپ لوڈ کرنے کے بعد، اسکرین شاٹ دیکھیں اور بتائیں کہ ادائیگی موصول ہوئی یا نہیں۔",
+      "viewProof": "ثبوت دیکھیں",
+      "hideProof": "ثبوت چھپائیں",
+      "confirmReceipt": "موصول ہوا",
+      "notReceived": "موصول نہیں ہوا",
+      "changeReceipt": "حالت بدلیں",
+      "disputeReason": "ادائیگی کیوں موصول نہیں ہوئی؟",
+      "disputePlaceholder": "بتائیں کہ اس ادائیگی میں کیا کمی یا غلطی ہے۔",
+      "adminResponse": "ایڈمن کا جواب",
+      "submitDispute": "موصول نہیں ہوا رپورٹ کریں",
+      "cancelDispute": "منسوخ",
+      "confirming": "محفوظ ہو رہا ہے…",
+      "disputing": "جمع ہو رہا ہے…",
+      "confirmError": "وصولی کی حالت اپڈیٹ نہیں ہو سکی۔",
+      "paidOn": "ادائیگی کی تاریخ",
+      "noTrackingId": "کوئی درخواست منسلک نہیں",
+      "filters": {
+        "all": "سب",
+        "pending": "زیر التوا",
+        "paid": "ادا شدہ",
+        "cancelled": "منسوخ"
+      },
+      "summary": {
+        "pending": "زیر التوا",
+        "paid": "کل ادا شدہ",
+        "awaiting": "آپ کی تصدیق زیر التوا"
+      },
+      "receiptStatus": {
+        "AWAITING": "تصدیق زیر التوا",
+        "RECEIVED": "موصول ہوا",
+        "NOT_RECEIVED": "موصول نہیں ہوا"
+      },
       "columns": {
         "label": "آئٹم",
         "amount": "رقم",
         "payoutStatus": "ادائیگی کی صورتحال",
         "application": "درخواست",
-        "date": "تاریخ"
+        "date": "تاریخ",
+        "actions": "اقدامات"
       },
       "payoutStatus": {
         "PENDING": "زیر التوا",
         "PROCESSING": "پروسیسنگ",
         "PAID": "ادا شدہ",
         "CANCELLED": "منسوخ"
+      },
+      "source": {
+        "MANUAL": "دستی ادائیگی",
+        "AUTO_PERCENTAGE": "خودکار فیصد",
+        "AUTO_FIXED": "خودکار مقررہ"
+      },
+      "proof": {
+        "loading": "ثبوت لوڈ ہو رہا ہے…",
+        "error": "ثبوت لوڈ نہیں ہو سکا",
+        "retry": "دوبارہ کوشش",
+        "openNewTab": "نئی ٹیب میں کھولیں",
+        "unsupported": "اس فائل کی پیش نظارہ دستیاب نہیں"
       }
     },
     "profile": {
       "metaTitle": "ایجنٹ پروفائل | PakExcise.com",
       "title": "ایجنٹ پروفائل",
-      "description": "رابطے کی تفصیلات اپ ڈیٹ کریں اور ایجنٹ اسٹیٹس دیکھیں۔",
+      "description": "رابطے کی تفصیلات، ادائیگی کا طریقہ، اور ایجنٹ اسٹیٹس دیکھیں۔",
       "name": "پورا نام",
       "phone": "موبائل نمبر",
       "email": "ای میل",
       "emailReadOnly": "ای میل یہاں تبدیل نہیں ہو سکتی۔",
       "commissionRate": "کمیشن شرح",
+      "commissionMode": "کمیشن موڈ",
+      "commissionModeManual": "فی درخواست دستی",
+      "commissionModePercentage": "فی مکمل درخواست فیصد",
+      "commissionModeFixed": "فی مکمل درخواست مقررہ رقم",
+      "fixedAmount": "مقررہ کمیشن رقم",
       "approvalStatus": "منظوری کی صورتحال",
       "save": "تبدیلیاں محفوظ کریں",
       "saving": "محفوظ ہو رہا ہے…",
       "saved": "پروفائل اپ ڈیٹ ہو گئی۔",
-      "error": "پروفائل اپ ڈیٹ نہیں ہو سکی۔"
+      "error": "پروفائل اپ ڈیٹ نہیں ہو سکی۔",
+      "payoutMethod": {
+        "title": "ادائیگی کا طریقہ",
+        "description": "وہ تفصیلات درج کریں جہاں آپ کمیشن وصول کرنا چاہتے ہیں۔",
+        "methodType": "ادائیگی کا طریقہ",
+        "accountTitle": "اکاؤنٹ کا نام",
+        "accountNumber": "اکاؤنٹ نمبر",
+        "iban": "IBAN",
+        "bankName": "بینک کا نام",
+        "walletNumber": "موبائل والیٹ نمبر",
+        "notes": "اضافی نوٹس",
+        "save": "ادائیگی کا طریقہ محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "saved": "ادائیگی کا طریقہ محفوظ ہو گیا۔",
+        "error": "ادائیگی کا طریقہ محفوظ نہیں ہو سکا۔",
+        "cancel": "منسوخ",
+        "configured": "ترتیب شدہ",
+        "addMethod": "طریقہ شامل کریں",
+        "editMethod": "ترمیم",
+        "deleteMethod": "ہٹائیں",
+        "deleteConfirm": "ادائیگی کا طریقہ ہٹائیں؟ دوبارہ شامل کرنے تک ایڈمن آپ کو ادائیگی نہیں کر سکے گا۔",
+        "deleteConfirmButton": "ہاں، ہٹائیں",
+        "deleteDismiss": "طریقہ رکھیں",
+        "deleting": "ہٹایا جا رہا ہے…",
+        "deleted": "ادائیگی کا طریقہ ہٹا دیا گیا۔",
+        "emptyTitle": "ادائیگیاں کہاں وصول کرنی ہیں شامل کریں",
+        "emptyDescription": "ایڈمن کمیشن ادا کرتے وقت یہ تفصیلات استعمال کرتا ہے۔",
+        "types": {
+          "BANK_TRANSFER": "بینک ٹرانسفر",
+          "JAZZCASH": "جاز کیش",
+          "EASYPAISA": "ایزی پیسہ",
+          "NAYAPAY": "نیا پے",
+          "SADAPAY": "صدا پے",
+          "OTHER": "دیگر"
+        }
+      }
     },
     "verification": {
       "metaTitle": "ایجنٹ تصدیق | PakExcise.com",
@@ -883,6 +1109,7 @@
       "social": "سوشل لنکس",
       "paymentMethods": "ادائیگی کے طریقے",
       "agents": "ایجنٹس",
+      "agentPayouts": "ایجنٹ ادائیگیاں",
       "agentVerifications": "ایجنٹ تصدیقات",
       "customers": "کسٹمرز",
       "notifications": "اطلاعات",
@@ -991,6 +1218,7 @@
         "proofTitle": "تکمیل کا ثبوت اپ لوڈ",
         "proofDescription": "جب خدمت کو ثبوت درکار ہو تو مکمل سے پہلے یہ لازمی ہے۔",
         "proofUpload": "ثبوت اپ لوڈ",
+        "proofReplace": "ثبوت تبدیل کریں",
         "proofUploading": "اپ لوڈ ہو رہا ہے…",
         "proofUploaded": "ثبوت اپ لوڈ ہو گیا",
         "proofRequired": "اس خدمت کے لیے تکمیل کا ثبوت لازمی ہے۔",
@@ -1103,39 +1331,225 @@
     },
     "agents": {
       "title": "ایجنٹس",
-      "description": "ایجنٹس منظور کریں، کمیشن شرح مقرر کریں، اور کمیشن لائن آئٹمز منظم کریں۔",
+      "description": "ایجنٹس کی منظوری، کمیشن کی شرح، اور جمع شدہ درخواستوں کا جائزہ لیں۔",
       "emptyTitle": "کوئی ایجنٹ نہیں ملا",
-      "emptyDescription": "صارفین کو ایجنٹ رول میں ترقی دیں تاکہ پروفائلز بنیں۔",
+      "emptyDescription": "ایجنٹ پروفائل بنانے کے لیے صارفین کو ایجنٹ رول میں ترقی دیں۔",
       "active": "فعال",
       "inactive": "غیر فعال",
-      "commissionRate": "کمیشن شرح",
+      "manage": "منظم کریں",
+      "sheetTitle": "ایجنٹ منظم کریں",
+      "sheetDescription": "منظوری، اکاؤنٹ رسائی، کمیشن کی ترتیبات اور ادائیگیاں اپڈیٹ کریں۔",
+      "viewApplications": "تمام درخواستیں دیکھیں",
+      "recentApplications": "حالیہ درخواستیں",
+      "noRecentApplications": "اس ایجنٹ نے ابھی تک کوئی درخواست جمع نہیں کروائی۔",
+      "commissionRate": "کمیشن کی شرح",
+      "commissionFixedPrefix": "PKR",
+      "commissionManualDisplay": "دستی",
       "applicationCount": "جمع شدہ درخواستیں",
       "commissionItems": "کمیشن لائن آئٹمز",
-      "recentApplications": "حالیہ ایجنٹ درخواستیں",
+      "stats": {
+        "total": "کل ایجنٹس",
+        "pending": "زیر التوا منظوری",
+        "approved": "منظور شدہ",
+        "rejected": "مسترد",
+        "active": "فعال اکاؤنٹس",
+        "inactive": "غیر فعال اکاؤنٹس"
+      },
+      "filters": {
+        "search": "تلاش",
+        "searchPlaceholder": "نام، ای میل، یا فون",
+        "approvalStatus": "منظوری کی حیثیت",
+        "allStatuses": "تمام حیثیتیں",
+        "apply": "فلٹرز لاگو کریں",
+        "reset": "ری سیٹ"
+      },
+      "approvalStatus": {
+        "PENDING": "زیر التوا",
+        "APPROVED": "منظور",
+        "REJECTED": "مسترد"
+      },
       "columns": {
+        "agent": "ایجنٹ",
+        "contact": "رابطہ",
+        "approval": "منظوری",
+        "account": "اکاؤنٹ",
+        "commission": "کمیشن",
+        "applications": "درخواستیں",
+        "commissions": "کمیشنز",
+        "actions": "اقدامات",
         "trackingId": "ٹریکنگ ID",
         "service": "خدمت",
         "status": "اسٹیٹس",
         "created": "تاریخ"
       },
       "actions": {
-        "approve": "ایجنٹ منظور",
+        "approve": "ایجنٹ منظور کریں",
         "approving": "منظور ہو رہا ہے…",
-        "reject": "ایجنٹ مسترد",
+        "reject": "ایجنٹ مسترد کریں",
         "rejecting": "مسترد ہو رہا ہے…",
         "rejectNotes": "مستردی کے نوٹس",
-        "updateRate": "شرح اپڈیٹ",
+        "updateRate": "شرح اپڈیٹ کریں",
         "updatingRate": "اپڈیٹ ہو رہا ہے…",
         "activate": "فعال کریں",
         "deactivate": "غیر فعال کریں",
         "toggling": "اپڈیٹ ہو رہا ہے…",
-        "addCommission": "کمیشن لائن آئٹم شامل",
+        "addCommission": "کمیشن لائن آئٹم شامل کریں",
         "commissionLabel": "لیبل",
         "commissionAmount": "رقم (PKR)",
         "commissionDescription": "تفصیل",
         "addingCommission": "شامل ہو رہا ہے…",
         "success": "ایجنٹ اپڈیٹ ہو گیا۔",
-        "error": "ایجنٹ اپڈیٹ نہیں ہو سکا۔"
+        "error": "ایجنٹ اپڈیٹ نہیں ہو سکا۔",
+        "approvalSection": "منظوری",
+        "accountSection": "اکاؤنٹ رسائی",
+        "commissionSection": "کمیشن کی شرح",
+        "payoutSection": "دستی ادائیگی",
+        "showPayoutForm": "ادائیگی شامل کریں",
+        "hidePayoutForm": "فارم چھپائیں",
+        "commissionHelp": "درخواست مکمل ہونے پر خودکار کمیشن بنتا ہے۔ دستی موڈ میں آپ خود ہر درخواست کی ادائیگی شامل کریں۔",
+        "commissionMode": "کمیشن موڈ",
+        "commissionModeManual": "فی درخواست دستی",
+        "commissionModePercentage": "فی مکمل درخواست فیصد",
+        "commissionModeFixed": "فی مکمل درخواست مقررہ رقم",
+        "fixedAmount": "مقررہ رقم (PKR)",
+        "saveManualMode": "دستی موڈ محفوظ کریں",
+        "payoutMethodSection": "ایجنٹ ادائیگی کی تفصیلات",
+        "payoutMethodType": "ادائیگی کا طریقہ",
+        "payoutAccountTitle": "اکاؤنٹ کا نام",
+        "payoutAccountNumber": "اکاؤنٹ نمبر",
+        "payoutIban": "IBAN",
+        "payoutBankName": "بینک کا نام",
+        "payoutWalletNumber": "والیٹ نمبر",
+        "payoutNotes": "ایجنٹ کے نوٹس",
+        "payoutMethodMissing": "ایجنٹ نے ابھی ادائیگی کی تفصیلات شامل نہیں کیں۔",
+        "commissionsLedger": "کمیشن لیجر",
+        "noCommissions": "ابھی کوئی کمیشن لائن آئٹم نہیں۔",
+        "markPaid": "ادا شدہ + ثبوت اپ لوڈ",
+        "viewProof": "ثبوت دیکھیں",
+        "hideProof": "ثبوت چھپائیں",
+        "agentConfirmed": "ایجنٹ نے وصولی کی تصدیق کر دی",
+        "awaitingAgentConfirm": "ایجنٹ کی تصدیق زیر التوا",
+        "invalidProof": "غلط ثبوت فائل",
+        "uploadFailed": "ثبوت اپ لوڈ نہیں ہو سکا",
+        "proofLoading": "ثبوت لوڈ ہو رہا ہے…",
+        "proofError": "ثبوت لوڈ نہیں ہو سکا",
+        "proofRetry": "دوبارہ کوشش",
+        "proofOpen": "نئی ٹیب میں کھولیں",
+        "proofUnsupported": "اس فائل کی پیش نظارہ دستیاب نہیں"
+      },
+      "ledger": {
+        "edit": "ادائیگی میں ترمیم",
+        "save": "تبدیلیاں محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "cancelEdit": "منسوخ",
+        "cancelPayout": "ادائیگی منسوخ کریں",
+        "cancelling": "منسوخ ہو رہا ہے…",
+        "cancelConfirm": "کیا یہ ادائیگی لائن آئٹم منسوخ کریں؟ یہ واپس نہیں ہو سکتا۔",
+        "cancelConfirmButton": "ہاں، ادائیگی منسوخ کریں",
+        "cancelDismiss": "ادائیگی رکھیں",
+        "locked": "ادا شدہ ادائیگیاں ترمیم نہیں ہو سکتیں",
+        "filterAll": "سب",
+        "filterPending": "زیر التوا",
+        "filterPaid": "ادا شدہ",
+        "filterCancelled": "منسوخ",
+        "summaryPending": "زیر التوا",
+        "summaryPaid": "ادا شدہ",
+        "success": "کمیشن لیجر اپڈیٹ ہو گیا۔",
+        "error": "کمیشن لیجر اپڈیٹ نہیں ہو سکا۔",
+        "markPaidShort": "ادا کریں",
+        "markPaidUploading": "اپ لوڈ ہو رہا ہے…",
+        "markPaidRequiresPayout": "ادا کرنے سے پہلے ایجنٹ کو ادائیگی کی تفصیلات شامل کرنی ہوں گی۔",
+        "noTrackingId": "کوئی درخواست منسلک نہیں",
+        "completePayout": "ادائیگی مکمل کریں",
+        "completingPayout": "مکمل ہو رہی ہے…",
+        "reuploadProof": "ثبوت بدلیں",
+        "resolveDispute": "تنازعہ حل کریں",
+        "resolvingDispute": "حل ہو رہا ہے…",
+        "resolutionNote": "ایڈمن کا جواب",
+        "resolutionNotePlaceholder": "ایجنٹ کے لیے نئے ثبوت یا ادائیگی کی تفصیلات بیان کریں…",
+        "resolutionNoteRequired": "تنازعہ حل کرنے کے لیے جوابی نوٹ ضروری ہے۔",
+        "cancelResolve": "منسوخ",
+        "uploadNewProof": "نیا ثبوت اپ لوڈ کریں",
+        "receipt_RECEIVED": "ایجنٹ نے وصولی کی تصدیق کر دی",
+        "receipt_NOT_RECEIVED": "ایجنٹ نے موصول نہیں ہونے کی رپورٹ کی",
+        "receipt_AWAITING": "ایجنٹ کی تصدیق زیر التوا"
+      },
+      "payouts": {
+        "title": "ایجنٹ ادائیگیاں",
+        "description": "تمام ایجنٹ کمیشن، ادائیگی کے ثبوت، اور تصدیق کی صورتحال ٹریک کریں۔",
+        "emptyTitle": "کوئی ادائیگی نہیں ملی",
+        "emptyDescription": "دستی یا خودکار کمیشن یہاں ظاہر ہوں گے۔",
+        "agentConfirmed": "ایجنٹ نے تصدیق کر دی",
+        "awaitingConfirm": "ایجنٹ کی تصدیق زیر التوا",
+        "hasProof": "ثبوت اپ لوڈ شدہ",
+        "columns": {
+          "agent": "ایجنٹ",
+          "label": "آئٹم",
+          "application": "درخواست",
+          "amount": "رقم",
+          "status": "صورتحال",
+          "source": "ماخذ",
+          "actions": "اقدامات",
+          "date": "تاریخ"
+        },
+        "filters": {
+          "search": "تلاش",
+          "searchPlaceholder": "ایجنٹ، ٹریکنگ ID، یا لیبل",
+          "status": "ادائیگی کی صورتحال",
+          "allStatuses": "تمام صورتحیالات",
+          "receiptStatus": "ایجنٹ کی وصولی",
+          "allReceiptStatuses": "تمام وصولی کی صورتحیالات",
+          "apply": "فلٹرز لاگو کریں",
+          "reset": "ری سیٹ"
+        },
+        "receipt": {
+          "AWAITING": "تصدیق زیر التوا",
+          "RECEIVED": "ایجنٹ نے تصدیق کی",
+          "NOT_RECEIVED": "موصول نہیں ہوا"
+        },
+        "source": {
+          "MANUAL": "دستی",
+          "AUTO_PERCENTAGE": "خودکار %",
+          "AUTO_FIXED": "خودکار مقررہ"
+        },
+        "status": {
+          "PENDING": "زیر التوا",
+          "PROCESSING": "پروسیسنگ",
+          "PAID": "ادا شدہ",
+          "CANCELLED": "منسوخ"
+        }
+      }
+    },
+    "customers": {
+      "title": "کسٹمرز",
+      "description": "کسٹمر اکاؤنٹس اور ان کی درخواستوں کی تاریخ دیکھیں۔",
+      "emptyTitle": "کوئی کسٹمر نہیں ملا",
+      "emptyDescription": "صارفین کے سائن اپ کرنے کے بعد کسٹمر اکاؤنٹس یہاں ظاہر ہوں گے۔",
+      "verifiedEmail": "ای میل تصدیق شدہ",
+      "verifiedPhone": "فون تصدیق شدہ",
+      "viewApplications": "درخواستیں دیکھیں",
+      "filters": {
+        "search": "تلاش",
+        "searchPlaceholder": "نام، ای میل، یا فون",
+        "status": "اسٹیٹس",
+        "allStatuses": "تمام اسٹیٹس",
+        "apply": "فلٹرز لاگو کریں",
+        "reset": "ری سیٹ"
+      },
+      "columns": {
+        "name": "نام",
+        "email": "ای میل / لاگ ان",
+        "phone": "فون",
+        "status": "اسٹیٹس",
+        "applications": "درخواستیں",
+        "joined": "شامل ہوئے",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "ACTIVE": "فعال",
+        "DISABLED": "غیر فعال",
+        "PENDING": "زیر التوا",
+        "SUSPENDED": "معطل"
       }
     },
     "notifications": {

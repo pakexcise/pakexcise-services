@@ -260,6 +260,7 @@ export default async function CustomerApplicationPage({
       {payment ? (
         <PaymentUpload
           applicationId={application.id}
+          applicationStatus={application.status}
           paymentId={payment.id}
           paymentStatus={payment.status}
           screenshotFileName={payment.screenshotFileName}
@@ -273,6 +274,7 @@ export default async function CustomerApplicationPage({
             uploading: t("payment.uploading"),
             uploaded: t("payment.uploaded"),
             replace: t("payment.replace"),
+            replaceHint: t("payment.replaceHint"),
             maxSize: t("payment.maxSize"),
             allowedTypes: t("payment.allowedTypes"),
             uploadFailed: t("payment.uploadFailed"),

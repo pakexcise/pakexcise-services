@@ -19,6 +19,7 @@ const completionProofUploadStatuses: ApplicationStatus[] = [
   "PAYMENT_VERIFIED",
   "IN_PROGRESS",
   "AT_OFFICE",
+  "COMPLETED",
 ];
 
 export function canUploadCompletionProof(

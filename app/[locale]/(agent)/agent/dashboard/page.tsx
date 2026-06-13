@@ -10,6 +10,7 @@ import { AgentQuickActions } from "@/components/agent/agent-quick-actions";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { formatPkr } from "@/features/invoices/lib/format-pkr";
 import { isApprovedActiveAgent } from "@/features/agents/lib/is-approved-agent";
+import { isAgentPayoutMethodConfigured } from "@/features/agents/lib/payout-method";
 import { isTempPhoneEmail } from "@/features/auth/lib/user-identity";
 import { agentDashboardStatusCards } from "@/config/agent";
 import { formatDate } from "@/lib/utils";
@@ -18,6 +19,8 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { agentApplicationRepository } from "@/server/repositories/agent-application-repository";
 import { agentRepository } from "@/server/repositories/agent-repository";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("agent.dashboard");
@@ -114,6 +117,12 @@ export default async function AgentDashboardPage() {
 
   const pendingTotal = sumCommissionAmounts(commissions, ["PENDING", "PROCESSING"]);
   const paidTotal = sumCommissionAmounts(commissions, ["PAID"]);
+  const awaitingConfirmations = commissions.filter(
+    (item) => item.payoutStatus === "PAID" && item.agentReceiptStatus === "AWAITING",
+  ).length;
+  const hasPayoutMethod = agentProfile
+    ? isAgentPayoutMethodConfigured(agentProfile)
+    : false;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -182,11 +191,16 @@ export default async function AgentDashboardPage() {
           <AgentCommissionSummary
             pendingTotal={formatPkr(pendingTotal, locale)}
             paidTotal={formatPkr(paidTotal, locale)}
+            awaitingCount={awaitingConfirmations}
+            payoutMethodMissing={!hasPayoutMethod}
             labels={{
               title: t("commissionSummary.title"),
               description: t("commissionSummary.description"),
               pendingLabel: t("commissionSummary.pending"),
               paidLabel: t("commissionSummary.paid"),
+              awaitingLabel: t("commissionSummary.awaiting"),
+              payoutMethodMissing: t("commissionSummary.payoutMethodMissing"),
+              setupPayoutMethod: t("commissionSummary.setupPayoutMethod"),
               viewAll: t("commissionSummary.viewAll"),
             }}
           />

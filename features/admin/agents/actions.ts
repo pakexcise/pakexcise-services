@@ -1,12 +1,22 @@
 "use server";
 
 import {
+  PAYMENT_SCREENSHOT_MAX_BYTES,
+  buildCommissionProofKey,
+  validateUploadFile,
+} from "@/config/uploads";
+import {
   agentProfileIdSchema,
+  confirmCommissionPaidSchema,
   createAgentCommissionSchema,
+  cancelAgentCommissionSchema,
+  abortCommissionProofUploadSchema,
   promoteUserToAgentSchema,
   rejectAgentSchema,
+  requestCommissionProofUploadSchema,
   toggleAgentActiveSchema,
-  updateAgentCommissionRateSchema,
+  updateAgentCommissionConfigSchema,
+  updateAgentCommissionSchema,
 } from "@/features/admin/agents/validators";
 import {
   errorResult,
@@ -17,6 +27,10 @@ import {
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { requirePermission } from "@/server/permissions/guards";
+import {
+  headStoredObject,
+  isObjectStorageConfigured,
+} from "@/server/storage/object-storage";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
 
 async function getAgentProfileOrError(agentProfileId: string) {
@@ -28,6 +42,10 @@ async function getAgentProfileOrError(agentProfileId: string) {
   });
 
   if (!profile) {
+    return null;
+  }
+
+  if (profile.user.role !== "AGENT") {
     return null;
   }
 
@@ -126,11 +144,31 @@ export async function rejectAgentAction(
 
 export async function updateAgentCommissionRateAction(
   input: unknown,
-): Promise<ActionResult<{ agentProfileId: string; commissionRate: string }>> {
+): Promise<
+  ActionResult<{
+    agentProfileId: string;
+    commissionMode: string;
+    commissionRate: string;
+    commissionFixedAmount: string | null;
+  }>
+> {
+  return updateAgentCommissionConfigAction(input);
+}
+
+export async function updateAgentCommissionConfigAction(
+  input: unknown,
+): Promise<
+  ActionResult<{
+    agentProfileId: string;
+    commissionMode: string;
+    commissionRate: string;
+    commissionFixedAmount: string | null;
+  }>
+> {
   const user = await requirePermission("agents:manage");
   await enforceRateLimit(serverActionRateLimit, `agent-rate:${user.id}`);
 
-  const parsed = parseInput(updateAgentCommissionRateSchema, input);
+  const parsed = parseInput(updateAgentCommissionConfigSchema, input);
 
   if (!parsed.success) {
     return errorResult(parsed.error, parsed.fieldErrors);
@@ -144,7 +182,17 @@ export async function updateAgentCommissionRateAction(
 
   const updated = await prisma.agentProfile.update({
     where: { id: profile.id },
-    data: { commissionRate: parsed.data.commissionRate },
+    data: {
+      commissionMode: parsed.data.commissionMode,
+      commissionRate:
+        parsed.data.commissionMode === "PERCENTAGE"
+          ? (parsed.data.commissionRate ?? 0)
+          : 0,
+      commissionFixedAmount:
+        parsed.data.commissionMode === "FIXED"
+          ? (parsed.data.commissionFixedAmount ?? null)
+          : null,
+    },
   });
 
   await auditAdminAction({
@@ -152,13 +200,23 @@ export async function updateAgentCommissionRateAction(
     action: "UPDATE",
     entityType: "agent_profile",
     entityId: profile.id,
-    before: { commissionRate: profile.commissionRate.toString() },
-    after: { commissionRate: updated.commissionRate.toString() },
+    before: {
+      commissionMode: profile.commissionMode,
+      commissionRate: profile.commissionRate.toString(),
+      commissionFixedAmount: profile.commissionFixedAmount?.toString() ?? null,
+    },
+    after: {
+      commissionMode: updated.commissionMode,
+      commissionRate: updated.commissionRate.toString(),
+      commissionFixedAmount: updated.commissionFixedAmount?.toString() ?? null,
+    },
   });
 
   return successResult({
     agentProfileId: updated.id,
+    commissionMode: updated.commissionMode,
     commissionRate: updated.commissionRate.toString(),
+    commissionFixedAmount: updated.commissionFixedAmount?.toString() ?? null,
   });
 }
 
@@ -216,28 +274,40 @@ export async function createAgentCommissionAction(
     return errorResult("Agent profile not found");
   }
 
-  if (parsed.data.applicationId) {
-    const application = await prisma.application.findFirst({
-      where: {
-        id: parsed.data.applicationId,
-        agentId: profile.userId,
-      },
-      select: { id: true },
-    });
+  const application = await prisma.application.findFirst({
+    where: {
+      trackingId: parsed.data.trackingId.toUpperCase(),
+      agentId: profile.userId,
+    },
+    select: { id: true, trackingId: true },
+  });
 
-    if (!application) {
-      return errorResult("Application is not assigned to this agent");
-    }
+  if (!application) {
+    return errorResult("Application not found for this agent");
+  }
+
+  const existing = await prisma.agentCommission.findFirst({
+    where: {
+      applicationId: application.id,
+      source: "MANUAL",
+      payoutStatus: { not: "CANCELLED" },
+    },
+    select: { id: true },
+  });
+
+  if (existing) {
+    return errorResult("A manual payout already exists for this application");
   }
 
   const commission = await prisma.agentCommission.create({
     data: {
       agentProfileId: profile.id,
-      applicationId: parsed.data.applicationId,
+      applicationId: application.id,
       label: parsed.data.label,
       description: parsed.data.description,
       amount: parsed.data.amount,
-      payoutStatus: parsed.data.payoutStatus,
+      source: "MANUAL",
+      payoutStatus: "PENDING",
     },
   });
 
@@ -255,6 +325,404 @@ export async function createAgentCommissionAction(
   });
 
   return successResult({ commissionId: commission.id });
+}
+
+async function getCommissionForAdmin(commissionId: string) {
+  return prisma.agentCommission.findFirst({
+    where: {
+      id: commissionId,
+      agentProfile: {
+        user: {
+          role: "AGENT",
+          deletedAt: null,
+        },
+      },
+    },
+    include: {
+      application: {
+        select: {
+          id: true,
+          trackingId: true,
+        },
+      },
+      agentProfile: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  });
+}
+
+export async function requestCommissionProofUploadAction(
+  input: unknown,
+): Promise<
+  ActionResult<{
+    commissionId: string;
+  }>
+> {
+  if (!isObjectStorageConfigured()) {
+    return errorResult("Proof upload is not available");
+  }
+
+  const user = await requirePermission("agents:manage");
+  await enforceRateLimit(serverActionRateLimit, `commission-proof:${user.id}`);
+
+  const parsed = parseInput(requestCommissionProofUploadSchema, input);
+
+  if (!parsed.success) {
+    return errorResult(parsed.error, parsed.fieldErrors);
+  }
+
+  const commission = await getCommissionForAdmin(parsed.data.commissionId);
+
+  if (!commission) {
+    return errorResult("Commission not found");
+  }
+
+  if (commission.payoutStatus === "PAID") {
+    if (commission.agentReceiptStatus !== "NOT_RECEIVED") {
+      return errorResult("Commission is already marked as paid");
+    }
+  } else if (commission.payoutStatus === "CANCELLED") {
+    return errorResult("Cancelled commissions cannot be paid");
+  }
+
+  const validation = validateUploadFile({
+    fileName: parsed.data.fileName,
+    mimeType: parsed.data.mimeType,
+    fileSize: parsed.data.fileSize,
+    maxSizeBytes: PAYMENT_SCREENSHOT_MAX_BYTES,
+  });
+
+  if (!validation.valid) {
+    return errorResult("Invalid proof file");
+  }
+
+  const trackingId = commission.application?.trackingId;
+
+  if (!trackingId) {
+    return errorResult("Commission must be linked to an application before payment proof upload");
+  }
+
+  const proofR2Key = buildCommissionProofKey({
+    trackingId,
+    commissionId: commission.id,
+    extension: validation.extension,
+  });
+
+  try {
+    await prisma.agentCommission.update({
+      where: { id: commission.id },
+      data: {
+        payoutStatus: "PROCESSING",
+        proofR2Key,
+        proofMimeType: parsed.data.mimeType,
+        proofFileName: parsed.data.fileName,
+        proofFileSize: parsed.data.fileSize,
+      },
+    });
+
+    return successResult({
+      commissionId: commission.id,
+    });
+  } catch {
+    return errorResult("Could not prepare proof upload");
+  }
+}
+
+export async function confirmCommissionPaidAction(
+  input: unknown,
+): Promise<ActionResult<{ commissionId: string; payoutStatus: string }>> {
+  const user = await requirePermission("agents:manage");
+  const parsed = parseInput(confirmCommissionPaidSchema, input);
+
+  if (!parsed.success) {
+    return errorResult(parsed.error, parsed.fieldErrors);
+  }
+
+  const commission = await getCommissionForAdmin(parsed.data.commissionId);
+
+  if (!commission || !commission.proofR2Key) {
+    return errorResult("Commission proof upload not found");
+  }
+
+  const head = await headStoredObject(commission.proofR2Key);
+
+  if (!head?.contentLength) {
+    return errorResult("Uploaded proof was not found in storage");
+  }
+
+  const isDisputeResolution = commission.agentReceiptStatus === "NOT_RECEIVED";
+  const resolutionNote = parsed.data.resolutionNote?.trim();
+
+  if (isDisputeResolution && !resolutionNote) {
+    return errorResult("Resolution note is required when resolving a dispute");
+  }
+
+  const now = new Date();
+
+  const updated = await prisma.agentCommission.update({
+    where: { id: commission.id },
+    data: {
+      payoutStatus: "PAID",
+      proofFileSize: head.contentLength,
+      paidAt: commission.paidAt ?? now,
+      paidById: commission.paidById ?? user.id,
+      agentReceiptStatus: "AWAITING",
+      agentConfirmedAt: null,
+      agentDisputedAt: null,
+      agentDisputeReason: null,
+      ...(isDisputeResolution
+        ? {
+            adminResolutionNote: resolutionNote,
+            adminResolvedAt: now,
+            adminResolvedById: user.id,
+          }
+        : {}),
+    },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "UPDATE",
+    entityType: "agent_commission",
+    entityId: commission.id,
+    before: { payoutStatus: commission.payoutStatus },
+    after: {
+      payoutStatus: updated.payoutStatus,
+      paidAt: updated.paidAt?.toISOString() ?? null,
+    },
+  });
+
+  return successResult({
+    commissionId: updated.id,
+    payoutStatus: updated.payoutStatus,
+  });
+}
+
+export async function updateAgentCommissionAction(
+  input: unknown,
+): Promise<ActionResult<{ commissionId: string }>> {
+  const user = await requirePermission("agents:manage");
+  await enforceRateLimit(serverActionRateLimit, `agent-commission-update:${user.id}`);
+
+  const parsed = parseInput(updateAgentCommissionSchema, input);
+
+  if (!parsed.success) {
+    return errorResult(parsed.error, parsed.fieldErrors);
+  }
+
+  const commission = await getCommissionForAdmin(parsed.data.commissionId);
+
+  if (!commission) {
+    return errorResult("Commission not found");
+  }
+
+  if (
+    commission.payoutStatus !== "PENDING" &&
+    commission.payoutStatus !== "PROCESSING"
+  ) {
+    return errorResult("Only pending or processing payouts can be edited");
+  }
+
+  let applicationId = commission.applicationId;
+
+  if (commission.source === "MANUAL") {
+    const trackingId = parsed.data.trackingId?.trim().toUpperCase();
+
+    if (!trackingId && !commission.application?.trackingId) {
+      return errorResult("Tracking ID is required for manual payouts");
+    }
+
+    const resolvedTrackingId =
+      trackingId ?? commission.application?.trackingId ?? "";
+
+    if (
+      resolvedTrackingId &&
+      resolvedTrackingId !== commission.application?.trackingId
+    ) {
+      const application = await prisma.application.findFirst({
+        where: {
+          trackingId: resolvedTrackingId,
+          agentId: commission.agentProfile.userId,
+        },
+        select: { id: true, trackingId: true },
+      });
+
+      if (!application) {
+        return errorResult("Application not found for this agent");
+      }
+
+      const duplicate = await prisma.agentCommission.findFirst({
+        where: {
+          id: { not: commission.id },
+          applicationId: application.id,
+          source: "MANUAL",
+          payoutStatus: { not: "CANCELLED" },
+        },
+        select: { id: true },
+      });
+
+      if (duplicate) {
+        return errorResult("A manual payout already exists for this application");
+      }
+
+      applicationId = application.id;
+    }
+  }
+
+  const shouldResetProof = commission.payoutStatus === "PROCESSING";
+
+  const updated = await prisma.agentCommission.update({
+    where: { id: commission.id },
+    data: {
+      label: parsed.data.label,
+      description: parsed.data.description,
+      amount: parsed.data.amount,
+      applicationId,
+      ...(shouldResetProof
+        ? {
+            payoutStatus: "PENDING",
+            proofR2Key: null,
+            proofMimeType: null,
+            proofFileName: null,
+            proofFileSize: null,
+          }
+        : {}),
+    },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "UPDATE",
+    entityType: "agent_commission",
+    entityId: commission.id,
+    before: {
+      label: commission.label,
+      amount: commission.amount.toString(),
+      payoutStatus: commission.payoutStatus,
+      applicationId: commission.applicationId,
+    },
+    after: {
+      label: updated.label,
+      amount: updated.amount.toString(),
+      payoutStatus: updated.payoutStatus,
+      applicationId: updated.applicationId,
+    },
+  });
+
+  return successResult({ commissionId: updated.id });
+}
+
+export async function cancelAgentCommissionAction(
+  input: unknown,
+): Promise<ActionResult<{ commissionId: string; payoutStatus: string }>> {
+  const user = await requirePermission("agents:manage");
+  await enforceRateLimit(serverActionRateLimit, `agent-commission-cancel:${user.id}`);
+
+  const parsed = parseInput(cancelAgentCommissionSchema, input);
+
+  if (!parsed.success) {
+    return errorResult(parsed.error, parsed.fieldErrors);
+  }
+
+  const commission = await getCommissionForAdmin(parsed.data.commissionId);
+
+  if (!commission) {
+    return errorResult("Commission not found");
+  }
+
+  if (
+    commission.payoutStatus !== "PENDING" &&
+    commission.payoutStatus !== "PROCESSING"
+  ) {
+    return errorResult("Only pending or processing payouts can be cancelled");
+  }
+
+  const updated = await prisma.agentCommission.update({
+    where: { id: commission.id },
+    data: {
+      payoutStatus: "CANCELLED",
+      proofR2Key: null,
+      proofMimeType: null,
+      proofFileName: null,
+      proofFileSize: null,
+    },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "UPDATE",
+    entityType: "agent_commission",
+    entityId: commission.id,
+    before: { payoutStatus: commission.payoutStatus },
+    after: { payoutStatus: updated.payoutStatus },
+  });
+
+  return successResult({
+    commissionId: updated.id,
+    payoutStatus: updated.payoutStatus,
+  });
+}
+
+export async function abortCommissionProofUploadAction(
+  input: unknown,
+): Promise<ActionResult<{ commissionId: string; payoutStatus: string }>> {
+  const user = await requirePermission("agents:manage");
+  const parsed = parseInput(abortCommissionProofUploadSchema, input);
+
+  if (!parsed.success) {
+    return errorResult(parsed.error, parsed.fieldErrors);
+  }
+
+  const commission = await getCommissionForAdmin(parsed.data.commissionId);
+
+  if (!commission) {
+    return errorResult("Commission not found");
+  }
+
+  if (commission.payoutStatus !== "PROCESSING") {
+    return successResult({
+      commissionId: commission.id,
+      payoutStatus: commission.payoutStatus,
+    });
+  }
+
+  const isDisputeAbort = commission.agentReceiptStatus === "NOT_RECEIVED";
+
+  const updated = await prisma.agentCommission.update({
+    where: { id: commission.id },
+    data: isDisputeAbort
+      ? {
+          payoutStatus: "PAID",
+          proofR2Key: null,
+          proofMimeType: null,
+          proofFileName: null,
+          proofFileSize: null,
+        }
+      : {
+          payoutStatus: "PENDING",
+          proofR2Key: null,
+          proofMimeType: null,
+          proofFileName: null,
+          proofFileSize: null,
+        },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "UPDATE",
+    entityType: "agent_commission",
+    entityId: commission.id,
+    before: { payoutStatus: commission.payoutStatus },
+    after: { payoutStatus: updated.payoutStatus },
+  });
+
+  return successResult({
+    commissionId: updated.id,
+    payoutStatus: updated.payoutStatus,
+  });
 }
 
 export async function promoteUserToAgentAction(

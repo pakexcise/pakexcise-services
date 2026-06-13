@@ -16,6 +16,7 @@ export const adminNavItems: AdminNavItem[] = [
   { href: "/admin/social", labelKey: "social", icon: "share-2" },
   { href: "/admin/payment-methods", labelKey: "paymentMethods", icon: "credit-card" },
   { href: "/admin/agents", labelKey: "agents", icon: "users" },
+  { href: "/admin/agent-payouts", labelKey: "agentPayouts", icon: "wallet" },
   { href: "/admin/customers", labelKey: "customers", icon: "user-circle" },
   { href: "/admin/notifications", labelKey: "notifications", icon: "bell" },
   { href: "/admin/seo", labelKey: "seo", icon: "search" },

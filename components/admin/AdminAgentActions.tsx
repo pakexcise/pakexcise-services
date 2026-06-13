@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ type AdminAgentActionsProps = {
   approvalStatus: string;
   isActive: boolean;
   commissionRate: string;
+  notes?: string | null;
   labels: {
     approve: string;
     approving: string;
@@ -39,6 +41,12 @@ type AdminAgentActionsProps = {
     addingCommission: string;
     success: string;
     error: string;
+    approvalSection: string;
+    accountSection: string;
+    commissionSection: string;
+    payoutSection: string;
+    showPayoutForm: string;
+    hidePayoutForm: string;
   };
 };
 
@@ -47,14 +55,17 @@ export function AdminAgentActions({
   approvalStatus,
   isActive,
   commissionRate,
+  notes,
   labels,
 }: AdminAgentActionsProps) {
   const router = useRouter();
-  const [rejectNotes, setRejectNotes] = useState("");
+  const fieldId = (name: string) => `${agentProfileId}-${name}`;
+  const [rejectNotes, setRejectNotes] = useState(notes ?? "");
   const [rate, setRate] = useState(commissionRate);
   const [commissionLabel, setCommissionLabel] = useState("");
   const [commissionAmount, setCommissionAmount] = useState("");
   const [commissionDescription, setCommissionDescription] = useState("");
+  const [showPayoutForm, setShowPayoutForm] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -133,117 +144,176 @@ export function AdminAgentActions({
       setCommissionLabel("");
       setCommissionAmount("");
       setCommissionDescription("");
+      setShowPayoutForm(false);
       setMessage(labels.success);
       router.refresh();
     });
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-2">
+    <div className="space-y-5">
+      <section className="rounded-xl border bg-card p-4">
+        <h3 className="text-sm font-semibold">{labels.approvalSection}</h3>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {approvalStatus !== "APPROVED" ? (
+            <Button type="button" onClick={handleApprove} disabled={isPending}>
+              {isPending ? labels.approving : labels.approve}
+            </Button>
+          ) : null}
+          {approvalStatus !== "REJECTED" ? (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleReject}
+              disabled={isPending || rejectNotes.trim().length < 3}
+            >
+              {isPending ? labels.rejecting : labels.reject}
+            </Button>
+          ) : null}
+        </div>
         {approvalStatus !== "APPROVED" ? (
-          <Button type="button" onClick={handleApprove} disabled={isPending}>
-            {isPending ? labels.approving : labels.approve}
-          </Button>
-        ) : null}
-        {approvalStatus !== "REJECTED" ? (
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleReject}
-            disabled={isPending || rejectNotes.trim().length < 3}
-          >
-            {isPending ? labels.rejecting : labels.reject}
-          </Button>
-        ) : null}
-        <Button type="button" variant="outline" onClick={handleToggleActive} disabled={isPending}>
-          {isPending
-            ? labels.toggling
-            : isActive
-              ? labels.toggleInactive
-              : labels.toggleActive}
-        </Button>
-      </div>
-
-      {approvalStatus !== "APPROVED" ? (
-        <div className="space-y-2">
-          <Label htmlFor="rejectNotes">{labels.rejectNotes}</Label>
-          <Textarea
-            id="rejectNotes"
-            value={rejectNotes}
-            onChange={(event) => setRejectNotes(event.target.value)}
-            rows={3}
-          />
-        </div>
-      ) : null}
-
-      <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
-        <div className="space-y-2">
-          <Label htmlFor="commissionRate">{labels.commissionRate}</Label>
-          <Input
-            id="commissionRate"
-            type="number"
-            step="0.01"
-            min="0"
-            max="100"
-            value={rate}
-            onChange={(event) => setRate(event.target.value)}
-          />
-        </div>
-        <Button type="button" onClick={handleUpdateRate} disabled={isPending}>
-          {isPending ? labels.updatingRate : labels.updateRate}
-        </Button>
-      </div>
-
-      <div className="space-y-3 rounded-lg border p-4">
-        <p className="font-medium">{labels.addCommission}</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="commissionLabel">{labels.commissionLabel}</Label>
-            <Input
-              id="commissionLabel"
-              value={commissionLabel}
-              onChange={(event) => setCommissionLabel(event.target.value)}
+          <div className="mt-4 space-y-2">
+            <Label htmlFor={fieldId("rejectNotes")}>{labels.rejectNotes}</Label>
+            <Textarea
+              id={fieldId("rejectNotes")}
+              value={rejectNotes}
+              onChange={(event) => setRejectNotes(event.target.value)}
+              rows={3}
+              placeholder={labels.rejectNotes}
             />
           </div>
+        ) : null}
+      </section>
+
+      <section className="rounded-xl border bg-card p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold">{labels.accountSection}</h3>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleToggleActive}
+            disabled={isPending}
+          >
+            {isPending
+              ? labels.toggling
+              : isActive
+                ? labels.toggleInactive
+                : labels.toggleActive}
+          </Button>
+        </div>
+      </section>
+
+      <section className="rounded-xl border bg-card p-4">
+        <h3 className="text-sm font-semibold">{labels.commissionSection}</h3>
+        <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
           <div className="space-y-2">
-            <Label htmlFor="commissionAmount">{labels.commissionAmount}</Label>
+            <Label htmlFor={fieldId("commissionRate")}>{labels.commissionRate}</Label>
             <Input
-              id="commissionAmount"
+              id={fieldId("commissionRate")}
               type="number"
               step="0.01"
               min="0"
-              value={commissionAmount}
-              onChange={(event) => setCommissionAmount(event.target.value)}
+              max="100"
+              value={rate}
+              onChange={(event) => setRate(event.target.value)}
             />
           </div>
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="commissionDescription">{labels.commissionDescription}</Label>
-            <Textarea
-              id="commissionDescription"
-              value={commissionDescription}
-              onChange={(event) => setCommissionDescription(event.target.value)}
-              rows={2}
-            />
-          </div>
+          <Button type="button" onClick={handleUpdateRate} disabled={isPending}>
+            {isPending ? labels.updatingRate : labels.updateRate}
+          </Button>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleAddCommission}
-          disabled={
-            isPending ||
-            !commissionLabel.trim() ||
-            !commissionAmount ||
-            Number(commissionAmount) <= 0
-          }
-        >
-          {isPending ? labels.addingCommission : labels.addCommission}
-        </Button>
-      </div>
+      </section>
 
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
-      {message ? <p className="text-sm text-primary">{message}</p> : null}
+      <section className="rounded-xl border bg-card p-4">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold">{labels.payoutSection}</h3>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowPayoutForm((current) => !current)}
+          >
+            {showPayoutForm ? (
+              <>
+                <ChevronUp className="size-4" />
+                {labels.hidePayoutForm}
+              </>
+            ) : (
+              <>
+                <ChevronDown className="size-4" />
+                {labels.showPayoutForm}
+              </>
+            )}
+          </Button>
+        </div>
+
+        {showPayoutForm ? (
+          <div className="mt-4 space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor={fieldId("commissionLabel")}>
+                  {labels.commissionLabel}
+                </Label>
+                <Input
+                  id={fieldId("commissionLabel")}
+                  value={commissionLabel}
+                  onChange={(event) => setCommissionLabel(event.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={fieldId("commissionAmount")}>
+                  {labels.commissionAmount}
+                </Label>
+                <Input
+                  id={fieldId("commissionAmount")}
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={commissionAmount}
+                  onChange={(event) => setCommissionAmount(event.target.value)}
+                />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor={fieldId("commissionDescription")}>
+                  {labels.commissionDescription}
+                </Label>
+                <Textarea
+                  id={fieldId("commissionDescription")}
+                  value={commissionDescription}
+                  onChange={(event) =>
+                    setCommissionDescription(event.target.value)
+                  }
+                  rows={2}
+                />
+              </div>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAddCommission}
+              disabled={
+                isPending ||
+                !commissionLabel.trim() ||
+                !commissionAmount ||
+                Number(commissionAmount) <= 0
+              }
+            >
+              {isPending ? labels.addingCommission : labels.addCommission}
+            </Button>
+          </div>
+        ) : null}
+      </section>
+
+      {error ? (
+        <p className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
+      {message ? (
+        <p className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm text-primary">
+          {message}
+        </p>
+      ) : null}
     </div>
   );
 }

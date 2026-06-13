@@ -68,7 +68,7 @@ export async function persistInvoicePdf(
   });
 
   const pdfR2Key = buildInvoicePdfKey({
-    applicationId: input.applicationId,
+    trackingId: input.trackingId,
     invoiceId: input.invoiceId,
   });
 

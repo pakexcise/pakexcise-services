@@ -6,7 +6,7 @@ import { ApplicationRealtimeSync } from "@/components/shared/application-realtim
 import { AgentSidebar } from "@/components/agent/agent-sidebar";
 import { AgentTopbar } from "@/components/agent/agent-topbar";
 import type { AgentNavItem } from "@/config/agent-nav";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 type AgentShellProps = {
   children: React.ReactNode;
@@ -41,6 +41,7 @@ export function AgentShell({
           side="left"
           className="flex w-[min(100vw-2rem,18rem)] flex-col p-0"
         >
+          <SheetTitle className="sr-only">Agent navigation</SheetTitle>
           <AgentSidebar
             navItems={navItems}
             userName={userName}

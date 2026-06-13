@@ -19,6 +19,7 @@ type PaymentVerificationProps = {
     status: string;
     amount: string;
     fileName?: string | null;
+    contentVersion?: string | null;
     rejectionReason?: string | null;
   };
   labels: {
@@ -111,6 +112,8 @@ export function PaymentVerification({ payment, labels }: PaymentVerificationProp
 
       <SecurePaymentViewer
         paymentId={payment.id}
+        fileName={payment.fileName}
+        contentVersion={payment.contentVersion}
         labels={{
           loading: labels.viewerLoading,
           error: labels.viewerError,

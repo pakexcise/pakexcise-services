@@ -27,12 +27,19 @@ type AgentProfileFormProps = {
   initialPhone: string;
   email: string;
   commissionRate: string;
+  commissionMode: string;
+  commissionFixedAmount: string | null;
   labels: {
     name: string;
     phone: string;
     email: string;
     emailReadOnly: string;
     commissionRate: string;
+    commissionMode: string;
+    commissionModeManual: string;
+    commissionModePercentage: string;
+    commissionModeFixed: string;
+    fixedAmount: string;
     approvalStatus: string;
     save: string;
     saving: string;
@@ -47,6 +54,8 @@ export function AgentProfileForm({
   initialPhone,
   email,
   commissionRate,
+  commissionMode,
+  commissionFixedAmount,
   labels,
   statusLabel,
 }: AgentProfileFormProps) {
@@ -92,9 +101,35 @@ export function AgentProfileForm({
           <Input value={statusLabel} readOnly disabled />
         </div>
         <div className="space-y-2">
-          <Label>{labels.commissionRate}</Label>
-          <Input value={`${commissionRate}%`} readOnly disabled />
+          <Label>{labels.commissionMode}</Label>
+          <Input
+            value={
+              commissionMode === "PERCENTAGE"
+                ? labels.commissionModePercentage
+                : commissionMode === "FIXED"
+                  ? labels.commissionModeFixed
+                  : labels.commissionModeManual
+            }
+            readOnly
+            disabled
+          />
         </div>
+        {commissionMode === "PERCENTAGE" ? (
+          <div className="space-y-2">
+            <Label>{labels.commissionRate}</Label>
+            <Input value={`${commissionRate}%`} readOnly disabled />
+          </div>
+        ) : null}
+        {commissionMode === "FIXED" ? (
+          <div className="space-y-2">
+            <Label>{labels.fixedAmount}</Label>
+            <Input
+              value={`PKR ${commissionFixedAmount ?? "0"}`}
+              readOnly
+              disabled
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="space-y-2">

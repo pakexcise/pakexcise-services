@@ -3,6 +3,7 @@
 import { z } from "zod";
 
 import { hasUploadedCompletionProof } from "@/features/applications/lib/completion-proof";
+import { createAutoCommissionForCompletedApplication } from "@/features/agents/lib/auto-commission";
 import { COMPLETION_PROOF_DOC_TYPE } from "@/config/uploads";
 import {
   canTransitionApplicationStatus,
@@ -163,6 +164,14 @@ export async function transitionApplicationStatusAction(
     changeType: "status",
   });
 
+  if (parsed.data.toStatus === "COMPLETED" && application.agentId) {
+    await createAutoCommissionForCompletedApplication({
+      applicationId: application.id,
+      trackingId: application.trackingId,
+      agentUserId: application.agentId,
+    });
+  }
+
   return successResult({
     applicationId: application.id,
     status: parsed.data.toStatus,
@@ -302,17 +311,17 @@ export async function confirmCompletionProofUploadAction(
     return errorResult(result.error);
   }
 
-  await auditAdminAction({
-    actorId: user.id,
-    action: "CREATE",
-    entityType: "completion_proof",
-    entityId: result.documentId,
-    after: { applicationId: parsed.data.applicationId },
-  });
-
   const application = await prisma.application.findUnique({
     where: { id: parsed.data.applicationId },
     select: { status: true, userId: true, agentId: true },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: application?.status === "COMPLETED" ? "UPDATE" : "CREATE",
+    entityType: "completion_proof",
+    entityId: result.documentId,
+    after: { applicationId: parsed.data.applicationId },
   });
 
   if (application) {

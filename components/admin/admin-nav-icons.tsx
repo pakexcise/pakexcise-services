@@ -15,6 +15,7 @@ import {
   Shield,
   UserCircle,
   Users,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ const iconMap: Record<string, LucideIcon> = {
   "help-circle": HelpCircle,
   "share-2": Share2,
   users: Users,
+  wallet: Wallet,
   "user-circle": UserCircle,
   bell: Bell,
   search: Search,

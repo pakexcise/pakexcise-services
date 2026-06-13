@@ -22,6 +22,7 @@ import { getInvoiceEditBlockReason } from "@/features/invoices/lib/can-edit-invo
 import { serializeInvoiceForEditor } from "@/features/invoices/lib/serialize-invoice-for-editor";
 import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligibility";
 import { formatPkr } from "@/features/invoices/lib/format-pkr";
+import { buildFileContentVersion } from "@/lib/utils/file-content-version";
 import {
   resolveAdminFieldDisplayValues,
   resolveCustomerContactDisplay,
@@ -361,6 +362,10 @@ export default async function AdminApplicationDetailPage({
                 <SecureDocViewer
                   documentId={document.id}
                   fileName={document.fileName}
+                  contentVersion={buildFileContentVersion(
+                    document.fileName,
+                    document.updatedAt,
+                  )}
                   labels={viewerLabels}
                 />
               </div>
@@ -391,6 +396,7 @@ export default async function AdminApplicationDetailPage({
                 title: t("applications.detail.proofTitle"),
                 description: t("applications.detail.proofDescription"),
                 upload: t("applications.detail.proofUpload"),
+                replace: t("applications.detail.proofReplace"),
                 uploading: t("applications.detail.proofUploading"),
                 uploaded: t("applications.detail.proofUploaded"),
                 required: t("applications.detail.proofRequired"),
@@ -405,6 +411,10 @@ export default async function AdminApplicationDetailPage({
                 <SecureDocViewer
                   documentId={completionProof.id}
                   fileName={completionProof.fileName}
+                  contentVersion={buildFileContentVersion(
+                    completionProof.fileName,
+                    completionProof.updatedAt,
+                  )}
                   purpose="view"
                   labels={viewerLabels}
                 />
@@ -616,6 +626,10 @@ export default async function AdminApplicationDetailPage({
                         <SecurePaymentViewer
                           paymentId={payment.id}
                           fileName={payment.screenshotFileName}
+                          contentVersion={buildFileContentVersion(
+                            payment.screenshotFileName,
+                            payment.updatedAt,
+                          )}
                           labels={{
                             loading: t("payments.verification.viewerLoading"),
                             error: t("payments.verification.viewerError"),
@@ -655,6 +669,10 @@ export default async function AdminApplicationDetailPage({
                 status: pendingVerificationPayment.status,
                 amount: pendingVerificationPayment.amount.toString(),
                 fileName: pendingVerificationPayment.screenshotFileName,
+                contentVersion: buildFileContentVersion(
+                  pendingVerificationPayment.screenshotFileName,
+                  pendingVerificationPayment.updatedAt,
+                ),
                 rejectionReason: pendingVerificationPayment.rejectionReason,
               }}
               labels={{

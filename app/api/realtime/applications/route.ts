@@ -14,6 +14,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const since = Number(searchParams.get("since") ?? "0");
+  const applicationId = searchParams.get("applicationId");
 
   const result = await listApplicationEventsSince(
     Number.isFinite(since) ? since : 0,
@@ -21,6 +22,7 @@ export async function GET(request: Request) {
       role: user.role,
       userId: user.id,
     },
+    applicationId,
   );
 
   return NextResponse.json(result);

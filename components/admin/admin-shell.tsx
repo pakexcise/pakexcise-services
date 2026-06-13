@@ -8,7 +8,7 @@ import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { ApplicationRealtimeSync } from "@/components/shared/application-realtime-sync";
 import type { AdminUserSummary } from "@/components/admin/admin-user-menu";
 import type { AdminNavItem } from "@/config/admin";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 type AdminShellProps = {
   children: React.ReactNode;
@@ -41,6 +41,7 @@ export function AdminShell({ children, navItems, user }: AdminShellProps) {
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="flex w-[min(100vw-2rem,18rem)] flex-col p-0">
+          <SheetTitle className="sr-only">{t("panel")}</SheetTitle>
           <div className="shrink-0 border-b px-4 py-4">
             <p className="text-sm font-semibold text-primary">{t("panel")}</p>
           </div>

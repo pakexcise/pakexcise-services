@@ -23,6 +23,57 @@ type StatusTimelineProps = {
   statusLabel: (status: ApplicationStatus) => string;
 };
 
+type TimelineStep = {
+  key: string;
+  status: ApplicationStatus;
+  createdAt: Date | string | null;
+  isCurrent: boolean;
+};
+
+function buildTimelineSteps(
+  entries: StatusHistoryEntry[],
+  currentStatus: ApplicationStatus,
+): TimelineStep[] {
+  const sortedEntries = [...entries].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  );
+
+  const steps: TimelineStep[] = sortedEntries.map((entry) => ({
+    key: entry.id,
+    status: entry.toStatus,
+    createdAt: entry.createdAt,
+    isCurrent: false,
+  }));
+
+  const lastStep = steps.at(-1);
+
+  if (!lastStep) {
+    return [
+      {
+        key: `current-${currentStatus}`,
+        status: currentStatus,
+        createdAt: null,
+        isCurrent: true,
+      },
+    ];
+  }
+
+  if (lastStep.status === currentStatus) {
+    lastStep.isCurrent = true;
+    return steps;
+  }
+
+  return [
+    ...steps,
+    {
+      key: `current-${currentStatus}`,
+      status: currentStatus,
+      createdAt: null,
+      isCurrent: true,
+    },
+  ];
+}
+
 export function StatusTimeline({
   entries,
   currentStatus,
@@ -30,11 +81,9 @@ export function StatusTimeline({
   labels,
   statusLabel,
 }: StatusTimelineProps) {
-  const sortedEntries = [...entries].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-  );
+  const steps = buildTimelineSteps(entries, currentStatus);
 
-  if (sortedEntries.length === 0) {
+  if (steps.length === 0) {
     return (
       <div className="rounded-xl border p-5">
         <h2 className="font-semibold">{labels.title}</h2>
@@ -53,33 +102,33 @@ export function StatusTimeline({
     <div className="rounded-xl border p-5">
       <h2 className="font-semibold">{labels.title}</h2>
       <ol className="relative mt-4 space-y-0 border-s border-border ps-6">
-        {sortedEntries.map((entry, index) => {
-          const isLast = index === sortedEntries.length - 1;
-
-          return (
-            <li key={entry.id} className="relative pb-6 last:pb-0">
-              <span
-                className="absolute -start-[7px] top-1 size-3 rounded-full border-2 border-background bg-primary"
-                aria-hidden="true"
+        {steps.map((step) => (
+          <li key={step.key} className="relative pb-6 last:pb-0">
+            <span
+              className={`absolute -start-[7px] top-1 size-3 rounded-full border-2 border-background ${
+                step.isCurrent ? "bg-primary" : "bg-muted-foreground/50"
+              }`}
+              aria-hidden="true"
+            />
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <ApplicationStatusBadge
+                status={step.status}
+                label={statusLabel(step.status)}
               />
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <ApplicationStatusBadge
-                  status={entry.toStatus}
-                  label={statusLabel(entry.toStatus)}
-                />
+              {step.createdAt ? (
                 <time
                   className="text-xs text-muted-foreground"
-                  dateTime={new Date(entry.createdAt).toISOString()}
+                  dateTime={new Date(step.createdAt).toISOString()}
                 >
-                  {formatDateTime(entry.createdAt, locale)}
+                  {formatDateTime(step.createdAt, locale)}
                 </time>
-              </div>
-              {isLast ? (
-                <p className="mt-1 text-xs text-muted-foreground">{labels.current}</p>
               ) : null}
-            </li>
-          );
-        })}
+            </div>
+            {step.isCurrent ? (
+              <p className="mt-1 text-xs text-muted-foreground">{labels.current}</p>
+            ) : null}
+          </li>
+        ))}
       </ol>
     </div>
   );

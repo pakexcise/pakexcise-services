@@ -32,13 +32,14 @@ const allowedTransitions: Record<
   PAYMENT_VERIFIED: ["IN_PROGRESS", "COMPLETED", "CANCELLED"],
   IN_PROGRESS: ["AT_OFFICE", "COMPLETED", "REJECTED", "CANCELLED"],
   AT_OFFICE: ["COMPLETED", "REJECTED", "CANCELLED"],
-  COMPLETED: [],
+  COMPLETED: ["REVIEW", "IN_PROGRESS", "AT_OFFICE"],
   REJECTED: [],
   CANCELLED: [],
 };
 
 const notificationTransitions = new Set<ApplicationStatus>([
   "DOCS_REQUIRED",
+  "REVIEW",
   "PAYMENT_VERIFIED",
   "IN_PROGRESS",
   "AT_OFFICE",

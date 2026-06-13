@@ -29,6 +29,7 @@ type ProofUploadSectionProps = {
     title: string;
     description: string;
     upload: string;
+    replace: string;
     uploading: string;
     uploaded: string;
     required: string;
@@ -193,7 +194,7 @@ export function ProofUploadSection({
         ) : (
           <>
             <FileUp className="size-4" />
-            {labels.upload}
+            {existingProof ? labels.replace : labels.upload}
           </>
         )}
       </Button>

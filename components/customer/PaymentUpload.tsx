@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { FileUp, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,10 @@ import {
   confirmPaymentScreenshotUploadAction,
   requestPaymentScreenshotUploadAction,
 } from "@/features/payments/actions";
+import {
+  canReplacePaymentProof,
+  resolvePaymentProofUiStatus,
+} from "@/features/payments/lib/payment-proof-state";
 import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 import {
   formatFileSize,
@@ -21,6 +25,7 @@ import { resolveClientFileMimeType } from "@/lib/utils/resolve-file-mime";
 
 type PaymentUploadProps = {
   applicationId: string;
+  applicationStatus: string;
   paymentId: string;
   paymentStatus: string;
   screenshotFileName?: string | null;
@@ -34,6 +39,7 @@ type PaymentUploadProps = {
     uploading: string;
     uploaded: string;
     replace: string;
+    replaceHint?: string;
     maxSize: string;
     allowedTypes: string;
     uploadFailed: string;
@@ -65,6 +71,7 @@ async function computeSha256Checksum(file: File): Promise<string> {
 
 export function PaymentUpload({
   applicationId,
+  applicationStatus,
   paymentId,
   paymentStatus,
   screenshotFileName,
@@ -78,44 +85,29 @@ export function PaymentUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(screenshotFileName ?? null);
+  const [previewRevision, setPreviewRevision] = useState(0);
   const [isPending, startTransition] = useTransition();
+  const previousScreenshotFileNameRef = useRef(screenshotFileName);
 
-  const canUpload =
-    paymentStatus === "PENDING" || paymentStatus === "REJECTED";
+  useEffect(() => {
+    setFileName(screenshotFileName ?? null);
+
+    if (previousScreenshotFileNameRef.current !== screenshotFileName) {
+      previousScreenshotFileNameRef.current = screenshotFileName;
+
+      if (screenshotFileName) {
+        setPreviewRevision((current) => current + 1);
+      }
+    }
+  }, [screenshotFileName]);
+
+  const uiStatus = resolvePaymentProofUiStatus(paymentStatus, applicationStatus);
+  const canUpload = canReplacePaymentProof(applicationStatus, paymentStatus);
   const showPreview =
-    paymentStatus === "UPLOADED" ||
-    paymentStatus === "VERIFIED" ||
+    uiStatus === "uploaded" ||
+    uiStatus === "verified" ||
     Boolean(fileName);
-
-  if (paymentStatus === "VERIFIED") {
-    return (
-      <div className="space-y-4 rounded-xl border border-primary/30 bg-primary/5 p-5">
-        <p className="font-medium text-primary">{labels.verified}</p>
-        {showPreview ? (
-          <SecurePaymentViewer
-            paymentId={paymentId}
-            fileName={fileName}
-            labels={labels.viewer}
-          />
-        ) : null}
-      </div>
-    );
-  }
-
-  if (paymentStatus === "UPLOADED") {
-    return (
-      <div className="space-y-4 rounded-xl border p-5">
-        <p className="font-medium">{labels.waitingVerification}</p>
-        {showPreview ? (
-          <SecurePaymentViewer
-            paymentId={paymentId}
-            fileName={fileName}
-            labels={labels.viewer}
-          />
-        ) : null}
-      </div>
-    );
-  }
+  const showUploadForm = uiStatus === "pending" || uiStatus === "rejected" || canUpload;
 
   function handlePickFile() {
     inputRef.current?.click();
@@ -204,6 +196,7 @@ export function PaymentUpload({
         });
 
         setFileName(file.name);
+        setPreviewRevision((current) => current + 1);
         onUploaded?.();
         broadcastApplicationUpdate();
         router.refresh();
@@ -214,13 +207,29 @@ export function PaymentUpload({
   }
 
   return (
-    <div className="space-y-4 rounded-xl border p-5">
-      <div className="space-y-1">
-        <h2 className="text-lg font-semibold">{labels.title}</h2>
-        <p className="text-sm text-muted-foreground">{labels.description}</p>
-      </div>
+    <div
+      className={
+        uiStatus === "verified"
+          ? "space-y-4 rounded-xl border border-primary/30 bg-primary/5 p-5"
+          : "space-y-4 rounded-xl border p-5"
+      }
+    >
+      {showUploadForm && (uiStatus === "pending" || uiStatus === "rejected") ? (
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">{labels.title}</h2>
+          <p className="text-sm text-muted-foreground">{labels.description}</p>
+        </div>
+      ) : null}
 
-      {paymentStatus === "REJECTED" && rejectionReason ? (
+      {uiStatus === "verified" ? (
+        <p className="font-medium text-primary">{labels.verified}</p>
+      ) : null}
+
+      {uiStatus === "uploaded" ? (
+        <p className="font-medium">{labels.waitingVerification}</p>
+      ) : null}
+
+      {uiStatus === "rejected" && rejectionReason ? (
         <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
           <p className="font-medium text-destructive">{labels.rejected}</p>
           <p className="mt-1">
@@ -229,40 +238,58 @@ export function PaymentUpload({
         </div>
       ) : null}
 
-      <input
-        ref={inputRef}
-        type="file"
-        className="hidden"
-        accept={acceptedMimeTypes.join(",")}
-        onChange={handleFileChange}
-      />
+      {showPreview ? (
+        <SecurePaymentViewer
+          paymentId={paymentId}
+          fileName={fileName}
+          refreshKey={previewRevision}
+          labels={labels.viewer}
+        />
+      ) : null}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          type="button"
-          onClick={handlePickFile}
-          disabled={isPending || !canUpload}
-        >
-          {isPending ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <FileUp className="size-4" />
-          )}
-          {isPending
-            ? labels.uploading
-            : fileName
-              ? labels.replace
-              : labels.upload}
-        </Button>
-        {fileName ? (
-          <Badge variant="secondary">{fileName}</Badge>
-        ) : null}
-      </div>
+      {canUpload ? (
+        <>
+          {uiStatus === "verified" && labels.replaceHint ? (
+            <p className="text-sm text-muted-foreground">{labels.replaceHint}</p>
+          ) : null}
 
-      <p className="text-xs text-muted-foreground">
-        {labels.maxSize}: {formatFileSize(maxSizeBytes)} · {labels.allowedTypes}:{" "}
-        {acceptedMimeTypes.join(", ")}
-      </p>
+          <input
+            ref={inputRef}
+            type="file"
+            className="hidden"
+            accept={acceptedMimeTypes.join(",")}
+            onChange={handleFileChange}
+          />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              type="button"
+              variant={uiStatus === "verified" ? "outline" : "default"}
+              onClick={handlePickFile}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <FileUp className="size-4" />
+              )}
+              {isPending
+                ? labels.uploading
+                : fileName
+                  ? labels.replace
+                  : labels.upload}
+            </Button>
+            {fileName ? (
+              <Badge variant="secondary">{fileName}</Badge>
+            ) : null}
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            {labels.maxSize}: {formatFileSize(maxSizeBytes)} · {labels.allowedTypes}:{" "}
+            {acceptedMimeTypes.join(", ")}
+          </p>
+        </>
+      ) : null}
 
       {error ? (
         <p className="text-sm text-destructive" role="alert">

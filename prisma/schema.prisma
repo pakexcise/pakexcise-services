@@ -36,6 +36,24 @@ enum AgentPayoutStatus {
   CANCELLED
 }
 
+enum AgentReceiptStatus {
+  AWAITING
+  RECEIVED
+  NOT_RECEIVED
+}
+
+enum AgentCommissionMode {
+  MANUAL
+  PERCENTAGE
+  FIXED
+}
+
+enum AgentCommissionSource {
+  MANUAL
+  AUTO_PERCENTAGE
+  AUTO_FIXED
+}
+
 enum ApplicationStatus {
   DRAFT
   SUBMITTED
@@ -161,6 +179,8 @@ model User {
   uploadedDocuments    Document[]        @relation("DocumentUploader")
   verifiedDocuments    Document[]        @relation("DocumentVerifier")
   verifiedPayments     Payment[]         @relation("PaymentVerifier")
+  paidAgentCommissions AgentCommission[] @relation("AgentCommissionPaidBy")
+  resolvedAgentCommissions AgentCommission[] @relation("AgentCommissionResolvedBy")
   auditLogs            AuditLog[]
   notifications        Notification[]
   statusChanges        StatusHistory[]
@@ -221,14 +241,23 @@ model Verification {
 }
 
 model AgentProfile {
-  id              String              @id @default(cuid())
-  userId          String              @unique
-  approvalStatus  AgentApprovalStatus @default(APPROVED)
-  commissionRate  Decimal             @default(0) @db.Decimal(5, 2)
-  notes           String?             @db.Text
-  isActive        Boolean             @default(true)
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
+  id                    String              @id @default(cuid())
+  userId                String              @unique
+  approvalStatus        AgentApprovalStatus @default(APPROVED)
+  commissionMode        AgentCommissionMode @default(MANUAL)
+  commissionRate        Decimal             @default(0) @db.Decimal(5, 2)
+  commissionFixedAmount Decimal?            @db.Decimal(12, 2)
+  notes                 String?             @db.Text
+  isActive              Boolean             @default(true)
+  payoutMethodType      PaymentMethodType?
+  payoutAccountTitle    String?
+  payoutAccountNumber   String?
+  payoutIban            String?
+  payoutBankName        String?
+  payoutWalletNumber    String?
+  payoutNotes           String?             @db.Text
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
 
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   commissions AgentCommission[]
@@ -238,22 +267,39 @@ model AgentProfile {
 }
 
 model AgentCommission {
-  id            String            @id @default(cuid())
-  agentProfileId String
-  applicationId String?
-  label         String
-  description   String?           @db.Text
-  amount        Decimal           @db.Decimal(12, 2)
-  currency      String            @default("PKR")
-  payoutStatus  AgentPayoutStatus @default(PENDING)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id                String                @id @default(cuid())
+  agentProfileId    String
+  applicationId     String?
+  label             String
+  description       String?               @db.Text
+  amount            Decimal               @db.Decimal(12, 2)
+  currency          String                @default("PKR")
+  source            AgentCommissionSource @default(MANUAL)
+  payoutStatus      AgentPayoutStatus     @default(PENDING)
+  proofR2Key        String?
+  proofMimeType     String?
+  proofFileName     String?
+  proofFileSize     Int?
+  paidAt            DateTime?
+  paidById          String?
+  agentReceiptStatus AgentReceiptStatus @default(AWAITING)
+  agentConfirmedAt  DateTime?
+  agentDisputedAt   DateTime?
+  agentDisputeReason String?              @db.Text
+  adminResolutionNote String?             @db.Text
+  adminResolvedAt   DateTime?
+  adminResolvedById String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 
   agentProfile AgentProfile @relation(fields: [agentProfileId], references: [id], onDelete: Cascade)
   application  Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  paidBy       User?        @relation("AgentCommissionPaidBy", fields: [paidById], references: [id])
+  adminResolvedBy User?     @relation("AgentCommissionResolvedBy", fields: [adminResolvedById], references: [id])
 
   @@index([agentProfileId, payoutStatus, createdAt])
   @@index([applicationId])
+  @@index([payoutStatus, createdAt])
   @@map("agent_commissions")
 }
 

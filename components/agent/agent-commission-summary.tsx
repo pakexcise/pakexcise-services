@@ -7,11 +7,16 @@ import { cn } from "@/lib/utils";
 type AgentCommissionSummaryProps = {
   pendingTotal: string;
   paidTotal: string;
+  awaitingCount?: number;
+  payoutMethodMissing?: boolean;
   labels: {
     title: string;
     description: string;
     pendingLabel: string;
     paidLabel: string;
+    awaitingLabel?: string;
+    payoutMethodMissing?: string;
+    setupPayoutMethod?: string;
     viewAll: string;
   };
 };
@@ -19,6 +24,8 @@ type AgentCommissionSummaryProps = {
 export function AgentCommissionSummary({
   pendingTotal,
   paidTotal,
+  awaitingCount = 0,
+  payoutMethodMissing = false,
   labels,
 }: AgentCommissionSummaryProps) {
   return (
@@ -36,7 +43,7 @@ export function AgentCommissionSummary({
         </Button>
       </div>
 
-      <div className="grid gap-4 p-5 sm:grid-cols-2">
+      <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
         <div
           className={cn(
             "rounded-xl border border-s-4 border-s-secondary bg-background/80 p-4",
@@ -72,7 +79,35 @@ export function AgentCommissionSummary({
             </div>
           </div>
         </div>
+
+        {labels.awaitingLabel ? (
+          <div className="rounded-xl border border-s-4 border-s-amber-500 bg-background/80 p-4 sm:col-span-2 lg:col-span-1">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {labels.awaitingLabel}
+                </p>
+                <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight">
+                  {awaitingCount}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
+
+      {payoutMethodMissing && labels.payoutMethodMissing ? (
+        <div className="border-t px-5 py-4">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            {labels.payoutMethodMissing}
+          </p>
+          {labels.setupPayoutMethod ? (
+            <Button asChild size="sm" variant="outline" className="mt-3">
+              <Link href="/agent/commissions">{labels.setupPayoutMethod}</Link>
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }

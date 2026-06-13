@@ -2,6 +2,8 @@ import "server-only";
 
 import type { ApplicationStatus, Prisma } from "@prisma/client";
 
+import { COMPLETION_PROOF_DOC_TYPE } from "@/config/uploads";
+import { findUploadedCompletionProof } from "@/features/applications/lib/completion-proof";
 import { Repository } from "@/server/repositories/base/repository";
 
 const agentApplicationListSelect = {
@@ -48,6 +50,66 @@ const agentApplicationDetailSelect = {
       nameEn: true,
       nameUr: true,
       slug: true,
+      region: {
+        select: {
+          nameEn: true,
+          nameUr: true,
+        },
+      },
+      documentReqs: {
+        where: { isActive: true },
+        orderBy: { displayOrder: "asc" },
+        select: {
+          id: true,
+          docType: true,
+          labelEn: true,
+          labelUr: true,
+          isRequired: true,
+        },
+      },
+    },
+  },
+  fieldValues: {
+    orderBy: { createdAt: "asc" },
+    select: {
+      fieldId: true,
+      valuePlain: true,
+      valueEncrypted: true,
+      valueJson: true,
+      isEncrypted: true,
+      field: {
+        select: {
+          fieldKey: true,
+          labelEn: true,
+          labelUr: true,
+          fieldType: true,
+          isEncrypted: true,
+        },
+      },
+    },
+  },
+  documents: {
+    where: { type: { not: COMPLETION_PROOF_DOC_TYPE } },
+    orderBy: { createdAt: "asc" },
+    select: {
+      id: true,
+      type: true,
+      fileName: true,
+      status: true,
+      rejectionReason: true,
+      requirementId: true,
+    },
+  },
+  agentCommissions: {
+    where: { payoutStatus: { not: "CANCELLED" } },
+    orderBy: { createdAt: "desc" },
+    take: 1,
+    select: {
+      id: true,
+      label: true,
+      amount: true,
+      payoutStatus: true,
+      agentReceiptStatus: true,
     },
   },
   statusHistory: {
@@ -136,6 +198,26 @@ export class AgentApplicationRepository extends Repository {
       },
       select: agentApplicationDetailSelect,
     });
+  }
+
+  async findCompletionProofForAssignedApplication(input: {
+    applicationId: string;
+    agentId: string;
+  }) {
+    const application = await this.db.application.findFirst({
+      where: {
+        id: input.applicationId,
+        agentId: input.agentId,
+        status: "COMPLETED",
+      },
+      select: { id: true },
+    });
+
+    if (!application) {
+      return null;
+    }
+
+    return findUploadedCompletionProof(application.id);
   }
 
   async listByAgentForAdmin(agentUserId: string, limit = 20) {
