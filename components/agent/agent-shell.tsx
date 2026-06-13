@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { ApplicationRealtimeSync } from "@/components/shared/application-realtime-sync";
 import { AgentSidebar } from "@/components/agent/agent-sidebar";
 import { AgentTopbar } from "@/components/agent/agent-topbar";
 import type { AgentNavItem } from "@/config/agent-nav";
@@ -10,6 +11,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 type AgentShellProps = {
   children: React.ReactNode;
   navItems: readonly AgentNavItem[];
+  userId: string;
   userName: string;
   userContactLine: string;
 };
@@ -17,6 +19,7 @@ type AgentShellProps = {
 export function AgentShell({
   children,
   navItems,
+  userId,
   userName,
   userContactLine,
 }: AgentShellProps) {
@@ -24,6 +27,7 @@ export function AgentShell({
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
+      <ApplicationRealtimeSync userId={userId} role="AGENT" />
       <aside className="hidden w-64 shrink-0 flex-col border-r bg-card lg:flex">
         <AgentSidebar
           navItems={navItems}

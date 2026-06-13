@@ -23,6 +23,7 @@ import { sendServerAnalyticsEvent } from "@/features/analytics/server-events";
 import { canTransitionStatus } from "@/features/applications/lib/status-transitions";
 import { queueApplicationSubmittedNotifications } from "@/server/notifications/queue-application-notification";
 import { absoluteUrl } from "@/lib/utils";
+import { emitApplicationChange } from "@/server/realtime/application-events";
 
 export async function submitApplicationAction(
   input: unknown,
@@ -273,7 +274,7 @@ export async function submitApplicationAction(
     serviceName: service.name,
     serviceNameUr: serviceRecord.nameUr,
     locale: parsed.data.locale,
-    userEmail: parsed.data.basic.email,
+    userEmail: parsed.data.basic.email.trim() || user.email,
     userPhone: parsed.data.basic.phone,
   });
 
@@ -292,6 +293,14 @@ export async function submitApplicationAction(
     },
     attribution: attribution ?? undefined,
     eventSourceUrl: absoluteUrl(`/apply/${serviceRecord.slug}`),
+  });
+
+  await emitApplicationChange({
+    applicationId: draft.id,
+    userId: user.id,
+    agentId: draft.agentId,
+    status: "SUBMITTED",
+    changeType: "submit",
   });
 
   return successResult({

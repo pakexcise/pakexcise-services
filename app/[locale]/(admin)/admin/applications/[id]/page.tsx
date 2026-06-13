@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { AdminInvoicePdfButton } from "@/components/admin/AdminInvoicePdfButton";
+import { InvoiceEditor } from "@/components/admin/InvoiceEditor";
 import { InvoiceGenerator } from "@/components/admin/InvoiceGenerator";
 import { PaymentVerification } from "@/components/admin/PaymentVerification";
 import { InvoicePaymentMethodsDisplay } from "@/components/shared/InvoicePaymentMethodsDisplay";
@@ -17,6 +18,8 @@ import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/applicat
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { isUploadedCompletionProof } from "@/features/applications/lib/completion-proof";
 import { getAllowedNextStatuses } from "@/features/applications/status-machine";
+import { getInvoiceEditBlockReason } from "@/features/invoices/lib/can-edit-invoice";
+import { serializeInvoiceForEditor } from "@/features/invoices/lib/serialize-invoice-for-editor";
 import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligibility";
 import { formatPkr } from "@/features/invoices/lib/format-pkr";
 import {
@@ -522,6 +525,60 @@ export default async function AdminApplicationDetailPage({
                         label={t("invoices.viewPdf")}
                         loadingLabel={t("invoices.loadingPdf")}
                         errorLabel={t("invoices.pdfError")}
+                      />
+                    ) : null}
+                    {canManageInvoice && invoice.status === "SENT" ? (
+                      <InvoiceEditor
+                        invoice={serializeInvoiceForEditor(invoice)}
+                        paymentMethods={activePaymentMethods}
+                        blockReason={(() => {
+                          const reason = getInvoiceEditBlockReason({
+                            invoiceStatus: invoice.status,
+                            paymentStatus: application.payments.find(
+                              (payment) => payment.invoiceId === invoice.id,
+                            )?.status,
+                          });
+
+                          return reason === "payment_uploaded" ||
+                            reason === "payment_verified"
+                            ? reason
+                            : null;
+                        })()}
+                        labels={{
+                          edit: t("invoices.editor.edit"),
+                          editing: t("invoices.editor.editing"),
+                          description: t("invoices.editor.description"),
+                          serviceFee: t("invoices.generator.serviceFee"),
+                          officialFeeNote: t("invoices.generator.officialFeeNote"),
+                          paymentMethods: t("invoices.generator.paymentMethods"),
+                          paymentMethodsHint: t("invoices.generator.paymentMethodsHint"),
+                          noPaymentMethods: t("invoices.generator.noPaymentMethods"),
+                          paymentInstructions: t("invoices.generator.paymentInstructions"),
+                          paymentInstructionsHint:
+                            t("invoices.generator.paymentInstructionsHint"),
+                          dueDate: t("invoices.generator.dueDate"),
+                          notes: t("invoices.generator.notes"),
+                          taxTotal: t("invoices.generator.taxTotal"),
+                          editNote: t("invoices.editor.editNote"),
+                          lineItems: t("invoices.generator.lineItems"),
+                          itemLabel: t("invoices.generator.itemLabel"),
+                          itemDescription: t("invoices.generator.itemDescription"),
+                          itemAmount: t("invoices.generator.itemAmount"),
+                          officialFee: t("invoices.generator.officialFee"),
+                          addLineItem: t("invoices.generator.addLineItem"),
+                          removeLineItem: t("invoices.generator.removeLineItem"),
+                          submit: t("invoices.editor.submit"),
+                          submitting: t("invoices.editor.submitting"),
+                          success: t("invoices.editor.success"),
+                          error: t("invoices.editor.error"),
+                          accountTitle: t("invoices.generator.accountTitle"),
+                          accountNumber: t("invoices.generator.accountNumber"),
+                          iban: t("invoices.generator.iban"),
+                          bankName: t("invoices.generator.bankName"),
+                          blockedPaymentUploaded: t("invoices.editor.blockedPaymentUploaded"),
+                          blockedPaymentVerified: t("invoices.editor.blockedPaymentVerified"),
+                          cancel: t("invoices.editor.cancel"),
+                        }}
                       />
                     ) : null}
                   </div>

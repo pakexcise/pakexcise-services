@@ -18,6 +18,8 @@ export const adminPaymentMethodSelect = {
   bankNameUr: true,
   instructionsEn: true,
   instructionsUr: true,
+  qrCodeR2Key: true,
+  qrCodeMimeType: true,
   isActive: true,
   displayOrder: true,
   createdAt: true,

@@ -27,7 +27,13 @@ export function createBasicApplicantDetailsSchema(
       .trim()
       .min(2, m.fullNameRequired)
       .max(120, m.fullNameTooLong),
-    email: z.string().trim().email(m.emailInvalid),
+    email: z
+      .string()
+      .trim()
+      .refine(
+        (value) => value.length === 0 || z.string().email().safeParse(value).success,
+        m.emailInvalid,
+      ),
     phone: z
       .string()
       .trim()

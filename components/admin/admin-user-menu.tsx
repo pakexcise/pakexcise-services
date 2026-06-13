@@ -16,6 +16,7 @@ import { authClient } from "@/lib/auth-client";
 import { Link } from "@/i18n/navigation";
 
 export type AdminUserSummary = {
+  id: string;
   name: string | null;
   email: string;
   role: string;

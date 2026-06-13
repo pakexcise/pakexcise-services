@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { updateAdminNotesAction } from "@/features/applications/actions";
+import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 
 type AdminNotesFormProps = {
   applicationId: string;
@@ -47,6 +48,7 @@ export function AdminNotesForm({
       }
 
       setMessage(labels.saved);
+      broadcastApplicationUpdate();
       router.refresh();
     });
   }

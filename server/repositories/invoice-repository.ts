@@ -47,6 +47,8 @@ const customerInvoiceSelect = {
       bankNameUr: true,
       instructionsEn: true,
       instructionsUr: true,
+      qrCodeR2Key: true,
+      qrCodeMimeType: true,
       displayOrder: true,
     },
   },

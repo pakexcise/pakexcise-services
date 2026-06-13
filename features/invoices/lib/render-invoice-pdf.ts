@@ -3,15 +3,61 @@ import "server-only";
 import React from "react";
 import { renderToBuffer } from "@react-pdf/renderer";
 
+import { getBrandingAssetDataUri } from "@/features/invoices/lib/branding-asset-path";
 import {
   InvoicePdfDocument,
   type InvoicePdfData,
+  type InvoicePdfPaymentMethod,
 } from "@/features/invoices/lib/invoice-pdf-document";
+import { getStoredImageDataUri } from "@/features/payment-methods/lib/payment-method-qr";
+import type { PaymentMethodDisplayFields } from "@/features/payment-methods/lib/format-payment-method";
+
+type RenderInvoicePdfInput = Omit<InvoicePdfData, "brandMarkSrc" | "paymentMethods"> & {
+  paymentMethods?: Array<
+    PaymentMethodDisplayFields & {
+      qrCodeR2Key?: string | null;
+      qrCodeMimeType?: string | null;
+    }
+  >;
+};
+
+async function enrichPaymentMethodsForPdf(
+  methods: RenderInvoicePdfInput["paymentMethods"],
+): Promise<InvoicePdfPaymentMethod[]> {
+  if (!methods || methods.length === 0) {
+    return [];
+  }
+
+  return Promise.all(
+    methods.map(async (method) => {
+      const qrCodeDataUri =
+        method.qrCodeR2Key && method.qrCodeMimeType
+          ? await getStoredImageDataUri({
+              key: method.qrCodeR2Key,
+              mimeType: method.qrCodeMimeType,
+            })
+          : null;
+
+      return {
+        ...method,
+        qrCodeDataUri,
+      };
+    }),
+  );
+}
 
 export async function renderInvoicePdfBuffer(
-  data: InvoicePdfData,
+  data: RenderInvoicePdfInput,
 ): Promise<Buffer> {
-  const element = React.createElement(InvoicePdfDocument, { data });
+  const paymentMethods = await enrichPaymentMethodsForPdf(data.paymentMethods);
+
+  const element = React.createElement(InvoicePdfDocument, {
+    data: {
+      ...data,
+      paymentMethods,
+      brandMarkSrc: getBrandingAssetDataUri("logoIcon"),
+    },
+  });
   const buffer = await renderToBuffer(
     element as Parameters<typeof renderToBuffer>[0],
   );

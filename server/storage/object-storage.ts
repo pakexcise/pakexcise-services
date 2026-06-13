@@ -51,11 +51,16 @@ export async function headStoredObject(key: string): Promise<R2ObjectHead | null
 }
 
 export async function readStoredObject(key: string): Promise<Buffer> {
+  if (isR2Configured()) {
+    const { getR2Object } = await import("@/server/r2/get-object");
+    return getR2Object(key);
+  }
+
   if (isLocalDevStorageEnabled()) {
     return readLocalObject(key);
   }
 
-  throw new Error("Direct object reads are only supported for local dev storage");
+  throw new Error("Object storage is not configured");
 }
 
 export async function deleteStoredObject(key: string): Promise<void> {

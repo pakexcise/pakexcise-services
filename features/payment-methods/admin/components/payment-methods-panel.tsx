@@ -26,6 +26,10 @@ import {
   updatePaymentMethodAction,
 } from "@/features/payment-methods/admin/actions/payment-method-actions";
 import type { PaymentMethodPanelLabels } from "@/features/payment-methods/admin/lib/labels";
+import {
+  PaymentMethodQrField,
+  PaymentMethodQrSaveFirstHint,
+} from "@/features/payment-methods/admin/components/payment-method-qr-field";
 import type { AdminPaymentMethodItem } from "@/server/repositories/admin-payment-method-repository";
 
 type PaymentMethodsPanelProps = {
@@ -128,7 +132,33 @@ export function PaymentMethodsPanel({
           return;
         }
 
-        setDraft(emptyDraft(nextDisplayOrder));
+        if (draft.id) {
+          setDraft(emptyDraft(nextDisplayOrder));
+        } else {
+          const created = methods.find((method) => method.id === result.data.id);
+          setDraft(
+            created
+              ? methodToDraft(created)
+              : {
+                  ...emptyDraft(nextDisplayOrder),
+                  id: result.data.id,
+                  code: draft.code,
+                  type: draft.type,
+                  nameEn: draft.nameEn,
+                  nameUr: draft.nameUr,
+                  accountTitleEn: draft.accountTitleEn,
+                  accountTitleUr: draft.accountTitleUr,
+                  accountNumber: draft.accountNumber,
+                  iban: draft.iban,
+                  bankNameEn: draft.bankNameEn,
+                  bankNameUr: draft.bankNameUr,
+                  instructionsEn: draft.instructionsEn,
+                  instructionsUr: draft.instructionsUr,
+                  isActive: draft.isActive,
+                  displayOrder: draft.displayOrder,
+                },
+          );
+        }
         router.refresh();
       } catch (saveError) {
         setError(
@@ -377,6 +407,34 @@ export function PaymentMethodsPanel({
             />
             {labels.isActive}
           </label>
+
+          {draft.id ? (
+            <PaymentMethodQrField
+              paymentMethodId={draft.id}
+              hasQr={Boolean(
+                methods.find((method) => method.id === draft.id)?.qrCodeR2Key,
+              )}
+              labels={{
+                title: labels.qrCode,
+                hint: labels.qrCodeHint,
+                upload: labels.qrCodeUpload,
+                uploading: labels.qrCodeUploading,
+                remove: labels.qrCodeRemove,
+                removing: labels.qrCodeRemoving,
+                scanHint: labels.qrCodeScanHint,
+                saveFirst: labels.qrCodeSaveFirst,
+                uploadFailed: labels.qrCodeUploadFailed,
+                invalidType: labels.qrCodeInvalidType,
+                tooLarge: labels.qrCodeTooLarge,
+                invalidName: labels.qrCodeInvalidName,
+                maxSize: labels.qrCodeMaxSize,
+              }}
+            />
+          ) : (
+            <PaymentMethodQrSaveFirstHint
+              labels={{ saveFirst: labels.qrCodeSaveFirst }}
+            />
+          )}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">

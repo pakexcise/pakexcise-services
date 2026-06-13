@@ -37,6 +37,12 @@ export const saveApplicationDraftSchema = z.object({
   attribution: attributionSchema.optional(),
 });
 
+export const changeApplicationServiceSchema = z.object({
+  applicationId: z.string().cuid(),
+  newServiceSlug: z.string().trim().min(1),
+  basic: basicApplicantDetailsSchema,
+});
+
 export const submitApplicationSchema = z.object({
   analyticsEventId: z.string().uuid().optional(),
   applicationId: z.string().cuid(),

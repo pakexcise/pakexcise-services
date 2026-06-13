@@ -595,6 +595,8 @@ model PaymentMethod {
   bankNameUr       String?
   instructionsEn   String?           @db.Text
   instructionsUr   String?           @db.Text
+  qrCodeR2Key      String?
+  qrCodeMimeType   String?
   isActive         Boolean           @default(true)
   displayOrder     Int               @default(0)
   createdAt        DateTime          @default(now())
@@ -622,6 +624,8 @@ model InvoicePaymentMethod {
   bankNameUr       String?
   instructionsEn   String?           @db.Text
   instructionsUr   String?           @db.Text
+  qrCodeR2Key      String?
+  qrCodeMimeType   String?
   displayOrder     Int               @default(0)
   createdAt        DateTime          @default(now())
 

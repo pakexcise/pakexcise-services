@@ -10,6 +10,7 @@ import {
   parseDraftJson,
 } from "@/features/applications/lib/load-draft-state";
 import { mapServiceApplyConfig } from "@/features/applications/lib/map-service-config";
+import { mapServiceApplyOption } from "@/features/applications/lib/map-service-option";
 import {
   getApplyUser,
   resolveApplyRedirectHref,
@@ -79,8 +80,19 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   }
   const t = await getTranslations("apply");
   const tNav = await getTranslations("nav");
+  const tMarketing = await getTranslations("marketing");
 
   const service = mapServiceApplyConfig(serviceRecord, locale);
+  const { items: serviceRecords } = await serviceRepository.listPublicPaginated(
+    1,
+    100,
+  );
+  const availableServices = serviceRecords.map((item) =>
+    mapServiceApplyOption(item, locale, {
+      multiple: tMarketing("services.multipleRegions"),
+      allProvinces: tMarketing("services.allProvinces"),
+    }),
+  );
   const serviceName = service.name;
 
   const existingDraft = await applicationWizardRepository.findDraftByServiceForUser(
@@ -165,7 +177,11 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
     fields: {
       title: t("fields.title"),
       description: t("fields.description"),
-      empty: t("fields.empty"),
+      serviceSection: t("fields.serviceSection"),
+      selectedBadge: t("fields.selectedBadge"),
+      switchServiceNotice: t("fields.switchServiceNotice"),
+      additionalSection: t("fields.additionalSection"),
+      noAdditionalFields: t("fields.noAdditionalFields"),
       emptyTitle: t("fields.emptyTitle"),
       back: t("actions.back"),
       continue: t("actions.continue"),
@@ -199,7 +215,9 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       title: t("review.title"),
       description: t("review.description"),
       basicSection: t("review.basicSection"),
+      serviceSection: t("review.serviceSection"),
       fieldsSection: t("review.fieldsSection"),
+      edit: t("review.edit"),
       documentsSection: t("review.documentsSection"),
       fullName: t("basic.fullName"),
       email: t("basic.email"),
@@ -233,6 +251,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       <ApplyPageShell serviceName={serviceName} regionLabel={service.region}>
         <ApplicationWizard
           service={service}
+          availableServices={availableServices}
           locale={locale}
           labels={labels}
           initialDraft={initialDraft}

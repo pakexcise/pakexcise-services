@@ -12,6 +12,13 @@ const moneyAmountSchema = z
     "Amount can have at most 2 decimal places",
   );
 
+const optionalInvoiceNoteSchema = z
+  .string()
+  .trim()
+  .max(2000)
+  .optional()
+  .transform((value) => (value && value.length > 0 ? value : undefined));
+
 export const invoiceLineItemInputSchema = z.object({
   label: z.string().trim().min(1).max(120),
   description: z.string().trim().max(500).optional(),
@@ -23,15 +30,15 @@ export const createInvoiceSchema = z.object({
   applicationId: z.string().cuid(),
   locale: localeSchema,
   serviceFee: moneyAmountSchema,
-  officialFeeNote: z.string().trim().max(2000).optional(),
+  officialFeeNote: optionalInvoiceNoteSchema,
   lineItems: z.array(invoiceLineItemInputSchema).max(20).default([]),
   paymentMethodIds: z
     .array(z.string().cuid())
     .min(1, "Select at least one payment method")
     .max(10),
-  paymentInstructions: z.string().trim().max(2000).optional(),
+  paymentInstructions: optionalInvoiceNoteSchema,
   dueAt: z.string().datetime().optional(),
-  notes: z.string().trim().max(2000).optional(),
+  notes: optionalInvoiceNoteSchema,
   taxTotal: moneyAmountSchema.default(0),
   statusNote: z
     .string()
@@ -43,3 +50,14 @@ export const createInvoiceSchema = z.object({
 export const invoiceIdSchema = z.object({
   invoiceId: z.string().cuid(),
 });
+
+export const updateInvoiceSchema = createInvoiceSchema
+  .omit({ applicationId: true, statusNote: true })
+  .extend({
+    invoiceId: z.string().cuid(),
+    editNote: z
+      .string()
+      .trim()
+      .min(3, "Edit note is required")
+      .max(2000),
+  });

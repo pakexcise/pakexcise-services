@@ -20,6 +20,7 @@ import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { adminPaymentMethodRepository } from "@/server/repositories/admin-payment-method-repository";
 import { requirePermission } from "@/server/permissions/guards";
+import { deleteStoredObject } from "@/server/storage/object-storage";
 
 const ADMIN_PAYMENT_METHODS_PATH = "/admin/payment-methods";
 
@@ -151,6 +152,10 @@ export async function deletePaymentMethodAction(
   }
 
   const before = paymentMethodAuditSnapshot(existing);
+
+  if (existing.qrCodeR2Key) {
+    await deleteStoredObject(existing.qrCodeR2Key).catch(() => undefined);
+  }
 
   await prisma.paymentMethod.delete({
     where: { id: parsed.data.id },

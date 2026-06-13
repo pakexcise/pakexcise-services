@@ -12,6 +12,8 @@ export type PaymentMethodDisplayFields = {
   bankNameUr?: string | null;
   instructionsEn?: string | null;
   instructionsUr?: string | null;
+  qrCodeR2Key?: string | null;
+  qrCodeMimeType?: string | null;
 };
 
 export type PaymentMethodDisplayLabels = {
@@ -107,6 +109,8 @@ export function buildPaymentMethodSnapshot(
     bankNameUr: method.bankNameUr?.trim() || null,
     instructionsEn: method.instructionsEn?.trim() || null,
     instructionsUr: method.instructionsUr?.trim() || null,
+    qrCodeR2Key: method.qrCodeR2Key ?? null,
+    qrCodeMimeType: method.qrCodeMimeType ?? null,
     displayOrder,
   };
 }

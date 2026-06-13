@@ -30,6 +30,7 @@ export async function getLoginFormLabels() {
     phoneAccountNotFound: t("phoneAccountNotFound"),
     accountExists: t("accountExists"),
     emailExists: t("emailExists"),
+    emailNotVerified: t("emailNotVerified"),
     phoneExists: t("phoneExists"),
     googleAccountExists: t("googleAccountExists"),
     signupPrompt: t("signupPrompt"),

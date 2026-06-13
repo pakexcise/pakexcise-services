@@ -47,6 +47,7 @@ type LoginFormLabels = {
   phoneAccountNotFound: string;
   accountExists: string;
   emailExists: string;
+  emailNotVerified: string;
   phoneExists: string;
   googleAccountExists: string;
   signupPrompt: string;
@@ -99,6 +100,7 @@ function LoginFormContent({ labels, socialProviders, unified = false }: LoginFor
     accountNotFound: labels.accountNotFound,
     accountExists: labels.accountExists,
     emailExists: labels.emailExists,
+    emailNotVerified: labels.emailNotVerified,
     googleAccountExists: labels.googleAccountExists,
     signupPrompt: labels.signupPrompt,
     loginPrompt: labels.loginPrompt,

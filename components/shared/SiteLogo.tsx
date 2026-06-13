@@ -4,7 +4,7 @@ import { brandingAssets } from "@/config/branding";
 import { cn } from "@/lib/utils";
 
 type SiteLogoProps = {
-  variant?: "full" | "icon";
+  variant?: "full" | "icon" | "onPrimary";
   className?: string;
   imageClassName?: string;
   priority?: boolean;
@@ -25,6 +25,20 @@ export function SiteLogo({
         height={48}
         unoptimized
         className={cn("h-10 w-10", imageClassName, className)}
+        priority={priority}
+      />
+    );
+  }
+
+  if (variant === "onPrimary") {
+    return (
+      <Image
+        src={brandingAssets.logoDark}
+        alt="PakExcise"
+        width={220}
+        height={52}
+        unoptimized
+        className={cn("h-8 w-auto max-w-full object-contain object-left", imageClassName, className)}
         priority={priority}
       />
     );

@@ -18,6 +18,7 @@ export default async function SupportLayout({
   return (
     <SupportShell
       navItems={supportNavItems}
+      userId={user!.id}
       userName={displayName}
       userEmail={displayEmail}
     >

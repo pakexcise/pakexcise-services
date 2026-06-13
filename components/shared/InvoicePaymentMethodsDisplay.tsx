@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 export type InvoicePaymentMethodView = PaymentMethodDisplayFields & {
   id: string;
   code: string;
+  qrCodeUrl?: string | null;
 };
 
 type InvoicePaymentMethodsDisplayProps = {
@@ -19,6 +20,7 @@ type InvoicePaymentMethodsDisplayProps = {
   labels: PaymentMethodDisplayLabels & {
     title: string;
     empty?: string;
+    scanQr?: string;
   };
   className?: string;
 };
@@ -80,6 +82,23 @@ export function InvoicePaymentMethodsDisplay({
                       {line}
                     </p>
                   ))}
+                  {method.qrCodeUrl ? (
+                    <div className="pt-3">
+                      {labels.scanQr ? (
+                        <p className="mb-2 text-xs text-muted-foreground">
+                          {labels.scanQr}
+                        </p>
+                      ) : null}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={method.qrCodeUrl}
+                        alt=""
+                        className="mx-auto max-h-80 w-auto max-w-full object-contain"
+                        width={512}
+                        height={512}
+                      />
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

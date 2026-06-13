@@ -26,6 +26,7 @@ export default async function AgentLayout({
   return (
     <AgentShell
       navItems={agentNavItems}
+      userId={user!.id}
       userName={displayName}
       userContactLine={contactLine}
     >

@@ -25,6 +25,7 @@ export default async function AdminLayout({
     <AdminShell
       navItems={navItems}
       user={{
+        id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,

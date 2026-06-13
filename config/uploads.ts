@@ -32,6 +32,16 @@ export const PROOF_DOWNLOAD_EXPIRY_SECONDS = 24 * 60 * 60;
 
 export const INVOICE_DOWNLOAD_EXPIRY_SECONDS = 24 * 60 * 60;
 
+export const PAYMENT_METHOD_QR_MAX_BYTES = 3 * 1024 * 1024;
+
+export const PAYMENT_METHOD_QR_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+] as const;
+
+export type PaymentMethodQrMimeType = (typeof PAYMENT_METHOD_QR_MIME_TYPES)[number];
+
 export const COMPLETION_PROOF_DOC_TYPE = "completion_proof";
 
 const DOUBLE_EXTENSION_PATTERN = /\.[^./\\]+$/i;
@@ -146,6 +156,14 @@ export function buildInvoicePdfKey(input: {
   invoiceId: string;
 }): string {
   return `applications/${input.applicationId}/invoices/${input.invoiceId}.pdf`;
+}
+
+export function buildPaymentMethodQrKey(input: {
+  paymentMethodId: string;
+  extension: string;
+}): string {
+  const safeExt = input.extension.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  return `payment-methods/${input.paymentMethodId}/qr.${safeExt || "png"}`;
 }
 
 export const PAYMENT_SCREENSHOT_MAX_BYTES = DEFAULT_MAX_FILE_SIZE_BYTES;

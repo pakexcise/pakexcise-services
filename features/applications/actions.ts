@@ -24,6 +24,7 @@ import {
   type ActionResult,
 } from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
+import { emitApplicationChange } from "@/server/realtime/application-events";
 import { prisma } from "@/server/db/client";
 import { queueApplicationStatusNotifications } from "@/server/notifications/queue-application-status-notification";
 import { applicationIdParamSchema } from "@/lib/validations/route-params";
@@ -154,6 +155,14 @@ export async function transitionApplicationStatusAction(
     });
   }
 
+  await emitApplicationChange({
+    applicationId: application.id,
+    userId: application.userId,
+    agentId: application.agentId,
+    status: parsed.data.toStatus,
+    changeType: "status",
+  });
+
   return successResult({
     applicationId: application.id,
     status: parsed.data.toStatus,
@@ -192,6 +201,21 @@ export async function updateAdminNotesAction(
     before: { adminNotes: existing.adminNotes },
     after: { adminNotes: parsed.data.notes || null },
   });
+
+  const application = await prisma.application.findUnique({
+    where: { id: parsed.data.applicationId },
+    select: { status: true, userId: true, agentId: true },
+  });
+
+  if (application) {
+    await emitApplicationChange({
+      applicationId: parsed.data.applicationId,
+      userId: application.userId,
+      agentId: application.agentId,
+      status: application.status,
+      changeType: "notes",
+    });
+  }
 
   return successResult({ applicationId: parsed.data.applicationId });
 }
@@ -285,6 +309,21 @@ export async function confirmCompletionProofUploadAction(
     entityId: result.documentId,
     after: { applicationId: parsed.data.applicationId },
   });
+
+  const application = await prisma.application.findUnique({
+    where: { id: parsed.data.applicationId },
+    select: { status: true, userId: true, agentId: true },
+  });
+
+  if (application) {
+    await emitApplicationChange({
+      applicationId: parsed.data.applicationId,
+      userId: application.userId,
+      agentId: application.agentId,
+      status: application.status,
+      changeType: "document",
+    });
+  }
 
   return successResult({ documentId: result.documentId });
 }

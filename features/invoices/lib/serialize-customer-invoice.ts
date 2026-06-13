@@ -1,5 +1,6 @@
 import type { PaymentMethodType } from "@prisma/client";
 
+import { normalizeOptionalInvoiceNote } from "@/features/invoices/lib/normalize-optional-invoice-note";
 import type { CustomerInvoiceDetail } from "@/server/repositories/invoice-repository";
 
 export type CustomerInvoicePaymentMethodView = {
@@ -16,6 +17,7 @@ export type CustomerInvoicePaymentMethodView = {
   bankNameUr: string | null;
   instructionsEn: string | null;
   instructionsUr: string | null;
+  qrCodeUrl: string | null;
 };
 
 export type CustomerInvoiceViewData = {
@@ -53,10 +55,10 @@ export function serializeCustomerInvoiceForView(
     taxTotal: invoice.taxTotal.toString(),
     total: invoice.total.toString(),
     currency: invoice.currency,
-    notes: invoice.notes,
-    officialFeeNote: invoice.officialFeeNote,
+    notes: normalizeOptionalInvoiceNote(invoice.notes),
+    officialFeeNote: normalizeOptionalInvoiceNote(invoice.officialFeeNote),
     paymentMethod: invoice.paymentMethod,
-    paymentInstructions: invoice.paymentInstructions,
+    paymentInstructions: normalizeOptionalInvoiceNote(invoice.paymentInstructions),
     paymentMethods: invoice.paymentMethods.map((method) => ({
       id: method.id,
       code: method.code,
@@ -71,6 +73,9 @@ export function serializeCustomerInvoiceForView(
       bankNameUr: method.bankNameUr,
       instructionsEn: method.instructionsEn,
       instructionsUr: method.instructionsUr,
+      qrCodeUrl: method.qrCodeR2Key
+        ? `/api/invoices/${invoice.id}/payment-methods/${method.id}/qr`
+        : null,
     })),
     sentAt: invoice.sentAt?.toISOString() ?? null,
     dueAt: invoice.dueAt?.toISOString() ?? null,

@@ -231,15 +231,21 @@ export default async function CustomerApplicationPage({
             iban: t("invoice.iban"),
             bankName: t("invoice.bankName"),
             instructions: t("invoice.instructions"),
+            scanQr: t("invoice.scanQr"),
             dueDate: t("invoice.dueDate"),
             notes: t("invoice.notes"),
             lineItems: t("invoice.lineItems"),
+            description: t("invoice.description"),
+            amount: t("invoice.amount"),
             officialFee: t("invoice.officialFee"),
             downloadPdf: t("invoice.downloadPdf"),
             loadingPdf: t("invoice.loadingPdf"),
             pdfError: t("invoice.pdfError"),
             retry: t("invoice.retry"),
             sentOn: t("invoice.sentOn"),
+            exactPaymentTitle: t("invoice.exactPaymentTitle"),
+            exactPaymentNotice: t("invoice.exactPaymentNotice"),
+            disclaimer: t("invoice.disclaimer"),
           }}
         />
       ) : application.status !== "INVOICE_SENT" &&

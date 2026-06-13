@@ -13,7 +13,8 @@ import { CustomerAccountAvatar } from "@/components/customer/customer-account-av
 import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { Button } from "@/components/ui/button";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
+import { useAppPathname } from "@/i18n/use-app-pathname";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -41,7 +42,7 @@ export function CustomerSidebar({
   onNavigate,
   className,
 }: CustomerSidebarProps) {
-  const pathname = usePathname();
+  const pathname = useAppPathname();
   const t = labels.nav;
   const tShell = labels.shell;
 

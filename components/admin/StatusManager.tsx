@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { transitionApplicationStatusAction } from "@/features/applications/actions";
+import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 
 type StatusManagerProps = {
   applicationId: string;
@@ -87,6 +88,7 @@ export function StatusManager({
       setMessage(labels.success);
       setNote("");
       setToStatus("");
+      broadcastApplicationUpdate();
       router.refresh();
     });
   }

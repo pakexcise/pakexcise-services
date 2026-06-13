@@ -56,6 +56,7 @@ type EmailOtpAuthFormLabels = {
   accountNotFound?: string;
   accountExists?: string;
   emailExists?: string;
+  emailNotVerified?: string;
   googleAccountExists?: string;
   signupPrompt?: string;
   loginPrompt?: string;
@@ -129,6 +130,15 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
             return;
           }
 
+          if (eligibility.code === "EMAIL_NOT_VERIFIED") {
+            setError(
+              labels.emailNotVerified ??
+                labels.signInFailed ??
+                labels.verifyFailed,
+            );
+            return;
+          }
+
           if (eligibility.code === "GOOGLE_ACCOUNT_EXISTS") {
             setError(labels.googleAccountExists ?? labels.sendFailed);
             return;
@@ -150,6 +160,19 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           });
 
           if (result.error) {
+            const isUnverified =
+              result.error.status === 403 ||
+              result.error.message?.toLowerCase().includes("verify");
+
+            if (isUnverified) {
+              setError(
+                labels.emailNotVerified ??
+                  labels.signInFailed ??
+                  labels.verifyFailed,
+              );
+              return;
+            }
+
             setError(result.error.message ?? labels.signInFailed ?? labels.verifyFailed);
             return;
           }
@@ -159,23 +182,25 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           return;
         }
 
-        const signupResult = await signUp.email({
-          email: trimmedEmail,
-          password,
-          name: name.trim(),
-        });
+        if (!eligibility.resumeVerification) {
+          const signupResult = await signUp.email({
+            email: trimmedEmail,
+            password,
+            name: name.trim(),
+          });
 
-        if (signupResult.error) {
-          if (
-            signupResult.error.message?.toLowerCase().includes("already") ||
-            signupResult.error.message?.toLowerCase().includes("exists")
-          ) {
-            setError(labels.emailExists ?? labels.accountExists ?? labels.sendFailed);
+          if (signupResult.error) {
+            if (
+              signupResult.error.message?.toLowerCase().includes("already") ||
+              signupResult.error.message?.toLowerCase().includes("exists")
+            ) {
+              setError(labels.emailExists ?? labels.accountExists ?? labels.sendFailed);
+              return;
+            }
+
+            setError(signupResult.error.message ?? labels.sendFailed);
             return;
           }
-
-          setError(signupResult.error.message ?? labels.sendFailed);
-          return;
         }
 
         const otpResult = await sendEmailVerificationOtp(trimmedEmail);

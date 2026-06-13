@@ -26,24 +26,27 @@ export type InvoicePdfLabels = {
   paymentInstructions: string;
   officialFeeNote: string;
   notes: string;
+  scanQr: string;
   disclaimer: string;
+  exactPaymentTitle: string;
+  exactPaymentNotice: string;
   facilitationFee: string;
   governmentFees: string;
 };
 
 export const invoicePdfLabels: Record<InvoiceLocale, InvoicePdfLabels> = {
   en: {
-    title: "PakExcise.com Invoice",
+    title: "Invoice",
     invoiceNumber: "Invoice number",
     trackingId: "Tracking ID",
     service: "Service",
     customer: "Customer",
     issueDate: "Issue date",
     dueDate: "Due date",
-    lineItems: "Line items",
+    lineItems: "Fee breakdown",
     description: "Description",
     amount: "Amount",
-    serviceFee: "PakExcise facilitation service fee",
+    serviceFee: "Facilitation service fee",
     officialFees: "Government / official fees",
     subtotal: "Subtotal",
     tax: "Tax",
@@ -58,23 +61,27 @@ export const invoicePdfLabels: Record<InvoiceLocale, InvoicePdfLabels> = {
     paymentInstructions: "Additional payment instructions",
     officialFeeNote: "Official fee note",
     notes: "Notes",
+    scanQr: "Scan this QR code to pay",
     disclaimer:
-      "PakExcise.com is a private facilitation service and is not affiliated with any government department. Government taxes and official fees are separate from the PakExcise facilitation service fee.",
+      "Private facilitation service — not affiliated with any government department. Government taxes and official fees are separate from the facilitation service fee.",
+    exactPaymentTitle: "Important payment notice",
+    exactPaymentNotice:
+      "Payment must be the exact total amount shown above. Send the full payment in one transfer — partial payments are not accepted.",
     facilitationFee: "Facilitation service fee",
     governmentFees: "Government / official fees",
   },
   ur: {
-    title: "PakExcise.com انوائس",
+    title: "انوائس",
     invoiceNumber: "انوائس نمبر",
     trackingId: "ٹریکنگ ID",
     service: "خدمت",
     customer: "کسٹمر",
     issueDate: "جاری تاریخ",
     dueDate: "آخری تاریخ",
-    lineItems: "لائن آئٹمز",
+    lineItems: "فیس کی تفصیل",
     description: "تفصیل",
     amount: "رقم",
-    serviceFee: "PakExcise سہولت سروس فیس",
+    serviceFee: "سہولت سروس فیس",
     officialFees: "سرکاری / آفیشل فیس",
     subtotal: "ذیلی کل",
     tax: "ٹیکس",
@@ -89,8 +96,12 @@ export const invoicePdfLabels: Record<InvoiceLocale, InvoicePdfLabels> = {
     paymentInstructions: "اضافی ادائیگی کی ہدایات",
     officialFeeNote: "آفیشل فیس نوٹ",
     notes: "نوٹس",
+    scanQr: "ادائیگی کے لیے اس QR کو اسکین کریں",
     disclaimer:
-      "PakExcise.com ایک نجی سہولت سروس ہے اور کسی سرکاری محکمے سے وابستہ نہیں۔ سرکاری ٹیکس اور آفیشل فیس PakExcise سہولت سروس فیس سے الگ ہیں۔",
+      "نجی سہولت سروس — کسی سرکاری محکمے سے وابستہ نہیں۔ سرکاری ٹیکس اور آفیشل فیس سہولت سروس فیس سے الگ ہیں۔",
+    exactPaymentTitle: "اہم ادائیگی نوٹس",
+    exactPaymentNotice:
+      "ادائیگی اوپر دی گئی بالکل مکمل رقم ہونی چاہیے۔ پوری رقم ایک ہی ٹرانسفر میں بھیجیں — جزوی ادائیگی قبول نہیں ہے۔",
     facilitationFee: "سہولت سروس فیس",
     governmentFees: "سرکاری / آفیشل فیس",
   },

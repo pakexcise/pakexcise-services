@@ -12,6 +12,7 @@ import {
   confirmPaymentScreenshotUploadAction,
   requestPaymentScreenshotUploadAction,
 } from "@/features/payments/actions";
+import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 import {
   formatFileSize,
   validateClientUpload,
@@ -204,6 +205,7 @@ export function PaymentUpload({
 
         setFileName(file.name);
         onUploaded?.();
+        broadcastApplicationUpdate();
         router.refresh();
       } catch {
         setError(labels.uploadFailed);

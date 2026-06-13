@@ -253,6 +253,16 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
           return;
         }
 
+        const signInResult = await signIn.email({
+          email: tempEmail,
+          password,
+        });
+
+        if (signInResult.error) {
+          setError(signInResult.error.message ?? labels.sendFailed);
+          return;
+        }
+
         router.push(buildPostSignupRedirectUrl({ intent, callbackUrl }));
         router.refresh();
       } catch (submitError) {

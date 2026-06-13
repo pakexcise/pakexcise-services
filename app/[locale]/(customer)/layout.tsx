@@ -47,6 +47,7 @@ export default async function CustomerLayout({
 
   return (
     <CustomerShell
+      userId={user!.id}
       userName={displayName}
       userContactLine={contactLine}
       labels={labels}

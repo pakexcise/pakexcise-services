@@ -9,6 +9,7 @@ import {
   confirmCompletionProofUploadAction,
   requestCompletionProofUploadAction,
 } from "@/features/applications/actions";
+import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 import {
   formatFileSize,
   validateClientUpload,
@@ -140,6 +141,7 @@ export function ProofUploadSection({
           return;
         }
 
+        broadcastApplicationUpdate();
         router.refresh();
       } catch {
         setError(labels.uploadFailed);

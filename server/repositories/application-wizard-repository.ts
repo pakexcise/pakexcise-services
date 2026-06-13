@@ -101,6 +101,36 @@ export class ApplicationWizardRepository extends Repository {
     });
   }
 
+  async updateDraftService(input: {
+    applicationId: string;
+    userId: string;
+    serviceId: string;
+    currentStep: number;
+    draftJson: ApplicationDraftJson;
+  }): Promise<WizardApplicationRecord | null> {
+    const result = await this.db.application.updateMany({
+      where: {
+        id: input.applicationId,
+        userId: input.userId,
+        status: "DRAFT",
+      },
+      data: {
+        serviceId: input.serviceId,
+        currentStep: input.currentStep,
+        draftJson: input.draftJson as Prisma.InputJsonValue,
+      },
+    });
+
+    if (result.count === 0) {
+      return null;
+    }
+
+    return this.findDraftForUser({
+      applicationId: input.applicationId,
+      userId: input.userId,
+    });
+  }
+
   async updateDraft(input: {
     applicationId: string;
     userId: string;

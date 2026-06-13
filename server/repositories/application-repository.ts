@@ -140,6 +140,7 @@ const adminApplicationDetailSelect = {
         orderBy: { displayOrder: "asc" },
         select: {
           id: true,
+          paymentMethodId: true,
           code: true,
           type: true,
           nameEn: true,
@@ -152,6 +153,8 @@ const adminApplicationDetailSelect = {
           bankNameUr: true,
           instructionsEn: true,
           instructionsUr: true,
+          qrCodeR2Key: true,
+          qrCodeMimeType: true,
           displayOrder: true,
         },
       },
@@ -176,6 +179,7 @@ const adminApplicationDetailSelect = {
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
+      invoiceId: true,
       status: true,
       amount: true,
       rejectionReason: true,

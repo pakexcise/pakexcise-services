@@ -78,7 +78,6 @@ export const useWizardStore = create<WizardState>((set) => ({
 
     const hasCompleteBasic = Boolean(
       basic.fullName?.trim() &&
-        basic.email?.trim() &&
         basic.phone?.trim() &&
         basic.cnic?.trim(),
     );

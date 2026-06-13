@@ -13,6 +13,7 @@ import type {
 import { formatPhoneForDisplay } from "@/lib/validations/phone";
 
 type ReviewStepProps = {
+  serviceName: string;
   basic: BasicApplicantDetails;
   basicComplete: boolean;
   fields: ApplyFormFieldConfig[];
@@ -23,6 +24,7 @@ type ReviewStepProps = {
     title: string;
     description: string;
     basicSection: string;
+    serviceSection: string;
     fieldsSection: string;
     documentsSection: string;
     fullName: string;
@@ -35,11 +37,13 @@ type ReviewStepProps = {
     submit: string;
     submitting: string;
     disclaimer: string;
+    edit: string;
   };
   isSubmitting: boolean;
   submitError: string | null;
   onBack: () => void;
   onEditDetails: () => void;
+  onEditService: () => void;
   onSubmit: () => Promise<void>;
 };
 
@@ -87,6 +91,7 @@ function displayValue(value: string): string {
 }
 
 export function ReviewStep({
+  serviceName,
   basic,
   basicComplete,
   fields,
@@ -98,6 +103,7 @@ export function ReviewStep({
   submitError,
   onBack,
   onEditDetails,
+  onEditService,
   onSubmit,
 }: ReviewStepProps) {
   const uploadedDocuments = documentRequirements
@@ -138,6 +144,16 @@ export function ReviewStep({
           </div>
         </div>
       ) : null}
+
+      <section className="space-y-3 rounded-lg border p-4">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-medium">{labels.serviceSection}</h3>
+          <Button type="button" size="sm" variant="ghost" onClick={onEditService}>
+            {labels.edit}
+          </Button>
+        </div>
+        <p className="text-sm font-medium">{serviceName}</p>
+      </section>
 
       <section className="space-y-3 rounded-lg border p-4">
         <h3 className="font-medium">{labels.basicSection}</h3>

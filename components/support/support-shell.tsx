@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { ApplicationRealtimeSync } from "@/components/shared/application-realtime-sync";
 import { SupportSidebar } from "@/components/support/support-sidebar";
 import { SupportTopbar } from "@/components/support/support-topbar";
 import type { SupportNavItem } from "@/config/support";
@@ -10,6 +11,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 type SupportShellProps = {
   children: React.ReactNode;
   navItems: SupportNavItem[];
+  userId: string;
   userName: string;
   userEmail: string;
 };
@@ -17,6 +19,7 @@ type SupportShellProps = {
 export function SupportShell({
   children,
   navItems,
+  userId,
   userName,
   userEmail,
 }: SupportShellProps) {
@@ -24,6 +27,7 @@ export function SupportShell({
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
+      <ApplicationRealtimeSync userId={userId} role="SUPPORT" />
       <aside className="hidden w-64 shrink-0 flex-col border-r bg-muted/20 lg:flex">
         <div className="min-h-0 flex-1 overflow-y-auto">
           <SupportSidebar items={navItems} />

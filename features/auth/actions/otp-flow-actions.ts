@@ -22,12 +22,13 @@ import { hashCnic } from "@/server/security/cnic-hash";
 const emailSchema = z.string().trim().email();
 
 export type AuthEligibilityResult =
-  | { ok: true }
+  | { ok: true; resumeVerification?: boolean }
   | {
       ok: false;
       code:
         | "ACCOUNT_NOT_FOUND"
         | "ACCOUNT_EXISTS"
+        | "EMAIL_NOT_VERIFIED"
         | "PHONE_EXISTS"
         | "CNIC_EXISTS"
         | "GOOGLE_ACCOUNT_EXISTS"
@@ -63,6 +64,11 @@ export async function checkEmailAuthEligibility(
     if (!user || isTempPhoneEmail(user.email)) {
       return { ok: false, code: "ACCOUNT_NOT_FOUND" };
     }
+
+    if (!user.emailVerified) {
+      return { ok: false, code: "EMAIL_NOT_VERIFIED" };
+    }
+
     return { ok: true };
   }
 
@@ -78,6 +84,10 @@ export async function checkEmailAuthEligibility(
 
     if (googleAccount && !credentialAccount) {
       return { ok: false, code: "GOOGLE_ACCOUNT_EXISTS" };
+    }
+
+    if (credentialAccount && !user.emailVerified) {
+      return { ok: true, resumeVerification: true };
     }
 
     return { ok: false, code: "ACCOUNT_EXISTS" };
@@ -220,6 +230,7 @@ export async function linkPhoneAndCnicToUser(
       phone: normalizedPhone,
       phoneNumber: normalizedPhone,
       phoneNumberVerified: true,
+      emailVerified: true,
       cnicEncrypted: encryptCnic(normalizedCnic),
       cnicHash: cnicHashValue,
     },

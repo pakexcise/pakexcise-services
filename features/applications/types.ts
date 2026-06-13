@@ -43,6 +43,14 @@ export type ApplyServiceConfig = {
   documentRequirements: ApplyDocumentRequirement[];
 };
 
+export type ApplyServiceOption = {
+  id: string;
+  slug: string;
+  name: string;
+  region: string;
+  shortDescription: string | null;
+};
+
 export type BasicApplicantDetails = {
   fullName: string;
   email: string;

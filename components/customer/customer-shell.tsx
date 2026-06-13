@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { ApplicationRealtimeSync } from "@/components/shared/application-realtime-sync";
 import { CustomerSidebar } from "@/components/customer/customer-sidebar";
 import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { CustomerTopbar } from "@/components/customer/customer-topbar";
@@ -9,6 +10,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 type CustomerShellProps = {
   children: React.ReactNode;
+  userId: string;
   userName: string;
   userContactLine: string;
   labels: CustomerShellLabels;
@@ -16,6 +18,7 @@ type CustomerShellProps = {
 
 export function CustomerShell({
   children,
+  userId,
   userName,
   userContactLine,
   labels,
@@ -24,6 +27,7 @@ export function CustomerShell({
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
+      <ApplicationRealtimeSync userId={userId} role="CUSTOMER" />
       <aside className="hidden w-64 shrink-0 flex-col border-r bg-card lg:flex">
         <CustomerSidebar
           userName={userName}

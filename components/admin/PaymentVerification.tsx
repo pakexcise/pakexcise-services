@@ -11,6 +11,7 @@ import {
   rejectPaymentAction,
   verifyPaymentAction,
 } from "@/features/payments/actions";
+import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 
 type PaymentVerificationProps = {
   payment: {
@@ -71,6 +72,7 @@ export function PaymentVerification({ payment, labels }: PaymentVerificationProp
       }
 
       setMessage(labels.successApprove);
+      broadcastApplicationUpdate();
       router.refresh();
     });
   }
@@ -92,6 +94,7 @@ export function PaymentVerification({ payment, labels }: PaymentVerificationProp
       }
 
       setMessage(labels.successReject);
+      broadcastApplicationUpdate();
       router.refresh();
     });
   }

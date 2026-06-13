@@ -19,6 +19,7 @@ import {
   type ActionResult,
 } from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
+import { emitApplicationChange } from "@/server/realtime/application-events";
 import { prisma } from "@/server/db/client";
 import {
   queuePaymentRejectedNotifications,
@@ -46,6 +47,7 @@ async function getOwnedPayment(paymentId: string, userId: string) {
           status: true,
           trackingId: true,
           userId: true,
+          agentId: true,
           locale: true,
           service: { select: { nameEn: true, nameUr: true } },
           user: { select: { email: true, phone: true } },
@@ -202,6 +204,14 @@ export async function confirmPaymentScreenshotUploadAction(
     userPhone: payment.application.user.phone,
   });
 
+  await emitApplicationChange({
+    applicationId: payment.applicationId,
+    userId: payment.application.userId,
+    agentId: payment.application.agentId,
+    status: "PAYMENT_UPLOADED",
+    changeType: "payment",
+  });
+
   return successResult({
     paymentId: payment.id,
     applicationStatus: "PAYMENT_UPLOADED",
@@ -227,6 +237,7 @@ export async function verifyPaymentAction(
           status: true,
           trackingId: true,
           userId: true,
+          agentId: true,
           locale: true,
           service: { select: { nameEn: true, nameUr: true } },
           user: { select: { email: true, phone: true } },
@@ -295,6 +306,14 @@ export async function verifyPaymentAction(
     userPhone: payment.application.user.phone,
   });
 
+  await emitApplicationChange({
+    applicationId: payment.applicationId,
+    userId: payment.application.userId,
+    agentId: payment.application.agentId,
+    status: "PAYMENT_VERIFIED",
+    changeType: "payment",
+  });
+
   return successResult({ paymentId: payment.id, status: "VERIFIED" });
 }
 
@@ -317,6 +336,7 @@ export async function rejectPaymentAction(
           status: true,
           trackingId: true,
           userId: true,
+          agentId: true,
           locale: true,
           service: { select: { nameEn: true, nameUr: true } },
           user: { select: { email: true, phone: true } },
@@ -386,6 +406,14 @@ export async function rejectPaymentAction(
     reason: parsed.data.reason,
     userEmail: payment.application.user.email,
     userPhone: payment.application.user.phone,
+  });
+
+  await emitApplicationChange({
+    applicationId: payment.applicationId,
+    userId: payment.application.userId,
+    agentId: payment.application.agentId,
+    status: "INVOICE_SENT",
+    changeType: "payment",
   });
 
   return successResult({ paymentId: payment.id, status: "REJECTED" });

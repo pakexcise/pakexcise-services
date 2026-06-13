@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createAndSendInvoiceAction } from "@/features/invoices/actions";
+import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 import { getPaymentMethodName } from "@/features/payment-methods/lib/format-payment-method";
 import { cn } from "@/lib/utils";
 
@@ -173,6 +174,7 @@ export function InvoiceGenerator({
       }
 
       setMessage(`${labels.success} ${result.data.invoiceNumber}`);
+      broadcastApplicationUpdate();
       router.refresh();
     });
   }

@@ -118,6 +118,12 @@ export class DocumentRepository extends Repository {
       },
     });
   }
+
+  async deleteAllForApplication(applicationId: string): Promise<void> {
+    await this.db.document.deleteMany({
+      where: { applicationId },
+    });
+  }
 }
 
 export const documentRepository = new DocumentRepository();
