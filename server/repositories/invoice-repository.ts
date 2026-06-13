@@ -35,6 +35,7 @@ const customerInvoiceSelect = {
     orderBy: { displayOrder: "asc" },
     select: {
       id: true,
+      paymentMethodId: true,
       code: true,
       type: true,
       nameEn: true,

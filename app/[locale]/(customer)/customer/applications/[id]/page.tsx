@@ -104,7 +104,7 @@ export default async function CustomerApplicationPage({
 
   const documentStatusLabels = buildDocumentStatusLabels((key) => tDocStatus(key));
   const serializedInvoice = invoice
-    ? serializeCustomerInvoiceForView(invoice)
+    ? await serializeCustomerInvoiceForView(invoice)
     : null;
 
   return (

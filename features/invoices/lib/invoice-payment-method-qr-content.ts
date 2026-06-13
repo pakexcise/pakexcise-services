@@ -1,7 +1,7 @@
 import "server-only";
 
 import { canViewInvoicePdf } from "@/features/invoices/lib/invoice-access";
-import { readPaymentMethodQrContent } from "@/features/payment-methods/lib/payment-method-qr-content";
+import { resolveInvoicePaymentMethodQrContent } from "@/features/invoices/lib/resolve-invoice-payment-method-qr";
 import type { CurrentUser } from "@/server/auth/current-user";
 import { prisma } from "@/server/db/client";
 
@@ -26,6 +26,7 @@ export async function handleInvoicePaymentMethodQrContent(
         select: {
           id: true,
           code: true,
+          paymentMethodId: true,
           qrCodeR2Key: true,
           qrCodeMimeType: true,
         },
@@ -48,9 +49,12 @@ export async function handleInvoicePaymentMethodQrContent(
     return { status: 404, error: "Payment method not found" } as const;
   }
 
-  return readPaymentMethodQrContent({
-    qrCodeR2Key: method.qrCodeR2Key,
-    qrCodeMimeType: method.qrCodeMimeType,
+  return resolveInvoicePaymentMethodQrContent({
+    source: {
+      qrCodeR2Key: method.qrCodeR2Key,
+      qrCodeMimeType: method.qrCodeMimeType,
+      paymentMethodId: method.paymentMethodId,
+    },
     fileName: `${method.code}-qr.png`,
   });
 }

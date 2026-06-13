@@ -1,6 +1,7 @@
 import type { PaymentMethodType } from "@prisma/client";
 
 import { normalizeOptionalInvoiceNote } from "@/features/invoices/lib/normalize-optional-invoice-note";
+import { resolveInvoicePaymentMethodQrDataUri } from "@/features/invoices/lib/resolve-invoice-payment-method-qr";
 import type { CustomerInvoiceDetail } from "@/server/repositories/invoice-repository";
 
 export type CustomerInvoicePaymentMethodView = {
@@ -44,9 +45,36 @@ export type CustomerInvoiceViewData = {
   }>;
 };
 
-export function serializeCustomerInvoiceForView(
+export async function serializeCustomerInvoiceForView(
   invoice: CustomerInvoiceDetail,
-): CustomerInvoiceViewData {
+): Promise<CustomerInvoiceViewData> {
+  const paymentMethods = await Promise.all(
+    invoice.paymentMethods.map(async (method) => {
+      const qrCodeUrl = await resolveInvoicePaymentMethodQrDataUri({
+        qrCodeR2Key: method.qrCodeR2Key,
+        qrCodeMimeType: method.qrCodeMimeType,
+        paymentMethodId: method.paymentMethodId,
+      });
+
+      return {
+        id: method.id,
+        code: method.code,
+        type: method.type,
+        nameEn: method.nameEn,
+        nameUr: method.nameUr,
+        accountTitleEn: method.accountTitleEn,
+        accountTitleUr: method.accountTitleUr,
+        accountNumber: method.accountNumber,
+        iban: method.iban,
+        bankNameEn: method.bankNameEn,
+        bankNameUr: method.bankNameUr,
+        instructionsEn: method.instructionsEn,
+        instructionsUr: method.instructionsUr,
+        qrCodeUrl,
+      };
+    }),
+  );
+
   return {
     id: invoice.id,
     invoiceNumber: invoice.invoiceNumber,
@@ -59,24 +87,7 @@ export function serializeCustomerInvoiceForView(
     officialFeeNote: normalizeOptionalInvoiceNote(invoice.officialFeeNote),
     paymentMethod: invoice.paymentMethod,
     paymentInstructions: normalizeOptionalInvoiceNote(invoice.paymentInstructions),
-    paymentMethods: invoice.paymentMethods.map((method) => ({
-      id: method.id,
-      code: method.code,
-      type: method.type,
-      nameEn: method.nameEn,
-      nameUr: method.nameUr,
-      accountTitleEn: method.accountTitleEn,
-      accountTitleUr: method.accountTitleUr,
-      accountNumber: method.accountNumber,
-      iban: method.iban,
-      bankNameEn: method.bankNameEn,
-      bankNameUr: method.bankNameUr,
-      instructionsEn: method.instructionsEn,
-      instructionsUr: method.instructionsUr,
-      qrCodeUrl: method.qrCodeR2Key
-        ? `/api/invoices/${invoice.id}/payment-methods/${method.id}/qr`
-        : null,
-    })),
+    paymentMethods,
     sentAt: invoice.sentAt?.toISOString() ?? null,
     dueAt: invoice.dueAt?.toISOString() ?? null,
     lineItems: invoice.lineItems.map((item) => ({
