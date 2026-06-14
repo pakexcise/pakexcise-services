@@ -8,7 +8,12 @@ let hasLoggedConnectionWarning = false;
 
 function isTransientConnectionError(error: unknown): boolean {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    return error.code === "P1001" || error.code === "P1002" || error.code === "P1017";
+    return (
+      error.code === "P1001" ||
+      error.code === "P1002" ||
+      error.code === "P1017" ||
+      error.code === "P2024"
+    );
   }
 
   if (error instanceof Prisma.PrismaClientInitializationError) {
@@ -20,7 +25,12 @@ function isTransientConnectionError(error: unknown): boolean {
 
 function shouldUseFallback(error: unknown): boolean {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    return error.code === "P1001" || error.code === "P1002" || error.code === "P1017";
+    return (
+      error.code === "P1001" ||
+      error.code === "P1002" ||
+      error.code === "P1017" ||
+      error.code === "P2024"
+    );
   }
 
   if (error instanceof Prisma.PrismaClientInitializationError) {

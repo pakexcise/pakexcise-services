@@ -34,43 +34,59 @@ function mergeWithDefaults<T extends Record<string, unknown>>(
   return { ...defaults, ...stored };
 }
 
+const PUBLIC_SETTINGS_LOOKUP_KEYS = [
+  SETTINGS_KEYS.business,
+  SETTINGS_KEYS.payment,
+  SETTINGS_KEYS.seo,
+  SETTINGS_KEYS.tracking,
+  SETTINGS_KEYS.features,
+  "site",
+  "whatsapp",
+] as const;
+
 async function loadPublicSettingsSnapshot(): Promise<PublicSettingsSnapshot> {
-  const [
-    businessRaw,
-    paymentRaw,
-    seoRaw,
-    trackingRaw,
-    featuresRaw,
-    legacySite,
-    legacyWhatsapp,
-  ] = await Promise.all([
-    settingsRepository.getValue<Partial<BusinessSettings>>(SETTINGS_KEYS.business),
-    settingsRepository.getValue<Partial<PaymentSettings>>(SETTINGS_KEYS.payment),
-    settingsRepository.getValue<Partial<SeoSettings>>(SETTINGS_KEYS.seo),
-    settingsRepository.getValue<Partial<TrackingSettings>>(SETTINGS_KEYS.tracking),
-    settingsRepository.getValue<Partial<FeatureFlagSettings>>(SETTINGS_KEYS.features),
-    settingsRepository.getValue<{
-      supportEmail?: string;
-      supportPhone?: string;
-      businessHoursEn?: string;
-      businessHoursUr?: string;
-    }>("site"),
-    settingsRepository.getValue<{
-      phoneNumber?: string;
-      defaultMessage?: string;
-    }>("whatsapp"),
-  ]);
+  const stored = await settingsRepository.getValuesByKeys(
+    PUBLIC_SETTINGS_LOOKUP_KEYS,
+  );
+
+  const businessRaw = stored[SETTINGS_KEYS.business] as
+    | Partial<BusinessSettings>
+    | undefined;
+  const paymentRaw = stored[SETTINGS_KEYS.payment] as
+    | Partial<PaymentSettings>
+    | undefined;
+  const seoRaw = stored[SETTINGS_KEYS.seo] as Partial<SeoSettings> | undefined;
+  const trackingRaw = stored[SETTINGS_KEYS.tracking] as
+    | Partial<TrackingSettings>
+    | undefined;
+  const featuresRaw = stored[SETTINGS_KEYS.features] as
+    | Partial<FeatureFlagSettings>
+    | undefined;
+  const legacySite = stored.site as
+    | {
+        supportEmail?: string;
+        supportPhone?: string;
+        businessHoursEn?: string;
+        businessHoursUr?: string;
+      }
+    | undefined;
+  const legacyWhatsapp = stored.whatsapp as
+    | {
+        phoneNumber?: string;
+        defaultMessage?: string;
+      }
+    | undefined;
 
   return {
     business: mergeLegacyBusinessSettings({
-      stored: businessRaw,
-      legacySite,
-      legacyWhatsapp,
+      stored: businessRaw ?? null,
+      legacySite: legacySite ?? null,
+      legacyWhatsapp: legacyWhatsapp ?? null,
     }),
-    payment: mergeWithDefaults(defaultPaymentSettings(), paymentRaw),
-    seo: mergeWithDefaults(defaultSeoSettings(), seoRaw),
-    tracking: mergeWithDefaults(defaultTrackingSettings(), trackingRaw),
-    features: mergeWithDefaults(defaultFeatureFlagSettings(), featuresRaw),
+    payment: mergeWithDefaults(defaultPaymentSettings(), paymentRaw ?? null),
+    seo: mergeWithDefaults(defaultSeoSettings(), seoRaw ?? null),
+    tracking: mergeWithDefaults(defaultTrackingSettings(), trackingRaw ?? null),
+    features: mergeWithDefaults(defaultFeatureFlagSettings(), featuresRaw ?? null),
   };
 }
 
