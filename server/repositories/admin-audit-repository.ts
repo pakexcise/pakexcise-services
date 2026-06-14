@@ -1,8 +1,9 @@
 import "server-only";
 
-import type { AuditAction, Prisma } from "@prisma/client";
+import type { AuditAction, Prisma, UserRole } from "@prisma/client";
 
 import { Repository } from "@/server/repositories/base/repository";
+import { hiddenAuditActorRolesForAdmin } from "@/server/permissions/admin-scope";
 
 export type AdminAuditLogItem = {
   id: string;
@@ -27,11 +28,26 @@ type ListAuditLogsInput = {
   entityType?: string;
   action?: AuditAction;
   q?: string;
+  viewerRole?: UserRole;
 };
 
 export class AdminAuditRepository extends Repository {
   async list(input: ListAuditLogsInput): Promise<AdminAuditLogListResult> {
     const where: Prisma.AuditLogWhereInput = {};
+    const andFilters: Prisma.AuditLogWhereInput[] = [];
+
+    if (input.viewerRole === "ADMIN") {
+      andFilters.push({
+        OR: [
+          { actorId: null },
+          {
+            actor: {
+              role: { notIn: [...hiddenAuditActorRolesForAdmin] },
+            },
+          },
+        ],
+      });
+    }
 
     if (input.entityType?.trim()) {
       where.entityType = { contains: input.entityType.trim(), mode: "insensitive" };
@@ -51,6 +67,19 @@ export class AdminAuditRepository extends Repository {
       ];
     }
 
+    if (andFilters.length > 0) {
+      andFilters.push(where);
+      const mergedWhere: Prisma.AuditLogWhereInput = { AND: andFilters };
+      return this.queryAuditLogs(input, mergedWhere);
+    }
+
+    return this.queryAuditLogs(input, where);
+  }
+
+  private async queryAuditLogs(
+    input: ListAuditLogsInput,
+    where: Prisma.AuditLogWhereInput,
+  ): Promise<AdminAuditLogListResult> {
     const skip = (input.page - 1) * input.pageSize;
 
     const [rows, total] = await Promise.all([

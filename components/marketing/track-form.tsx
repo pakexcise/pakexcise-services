@@ -10,6 +10,11 @@ import { trackApplicationAction } from "@/features/customer/actions/track-applic
 import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
 import { Link, useRouter } from "@/i18n/navigation";
 import { siteConfig } from "@/config/site";
+import {
+  disclaimerBannerClassName,
+  disclaimerBannerIconClassName,
+} from "@/lib/styles/disclaimer-banner";
+import { cn } from "@/lib/utils";
 import { getUserRole } from "@/lib/auth-types";
 import { useSession } from "@/lib/auth-client";
 
@@ -137,9 +142,14 @@ export function TrackForm({
     <div className="mx-auto max-w-xl space-y-6">
       <div
         role="note"
-        className="flex items-start gap-2 rounded-lg border border-secondary/40 bg-secondary/10 p-4 text-sm"
+        className={cn(
+          "flex items-start gap-2 rounded-lg border p-4 text-sm",
+          disclaimerBannerClassName,
+        )}
       >
-        <AlertTriangle className="mt-0.5 size-4 shrink-0 text-secondary-foreground" />
+        <AlertTriangle
+          className={cn("mt-0.5 size-4", disclaimerBannerIconClassName)}
+        />
         <p>{labels.disclaimer}</p>
       </div>
 

@@ -1,5 +1,9 @@
 import { AlertTriangle } from "lucide-react";
 
+import {
+  disclaimerBannerIconClassName,
+  disclaimerBoxClassName,
+} from "@/lib/styles/disclaimer-banner";
 import { cn } from "@/lib/utils";
 
 type DisclaimerBoxProps = {
@@ -9,15 +13,9 @@ type DisclaimerBoxProps = {
 
 export function DisclaimerBox({ text, className }: DisclaimerBoxProps) {
   return (
-    <div
-      role="note"
-      className={cn(
-        "flex gap-3 rounded-xl border border-secondary/30 bg-secondary/10 p-4 text-sm leading-relaxed",
-        className,
-      )}
-    >
+    <div role="note" className={cn("flex gap-3", disclaimerBoxClassName, className)}>
       <AlertTriangle
-        className="mt-0.5 size-4 shrink-0 text-secondary-foreground"
+        className={cn("mt-0.5 size-4", disclaimerBannerIconClassName)}
         aria-hidden="true"
       />
       <p>{text}</p>

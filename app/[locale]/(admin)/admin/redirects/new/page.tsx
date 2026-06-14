@@ -5,6 +5,7 @@ import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { RedirectEditorForm } from "@/features/redirects/admin/components/redirect-editor-form";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePlatformManageAccess } from "@/server/permissions/platform-access";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.resources.redirects");
@@ -12,6 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminRedirectNewPage() {
+  await enforcePlatformManageAccess();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.redirects");

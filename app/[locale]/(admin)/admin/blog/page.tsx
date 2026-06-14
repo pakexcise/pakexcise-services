@@ -26,6 +26,7 @@ import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import { adminBlogRepository } from "@/server/repositories/admin-blog-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 
 type BlogAdminPageProps = {
   searchParams: Promise<{ page?: string; q?: string; status?: string }>;
@@ -37,6 +38,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps) {
+  await enforcePermissionAccess("content:manage")();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.blog");

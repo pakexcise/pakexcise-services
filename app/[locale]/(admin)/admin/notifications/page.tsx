@@ -23,8 +23,10 @@ import {
 } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
+import { requireAdminPortal } from "@/server/permissions/guards";
 import { notificationRepository } from "@/server/repositories/notification-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { AdminScopeNotice } from "@/features/admin/components/admin-scope-notice";
 
 const validStatuses = new Set<string>([
   "PENDING",
@@ -89,6 +91,8 @@ function truncateHash(hash: string | null): string {
 export default async function AdminNotificationsPage({
   searchParams,
 }: NotificationsPageProps) {
+  const user = await requireAdminPortal();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin");
@@ -116,6 +120,7 @@ export default async function AdminNotificationsPage({
     status,
     channel,
     eventType,
+    viewerRole: user.role,
   });
 
   return (
@@ -124,6 +129,10 @@ export default async function AdminNotificationsPage({
         title={t("notifications.title")}
         description={t("notifications.description")}
       />
+
+      {user.role === "ADMIN" ? (
+        <AdminScopeNotice message={t("notifications.scopeNotice")} />
+      ) : null}
 
       <NotificationFilters
         currentStatus={status}

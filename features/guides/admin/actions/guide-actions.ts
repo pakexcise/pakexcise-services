@@ -72,7 +72,7 @@ async function validateRelations(serviceIds: string[], faqIds: string[]) {
 export async function createGuideAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(createGuideSchema, input);
   if (!parsed.success) return parsed;
 
@@ -119,7 +119,7 @@ export async function createGuideAction(
 export async function updateGuideAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(updateGuideSchema, input);
   if (!parsed.success) return parsed;
 
@@ -188,7 +188,7 @@ export async function updateGuideAction(
 export async function toggleGuideAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(toggleGuideSchema, input);
   if (!parsed.success) return parsed;
 
@@ -221,7 +221,7 @@ export async function toggleGuideAction(
 export async function deleteGuideAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(guideIdSchema, input);
   if (!parsed.success) return parsed;
 

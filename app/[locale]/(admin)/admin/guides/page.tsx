@@ -26,6 +26,7 @@ import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import { adminGuideRepository } from "@/server/repositories/admin-guide-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePlatformManageAccess } from "@/server/permissions/platform-access";
 
 type GuidesAdminPageProps = {
   searchParams: Promise<{ page?: string; q?: string; status?: string }>;
@@ -37,6 +38,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminGuidesPage({ searchParams }: GuidesAdminPageProps) {
+  await enforcePlatformManageAccess();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.guides");

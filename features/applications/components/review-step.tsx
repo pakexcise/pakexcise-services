@@ -11,6 +11,7 @@ import type {
   SavedDocumentMeta,
 } from "@/features/applications/types";
 import { formatPhoneForDisplay } from "@/lib/validations/phone";
+import { disclaimerBoxClassName } from "@/lib/styles/disclaimer-banner";
 
 type ReviewStepProps = {
   serviceName: string;
@@ -225,7 +226,7 @@ export function ReviewStep({
         )}
       </section>
 
-      <p className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+      <p className={disclaimerBoxClassName}>
         {labels.disclaimer}
       </p>
 

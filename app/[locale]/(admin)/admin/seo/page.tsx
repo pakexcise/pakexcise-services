@@ -21,6 +21,7 @@ import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import { adminSeoRepository } from "@/server/repositories/admin-seo-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePlatformManageAccess } from "@/server/permissions/platform-access";
 
 type SeoAdminPageProps = {
   searchParams: Promise<{ page?: string; q?: string }>;
@@ -32,6 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) {
+  await enforcePlatformManageAccess();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.seo");

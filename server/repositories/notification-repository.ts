@@ -5,9 +5,11 @@ import type {
   NotificationEventType,
   NotificationStatus,
   Prisma,
+  UserRole,
 } from "@prisma/client";
 
 import { adminDefaultPageSize } from "@/config/admin";
+import { adminVisibleNotificationRecipientRoles } from "@/server/permissions/admin-scope";
 import { prisma } from "@/server/db/client";
 
 export type NotificationListFilters = {
@@ -17,6 +19,7 @@ export type NotificationListFilters = {
   channel?: NotificationChannel;
   eventType?: NotificationEventType;
   search?: string;
+  viewerRole?: UserRole;
 };
 
 export type NotificationListItem = {
@@ -44,6 +47,20 @@ export const notificationRepository = {
     const skip = (page - 1) * pageSize;
 
     const where: Prisma.NotificationWhereInput = {};
+    const andFilters: Prisma.NotificationWhereInput[] = [];
+
+    if (filters.viewerRole === "ADMIN") {
+      andFilters.push({
+        OR: [
+          { userId: null },
+          {
+            user: {
+              role: { in: [...adminVisibleNotificationRecipientRoles] },
+            },
+          },
+        ],
+      });
+    }
 
     if (filters.status) {
       where.status = filters.status;
@@ -70,9 +87,12 @@ export const notificationRepository = {
       ];
     }
 
+    const queryWhere: Prisma.NotificationWhereInput =
+      andFilters.length > 0 ? { AND: [...andFilters, where] } : where;
+
     const [rows, total] = await Promise.all([
       prisma.notification.findMany({
-        where,
+        where: queryWhere,
         orderBy: { createdAt: "desc" },
         skip,
         take: pageSize,
@@ -94,7 +114,7 @@ export const notificationRepository = {
           user: { select: { email: true } },
         },
       }),
-      prisma.notification.count({ where }),
+      prisma.notification.count({ where: queryWhere }),
     ]);
 
     const items: NotificationListItem[] = rows.map((row) => ({

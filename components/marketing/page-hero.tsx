@@ -17,7 +17,7 @@ export function PageHero({
   return (
     <section
       className={cn(
-        "border-b bg-gradient-to-b from-primary/5 to-background",
+        "border-b bg-gradient-to-b from-primary/5 to-background dark:from-primary/10 dark:to-background",
         className,
       )}
     >

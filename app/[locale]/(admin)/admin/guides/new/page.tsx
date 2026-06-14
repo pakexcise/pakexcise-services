@@ -9,6 +9,7 @@ import {
 import { loadCmsEditorOptions } from "@/features/cms/lib/load-editor-options";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePlatformManageAccess } from "@/server/permissions/platform-access";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.resources.guides");
@@ -16,6 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminGuideNewPage() {
+  await enforcePlatformManageAccess();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.guides");

@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { disclaimerBannerClassName } from "@/lib/styles/disclaimer-banner";
 import { siteConfig } from "@/config/site";
 
 const navItems = [
@@ -26,6 +27,7 @@ const navItems = [
 type HeaderProps = {
   whatsappPhone?: string | null;
   whatsappMessage?: string | null;
+  embedded?: boolean;
 };
 
 function buildWhatsAppUrl(phoneNumber: string, message: string): string {
@@ -33,7 +35,11 @@ function buildWhatsAppUrl(phoneNumber: string, message: string): string {
   return `https://wa.me/${normalized}?text=${encodeURIComponent(message)}`;
 }
 
-export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
+export function Header({
+  whatsappPhone,
+  whatsappMessage,
+  embedded = false,
+}: HeaderProps) {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const tDisclaimer = useTranslations("disclaimer");
@@ -45,8 +51,19 @@ export function Header({ whatsappPhone, whatsappMessage }: HeaderProps) {
   const whatsappHref = buildWhatsAppUrl(phone, message);
 
   return (
-    <header className="sticky top-0 z-40 isolate border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="border-b border-secondary/20 bg-muted/40 px-4 py-1.5 text-center text-xs text-muted-foreground xl:hidden">
+    <header
+      className={cn(
+        !embedded &&
+          "sticky top-0 z-40 isolate border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+      )}
+    >
+      <div
+        className={cn(
+          "px-4 py-1.5 text-center text-xs leading-snug xl:hidden",
+          embedded ? "border-b border-border/60" : "border-b",
+          disclaimerBannerClassName,
+        )}
+      >
         {tDisclaimer("short")}
       </div>
 

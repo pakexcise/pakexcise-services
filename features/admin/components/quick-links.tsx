@@ -1,7 +1,14 @@
 import {
+  ArrowRightLeft,
+  Bell,
+  BookOpen,
   Briefcase,
   CreditCard,
   FileStack,
+  Newspaper,
+  Search,
+  Settings,
+  UserCog,
   Shield,
 } from "lucide-react";
 
@@ -59,5 +66,12 @@ export const quickLinkIcons = {
   services: <Briefcase className="size-4" aria-hidden="true" />,
   applications: <FileStack className="size-4" aria-hidden="true" />,
   payments: <CreditCard className="size-4" aria-hidden="true" />,
+  notifications: <Bell className="size-4" aria-hidden="true" />,
   audit: <Shield className="size-4" aria-hidden="true" />,
+  seo: <Search className="size-4" aria-hidden="true" />,
+  blog: <Newspaper className="size-4" aria-hidden="true" />,
+  redirects: <ArrowRightLeft className="size-4" aria-hidden="true" />,
+  guides: <BookOpen className="size-4" aria-hidden="true" />,
+  settings: <Settings className="size-4" aria-hidden="true" />,
+  users: <UserCog className="size-4" aria-hidden="true" />,
 };

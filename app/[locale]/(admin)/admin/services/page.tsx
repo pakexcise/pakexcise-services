@@ -25,6 +25,7 @@ import { Link } from "@/i18n/navigation";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
 import { regionRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 
 type ServicesAdminPageProps = {
   searchParams: Promise<{
@@ -43,6 +44,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminServicesPage({
   searchParams,
 }: ServicesAdminPageProps) {
+  await enforcePermissionAccess("service:manage")();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.services");

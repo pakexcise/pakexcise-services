@@ -4,6 +4,7 @@ import { Header } from "@/components/shared/Header";
 import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { siteChromeShellClassName } from "@/lib/styles/site-chrome";
 
 export default async function MarketingLayout({
   children,
@@ -26,11 +27,14 @@ export default async function MarketingLayout({
   if (features.maintenanceMode) {
     return (
       <>
-        <LegalDisclaimer bannerText={disclaimerText} />
-        <Header
-          whatsappPhone={business.whatsappNumber}
-          whatsappMessage={business.whatsappDefaultMessage}
-        />
+        <div className={siteChromeShellClassName}>
+          <LegalDisclaimer bannerText={disclaimerText} embedded />
+          <Header
+            embedded
+            whatsappPhone={business.whatsappNumber}
+            whatsappMessage={business.whatsappDefaultMessage}
+          />
+        </div>
         <main id="main-content">
           <MaintenanceView message={maintenanceMessage} />
         </main>
@@ -41,11 +45,14 @@ export default async function MarketingLayout({
 
   return (
     <>
-      <LegalDisclaimer bannerText={disclaimerText} />
-      <Header
-        whatsappPhone={business.whatsappNumber}
-        whatsappMessage={business.whatsappDefaultMessage}
-      />
+      <div className={siteChromeShellClassName}>
+        <LegalDisclaimer bannerText={disclaimerText} embedded />
+        <Header
+          embedded
+          whatsappPhone={business.whatsappNumber}
+          whatsappMessage={business.whatsappDefaultMessage}
+        />
+      </div>
       <main id="main-content">{children}</main>
       <Footer />
     </>

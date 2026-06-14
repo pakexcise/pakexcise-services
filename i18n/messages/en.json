@@ -1091,6 +1091,8 @@
   },
   "admin": {
     "panel": "Admin panel",
+    "panelOperations": "Operations panel",
+    "panelSuperAdmin": "Super admin panel",
     "privateNotice": "Private facilitation operations — not a government portal.",
     "search": "Search",
     "searchPlaceholder": "Search applications by tracking ID, customer, or service",
@@ -1099,6 +1101,10 @@
     "userMenu": {
       "publicSite": "View public site",
       "signOut": "Sign out"
+    },
+    "roles": {
+      "admin": "Admin",
+      "superAdmin": "Super Admin"
     },
     "nav": {
       "dashboard": "Dashboard",
@@ -1118,20 +1124,32 @@
       "blog": "Blog",
       "guides": "Guides",
       "auditLogs": "Audit logs",
-      "settings": "Settings"
+      "settings": "Settings",
+      "users": "Admin users"
     },
     "dashboard": {
       "title": "Dashboard",
       "description": "Overview of application volume, queues, and quick admin actions.",
+      "descriptionAdmin": "Operational overview for day-to-day application, payment, and customer workflows.",
+      "descriptionSuperAdmin": "Full platform overview with operations, SEO, redirects, guides, and system settings.",
       "recentApplications": "Recent applications",
       "recentEmpty": "No applications submitted yet.",
       "viewAllApplications": "View all applications",
       "quickLinks": "Quick links",
+      "platformLinks": "Platform management",
+      "staffLinks": "Staff & access",
       "links": {
         "services": "Manage services",
         "applicationQueue": "Application review queue",
         "paymentVerification": "Payment verification queue",
-        "auditLogs": "View audit logs"
+        "notifications": "View notifications",
+        "auditLogs": "View audit logs",
+        "seo": "SEO metadata",
+        "redirects": "URL redirects",
+        "guides": "Guides",
+        "blog": "Blog posts",
+        "settings": "System settings",
+        "users": "Admin users & permissions"
       },
       "cards": {
         "total": "Total applications",
@@ -1143,6 +1161,83 @@
         "inProgress": "In progress",
         "completed": "Completed",
         "rejectedCancelled": "Rejected / cancelled"
+      }
+    },
+    "users": {
+      "title": "Admin users",
+      "description": "Create staff accounts and assign module access for Admin users.",
+      "create": "Add staff user",
+      "createTitle": "Create staff user",
+      "createDescription": "Create an Admin or Support account and choose which modules they can access.",
+      "editTitle": "Edit staff user",
+      "edit": "Edit",
+      "search": "Search",
+      "searchPlaceholder": "Search by name or email",
+      "emptyTitle": "No staff users found",
+      "emptyDescription": "Create Admin or Support accounts to help run operations.",
+      "protectedAccount": "Protected account",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "form": {
+        "name": "Full name",
+        "email": "Email address",
+        "password": "Temporary password",
+        "role": "Role",
+        "roleAdmin": "Admin",
+        "roleSupport": "Support",
+        "status": "Account status",
+        "statusActive": "Active",
+        "statusDisabled": "Disabled",
+        "statusSuspended": "Suspended",
+        "permissionsTitle": "Module access",
+        "permissionsDescription": "Choose which areas this Admin can manage. Operational access is included by default.",
+        "create": "Create user",
+        "save": "Save changes",
+        "pending": "Saving…"
+      },
+      "permissions": {
+        "groups": {
+          "catalog": "Catalog & content",
+          "content": "Blog",
+          "platform": "Platform & SEO",
+          "system": "System"
+        },
+        "items": {
+          "service:manage": {
+            "title": "Services",
+            "description": "Manage services, form fields, and document checklists."
+          },
+          "region:manage": {
+            "title": "Regions",
+            "description": "Manage regions and cities."
+          },
+          "faq:manage": {
+            "title": "FAQs",
+            "description": "Create and publish FAQ entries."
+          },
+          "social:manage": {
+            "title": "Social links",
+            "description": "Manage social profile links."
+          },
+          "content:manage": {
+            "title": "Blog",
+            "description": "Create and publish blog posts."
+          },
+          "platform:manage": {
+            "title": "SEO, redirects & guides",
+            "description": "Manage SEO metadata, URL redirects, and guides."
+          },
+          "settings:manage": {
+            "title": "System settings",
+            "description": "Manage business settings and feature flags."
+          }
+        }
       }
     },
     "applications": {
@@ -1555,6 +1650,7 @@
     "notifications": {
       "title": "Notifications",
       "description": "Monitor outbound email, WhatsApp, and SMS notification delivery.",
+      "scopeNotice": "Showing customer, agent, and admin notifications. Super admin private notifications are hidden.",
       "emptyTitle": "No notifications found",
       "emptyDescription": "Notification delivery logs will appear here after customer events.",
       "filters": {
@@ -1811,6 +1907,7 @@
       }
     },
     "auditLogs": {
+      "scopeNotice": "Showing customer, agent, and admin activity. Super admin actions are hidden from this view.",
       "columns": {
         "time": "Time",
         "actor": "Actor",

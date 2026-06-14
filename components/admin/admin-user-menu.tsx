@@ -29,6 +29,13 @@ type AdminUserMenuProps = {
 export function AdminUserMenu({ user }: AdminUserMenuProps) {
   const t = useTranslations("admin");
 
+  const roleLabel =
+    user.role === "SUPER_ADMIN"
+      ? t("roles.superAdmin")
+      : user.role === "ADMIN"
+        ? t("roles.admin")
+        : user.role;
+
   async function handleSignOut() {
     await authClient.signOut();
     window.location.href = "/";
@@ -49,7 +56,7 @@ export function AdminUserMenu({ user }: AdminUserMenuProps) {
             <span className="truncate text-xs text-muted-foreground">
               {user.email}
             </span>
-            <span className="text-xs text-muted-foreground">{user.role}</span>
+            <span className="text-xs text-muted-foreground">{roleLabel}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

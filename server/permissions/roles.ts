@@ -15,6 +15,7 @@ export const permissions = [
   "social:manage",
   "payment-method:manage",
   "content:manage",
+  "platform:manage",
   "users:manage",
   "settings:manage",
   "audit:read",
@@ -23,7 +24,8 @@ export const permissions = [
 
 export type Permission = (typeof permissions)[number];
 
-const adminPermissions: Permission[] = [
+/** Always included for ADMIN — operational access only. */
+export const baseAdminPermissions: Permission[] = [
   "application:read",
   "application:write",
   "application:status",
@@ -32,15 +34,24 @@ const adminPermissions: Permission[] = [
   "documents:verify",
   "payment:verify",
   "invoice:manage",
+  "payment-method:manage",
+  "agents:manage",
+  "audit:read",
+];
+
+/** Permissions Super Admin can assign to individual Admin users. */
+export const grantableAdminPermissions: Permission[] = [
   "service:manage",
   "region:manage",
   "faq:manage",
   "social:manage",
-  "payment-method:manage",
   "content:manage",
-  "agents:manage",
-  "audit:read",
+  "platform:manage",
+  "settings:manage",
 ];
+
+/** Reserved for Super Admin only — never grantable to Admin. */
+export const superAdminOnlyPermissions: Permission[] = ["users:manage"];
 
 const supportPermissions: Permission[] = [
   "application:read",
@@ -54,12 +65,23 @@ export const rolePermissions: Record<UserRole, readonly Permission[]> = {
   CUSTOMER: [],
   AGENT: agentPermissions,
   SUPPORT: supportPermissions,
-  ADMIN: adminPermissions,
+  ADMIN: baseAdminPermissions,
   SUPER_ADMIN: permissions,
 };
 
 export function getPermissionsForRole(role: UserRole): readonly Permission[] {
   return rolePermissions[role];
+}
+
+export function isValidPermission(value: string): value is Permission {
+  return (permissions as readonly string[]).includes(value);
+}
+
+export function hasPermissionInSet(
+  permissionSet: readonly Permission[],
+  permission: Permission,
+): boolean {
+  return permissionSet.includes(permission);
 }
 
 export function roleHasPermission(
@@ -74,4 +96,37 @@ export const portalRoles = {
   agent: ["AGENT"] as const satisfies readonly UserRole[],
   support: ["SUPPORT"] as const satisfies readonly UserRole[],
   admin: ["ADMIN", "SUPER_ADMIN"] as const satisfies readonly UserRole[],
+};
+
+export type PermissionGroupKey =
+  | "operations"
+  | "catalog"
+  | "content"
+  | "platform"
+  | "system";
+
+export const permissionGroups: Record<
+  PermissionGroupKey,
+  { labelKey: string; permissions: Permission[] }
+> = {
+  operations: {
+    labelKey: "operations",
+    permissions: [...baseAdminPermissions],
+  },
+  catalog: {
+    labelKey: "catalog",
+    permissions: ["service:manage", "region:manage", "faq:manage", "social:manage"],
+  },
+  content: {
+    labelKey: "content",
+    permissions: ["content:manage"],
+  },
+  platform: {
+    labelKey: "platform",
+    permissions: ["platform:manage"],
+  },
+  system: {
+    labelKey: "system",
+    permissions: ["settings:manage"],
+  },
 };

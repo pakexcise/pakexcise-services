@@ -184,9 +184,26 @@ model User {
   auditLogs            AuditLog[]
   notifications        Notification[]
   statusChanges        StatusHistory[]
+  adminPermissionGrants AdminPermissionGrant[] @relation("AdminPermissionUser")
+  grantedAdminPermissions AdminPermissionGrant[] @relation("AdminPermissionGranter")
 
   @@index([role, status])
   @@map("users")
+}
+
+model AdminPermissionGrant {
+  id         String   @id @default(cuid())
+  userId     String
+  permission String
+  grantedBy  String
+  createdAt  DateTime @default(now())
+
+  user    User @relation("AdminPermissionUser", fields: [userId], references: [id], onDelete: Cascade)
+  granter User @relation("AdminPermissionGranter", fields: [grantedBy], references: [id], onDelete: Restrict)
+
+  @@unique([userId, permission])
+  @@index([userId])
+  @@map("admin_permission_grants")
 }
 
 model Account {

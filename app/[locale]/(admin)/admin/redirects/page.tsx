@@ -22,6 +22,7 @@ import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import { adminRedirectRepository } from "@/server/repositories/admin-redirect-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePlatformManageAccess } from "@/server/permissions/platform-access";
 
 type RedirectsAdminPageProps = {
   searchParams: Promise<{ page?: string; q?: string; active?: string }>;
@@ -35,6 +36,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminRedirectsPage({
   searchParams,
 }: RedirectsAdminPageProps) {
+  await enforcePlatformManageAccess();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.redirects");

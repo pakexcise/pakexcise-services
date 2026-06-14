@@ -10,6 +10,7 @@ import { legalPageKeys, type LegalPageKey } from "@/lib/validations/admin-page-c
 import { adminPageContentRepository } from "@/server/repositories/admin-page-content-repository";
 import { adminSeoRepository } from "@/server/repositories/admin-seo-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePlatformManageAccess } from "@/server/permissions/platform-access";
 
 type LegalEditPageProps = {
   params: Promise<{ pageKey: string }>;
@@ -20,6 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminLegalPageEditPage({ params }: LegalEditPageProps) {
+  await enforcePlatformManageAccess();
+
   const { pageKey } = await params;
 
   if (!legalPageKeys.includes(pageKey as LegalPageKey)) {

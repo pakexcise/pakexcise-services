@@ -47,7 +47,7 @@ function revalidateRedirectPaths() {
 export async function createRedirectAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(createRedirectSchema, input);
   if (!parsed.success) return parsed;
 
@@ -78,7 +78,7 @@ export async function createRedirectAction(
 export async function updateRedirectAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(updateRedirectSchema, input);
   if (!parsed.success) return parsed;
 
@@ -118,7 +118,7 @@ export async function updateRedirectAction(
 export async function toggleRedirectAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(toggleRedirectSchema, input);
   if (!parsed.success) return parsed;
 
@@ -146,7 +146,7 @@ export async function toggleRedirectAction(
 export async function deleteRedirectAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(redirectIdSchema, input);
   if (!parsed.success) return parsed;
 

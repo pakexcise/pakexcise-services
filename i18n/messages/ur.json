@@ -1091,6 +1091,8 @@
   },
   "admin": {
     "panel": "ایڈمن پینل",
+    "panelOperations": "آپریشنز پینل",
+    "panelSuperAdmin": "سپر ایڈمن پینل",
     "privateNotice": "نجی سہولت آپریشنز — سرکاری پورٹل نہیں۔",
     "search": "تلاش",
     "searchPlaceholder": "ٹریکنگ ID، کسٹمر یا سروس سے درخواست تلاش کریں",
@@ -1099,6 +1101,10 @@
     "userMenu": {
       "publicSite": "عوامی سائٹ دیکھیں",
       "signOut": "سائن آؤٹ"
+    },
+    "roles": {
+      "admin": "ایڈمن",
+      "superAdmin": "سپر ایڈمن"
     },
     "nav": {
       "dashboard": "ڈیش بورڈ",
@@ -1118,20 +1124,32 @@
       "blog": "بلاگ",
       "guides": "رہنما",
       "auditLogs": "آڈٹ لاگز",
-      "settings": "ترتیبات"
+      "settings": "ترتیبات",
+      "users": "ایڈمن صارفین"
     },
     "dashboard": {
       "title": "ڈیش بورڈ",
       "description": "درخواستوں کا مجموعی جائزہ، قطاریں، اور فوری ایڈمن اقدامات۔",
+      "descriptionAdmin": "روزمرہ درخواست، ادائیگی اور کسٹمر ورک فلو کے لیے آپریشنل جائزہ۔",
+      "descriptionSuperAdmin": "آپریشنز، SEO، ری ڈائریکٹس، رہنما اور سسٹم ترتیبات کے ساتھ مکمل پلیٹ فارم جائزہ۔",
       "recentApplications": "حالیہ درخواستیں",
       "recentEmpty": "ابھی کوئی درخواست جمع نہیں ہوئی۔",
       "viewAllApplications": "تمام درخواستیں دیکھیں",
       "quickLinks": "فوری لنکس",
+      "platformLinks": "پلیٹ فارم مینجمنٹ",
+      "staffLinks": "اسٹاف اور رسائی",
       "links": {
         "services": "خدمات منظم کریں",
         "applicationQueue": "درخواست جائزہ قطار",
         "paymentVerification": "ادائیگی تصدیق قطار",
-        "auditLogs": "آڈٹ لاگز دیکھیں"
+        "notifications": "اطلاعات دیکھیں",
+        "auditLogs": "آڈٹ لاگز دیکھیں",
+        "seo": "SEO میٹا ڈیٹا",
+        "redirects": "URL ری ڈائریکٹس",
+        "guides": "رہنما",
+        "blog": "بلاگ مضامین",
+        "settings": "سسٹم ترتیبات",
+        "users": "ایڈمن صارفین اور اجازتیں"
       },
       "cards": {
         "total": "کل درخواستیں",
@@ -1143,6 +1161,83 @@
         "inProgress": "جاری",
         "completed": "مکمل",
         "rejectedCancelled": "مسترد / منسوخ"
+      }
+    },
+    "users": {
+      "title": "ایڈمن صارفین",
+      "description": "اسٹاف اکاؤنٹس بنائیں اور ایڈمن صارفین کے لیے ماڈیول رسائی مقرر کریں۔",
+      "create": "اسٹاف صارف شامل کریں",
+      "createTitle": "اسٹاف صارف بنائیں",
+      "createDescription": "ایڈمن یا سپورٹ اکاؤنٹ بنائیں اور منتخب کریں کہ انہیں کون سے ماڈیولز تک رسائی ہو۔",
+      "editTitle": "اسٹاف صارف میں ترمیم",
+      "edit": "ترمیم",
+      "search": "تلاش",
+      "searchPlaceholder": "نام یا ای میل سے تلاش کریں",
+      "emptyTitle": "کوئی اسٹاف صارف نہیں ملا",
+      "emptyDescription": "آپریشنز چلانے کے لیے ایڈمن یا سپورٹ اکاؤنٹس بنائیں۔",
+      "protectedAccount": "محفوظ اکاؤنٹ",
+      "columns": {
+        "name": "نام",
+        "email": "ای میل",
+        "role": "کردار",
+        "status": "حیثیت",
+        "created": "تاریخ تخلیق",
+        "actions": "اقدامات"
+      },
+      "form": {
+        "name": "مکمل نام",
+        "email": "ای میل پتہ",
+        "password": "عارضی پاس ورڈ",
+        "role": "کردار",
+        "roleAdmin": "ایڈمن",
+        "roleSupport": "سپورٹ",
+        "status": "اکاؤنٹ کی حیثیت",
+        "statusActive": "فعال",
+        "statusDisabled": "غیر فعال",
+        "statusSuspended": "معطل",
+        "permissionsTitle": "ماڈیول رسائی",
+        "permissionsDescription": "منتخب کریں کہ یہ ایڈمن کن علاقوں کو منظم کر سکتا ہے۔ آپریشنل رسائی پہلے سے شامل ہے۔",
+        "create": "صارف بنائیں",
+        "save": "تبدیلیاں محفوظ کریں",
+        "pending": "محفوظ ہو رہا ہے…"
+      },
+      "permissions": {
+        "groups": {
+          "catalog": "کیٹلاگ اور مواد",
+          "content": "بلاگ",
+          "platform": "پلیٹ فارم اور SEO",
+          "system": "سسٹم"
+        },
+        "items": {
+          "service:manage": {
+            "title": "خدمات",
+            "description": "خدمات، فارم فیلڈز اور دستاویزات کی فہرستیں منظم کریں۔"
+          },
+          "region:manage": {
+            "title": "علاقے",
+            "description": "علاقے اور شہروں کو منظم کریں۔"
+          },
+          "faq:manage": {
+            "title": "سوالات",
+            "description": "FAQ اندراجات بنائیں اور شائع کریں۔"
+          },
+          "social:manage": {
+            "title": "سوشل لنکس",
+            "description": "سوشل پروفائل لنکس منظم کریں۔"
+          },
+          "content:manage": {
+            "title": "بلاگ",
+            "description": "بلاگ مضامین بنائیں اور شائع کریں۔"
+          },
+          "platform:manage": {
+            "title": "SEO، ری ڈائریکٹس اور رہنما",
+            "description": "SEO میٹا ڈیٹا، URL ری ڈائریکٹس اور رہنما منظم کریں۔"
+          },
+          "settings:manage": {
+            "title": "سسٹم ترتیبات",
+            "description": "کاروباری ترتیبات اور فیچر فلیگز منظم کریں۔"
+          }
+        }
       }
     },
     "applications": {
@@ -1555,6 +1650,7 @@
     "notifications": {
       "title": "اطلاعات",
       "description": "ای میل، واٹس ایپ اور SMS اطلاعات کی ترسیل مانیٹر کریں۔",
+      "scopeNotice": "کسٹمر، ایجنٹ اور ایڈمن اطلاعات دکھائی جا رہی ہیں۔ سپر ایڈمن کی نجی اطلاعات چھپائی گئی ہیں۔",
       "emptyTitle": "کوئی اطلاع نہیں ملی",
       "emptyDescription": "کسٹمر واقعات کے بعد اطلاعات کی لاگز یہاں ظاہر ہوں گی۔",
       "filters": {
@@ -1811,6 +1907,7 @@
       }
     },
     "auditLogs": {
+      "scopeNotice": "کسٹمر، ایجنٹ اور ایڈمن سرگرمی دکھائی جا رہی ہے۔ سپر ایڈمن کے اقدامات اس منظر سے چھپائے گئے ہیں۔",
       "columns": {
         "time": "وقت",
         "actor": "فاعل",

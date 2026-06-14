@@ -7,6 +7,7 @@ import { SocialLinksPanel } from "@/features/social/admin/components/social-link
 import { getSocialPanelLabels } from "@/features/social/admin/lib/labels";
 import { adminSocialRepository } from "@/server/repositories/admin-social-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.social");
@@ -14,6 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminSocialPage() {
+  await enforcePermissionAccess("social:manage")();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.social");

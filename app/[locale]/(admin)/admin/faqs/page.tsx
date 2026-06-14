@@ -26,6 +26,7 @@ import { Link } from "@/i18n/navigation";
 import { adminFaqRepository } from "@/server/repositories/admin-faq-repository";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 
 type FaqsAdminPageProps = {
   searchParams: Promise<{
@@ -45,6 +46,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminFaqsPage({
   searchParams,
 }: FaqsAdminPageProps) {
+  await enforcePermissionAccess("faq:manage")();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.faqs");

@@ -41,7 +41,7 @@ export async function Footer() {
   }
 
   return (
-    <footer className="border-t bg-muted/30">
+    <footer className="border-t bg-muted/30 dark:bg-muted/20">
       <div className="container-site grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-3 sm:col-span-2 lg:col-span-1">
           <SiteLogo imageClassName="max-h-9" />

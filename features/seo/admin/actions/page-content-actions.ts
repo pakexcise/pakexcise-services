@@ -24,7 +24,7 @@ const LEGAL_PATHS: Record<string, string> = {
 export async function updatePageContentAction(
   input: unknown,
 ): Promise<ActionResult<{ pageKey: string }>> {
-  const user = await requirePermission("content:manage");
+  const user = await requirePermission("platform:manage");
   const parsed = parseInput(pageContentSchema, input);
   if (!parsed.success) return parsed;
 

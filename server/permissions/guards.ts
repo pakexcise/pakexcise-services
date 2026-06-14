@@ -13,8 +13,10 @@ import {
 import {
   type Permission,
   portalRoles,
+  hasPermissionInSet,
   roleHasPermission,
 } from "@/server/permissions/roles";
+import { getCachedEffectivePermissions } from "@/server/permissions/effective-permissions";
 import { prisma } from "@/server/db/client";
 
 export type { CurrentUser };
@@ -39,8 +41,9 @@ export async function requirePermission(
   permission: Permission,
 ): Promise<CurrentUser> {
   const user = await requireUser();
+  const effective = await getCachedEffectivePermissions(user.id, user.role);
 
-  if (!roleHasPermission(user.role, permission)) {
+  if (!hasPermissionInSet(effective, permission)) {
     throw new AuthError("FORBIDDEN", "Missing required permission");
   }
 
@@ -149,11 +152,11 @@ export function canAccessApplication(
     return application.userId === user.id;
   }
 
-  if (roleHasPermission(user.role, "application:read")) {
+  if (portalRoles.admin.includes(user.role as (typeof portalRoles.admin)[number])) {
     return true;
   }
 
-  return false;
+  return roleHasPermission(user.role, "application:read");
 }
 
 export async function getAuthContext(): Promise<{

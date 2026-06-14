@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn, signUp } from "@/lib/auth-client";
+import { disclaimerCompactClassName } from "@/lib/styles/disclaimer-banner";
 import { formatCnicInput, isValidCnicInput } from "@/lib/validations/cnic";
 import {
   isValidPakistanPhone,
@@ -382,7 +383,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
           />
           <p className="text-xs text-muted-foreground">{labels.cnicHint}</p>
           {labels.cnicVerificationNote ? (
-            <p className="rounded-md border border-secondary/30 bg-secondary/10 px-3 py-2 text-xs text-foreground">
+            <p className={disclaimerCompactClassName}>
               {labels.cnicVerificationNote}
             </p>
           ) : null}

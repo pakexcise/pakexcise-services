@@ -9,6 +9,7 @@ import { selectAccountRole } from "@/features/auth/actions/select-role";
 import { parseAuthIntent } from "@/features/auth/lib/auth-url";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { disclaimerCompactClassName } from "@/lib/styles/disclaimer-banner";
 
 type ChooseRoleFormLabels = {
   customerTitle: string;
@@ -108,7 +109,7 @@ export function ChooseRoleForm({ labels }: ChooseRoleFormProps) {
       </div>
 
       {selectedRole === "AGENT" ? (
-        <p className="rounded-lg border border-secondary/30 bg-secondary/10 px-3 py-2 text-xs text-muted-foreground">
+        <p className={disclaimerCompactClassName}>
           {labels.agentNote}
         </p>
       ) : null}

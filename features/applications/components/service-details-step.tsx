@@ -15,6 +15,7 @@ import type {
   ApplyServiceOption,
 } from "@/features/applications/types";
 import { cn } from "@/lib/utils";
+import { disclaimerBoxClassName } from "@/lib/styles/disclaimer-banner";
 
 type ServiceDetailsStepProps = {
   service: ApplyServiceConfig;
@@ -143,7 +144,7 @@ export function ServiceDetailsStep({
       </section>
 
       {isSwitchingService && selectedService ? (
-        <p className="rounded-lg border border-secondary/30 bg-secondary/10 px-4 py-3 text-sm text-foreground">
+        <p className={disclaimerBoxClassName}>
           {labels.switchServiceNotice.replace("__SERVICE__", selectedService.name)}
         </p>
       ) : null}

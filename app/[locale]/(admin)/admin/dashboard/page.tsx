@@ -3,12 +3,16 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { dashboardStatusCards } from "@/config/admin";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
-import { QuickLinks, quickLinkIcons } from "@/features/admin/components/quick-links";
+import { DashboardQuickLinks } from "@/features/admin/components/dashboard-quick-links";
 import { RecentApplicationsTable } from "@/features/admin/components/recent-applications-table";
 import { StatCard } from "@/features/admin/components/stat-card";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { isSuperAdminRole } from "@/server/permissions/admin-scope";
+import { getCachedEffectivePermissions } from "@/server/permissions/effective-permissions";
+import { requireAdminPortal } from "@/server/permissions/guards";
+import { Badge } from "@/components/ui/badge";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin");
@@ -16,6 +20,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminDashboardPage() {
+  const user = await requireAdminPortal();
+  const isSuperAdmin = isSuperAdminRole(user.role);
+  const effectivePermissions = await getCachedEffectivePermissions(
+    user.id,
+    user.role,
+  );
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin");
@@ -71,7 +82,19 @@ export default async function AdminDashboardPage() {
     <div className="space-y-8">
       <AdminPageHeader
         title={t("dashboard.title")}
-        description={t("dashboard.description")}
+        description={
+          isSuperAdmin
+            ? t("dashboard.descriptionSuperAdmin")
+            : t("dashboard.descriptionAdmin")
+        }
+        actions={
+          <Badge
+            variant={isSuperAdmin ? "default" : "secondary"}
+            className="shrink-0"
+          >
+            {isSuperAdmin ? t("roles.superAdmin") : t("roles.admin")}
+          </Badge>
+        }
       />
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -92,30 +115,24 @@ export default async function AdminDashboardPage() {
           emptyMessage={t("dashboard.recentEmpty")}
           viewLabel={t("dashboard.viewAllApplications")}
         />
-        <QuickLinks
-          title={t("dashboard.quickLinks")}
-          links={[
-            {
-              href: "/admin/services",
-              label: t("dashboard.links.services"),
-              icon: quickLinkIcons.services,
-            },
-            {
-              href: "/admin/applications?status=REVIEW",
-              label: t("dashboard.links.applicationQueue"),
-              icon: quickLinkIcons.applications,
-            },
-            {
-              href: "/admin/applications?status=PAYMENT_UPLOADED",
-              label: t("dashboard.links.paymentVerification"),
-              icon: quickLinkIcons.payments,
-            },
-            {
-              href: "/admin/audit-logs",
-              label: t("dashboard.links.auditLogs"),
-              icon: quickLinkIcons.audit,
-            },
-          ]}
+        <DashboardQuickLinks
+          effectivePermissions={effectivePermissions}
+          labels={{
+            operationsTitle: t("dashboard.quickLinks"),
+            platformTitle: t("dashboard.platformLinks"),
+            staffTitle: t("dashboard.staffLinks"),
+            services: t("dashboard.links.services"),
+            applicationQueue: t("dashboard.links.applicationQueue"),
+            paymentVerification: t("dashboard.links.paymentVerification"),
+            notifications: t("dashboard.links.notifications"),
+            auditLogs: t("dashboard.links.auditLogs"),
+            seo: t("dashboard.links.seo"),
+            redirects: t("dashboard.links.redirects"),
+            guides: t("dashboard.links.guides"),
+            blog: t("dashboard.links.blog"),
+            settings: t("dashboard.links.settings"),
+            users: t("dashboard.links.users"),
+          }}
         />
       </div>
     </div>

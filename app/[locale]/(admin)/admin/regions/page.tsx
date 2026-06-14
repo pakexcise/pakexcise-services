@@ -20,6 +20,7 @@ import { adminDefaultPageSize } from "@/config/admin";
 import { Link } from "@/i18n/navigation";
 import { adminRegionRepository } from "@/server/repositories/admin-region-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 
 type RegionsAdminPageProps = {
   searchParams: Promise<{
@@ -37,6 +38,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminRegionsPage({
   searchParams,
 }: RegionsAdminPageProps) {
+  await enforcePermissionAccess("region:manage")();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.regions");

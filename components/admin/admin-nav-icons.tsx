@@ -14,6 +14,7 @@ import {
   Share2,
   Shield,
   UserCircle,
+  UserCog,
   Users,
   Wallet,
   type LucideIcon,
@@ -37,6 +38,7 @@ const iconMap: Record<string, LucideIcon> = {
   "book-open": BookOpen,
   shield: Shield,
   settings: Settings,
+  "user-cog": UserCog,
 };
 
 export function AdminNavIcon({

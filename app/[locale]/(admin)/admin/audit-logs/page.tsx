@@ -20,6 +20,7 @@ import { formatDate } from "@/lib/utils";
 import { requirePermission } from "@/server/permissions/guards";
 import { adminAuditRepository } from "@/server/repositories/admin-audit-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { AdminScopeNotice } from "@/features/admin/components/admin-scope-notice";
 
 const validActions = new Set<string>([
   "CREATE",
@@ -48,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminAuditLogsPage({
   searchParams,
 }: AuditLogsPageProps) {
-  await requirePermission("audit:read");
+  const user = await requirePermission("audit:read");
 
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
@@ -68,14 +69,19 @@ export default async function AdminAuditLogsPage({
     entityType: params.entityType,
     action,
     q: params.q,
+    viewerRole: user.role,
   });
 
   return (
-    <div>
+    <div className="space-y-4">
       <AdminPageHeader
         title={t("resources.auditLogs.title")}
         description={t("resources.auditLogs.description")}
       />
+
+      {user.role === "ADMIN" ? (
+        <AdminScopeNotice message={t("auditLogs.scopeNotice")} />
+      ) : null}
 
       {result.items.length === 0 ? (
         <EmptyState
