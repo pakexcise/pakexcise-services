@@ -42,6 +42,12 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "service:manage",
   },
   {
+    href: "/admin/service-categories",
+    labelKey: "serviceCategories",
+    icon: "layers",
+    permission: "service:manage",
+  },
+  {
     href: "/admin/regions",
     labelKey: "regions",
     icon: "map-pin",

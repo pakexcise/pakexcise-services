@@ -140,6 +140,8 @@ export async function createServiceAction(
   const service = await prisma.service.create({
     data: {
       slug: data.slug,
+      categoryId: data.categoryId,
+      parentServiceId: data.parentServiceId,
       regionId: data.regionIds[0],
       nameEn: data.nameEn,
       nameUr: data.nameUr,
@@ -151,6 +153,8 @@ export async function createServiceAction(
       ctaTextUr: data.ctaTextUr,
       processingNotesEn: data.processingNotesEn,
       processingNotesUr: data.processingNotesUr,
+      internalNotes: data.internalNotes,
+      referenceLinksJson: toPrismaNullableJson(data.referenceLinksJson),
       requiresProof: data.requiresProof,
       isActive: data.isActive,
       displayOrder,
@@ -223,6 +227,8 @@ export async function updateServiceAction(
     where: { id: data.id },
     data: {
       slug: data.slug,
+      categoryId: data.categoryId,
+      parentServiceId: data.parentServiceId,
       regionId: data.regionIds[0],
       nameEn: data.nameEn,
       nameUr: data.nameUr,
@@ -234,6 +240,8 @@ export async function updateServiceAction(
       ctaTextUr: data.ctaTextUr,
       processingNotesEn: data.processingNotesEn,
       processingNotesUr: data.processingNotesUr,
+      internalNotes: data.internalNotes,
+      referenceLinksJson: toPrismaNullableJson(data.referenceLinksJson),
       requiresProof: data.requiresProof,
       isActive: data.isActive,
       displayOrder: data.displayOrder,
@@ -393,6 +401,7 @@ export async function upsertDocumentRequirementAction(
   }
 
   const payload = {
+    regionId: data.regionId ?? null,
     docType: data.docType,
     labelEn: data.labelEn,
     labelUr: data.labelUr,
@@ -404,6 +413,22 @@ export async function upsertDocumentRequirementAction(
     displayOrder: data.displayOrder,
     isActive: data.isActive,
   };
+
+  const duplicate = await prisma.documentRequirement.findFirst({
+    where: {
+      serviceId: data.serviceId,
+      docType: data.docType,
+      regionId: data.regionId ?? null,
+      ...(data.id ? { NOT: { id: data.id } } : {}),
+    },
+    select: { id: true },
+  });
+
+  if (duplicate) {
+    return errorResult("A document with this type already exists for this scope", {
+      docType: ["Duplicate document type for this region scope"],
+    });
+  }
 
   let documentId = data.id;
   let before = null;

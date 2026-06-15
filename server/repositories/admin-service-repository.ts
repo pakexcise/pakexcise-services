@@ -12,6 +12,8 @@ export const adminServiceDetailSelect = {
   id: true,
   slug: true,
   regionId: true,
+  categoryId: true,
+  parentServiceId: true,
   serviceRegions: {
     orderBy: { displayOrder: "asc" },
     select: {
@@ -36,6 +38,8 @@ export const adminServiceDetailSelect = {
   ctaTextUr: true,
   processingNotesEn: true,
   processingNotesUr: true,
+  internalNotes: true,
+  referenceLinksJson: true,
   requiresProof: true,
   isActive: true,
   displayOrder: true,
@@ -50,11 +54,28 @@ export const adminServiceDetailSelect = {
       nameUr: true,
     },
   },
+  category: {
+    select: {
+      id: true,
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
+  parentService: {
+    select: {
+      id: true,
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
   seoMeta: true,
   documentReqs: {
     orderBy: { displayOrder: "asc" },
     select: {
       id: true,
+      regionId: true,
       docType: true,
       labelEn: true,
       labelUr: true,
@@ -65,6 +86,14 @@ export const adminServiceDetailSelect = {
       acceptedMimeTypes: true,
       displayOrder: true,
       isActive: true,
+      region: {
+        select: {
+          id: true,
+          slug: true,
+          nameEn: true,
+          nameUr: true,
+        },
+      },
     },
   },
   formFields: {
@@ -103,6 +132,18 @@ export const adminServiceListSelect = {
   displayOrder: true,
   updatedAt: true,
   deletedAt: true,
+  category: {
+    select: {
+      nameEn: true,
+      nameUr: true,
+    },
+  },
+  parentService: {
+    select: {
+      nameEn: true,
+      nameUr: true,
+    },
+  },
   serviceRegions: {
     orderBy: { displayOrder: "asc" },
     select: {

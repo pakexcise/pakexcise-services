@@ -6,7 +6,6 @@ import {
   activeOnly,
   isActiveOnly,
   publicServiceSelect,
-  publicServiceWhere,
   Repository,
   type PaginatedResult,
   type PublicServiceSelect,
@@ -35,6 +34,7 @@ const publicFormFieldSelect = {
 const publicDocumentRequirementSelect = {
   id: true,
   docType: true,
+  regionId: true,
   labelEn: true,
   labelUr: true,
   instructionsEn: true,
@@ -43,6 +43,13 @@ const publicDocumentRequirementSelect = {
   maxSizeBytes: true,
   acceptedMimeTypes: true,
   displayOrder: true,
+  region: {
+    select: {
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
 } as const;
 
 const publicAssignedRegionsSelect = {
@@ -59,6 +66,37 @@ const publicAssignedRegionsSelect = {
   },
 } as const satisfies Prisma.ServiceRegionFindManyArgs;
 
+const publicCategorySelect = {
+  slug: true,
+  nameEn: true,
+  nameUr: true,
+} as const;
+
+const publicSubServiceSelect = {
+  id: true,
+  slug: true,
+  nameEn: true,
+  nameUr: true,
+  shortDescriptionEn: true,
+  shortDescriptionUr: true,
+  displayOrder: true,
+} as const;
+
+export const publicServiceWhere = {
+  ...activeOnly(),
+  serviceRegions: {
+    some: {
+      isActive: true,
+      region: activeOnly(),
+    },
+  },
+} as const satisfies Prisma.ServiceWhereInput;
+
+export const publicTopLevelServiceWhere = {
+  ...publicServiceWhere,
+  parentServiceId: null,
+} as const satisfies Prisma.ServiceWhereInput;
+
 export const publicServiceDetailSelect = {
   id: true,
   slug: true,
@@ -73,6 +111,31 @@ export const publicServiceDetailSelect = {
   requiresProof: true,
   displayOrder: true,
   updatedAt: true,
+  categoryId: true,
+  parentServiceId: true,
+  category: {
+    select: publicCategorySelect,
+  },
+  parentService: {
+    select: {
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
+  subServices: {
+    where: {
+      ...activeOnly(),
+      serviceRegions: {
+        some: {
+          isActive: true,
+          region: activeOnly(),
+        },
+      },
+    },
+    orderBy: { displayOrder: "asc" },
+    select: publicSubServiceSelect,
+  },
   serviceRegions: publicAssignedRegionsSelect,
   documentReqs: {
     where: isActiveOnly(),
@@ -114,13 +177,28 @@ export type PublicServiceApplyConfig = Prisma.ServiceGetPayload<{
 function regionAssignedWhere(regionId: string): Prisma.ServiceWhereInput {
   return {
     ...activeOnly(),
-    serviceRegions: {
-      some: {
-        regionId,
-        isActive: true,
-        region: activeOnly(),
+    OR: [
+      {
+        serviceRegions: {
+          some: {
+            regionId,
+            isActive: true,
+            region: activeOnly(),
+          },
+        },
       },
-    },
+      {
+        parentService: {
+          serviceRegions: {
+            some: {
+              regionId,
+              isActive: true,
+              region: activeOnly(),
+            },
+          },
+        },
+      },
+    ],
   };
 }
 
@@ -129,7 +207,7 @@ export class ServiceRepository extends Repository {
     return this.query(
       () =>
         this.db.service.findMany({
-          where: publicServiceWhere,
+          where: publicTopLevelServiceWhere,
           orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
           take: limit,
           select: publicServiceSelect,
@@ -145,13 +223,13 @@ export class ServiceRepository extends Repository {
     return this.paginateQuery(
       ({ skip, take }) =>
         this.db.service.findMany({
-          where: publicServiceWhere,
+          where: publicTopLevelServiceWhere,
           orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
           skip,
           take,
           select: publicServiceSelect,
         }),
-      () => this.db.service.count({ where: publicServiceWhere }),
+      () => this.db.service.count({ where: publicTopLevelServiceWhere }),
       { page, pageSize },
     );
   }
@@ -217,20 +295,53 @@ export class ServiceRepository extends Repository {
     limit = 3,
   ): Promise<PublicServiceSelect[]> {
     return this.query(async () => {
-      const assignments = await this.db.serviceRegion.findMany({
-        where: { serviceId, isActive: true },
-        select: { regionId: true },
+      const current = await this.db.service.findUnique({
+        where: { id: serviceId },
+        select: {
+          categoryId: true,
+          serviceRegions: {
+            where: { isActive: true },
+            select: { regionId: true },
+          },
+        },
       });
-      const regionIds = assignments.map((entry) => entry.regionId);
 
-      if (regionIds.length === 0) {
+      if (!current) {
         return [];
       }
 
-      return this.db.service.findMany({
+      const regionIds = current.serviceRegions.map((entry) => entry.regionId);
+
+      const categoryMatches =
+        current.categoryId !== null
+          ? await this.db.service.findMany({
+              where: {
+                id: { not: serviceId },
+                categoryId: current.categoryId,
+                parentServiceId: null,
+                ...publicServiceWhere,
+              },
+              orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+              take: limit,
+              select: publicServiceSelect,
+            })
+          : [];
+
+      if (categoryMatches.length >= limit) {
+        return categoryMatches.slice(0, limit);
+      }
+
+      if (regionIds.length === 0) {
+        return categoryMatches;
+      }
+
+      const regionMatches = await this.db.service.findMany({
         where: {
-          id: { not: serviceId },
-          ...activeOnly(),
+          id: {
+            notIn: [serviceId, ...categoryMatches.map((service) => service.id)],
+          },
+          parentServiceId: null,
+          ...publicServiceWhere,
           serviceRegions: {
             some: {
               regionId: { in: regionIds },
@@ -240,9 +351,11 @@ export class ServiceRepository extends Repository {
           },
         },
         orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
-        take: limit,
+        take: limit - categoryMatches.length,
         select: publicServiceSelect,
       });
+
+      return [...categoryMatches, ...regionMatches];
     }, []);
   }
 
@@ -256,6 +369,28 @@ export class ServiceRepository extends Repository {
             updatedAt: true,
           },
           orderBy: { updatedAt: "desc" },
+        }),
+      [],
+    );
+  }
+
+  async listParentOptions(): Promise<
+    Array<{ id: string; slug: string; nameEn: string; nameUr: string }>
+  > {
+    return this.query(
+      () =>
+        this.db.service.findMany({
+          where: {
+            deletedAt: null,
+            parentServiceId: null,
+          },
+          orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+          select: {
+            id: true,
+            slug: true,
+            nameEn: true,
+            nameUr: true,
+          },
         }),
       [],
     );

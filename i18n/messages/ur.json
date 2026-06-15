@@ -959,7 +959,8 @@
     "heroSubtitle": "درخواستیں جمع کرائیں، دستاویزات اپ لوڈ کریں، پیش رفت ٹریک کریں، اور مدد حاصل کریں — پنجاب، اسلام آباد ICT اور دیگر علاقوں کے لیے قابل اعتماد نجی سہولت سروس۔",
     "heroCtaPrimary": "خدمات دیکھیں",
     "heroCtaSecondary": "درخواست ٹریک کریں",
-    "servicesTitle": "مقبول خدمات",
+    "servicesTitle": "تمام خدمات",
+    "servicesSubtitle": "ہر فعال سہولت خدمت کو کیٹیگری کے لحاظ سے دیکھیں۔",
     "servicesEmpty": "ایڈمن کی ترتیب کے بعد خدمات یہاں ظاہر ہوں گی۔",
     "servicesEmptyAction": "سپورٹ سے رابطہ",
     "howItWorksTitle": "یہ کیسے کام کرتا ہے",
@@ -1000,8 +1001,12 @@
       "metaTitle": "خدمات | PakExcise.com",
       "metaDescription": "پنجاب، اسلام آباد ICT اور دیگر علاقوں کے لیے فعال ایکسائز سہولت خدمات دیکھیں۔ نجی سروس — سرکاری ویب سائٹ نہیں۔",
       "empty": "فی الحال کوئی فعال خدمات دستیاب نہیں ہیں۔",
+      "emptyTitle": "ابھی کوئی خدمات دستیاب نہیں",
+      "browseRegions": "علاقے کے لحاظ سے دیکھیں",
+      "jumpToCategory": "کیٹیگری پر جائیں",
       "multipleRegions": "متعدد صوبے",
-      "allProvinces": "تمام صوبے"
+      "allProvinces": "تمام صوبے",
+      "disclaimer": "PakExcise.com ایک نجی سہولت سروس ہے۔ ہم سرکاری ویب سائٹ نہیں ہیں اور کسی سرکاری ادارے سے وابستہ نہیں ہیں۔"
     },
     "service": {
       "documentsTitle": "دستاویزات کی فہرست",
@@ -1013,9 +1018,14 @@
       "ctaTitle": "درخواست دینے کے لیے تیار ہیں؟",
       "ctaDescription": "اپنی درخواست آن لائن شروع کریں۔ ہماری ٹیم آپ کی جمع کرائی گئی درخواست کا جائزہ لے گی اور اگلے مراحل میں رہنمائی کرے گی۔",
       "applyNow": "ابھی درخواست دیں",
+      "chooseSubService": "ذیلی خدمت منتخب کریں",
       "relatedTitle": "متعلقہ خدمات",
       "importantNotes": "اہم نوٹس",
-      "availableIn": "دستیاب علاقے"
+      "availableIn": "دستیاب علاقے",
+      "categoryLabel": "کیٹیگری: {category}",
+      "subServicesTitle": "ذیلی خدمات",
+      "subServicesDescription": "وہ مخصوص راؤٹ پرمٹ خدمت منتخب کریں جس کی آپ کو ضرورت ہے۔",
+      "allRegionsScope": "تمام تفویض شدہ صوبے"
     },
     "regions": {
       "title": "علاقے",
@@ -1023,6 +1033,7 @@
       "metaDescription": "پاکستان بھر کے علاقوں کے لحاظ سے ایکسائز سہولت خدمات دیکھیں۔",
       "empty": "فی الحال کوئی فعال علاقے دستیاب نہیں ہیں۔",
       "emptyServices": "اس علاقے میں ابھی کوئی فعال خدمات نہیں ہیں۔",
+      "serviceCount": "{count, plural, one {# خدمت} other {# خدمات}}",
       "viewServices": "خدمات دیکھیں",
       "viewCity": "شہر دیکھیں",
       "citiesTitle": "اس علاقے کے شہر",
@@ -1110,6 +1121,7 @@
       "dashboard": "ڈیش بورڈ",
       "applications": "درخواستیں",
       "services": "خدمات",
+      "serviceCategories": "خدمات کی کیٹیگریز",
       "regions": "علاقے",
       "faqs": "سوالات",
       "social": "سوشل لنکس",
@@ -1973,6 +1985,14 @@
         "ctaTextUr": "CTA متن (اردو)",
         "processingNotesEn": "پروسیسنگ نوٹس (انگریزی)",
         "processingNotesUr": "پروسیسنگ نوٹس (اردو)",
+        "internalNotes": "اندرونی ایڈمن نوٹس",
+        "internalNotesHint": "صرف ایڈمن کو نظر آتے ہیں۔ عوامی صفحات پر نہیں دکھائے جاتے۔",
+        "referenceLinksJson": "حوالہ لنکس JSON",
+        "referenceLinksHint": "اختیاری array: [{\"labelEn\":\"...\",\"labelUr\":\"...\",\"url\":\"https://...\"}]",
+        "category": "خدمت کی کیٹیگری",
+        "selectCategory": "کیٹیگری منتخب کریں",
+        "parentService": "والدین خدمت (ذیلی خدمت)",
+        "noParentService": "اعلیٰ سطح کی خدمت",
         "requiresProof": "تکمیل کا ثبوت درکار",
         "isActive": "فعال",
         "displayOrder": "ڈسپلے ترتیب",
@@ -2003,6 +2023,8 @@
         "addDocument": "دستاویز کی ضرورت شامل کریں",
         "editDocument": "دستاویز کی ضرورت میں ترمیم",
         "docType": "دستاویز کی قسم",
+        "region": "صوبے کا دائرہ",
+        "allRegions": "تمام تفویض شدہ صوبے",
         "labelEn": "لیبل (انگریزی)",
         "labelUr": "لیبل (اردو)",
         "instructionsEn": "ہدایات (انگریزی)",
@@ -2045,6 +2067,49 @@
         "delete": "حذف",
         "confirmDelete": "یہ فارم فیلڈ حذف کریں؟",
         "invalidJson": "غلط JSON فارمیٹ"
+      }
+    },
+    "serviceCategories": {
+      "title": "خدمات کی کیٹیگریز",
+      "description": "عوامی خدمات صفحے پر دکھائی جانے والی اعلیٰ سطح کی گروپس منظم کریں۔",
+      "create": "کیٹیگری شامل کریں",
+      "createTitle": "خدمت کی کیٹیگری بنائیں",
+      "createDescription": "گاڑی کی خدمات یا لائسنس کی خدمات جیسی نئی کیٹیگری شامل کریں۔",
+      "editTitle": "خدمت کی کیٹیگری میں ترمیم",
+      "backToList": "کیٹیگریز پر واپس",
+      "searchPlaceholder": "نام یا slug سے تلاش کریں",
+      "emptyTitle": "کوئی کیٹیگری نہیں ملی",
+      "emptyDescription": "پہلی خدمت کی کیٹیگری بنائیں۔",
+      "columns": {
+        "order": "ترتیب",
+        "name": "کیٹیگری",
+        "slug": "Slug",
+        "services": "خدمات",
+        "status": "اسٹیٹس",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "filters": {
+        "all": "تمام اسٹیٹس",
+        "apply": "فلٹرز لگائیں"
+      },
+      "actions": {
+        "edit": "ترمیم"
+      },
+      "form": {
+        "slug": "Slug",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "descriptionEn": "تعارفی مواد (انگریزی)",
+        "descriptionUr": "تعارفی مواد (اردو)",
+        "isActive": "فعال",
+        "displayOrder": "ڈسپلے ترتیب",
+        "save": "کیٹیگری محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے...",
+        "saveFailed": "کیٹیگری محفوظ نہیں ہو سکی"
       }
     },
     "regions": {

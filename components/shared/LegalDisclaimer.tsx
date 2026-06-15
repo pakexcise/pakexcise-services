@@ -1,10 +1,6 @@
-import { AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import {
-  disclaimerBannerClassName,
-  disclaimerBannerIconClassName,
-} from "@/lib/styles/disclaimer-banner";
+import { disclaimerBannerClassName } from "@/lib/styles/disclaimer-banner";
 import { cn } from "@/lib/utils";
 
 type LegalDisclaimerProps = {
@@ -28,13 +24,9 @@ export async function LegalDisclaimer({
         disclaimerBannerClassName,
       )}
     >
-      <div className="container-site flex items-start justify-center gap-2 text-center text-xs leading-snug sm:text-sm">
-        <AlertTriangle
-          className={cn("mt-0.5 size-4", disclaimerBannerIconClassName)}
-          aria-hidden="true"
-        />
-        <p className="max-w-4xl">{text}</p>
-      </div>
+      <p className="container-site text-center text-xs leading-snug sm:text-sm">
+        {text}
+      </p>
     </div>
   );
 }

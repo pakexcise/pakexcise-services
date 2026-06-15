@@ -159,47 +159,45 @@ async function migrateLegacyRegions(
 
 export const CATEGORY_SEED = [
   {
-    slug: "vehicle-transfer",
-    nameEn: "Vehicle Transfer",
-    nameUr: "گاڑی منتقلی",
+    slug: "vehicle-services",
+    nameEn: "Vehicle Services",
+    nameUr: "گاڑی کی خدمات",
+    descriptionEn:
+      "Private facilitation for vehicle transfer, registration, token tax, route permits, and related excise support.",
+    descriptionUr:
+      "گاڑی منتقلی، رجسٹریشن، ٹوکن ٹیکس، راؤٹ پرمٹ اور متعلقہ ایکسائز سہولت۔",
     displayOrder: 1,
   },
   {
-    slug: "registration",
-    nameEn: "Vehicle Registration",
-    nameUr: "گاڑی رجسٹریشن",
+    slug: "license-services",
+    nameEn: "License Services",
+    nameUr: "لائسنس کی خدمات",
+    descriptionEn:
+      "Private facilitation for driving license renewal and learner license applications.",
+    descriptionUr:
+      "ڈرائیving لائسنس تجدید اور لرنر لائسنس درخواستوں کے لیے نجی سہولت۔",
     displayOrder: 2,
   },
   {
-    slug: "token-tax",
-    nameEn: "Token Tax",
-    nameUr: "ٹوکن ٹیکس",
+    slug: "e-challan-safe-city",
+    nameEn: "E-Challan / Safe City",
+    nameUr: "ای چالان / سیف سٹی",
+    descriptionEn:
+      "Private guidance for e-challan and Safe City-related facilitation across Pakistan.",
+    descriptionUr:
+      "پاکستان بھر میں ای چالان اور سیف سٹی سے متعلق نجی رہنمائی۔",
     displayOrder: 3,
   },
-  {
-    slug: "inspection",
-    nameEn: "Vehicle Inspection",
-    nameUr: "گاڑی معائنہ",
-    displayOrder: 4,
-  },
-  {
-    slug: "route-permit",
-    nameEn: "Route Permit",
-    nameUr: "راؤٹ پرمٹ",
-    displayOrder: 5,
-  },
-  {
-    slug: "license",
-    nameEn: "Driving License",
-    nameUr: "ڈرائیving لائسنس",
-    displayOrder: 6,
-  },
-  {
-    slug: "data-correction",
-    nameEn: "Data Correction",
-    nameUr: "ڈیٹا تصحیح",
-    displayOrder: 7,
-  },
+] as const;
+
+const LEGACY_CATEGORY_SLUGS = [
+  "vehicle-transfer",
+  "registration",
+  "token-tax",
+  "inspection",
+  "route-permit",
+  "license",
+  "data-correction",
 ] as const;
 
 const ALL_REGION_SLUGS = [
@@ -212,87 +210,155 @@ const ALL_REGION_SLUGS = [
   "ajk",
 ] as const;
 
+const TOKEN_TAX_REGION_SLUGS = [
+  "punjab",
+  "islamabad",
+  "sindh",
+  "balochistan",
+  "kpk",
+] as const;
+
 export const SERVICE_SEED = [
   {
     slug: "vehicle-transfer",
     regionSlugs: ["punjab", "islamabad"],
-    categorySlug: "vehicle-transfer",
+    categorySlug: "vehicle-services",
     nameEn: "Vehicle Transfer",
     nameUr: "گاڑی منتقلی",
     shortDescriptionEn:
-      "Private facilitation for vehicle ownership transfer in Punjab and Islamabad.",
+      "Private facilitation for vehicle ownership transfer in Punjab and Islamabad ICT.",
     shortDescriptionUr:
-      "پنجاب اور اسلام آباد میں گاڑی کی ملکیت منتقلی کے لیے نجی سہولت۔",
+      "پنجاب اور اسلام آباد ICT میں گاڑی کی ملکیت منتقلی کے لیے نجی سہولت۔",
     displayOrder: 1,
   },
   {
-    slug: "token-tax-payment",
-    regionSlugs: ALL_REGION_SLUGS,
-    categorySlug: "token-tax",
-    nameEn: "Token Tax Payment",
-    nameUr: "ٹوکن ٹیکس ادائیگی",
+    slug: "token-tax",
+    regionSlugs: TOKEN_TAX_REGION_SLUGS,
+    categorySlug: "vehicle-services",
+    nameEn: "Token Tax",
+    nameUr: "ٹوکن ٹیکس",
     shortDescriptionEn:
-      "Private facilitation support for token tax payment across Pakistan provinces.",
+      "Private facilitation support for token tax payment across supported provinces.",
     shortDescriptionUr:
-      "پاکستان کے صوبوں میں ٹوکن ٹیکس ادائیگی کے لیے نجی سہولت سپورٹ۔",
+      "معاون صوبوں میں ٹوکن ٹیکس ادائیگی کے لیے نجی سہولت سپورٹ۔",
     displayOrder: 2,
   },
   {
     slug: "new-vehicle-registration",
-    regionSlugs: ALL_REGION_SLUGS,
-    categorySlug: "registration",
+    regionSlugs: ["punjab", "islamabad"],
+    categorySlug: "vehicle-services",
     nameEn: "New Vehicle Registration",
     nameUr: "نئی گاڑی رجسٹریشن",
     shortDescriptionEn:
-      "Private facilitation for new vehicle registration across supported provinces.",
+      "Private facilitation for new vehicle registration in Punjab and Islamabad ICT.",
     shortDescriptionUr:
-      "معاون صوبوں میں نئی گاڑی رجسٹریشن کے لیے نجی سہولت۔",
+      "پنجاب اور اسلام آباد ICT میں نئی گاڑی رجسٹریشن کے لیے نجی سہولت۔",
     displayOrder: 3,
   },
   {
-    slug: "driving-license-renewal",
-    regionSlugs: ["punjab", "islamabad"],
-    categorySlug: "license",
-    nameEn: "Driving License Renewal",
-    nameUr: "ڈرائیving لائسنس تجدید",
+    slug: "vehicle-passing-fitness",
+    regionSlugs: ["islamabad"],
+    categorySlug: "vehicle-services",
+    nameEn: "Vehicle Passing / Fitness",
+    nameUr: "گاڑی پاسنگ / فٹنس",
     shortDescriptionEn:
-      "Private facilitation for driving license renewal in Punjab and Islamabad.",
+      "Private facilitation for vehicle passing and fitness processes in Islamabad ICT.",
     shortDescriptionUr:
-      "پنجاب اور اسلام آباد میں ڈرائیving لائسنس تجدید کے لیے نجی سہولت۔",
+      "اسلام آباد ICT میں گاڑی پاسنگ اور فٹنس کے عمل کے لیے نجی سہولت۔",
     displayOrder: 4,
-  },
-  {
-    slug: "vehicle-inspection",
-    regionSlugs: ["punjab", "islamabad"],
-    categorySlug: "inspection",
-    nameEn: "Vehicle Inspection",
-    nameUr: "گاڑی معائنہ",
-    shortDescriptionEn:
-      "Private facilitation for vehicle inspection and fitness processes.",
-    shortDescriptionUr: "گاڑی معائنہ اور فٹنس کے عمل کے لیے نجی سہولت۔",
-    displayOrder: 5,
   },
   {
     slug: "route-permit",
     regionSlugs: ["punjab", "islamabad"],
-    categorySlug: "route-permit",
+    categorySlug: "vehicle-services",
     nameEn: "Route Permit",
     nameUr: "راؤٹ پرمٹ",
-    shortDescriptionEn: "Private facilitation for route permit applications.",
-    shortDescriptionUr: "راؤٹ پرمٹ درخواستوں کے لیے نجی سہولت۔",
-    displayOrder: 6,
+    shortDescriptionEn:
+      "Private facilitation for route permit services in Punjab and Islamabad ICT.",
+    shortDescriptionUr:
+      "پنجاب اور اسلام آباد ICT میں راؤٹ پرمٹ سروسز کے لیے نجی سہولت۔",
+    displayOrder: 5,
+  },
+  {
+    slug: "route-permit-new",
+    parentSlug: "route-permit",
+    regionSlugs: ["punjab", "islamabad"],
+    categorySlug: "vehicle-services",
+    nameEn: "New Route Permit",
+    nameUr: "نیا راؤٹ پرمٹ",
+    shortDescriptionEn: "Private facilitation for new route permit applications.",
+    shortDescriptionUr: "نئے راؤٹ پرمٹ درخواستوں کے لیے نجی سہولت۔",
+    displayOrder: 1,
+  },
+  {
+    slug: "route-permit-noc",
+    parentSlug: "route-permit",
+    regionSlugs: ["punjab", "islamabad"],
+    categorySlug: "vehicle-services",
+    nameEn: "Route Permit NOC",
+    nameUr: "راؤٹ پرمٹ NOC",
+    shortDescriptionEn: "Private facilitation for route permit NOC requests.",
+    shortDescriptionUr: "راؤٹ پرمٹ NOC درخواستوں کے لیے نجی سہولت۔",
+    displayOrder: 2,
+  },
+  {
+    slug: "route-permit-duplicate",
+    parentSlug: "route-permit",
+    regionSlugs: ["punjab", "islamabad"],
+    categorySlug: "vehicle-services",
+    nameEn: "Route Permit Duplicate",
+    nameUr: "راؤٹ پرمٹ ڈپلیکیٹ",
+    shortDescriptionEn:
+      "Private facilitation for duplicate route permit applications.",
+    shortDescriptionUr: "ڈپلیکیٹ راؤٹ پرمٹ درخواستوں کے لیے نجی سہولت۔",
+    displayOrder: 3,
   },
   {
     slug: "vehicle-data-correction",
     regionSlugs: ["punjab", "islamabad"],
-    categorySlug: "data-correction",
-    nameEn: "Vehicle Data Correction",
-    nameUr: "گاڑی ڈیٹا تصحیح",
+    categorySlug: "vehicle-services",
+    nameEn: "Data Correction",
+    nameUr: "ڈیٹا تصحیح",
     shortDescriptionEn:
-      "Private facilitation for excise record data correction in Punjab and Islamabad.",
+      "Private facilitation for excise record data correction in Punjab and Islamabad ICT.",
     shortDescriptionUr:
-      "پنجاب اور اسلام آباد میں ایکسائز ریکارڈ تصحیح کے لیے نجی سہولت۔",
-    displayOrder: 7,
+      "پنجاب اور اسلام آباد ICT میں ایکسائز ریکارڈ تصحیح کے لیے نجی سہولت۔",
+    displayOrder: 6,
+  },
+  {
+    slug: "driving-license-renewal",
+    regionSlugs: ["punjab"],
+    categorySlug: "license-services",
+    nameEn: "Driving License Renewal",
+    nameUr: "ڈرائیving لائسنس تجدید",
+    shortDescriptionEn:
+      "Private facilitation for driving license renewal in Punjab.",
+    shortDescriptionUr: "پنجاب میں ڈرائیving لائسنس تجدید کے لیے نجی سہولت۔",
+    displayOrder: 1,
+  },
+  {
+    slug: "learner-license",
+    regionSlugs: ["punjab", "islamabad"],
+    categorySlug: "license-services",
+    nameEn: "Learner's License",
+    nameUr: "لرنر لائسنس",
+    shortDescriptionEn:
+      "Private facilitation for learner license applications in Punjab and Islamabad ICT.",
+    shortDescriptionUr:
+      "پنجاب اور اسلام آباد ICT میں لرنر لائسنس درخواستوں کے لیے نجی سہولت۔",
+    displayOrder: 2,
+  },
+  {
+    slug: "e-challan",
+    regionSlugs: ALL_REGION_SLUGS,
+    categorySlug: "e-challan-safe-city",
+    nameEn: "E-Challan",
+    nameUr: "ای چالان",
+    shortDescriptionEn:
+      "Private facilitation guidance for e-challan support across Pakistan provinces.",
+    shortDescriptionUr:
+      "پاکستان کے صوبوں میں ای چالان سپورٹ کے لیے نجی سہولت رہنمائی۔",
+    displayOrder: 1,
   },
 ] as const;
 
@@ -604,6 +670,8 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       update: {
         nameEn: category.nameEn,
         nameUr: category.nameUr,
+        descriptionEn: category.descriptionEn,
+        descriptionUr: category.descriptionUr,
         displayOrder: category.displayOrder,
         isActive: true,
       },
@@ -612,11 +680,23 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     categoryMap[category.slug] = created.id;
   }
 
+  await prisma.serviceCategory.updateMany({
+    where: { slug: { in: [...LEGACY_CATEGORY_SLUGS] } },
+    data: { isActive: false },
+  });
+
+  const serviceMap: Record<string, string> = {};
+
   for (const service of SERVICE_SEED) {
     const assignedRegionIds = service.regionSlugs
       .map((slug) => regionMap[slug])
       .filter((id): id is string => Boolean(id));
     const categoryId = categoryMap[service.categorySlug];
+    const parentServiceId =
+      "parentSlug" in service && service.parentSlug
+        ? serviceMap[service.parentSlug]
+        : null;
+
     if (assignedRegionIds.length === 0) continue;
 
     const primaryRegionId = assignedRegionIds[0];
@@ -630,6 +710,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       update: {
         regionId: primaryRegionId,
         categoryId,
+        parentServiceId,
         nameEn: service.nameEn,
         nameUr: service.nameUr,
         shortDescriptionEn: service.shortDescriptionEn,
@@ -642,6 +723,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         slug: service.slug,
         regionId: primaryRegionId,
         categoryId,
+        parentServiceId,
         nameEn: service.nameEn,
         nameUr: service.nameUr,
         shortDescriptionEn: service.shortDescriptionEn,
@@ -652,6 +734,8 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         requiresProof: true,
       },
     });
+
+    serviceMap[service.slug] = created.id;
 
     await prisma.serviceRegion.deleteMany({
       where: { serviceId: created.id },
@@ -684,24 +768,35 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       },
     });
 
-    await prisma.documentRequirement.upsert({
+    const existingDoc = await prisma.documentRequirement.findFirst({
       where: {
-        serviceId_docType: { serviceId: created.id, docType: "cnic_copy" },
-      },
-      update: { isActive: true },
-      create: {
         serviceId: created.id,
         docType: "cnic_copy",
-        labelEn: "CNIC copy",
-        labelUr: "شناختی کارڈ کی نقول",
-        instructionsEn: "Upload a clear CNIC copy.",
-        instructionsUr: "شناختی کارڈ کی واضح نقول اپ لوڈ کریں۔",
-        isRequired: true,
-        maxSizeBytes: 5242880,
-        acceptedMimeTypes: DEFAULT_MIME_TYPES,
-        displayOrder: 1,
+        regionId: null,
       },
     });
+
+    if (existingDoc) {
+      await prisma.documentRequirement.update({
+        where: { id: existingDoc.id },
+        data: { isActive: true },
+      });
+    } else {
+      await prisma.documentRequirement.create({
+        data: {
+          serviceId: created.id,
+          docType: "cnic_copy",
+          labelEn: "CNIC copy",
+          labelUr: "شناختی کارڈ کی نقول",
+          instructionsEn: "Upload a clear CNIC copy.",
+          instructionsUr: "شناختی کارڈ کی واضح نقول اپ لوڈ کریں۔",
+          isRequired: true,
+          maxSizeBytes: 5242880,
+          acceptedMimeTypes: DEFAULT_MIME_TYPES,
+          displayOrder: 1,
+        },
+      });
+    }
 
     await prisma.seoMeta.upsert({
       where: { pageKey: `service:${service.slug}` },
@@ -831,8 +926,10 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     "vehicle-transfer-islamabad-ict",
     "token-tax",
     "token-tax-all-provinces",
+    "token-tax-payment",
     "new-vehicle-registration-punjab",
     "new-vehicle-registration-islamabad-ict",
+    "vehicle-inspection",
     "vehicle-inspection-punjab",
     "vehicle-inspection-islamabad-ict",
     "vehicle-passing-fitness-islamabad-ict",
@@ -851,8 +948,9 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   });
 
   const redirects = [
-    { oldSlug: "token-tax-all-provinces", newSlug: "token-tax-payment" },
-    { oldSlug: "token-tax", newSlug: "token-tax-payment" },
+    { oldSlug: "token-tax-all-provinces", newSlug: "token-tax" },
+    { oldSlug: "token-tax", newSlug: "token-tax" },
+    { oldSlug: "token-tax-payment", newSlug: "token-tax" },
     { oldSlug: "vehicle-transfer-punjab", newSlug: "vehicle-transfer" },
     { oldSlug: "vehicle-transfer-islamabad-ict", newSlug: "vehicle-transfer" },
     {
@@ -863,21 +961,30 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       oldSlug: "new-vehicle-registration-islamabad-ict",
       newSlug: "new-vehicle-registration",
     },
-    { oldSlug: "vehicle-inspection-punjab", newSlug: "vehicle-inspection" },
+    { oldSlug: "vehicle-inspection", newSlug: "vehicle-passing-fitness" },
+    { oldSlug: "vehicle-inspection-punjab", newSlug: "vehicle-passing-fitness" },
     {
       oldSlug: "vehicle-inspection-islamabad-ict",
-      newSlug: "vehicle-inspection",
+      newSlug: "vehicle-passing-fitness",
     },
     {
       oldSlug: "vehicle-passing-fitness-islamabad-ict",
-      newSlug: "vehicle-inspection",
+      newSlug: "vehicle-passing-fitness",
     },
     { oldSlug: "route-permit-punjab", newSlug: "route-permit" },
     { oldSlug: "route-permit-islamabad-ict", newSlug: "route-permit" },
     { oldSlug: "data-correction-punjab-ict", newSlug: "vehicle-data-correction" },
     {
+      oldSlug: "data-correction-islamabad-ict",
+      newSlug: "vehicle-data-correction",
+    },
+    {
       oldSlug: "driving-license-renewal-punjab-ict",
       newSlug: "driving-license-renewal",
+    },
+    {
+      oldSlug: "learner-license-punjab-ict",
+      newSlug: "learner-license",
     },
     { oldSlug: "privacy", newSlug: "privacy-policy" },
     { oldSlug: "terms", newSlug: "terms-and-conditions" },

@@ -8,6 +8,8 @@ type ServiceGridProps = {
   learnMoreLabel: string;
   multipleRegionsLabel: string;
   allProvincesLabel: string;
+  showRegionLabel?: boolean;
+  variant?: "default" | "elevated";
   emptyMessage?: string;
 };
 
@@ -17,6 +19,8 @@ export function ServiceGrid({
   learnMoreLabel,
   multipleRegionsLabel,
   allProvincesLabel,
+  showRegionLabel = true,
+  variant = "elevated",
   emptyMessage,
 }: ServiceGridProps) {
   if (services.length === 0) {
@@ -35,6 +39,8 @@ export function ServiceGrid({
           learnMoreLabel={learnMoreLabel}
           multipleRegionsLabel={multipleRegionsLabel}
           allProvincesLabel={allProvincesLabel}
+          showRegionLabel={showRegionLabel}
+          variant={variant}
         />
       ))}
     </div>

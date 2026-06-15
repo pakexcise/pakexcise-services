@@ -2,6 +2,8 @@ import type { AdminServiceDetail } from "@/server/repositories/admin-service-rep
 
 export type ServiceEditorValues = {
   slug: string;
+  categoryId: string;
+  parentServiceId: string;
   regionIds: string[];
   nameEn: string;
   nameUr: string;
@@ -13,6 +15,8 @@ export type ServiceEditorValues = {
   ctaTextUr: string;
   processingNotesEn: string;
   processingNotesUr: string;
+  internalNotes: string;
+  referenceLinksJson: string;
   requiresProof: boolean;
   isActive: boolean;
   displayOrder: number;
@@ -43,6 +47,8 @@ export function emptyServiceEditorValues(
 ): ServiceEditorValues {
   return {
     slug: "",
+    categoryId: "",
+    parentServiceId: "",
     regionIds,
     nameEn: "",
     nameUr: "",
@@ -54,6 +60,8 @@ export function emptyServiceEditorValues(
     ctaTextUr: "",
     processingNotesEn: "",
     processingNotesUr: "",
+    internalNotes: "",
+    referenceLinksJson: "",
     requiresProof: true,
     isActive: true,
     displayOrder,
@@ -96,6 +104,8 @@ export function serviceToEditorValues(
 ): ServiceEditorValues {
   return {
     slug: service.slug,
+    categoryId: service.categoryId ?? "",
+    parentServiceId: service.parentServiceId ?? "",
     regionIds: service.serviceRegions.map((entry) => entry.regionId),
     nameEn: service.nameEn,
     nameUr: service.nameUr,
@@ -107,6 +117,8 @@ export function serviceToEditorValues(
     ctaTextUr: service.ctaTextUr ?? "",
     processingNotesEn: service.processingNotesEn ?? "",
     processingNotesUr: service.processingNotesUr ?? "",
+    internalNotes: service.internalNotes ?? "",
+    referenceLinksJson: jsonToString(service.referenceLinksJson),
     requiresProof: service.requiresProof,
     isActive: service.isActive,
     displayOrder: service.displayOrder,
@@ -160,6 +172,8 @@ export function parseOptionalJson(
 export function editorValuesToPayload(values: ServiceEditorValues) {
   return {
     ...values,
+    categoryId: values.categoryId || null,
+    parentServiceId: values.parentServiceId || null,
     shortDescriptionEn: values.shortDescriptionEn || null,
     shortDescriptionUr: values.shortDescriptionUr || null,
     contentEn: values.contentEn || null,
@@ -168,6 +182,8 @@ export function editorValuesToPayload(values: ServiceEditorValues) {
     ctaTextUr: values.ctaTextUr || null,
     processingNotesEn: values.processingNotesEn || null,
     processingNotesUr: values.processingNotesUr || null,
+    internalNotes: values.internalNotes || null,
+    referenceLinksJson: parseOptionalJson(values.referenceLinksJson),
     seo: {
       ...values.seo,
       metaTitleEn: values.seo.metaTitleEn || null,

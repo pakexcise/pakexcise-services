@@ -333,10 +333,11 @@ model Region {
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?
 
-  cities         City[]
-  services       Service[]
-  serviceRegions ServiceRegion[]
-  seoMeta        SeoMeta?
+  cities              City[]
+  services            Service[]
+  serviceRegions      ServiceRegion[]
+  documentReqs        DocumentRequirement[]
+  seoMeta             SeoMeta?
 
   @@index([isActive, displayOrder])
   @@map("regions")
@@ -423,6 +424,7 @@ model Service {
   slug                String    @unique
   regionId            String?
   categoryId          String?
+  parentServiceId     String?
   nameEn              String
   nameUr              String
   shortDescriptionEn  String?   @db.Text
@@ -433,6 +435,8 @@ model Service {
   ctaTextUr           String?
   processingNotesEn   String?   @db.Text
   processingNotesUr   String?   @db.Text
+  internalNotes       String?   @db.Text
+  referenceLinksJson  Json?
   requiresProof       Boolean   @default(true)
   isActive            Boolean   @default(true)
   displayOrder        Int       @default(0)
@@ -442,6 +446,8 @@ model Service {
 
   region          Region?               @relation(fields: [regionId], references: [id])
   category        ServiceCategory?      @relation(fields: [categoryId], references: [id])
+  parentService   Service?              @relation("ServiceHierarchy", fields: [parentServiceId], references: [id], onDelete: SetNull)
+  subServices     Service[]             @relation("ServiceHierarchy")
   serviceRegions  ServiceRegion[]
   formFields      ServiceFormField[]
   documentReqs    DocumentRequirement[]
@@ -454,6 +460,7 @@ model Service {
   @@index([isActive, displayOrder])
   @@index([regionId, isActive])
   @@index([categoryId, isActive])
+  @@index([parentServiceId, isActive, displayOrder])
   @@map("services")
 }
 
@@ -504,6 +511,7 @@ model ServiceFormField {
 model DocumentRequirement {
   id                String   @id @default(cuid())
   serviceId         String
+  regionId          String?
   docType           String
   labelEn           String
   labelUr           String
@@ -518,10 +526,11 @@ model DocumentRequirement {
   updatedAt         DateTime @updatedAt
 
   service   Service    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  region    Region?    @relation(fields: [regionId], references: [id], onDelete: SetNull)
   documents Document[]
 
-  @@unique([serviceId, docType])
   @@index([serviceId, isActive, displayOrder])
+  @@index([serviceId, regionId, docType])
   @@map("document_requirements")
 }
 

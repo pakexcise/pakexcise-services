@@ -130,6 +130,10 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
           learnMoreLabel={tCommon("learnMore")}
           multipleRegionsLabel={t("services.multipleRegions")}
           allProvincesLabel={t("services.allProvinces")}
+          showRegionLabel={false}
+          variant="region"
+          emptyMessage={t("regions.emptyServices")}
+          serviceCountLabel={t("regions.serviceCount", { count: services.length })}
         />
 
         {cities.length > 0 ? (

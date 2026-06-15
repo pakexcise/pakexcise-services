@@ -16,7 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
-import { regionRepository } from "@/server/repositories";
+import { adminServiceCategoryRepository } from "@/server/repositories/admin-service-category-repository";
+import { regionRepository, serviceRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 type EditServicePageProps = {
@@ -37,10 +38,12 @@ export default async function EditServicePage({ params }: EditServicePageProps) 
   setRequestLocale(locale);
   const t = await getTranslations("admin.services");
 
-  const [service, regions, editorLabels, documentLabels, fieldLabels] =
+  const [service, regions, categories, parentServices, editorLabels, documentLabels, fieldLabels] =
     await Promise.all([
       adminServiceRepository.findById(id),
       regionRepository.listAdmin(),
+      adminServiceCategoryRepository.listAdmin(),
+      serviceRepository.listParentOptions(),
       getServiceEditorLabels(),
       getDocumentPanelLabels(),
       getFormFieldsPanelLabels(),
@@ -69,6 +72,8 @@ export default async function EditServicePage({ params }: EditServicePageProps) 
           serviceId={service.id}
           initialValues={serviceToEditorValues(service)}
           regions={regions}
+          categories={categories}
+          parentServices={parentServices}
           labels={editorLabels}
         />
       </section>
@@ -78,6 +83,7 @@ export default async function EditServicePage({ params }: EditServicePageProps) 
         <DocumentRequirementsPanel
           serviceId={service.id}
           documents={service.documentReqs}
+          regions={regions}
           labels={documentLabels}
         />
       </section>

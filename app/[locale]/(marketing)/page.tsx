@@ -11,10 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getServiceRegionLabel } from "@/features/services/lib/service-regions";
+import { ServiceCategorySection } from "@/components/marketing/service-category-section";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { Link } from "@/i18n/navigation";
-import { getActiveServices, seoMetaRepository } from "@/server/repositories";
+import { seoMetaRepository } from "@/server/repositories";
+import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
@@ -54,13 +55,8 @@ export default async function HomePage() {
   const tNav = await getTranslations("nav");
   const tMarketing = await getTranslations("marketing");
 
-  let services: Awaited<ReturnType<typeof getActiveServices>> = [];
-
-  try {
-    services = await getActiveServices(6);
-  } catch {
-    services = [];
-  }
+  const categoryGroups = await serviceCategoryRepository.listPublicGrouped();
+  const hasServices = categoryGroups.length > 0;
 
   return (
     <>
@@ -126,7 +122,10 @@ export default async function HomePage() {
 
       <section className="container-site py-12 md:py-16">
         <div className="mb-8 flex flex-row items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold sm:text-3xl">{t("servicesTitle")}</h2>
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold sm:text-3xl">{t("servicesTitle")}</h2>
+            <p className="text-sm text-muted-foreground">{t("servicesSubtitle")}</p>
+          </div>
           <Button asChild variant="ghost" className="hidden shrink-0 sm:inline-flex">
             <Link href="/services">
               {tCommon("viewAll")}
@@ -135,7 +134,7 @@ export default async function HomePage() {
           </Button>
         </div>
 
-        {services.length === 0 ? (
+        {!hasServices ? (
           <Card>
             <CardHeader>
               <CardTitle>{t("servicesTitle")}</CardTitle>
@@ -148,45 +147,27 @@ export default async function HomePage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => {
-              const name = locale === "ur" ? service.nameUr : service.nameEn;
-              const summary =
-                locale === "ur" ? service.shortDescriptionUr : service.shortDescriptionEn;
-              const regionName = getServiceRegionLabel(
-                service,
-                locale,
-                tMarketing("services.multipleRegions"),
-                tMarketing("services.allProvinces"),
-              );
-
-              return (
-                <Card key={service.id} className="h-full">
-                  <CardHeader>
-                    <CardDescription>{regionName}</CardDescription>
-                    <CardTitle className="text-lg">{name}</CardTitle>
-                  </CardHeader>
-                  {summary ? (
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">{summary}</p>
-                      <Button asChild variant="link" className="mt-3 px-0">
-                        <Link href={`/services/${service.slug}`}>
-                          {tCommon("learnMore")}
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  ) : (
-                    <CardContent>
-                      <Button asChild variant="link" className="px-0">
-                        <Link href={`/services/${service.slug}`}>
-                          {tCommon("learnMore")}
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  )}
-                </Card>
-              );
-            })}
+          <div className="space-y-10 md:space-y-12">
+            {categoryGroups.map((group) => (
+              <ServiceCategorySection
+                key={group.id}
+                group={group}
+                locale={locale}
+                learnMoreLabel={tCommon("learnMore")}
+                multipleRegionsLabel={tMarketing("services.multipleRegions")}
+                allProvincesLabel={tMarketing("services.allProvinces")}
+                heading="h3"
+                compact
+              />
+            ))}
+            <div className="flex justify-center sm:hidden">
+              <Button asChild variant="outline">
+                <Link href="/services">
+                  {tCommon("viewAll")}
+                  <DirectionalArrow />
+                </Link>
+              </Button>
+            </div>
           </div>
         )}
       </section>

@@ -75,6 +75,18 @@ export {
   AdminServiceRepository,
 } from "./admin-service-repository";
 export {
+  adminServiceCategoryRepository,
+  AdminServiceCategoryRepository,
+} from "./admin-service-category-repository";
+export {
+  serviceCategoryRepository,
+  ServiceCategoryRepository,
+} from "./service-category-repository";
+export type {
+  PublicServiceCategory,
+  PublicServiceCategoryGroup,
+} from "./service-category-repository";
+export {
   adminRegionRepository,
   AdminRegionRepository,
 } from "./admin-region-repository";

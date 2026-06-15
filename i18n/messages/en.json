@@ -959,7 +959,8 @@
     "heroSubtitle": "Submit applications, upload documents, track progress, and get support — through a trusted private facilitation service for Punjab, Islamabad ICT, and more.",
     "heroCtaPrimary": "Browse services",
     "heroCtaSecondary": "Track your application",
-    "servicesTitle": "Popular services",
+    "servicesTitle": "All services",
+    "servicesSubtitle": "Browse every active facilitation service by category.",
     "servicesEmpty": "Services will appear here once configured by admin.",
     "servicesEmptyAction": "Contact support",
     "howItWorksTitle": "How it works",
@@ -1000,8 +1001,12 @@
       "metaTitle": "Services | PakExcise.com",
       "metaDescription": "Browse active excise facilitation services for Punjab, Islamabad ICT, and more. Private service — not a government website.",
       "empty": "No active services are available right now.",
+      "emptyTitle": "No services available yet",
+      "browseRegions": "Browse by region",
+      "jumpToCategory": "Jump to category",
       "multipleRegions": "Multiple provinces",
-      "allProvinces": "All Provinces"
+      "allProvinces": "All Provinces",
+      "disclaimer": "PakExcise.com is a private facilitation service. We are not a government website and are not affiliated with any government department."
     },
     "service": {
       "documentsTitle": "Document checklist",
@@ -1013,9 +1018,14 @@
       "ctaTitle": "Ready to apply?",
       "ctaDescription": "Start your application online. Our team will review your submission and guide you through the next steps.",
       "applyNow": "Apply now",
+      "chooseSubService": "Choose a sub-service",
       "relatedTitle": "Related services",
       "importantNotes": "Important notes",
-      "availableIn": "Available in"
+      "availableIn": "Available in",
+      "categoryLabel": "Category: {category}",
+      "subServicesTitle": "Sub-services",
+      "subServicesDescription": "Choose the specific route permit service you need.",
+      "allRegionsScope": "All assigned provinces"
     },
     "regions": {
       "title": "Regions",
@@ -1023,6 +1033,7 @@
       "metaDescription": "Explore excise facilitation services by region across Pakistan.",
       "empty": "No active regions are available right now.",
       "emptyServices": "No active services are available in this region yet.",
+      "serviceCount": "{count, plural, one {# service} other {# services}}",
       "viewServices": "View services",
       "viewCity": "View city",
       "citiesTitle": "Cities in this region",
@@ -1110,6 +1121,7 @@
       "dashboard": "Dashboard",
       "applications": "Applications",
       "services": "Services",
+      "serviceCategories": "Service categories",
       "regions": "Regions",
       "faqs": "FAQs",
       "social": "Social links",
@@ -1973,6 +1985,14 @@
         "ctaTextUr": "CTA text (Urdu)",
         "processingNotesEn": "Processing notes (English)",
         "processingNotesUr": "Processing notes (Urdu)",
+        "internalNotes": "Internal admin notes",
+        "internalNotesHint": "Visible to admin only. Not shown on public pages.",
+        "referenceLinksJson": "Reference links JSON",
+        "referenceLinksHint": "Optional array of objects: [{\"labelEn\":\"...\",\"labelUr\":\"...\",\"url\":\"https://...\"}]",
+        "category": "Service category",
+        "selectCategory": "Select category",
+        "parentService": "Parent service (sub-service of)",
+        "noParentService": "Top-level service",
         "requiresProof": "Requires completion proof",
         "isActive": "Active",
         "displayOrder": "Display order",
@@ -2003,6 +2023,8 @@
         "addDocument": "Add document requirement",
         "editDocument": "Edit document requirement",
         "docType": "Document type key",
+        "region": "Province scope",
+        "allRegions": "All assigned provinces",
         "labelEn": "Label (English)",
         "labelUr": "Label (Urdu)",
         "instructionsEn": "Instructions (English)",
@@ -2045,6 +2067,49 @@
         "delete": "Delete",
         "confirmDelete": "Delete this form field?",
         "invalidJson": "Invalid JSON format"
+      }
+    },
+    "serviceCategories": {
+      "title": "Service categories",
+      "description": "Manage top-level service groups shown on the public services page.",
+      "create": "Add category",
+      "createTitle": "Create service category",
+      "createDescription": "Add a new category such as Vehicle Services or License Services.",
+      "editTitle": "Edit service category",
+      "backToList": "Back to categories",
+      "searchPlaceholder": "Search by name or slug",
+      "emptyTitle": "No categories found",
+      "emptyDescription": "Create your first service category.",
+      "columns": {
+        "order": "Order",
+        "name": "Category",
+        "slug": "Slug",
+        "services": "Services",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "filters": {
+        "all": "All statuses",
+        "apply": "Apply filters"
+      },
+      "actions": {
+        "edit": "Edit"
+      },
+      "form": {
+        "slug": "Slug",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "descriptionEn": "Intro content (English)",
+        "descriptionUr": "Intro content (Urdu)",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "save": "Save category",
+        "saving": "Saving...",
+        "saveFailed": "Failed to save category"
       }
     },
     "regions": {

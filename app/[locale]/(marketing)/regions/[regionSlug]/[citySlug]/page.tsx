@@ -140,6 +140,10 @@ export default async function CityDetailPage({ params }: CityPageProps) {
           learnMoreLabel={tCommon("learnMore")}
           multipleRegionsLabel={t("services.multipleRegions")}
           allProvincesLabel={t("services.allProvinces")}
+          showRegionLabel={false}
+          variant="region"
+          emptyMessage={t("regions.emptyServices")}
+          serviceCountLabel={t("regions.serviceCount", { count: services.length })}
         />
         <FaqAccordion
           title={t("faqs.title")}

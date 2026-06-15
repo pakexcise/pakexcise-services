@@ -48,6 +48,8 @@ export const serviceSeoSchema = z.object({
 
 export const serviceCoreSchema = z.object({
   slug: serviceSlugSchema,
+  categoryId: z.string().cuid().optional().nullable(),
+  parentServiceId: z.string().cuid().optional().nullable(),
   regionIds: z.array(z.string().cuid()).min(1, "Select at least one province"),
   nameEn: z.string().trim().min(2).max(200),
   nameUr: z.string().trim().min(2).max(200),
@@ -59,6 +61,8 @@ export const serviceCoreSchema = z.object({
   ctaTextUr: z.string().trim().max(200).optional().nullable(),
   processingNotesEn: z.string().trim().max(10000).optional().nullable(),
   processingNotesUr: z.string().trim().max(10000).optional().nullable(),
+  internalNotes: z.string().trim().max(10000).optional().nullable(),
+  referenceLinksJson: jsonObjectSchema,
   requiresProof: z.boolean().default(true),
   isActive: z.boolean().default(true),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
@@ -118,6 +122,7 @@ export const fieldTypeSchema = z.enum([
 export const documentRequirementSchema = z.object({
   id: z.string().cuid().optional(),
   serviceId: z.string().cuid(),
+  regionId: z.string().cuid().optional().nullable(),
   docType: z
     .string()
     .trim()

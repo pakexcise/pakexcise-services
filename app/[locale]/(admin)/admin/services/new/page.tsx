@@ -11,7 +11,8 @@ import { getServiceEditorLabels } from "@/features/services/admin/lib/labels";
 import {
   adminServiceRepository,
 } from "@/server/repositories/admin-service-repository";
-import { regionRepository } from "@/server/repositories";
+import { adminServiceCategoryRepository } from "@/server/repositories/admin-service-category-repository";
+import { regionRepository, serviceRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,11 +25,14 @@ export default async function NewServicePage() {
   setRequestLocale(locale);
   const t = await getTranslations("admin.services");
 
-  const [regions, nextOrder, labels] = await Promise.all([
-    regionRepository.listAdmin(),
-    adminServiceRepository.getNextDisplayOrder(),
-    getServiceEditorLabels(),
-  ]);
+  const [regions, categories, parentServices, nextOrder, labels] =
+    await Promise.all([
+      regionRepository.listAdmin(),
+      adminServiceCategoryRepository.listAdmin(),
+      serviceRepository.listParentOptions(),
+      adminServiceRepository.getNextDisplayOrder(),
+      getServiceEditorLabels(),
+    ]);
 
   const defaultRegionIds = regions[0]?.id ? [regions[0].id] : [];
 
@@ -42,6 +46,8 @@ export default async function NewServicePage() {
         mode="create"
         initialValues={emptyServiceEditorValues(defaultRegionIds, nextOrder)}
         regions={regions}
+        categories={categories}
+        parentServices={parentServices}
         labels={labels}
       />
     </div>

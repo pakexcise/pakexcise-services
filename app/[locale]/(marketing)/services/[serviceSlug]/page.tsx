@@ -12,6 +12,8 @@ import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { RelatedServices } from "@/components/marketing/related-services";
 import { ServiceApplySidebar } from "@/components/marketing/service-apply-sidebar";
+import { ServiceRegionsList } from "@/components/marketing/service-regions-list";
+import { ServiceSubServices } from "@/components/marketing/service-sub-services";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
   buildBreadcrumbJsonLd,
@@ -95,6 +97,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const t = await getTranslations("marketing");
   const tCommon = await getTranslations("common");
   const tHome = await getTranslations("home");
+  const tNav = await getTranslations("nav");
 
   const [serviceFaqs, relatedServices, businessSettings] = await Promise.all([
     faqRepository.listByServiceId(service.id),
@@ -118,6 +121,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     en: service.processingNotesEn,
     ur: service.processingNotesUr,
   });
+  const categoryName = service.category
+    ? pickLocalized(locale, {
+        en: service.category.nameEn,
+        ur: service.category.nameUr,
+      })
+    : null;
   const assignedRegions = getServiceAssignedRegions(service);
   const regionName = getServiceRegionLabel(
     service,
@@ -135,6 +144,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       : regionName;
 
   const faqItems = mapFaqsForLocale(serviceFaqs, locale);
+  const allRegionsLabel = t("service.allRegionsScope");
   const documents = service.documentReqs.map((doc) => ({
     id: doc.id,
     label: pickLocalized(locale, { en: doc.labelEn, ur: doc.labelUr }),
@@ -143,13 +153,30 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       ur: doc.instructionsUr,
     }),
     isRequired: doc.isRequired,
+    scopeLabel: doc.region
+      ? pickLocalized(locale, {
+          en: doc.region.nameEn,
+          ur: doc.region.nameUr,
+        })
+      : allRegionsLabel,
   }));
   const requiredDocumentCount = documents.filter((doc) => doc.isRequired).length;
 
   const serviceUrl = absoluteUrl(`/services/${service.slug}`);
+  const breadcrumbItems = [
+    { label: tNav("home"), href: "/" },
+    { label: t("services.title"), href: "/services" },
+    ...(categoryName
+      ? [{ label: categoryName, href: "/services" as const }]
+      : []),
+    { label: name },
+  ];
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: t("services.title"), url: absoluteUrl("/services") },
+    ...(categoryName
+      ? [{ name: categoryName, url: absoluteUrl("/services") }]
+      : []),
     { name, url: serviceUrl },
   ]);
   const serviceJsonLd = buildServiceJsonLd({
@@ -160,6 +187,11 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   });
   const faqJsonLd =
     faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
+
+  const applyHref =
+    service.subServices.length > 0
+      ? undefined
+      : `/apply/${service.slug}`;
 
   return (
     <>
@@ -174,21 +206,33 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       <PageHero
         title={name}
         description={description}
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: t("services.title"), href: "/services" },
-          { label: name },
-        ]}
+        breadcrumbs={breadcrumbItems}
       />
 
       <div className="container-site py-10 md:py-12">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
           <div className="space-y-12">
-            {regionName ? (
-              <p className="text-sm font-medium text-primary">{regionName}</p>
+            {categoryName ? (
+              <p className="text-sm font-medium text-primary">
+                {t("service.categoryLabel", { category: categoryName })}
+              </p>
             ) : null}
 
             <ProseContent content={content ?? ""} />
+
+            <ServiceRegionsList
+              title={t("service.availableIn")}
+              regions={assignedRegions}
+              locale={locale}
+            />
+
+            <ServiceSubServices
+              title={t("service.subServicesTitle")}
+              description={t("service.subServicesDescription")}
+              services={service.subServices}
+              locale={locale}
+              applyLabel={tCommon("learnMore")}
+            />
 
             {processingNotes?.trim() ? (
               <section className="space-y-3 rounded-xl border bg-muted/30 p-5">
@@ -244,8 +288,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             regionLabel={regionName}
             documentCount={documents.length}
             requiredDocumentCount={requiredDocumentCount}
-            applyHref={`/apply/${service.slug}`}
-            applyLabel={t("service.applyNow")}
+            applyHref={applyHref ?? `/services/${service.slug}#sub-services`}
+            applyLabel={
+              service.subServices.length > 0
+                ? t("service.chooseSubService")
+                : t("service.applyNow")
+            }
             whatsappLabel={tCommon("whatsappHelp")}
             whatsappPhone={businessSettings.whatsappNumber}
             whatsappMessage={businessSettings.whatsappDefaultMessage}
@@ -256,17 +304,19 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           />
         </div>
 
-        <div className="mt-12 lg:hidden">
-          <CTASection
-            title={t("service.ctaTitle")}
-            description={t("service.ctaDescription")}
-            applyLabel={t("service.applyNow")}
-            applyHref={`/apply/${service.slug}`}
-            whatsappLabel={tCommon("whatsappHelp")}
-            whatsappPhone={businessSettings.whatsappNumber}
-            whatsappMessage={businessSettings.whatsappDefaultMessage}
-          />
-        </div>
+        {applyHref ? (
+          <div className="mt-12 lg:hidden">
+            <CTASection
+              title={t("service.ctaTitle")}
+              description={t("service.ctaDescription")}
+              applyLabel={t("service.applyNow")}
+              applyHref={applyHref}
+              whatsappLabel={tCommon("whatsappHelp")}
+              whatsappPhone={businessSettings.whatsappNumber}
+              whatsappMessage={businessSettings.whatsappDefaultMessage}
+            />
+          </div>
+        ) : null}
       </div>
     </>
   );

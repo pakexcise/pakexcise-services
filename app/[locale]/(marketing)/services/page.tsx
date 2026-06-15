@@ -3,14 +3,17 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
-import { ServiceCard } from "@/components/marketing/service-card";
+import { ServiceCategorySection } from "@/components/marketing/service-category-section";
+import { ServicesCategoryNav } from "@/components/marketing/services-category-nav";
+import { ServicesEmptyState } from "@/components/marketing/services-empty-state";
 import {
   buildBreadcrumbJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
-import { seoMetaRepository, serviceRepository } from "@/server/repositories";
+import { seoMetaRepository } from "@/server/repositories";
+import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
@@ -50,7 +53,7 @@ export default async function ServicesPage() {
   const tCommon = await getTranslations("common");
   const seo = await seoMetaRepository.findByPageKey("services");
 
-  const { items: services } = await serviceRepository.listPublicPaginated(1, 50);
+  const categoryGroups = await serviceCategoryRepository.listPublicGrouped();
 
   const title = pickLocalized(locale, {
     en: seo?.h1En ?? t("services.title"),
@@ -66,6 +69,8 @@ export default async function ServicesPage() {
     { name: title, url: absoluteUrl("/services") },
   ]);
 
+  const hasServices = categoryGroups.length > 0;
+
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />
@@ -77,22 +82,32 @@ export default async function ServicesPage() {
           { label: title },
         ]}
       />
-      <div className="container-site py-10 md:py-12">
-        {services.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("services.empty")}</p>
+      <div className="container-site space-y-10 py-10 md:space-y-12 md:py-12">
+        {!hasServices ? (
+          <ServicesEmptyState
+            title={t("services.emptyTitle")}
+            description={t("services.empty")}
+            browseRegionsLabel={t("services.browseRegions")}
+            contactLabel={tNav("contact")}
+          />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <ServiceCard
-                key={service.id}
-                service={service}
+          <>
+            <ServicesCategoryNav
+              groups={categoryGroups}
+              locale={locale}
+              label={t("services.jumpToCategory")}
+            />
+            {categoryGroups.map((group) => (
+              <ServiceCategorySection
+                key={group.id}
+                group={group}
                 locale={locale}
                 learnMoreLabel={tCommon("learnMore")}
                 multipleRegionsLabel={t("services.multipleRegions")}
                 allProvincesLabel={t("services.allProvinces")}
               />
             ))}
-          </div>
+          </>
         )}
       </div>
     </>

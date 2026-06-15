@@ -13,6 +13,7 @@ export type DocumentChecklistItem = {
   label: string;
   instructions: string | null;
   isRequired: boolean;
+  scopeLabel?: string;
 };
 
 type DocumentChecklistProps = {
@@ -55,6 +56,7 @@ export function DocumentChecklist({
                   <CardTitle className="text-base">{item.label}</CardTitle>
                   <CardDescription className="mt-1">
                     {item.isRequired ? requiredLabel : optionalLabel}
+                    {item.scopeLabel ? ` · ${item.scopeLabel}` : null}
                   </CardDescription>
                 </div>
               </div>

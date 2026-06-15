@@ -19,11 +19,13 @@ const DEFAULT_MIME = "image/jpeg, image/png, image/webp, application/pdf";
 type DocumentRequirementsPanelProps = {
   serviceId: string;
   documents: AdminServiceDetail["documentReqs"];
+  regions: Array<{ id: string; nameEn: string; nameUr: string }>;
   labels: DocumentPanelLabels;
 };
 
 type DocumentDraft = {
   id?: string;
+  regionId: string;
   docType: string;
   labelEn: string;
   labelUr: string;
@@ -38,6 +40,7 @@ type DocumentDraft = {
 
 function emptyDraft(displayOrder: number): DocumentDraft {
   return {
+    regionId: "",
     docType: "",
     labelEn: "",
     labelUr: "",
@@ -60,6 +63,7 @@ function toDraft(
 
   return {
     id: doc.id,
+    regionId: doc.regionId ?? "",
     docType: doc.docType,
     labelEn: doc.labelEn,
     labelUr: doc.labelUr,
@@ -76,6 +80,7 @@ function toDraft(
 export function DocumentRequirementsPanel({
   serviceId,
   documents,
+  regions,
   labels,
 }: DocumentRequirementsPanelProps) {
   const router = useRouter();
@@ -92,6 +97,7 @@ export function DocumentRequirementsPanel({
       const result = await upsertDocumentRequirementAction({
         ...draft,
         serviceId,
+        regionId: draft.regionId || null,
         acceptedMimeTypes: draft.acceptedMimeTypes
           .split(",")
           .map((item) => item.trim())
@@ -149,7 +155,11 @@ export function DocumentRequirementsPanel({
                 <div>
                   <p className="font-medium">{doc.labelEn}</p>
                   <p className="text-xs text-muted-foreground">
-                    {doc.docType} · {doc.isRequired ? labels.required : labels.optional}
+                    {doc.docType} ·{" "}
+                    {doc.region
+                      ? doc.region.nameEn
+                      : labels.allRegions}{" "}
+                    · {doc.isRequired ? labels.required : labels.optional}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -181,6 +191,26 @@ export function DocumentRequirementsPanel({
         <h3 className="text-base font-semibold lg:col-span-2">
           {draft.id ? labels.editDocument : labels.addDocument}
         </h3>
+        <div>
+          <Label className="mb-2 block">{labels.region}</Label>
+          <select
+            value={draft.regionId}
+            onChange={(event) =>
+              setDraft((current) => ({
+                ...current,
+                regionId: event.target.value,
+              }))
+            }
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+          >
+            <option value="">{labels.allRegions}</option>
+            {regions.map((region) => (
+              <option key={region.id} value={region.id}>
+                {region.nameEn}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <Label className="mb-2 block">{labels.docType}</Label>
           <Input

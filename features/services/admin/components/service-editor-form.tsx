@@ -23,11 +23,26 @@ type RegionOption = {
   nameUr: string;
 };
 
+type CategoryOption = {
+  id: string;
+  nameEn: string;
+  nameUr: string;
+};
+
+type ParentServiceOption = {
+  id: string;
+  slug: string;
+  nameEn: string;
+  nameUr: string;
+};
+
 type ServiceEditorFormProps = {
   mode: "create" | "edit";
   serviceId?: string;
   initialValues: ServiceEditorValues;
   regions: RegionOption[];
+  categories: CategoryOption[];
+  parentServices: ParentServiceOption[];
   labels: ServiceEditorLabels;
 };
 
@@ -38,6 +53,8 @@ export function ServiceEditorForm({
   serviceId,
   initialValues,
   regions,
+  categories,
+  parentServices,
   labels,
 }: ServiceEditorFormProps) {
   const router = useRouter();
@@ -132,6 +149,38 @@ export function ServiceEditorForm({
               value={values.slug}
               onChange={(event) => updateField("slug", event.target.value)}
             />
+          </Field>
+          <Field label={labels.category}>
+            <select
+              value={values.categoryId}
+              onChange={(event) => updateField("categoryId", event.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="">{labels.selectCategory}</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.nameEn}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label={labels.parentService}>
+            <select
+              value={values.parentServiceId}
+              onChange={(event) =>
+                updateField("parentServiceId", event.target.value)
+              }
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="">{labels.noParentService}</option>
+              {parentServices
+                .filter((parent) => parent.id !== serviceId)
+                .map((parent) => (
+                  <option key={parent.id} value={parent.id}>
+                    {parent.nameEn}
+                  </option>
+                ))}
+            </select>
           </Field>
           <Field
             label={labels.regions}
@@ -236,6 +285,25 @@ export function ServiceEditorForm({
                 updateField("processingNotesUr", event.target.value)
               }
               dir="rtl"
+            />
+          </Field>
+          <Field label={labels.internalNotes} className="lg:col-span-2">
+            <Textarea
+              value={values.internalNotes}
+              onChange={(event) =>
+                updateField("internalNotes", event.target.value)
+              }
+              placeholder={labels.internalNotesHint}
+            />
+          </Field>
+          <Field label={labels.referenceLinksJson} className="lg:col-span-2">
+            <Textarea
+              className="min-h-24 font-mono text-xs"
+              value={values.referenceLinksJson}
+              onChange={(event) =>
+                updateField("referenceLinksJson", event.target.value)
+              }
+              placeholder={labels.referenceLinksHint}
             />
           </Field>
           <Field label={labels.displayOrder}>
