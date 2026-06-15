@@ -303,7 +303,6 @@ export default async function HomePage() {
             whatsappCta={content.vehicleVisual.whatsappCta}
             requestCta={content.vehicleVisual.requestCta}
             whatsappHref={whatsappHref}
-            tone={tone}
           />
         );
 

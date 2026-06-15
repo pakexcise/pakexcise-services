@@ -409,7 +409,7 @@ export function HomePageSettingsPanel({
                       },
                     }))
                   }
-                  placeholder="/images/home/vehicle-documents-support.jpg"
+                  placeholder="/images/home/vehicle-documents-support.png"
                 />
               </div>
               <BilingualField
