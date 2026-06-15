@@ -553,8 +553,8 @@ export const REVIEW_SEED = [
 
 function serviceContent(shortEn: string, shortUr: string) {
   return {
-    contentEn: `${shortEn}\n\n## Overview\nOur team helps you prepare documents, submit your application, and track progress through a private facilitation service.\n\n## Why choose PakExcise\n- Dedicated support via WhatsApp and dashboard\n- Document checklist guidance\n- Status tracking with notes on every update\n- Private facilitation fees shared only via invoice after review`,
-    contentUr: `${shortUr}\n\n## جائزہ\nہماری ٹیم دستاویزات تیار کرنے، درخواست جمع کرانے اور پیش رفت ٹریک کرنے میں مدد کرتی ہے۔\n\n## PakExcise کیوں\n- واٹس ایپ اور ڈیش بورڈ کے ذریعے سپورٹ\n- دستاویزات چیک لسٹ رہنمائی\n- ہر اپڈیٹ پر نوٹس کے ساتھ ٹریکنگ\n- نجی سہولت فیس صرف جائزے کے بعد انوائس پر`,
+    contentEn: `${shortEn}\n\n## Overview\nOur team helps you prepare documents, submit your application, and track progress through a private facilitation service.\n\n## Why choose PakExcise\n- Dedicated support via WhatsApp and dashboard\n- Document checklist guidance\n- Status tracking with notes on every update`,
+    contentUr: `${shortUr}\n\n## جائزہ\nہماری ٹیم دستاویزات تیار کرنے، درخواست جمع کرانے اور پیش رفت ٹریک کرنے میں مدد کرتی ہے۔\n\n## PakExcise کیوں\n- واٹس ایپ اور ڈیش بورڈ کے ذریعے سپورٹ\n- دستاویزات چیک لسٹ رہنمائی\n- ہر اپڈیٹ پر نوٹس کے ساتھ ٹریکنگ`,
     processingNotesEn: null,
     processingNotesUr: null,
   };

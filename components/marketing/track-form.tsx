@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { AlertTriangle, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 import { TrackResult } from "@/components/marketing/TrackResult";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,6 @@ import { trackApplicationAction } from "@/features/customer/actions/track-applic
 import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
 import { Link, useRouter } from "@/i18n/navigation";
 import { siteConfig } from "@/config/site";
-import {
-  disclaimerBannerClassName,
-  disclaimerBannerIconClassName,
-} from "@/lib/styles/disclaimer-banner";
-import { cn } from "@/lib/utils";
 import { getUserRole } from "@/lib/auth-types";
 import { useSession } from "@/lib/auth-client";
 
@@ -28,7 +23,6 @@ type TrackFormProps = {
   labels: {
     error: string;
     rateLimited: string;
-    disclaimer: string;
     whatsapp: string;
     whatsappMessage: string;
     resultTitle: string;
@@ -140,19 +134,6 @@ export function TrackForm({
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
-      <div
-        role="note"
-        className={cn(
-          "flex items-start gap-2 rounded-lg border p-4 text-sm",
-          disclaimerBannerClassName,
-        )}
-      >
-        <AlertTriangle
-          className={cn("mt-0.5 size-4", disclaimerBannerIconClassName)}
-        />
-        <p>{labels.disclaimer}</p>
-      </div>
-
       <div className="space-y-4 rounded-xl border bg-card p-6">
         <form className="space-y-4" onSubmit={handleSubmit}>
           <label className="block space-y-2">

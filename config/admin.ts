@@ -36,6 +36,12 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "application:read",
   },
   {
+    href: "/admin/guest-leads",
+    labelKey: "guestLeads",
+    icon: "message-square",
+    permission: "application:read",
+  },
+  {
     href: "/admin/services",
     labelKey: "services",
     icon: "briefcase",
@@ -130,6 +136,24 @@ export const adminNavItems: AdminNavItem[] = [
     labelKey: "users",
     icon: "user-cog",
     permission: "users:manage",
+  },
+  {
+    href: "/admin/contact-inquiries",
+    labelKey: "contactInquiries",
+    icon: "mail",
+    permission: "application:read",
+  },
+  {
+    href: "/admin/home-page",
+    labelKey: "homePage",
+    icon: "home",
+    permission: "settings:manage",
+  },
+  {
+    href: "/admin/contact-page",
+    labelKey: "contactPage",
+    icon: "contact",
+    permission: "settings:manage",
   },
   {
     href: "/admin/settings",

@@ -21,9 +21,17 @@ type ProvinceCardProps = {
   };
   locale: string;
   viewLabel: string;
+  serviceCount?: number;
+  serviceCountLabel?: string;
 };
 
-export function ProvinceCard({ region, locale, viewLabel }: ProvinceCardProps) {
+export function ProvinceCard({
+  region,
+  locale,
+  viewLabel,
+  serviceCount,
+  serviceCountLabel,
+}: ProvinceCardProps) {
   const name = pickLocalized(locale, { en: region.nameEn, ur: region.nameUr });
   const description = pickLocalized(locale, {
     en: region.descriptionEn,
@@ -31,9 +39,16 @@ export function ProvinceCard({ region, locale, viewLabel }: ProvinceCardProps) {
   });
 
   return (
-    <Card className="h-full transition-shadow hover:shadow-md">
-      <CardHeader>
-        <MapPin className="mb-2 size-5 text-primary" aria-hidden="true" />
+    <Card className="h-full border-border/70 bg-background/80 transition-colors hover:border-primary/25 hover:bg-primary/[0.02]">
+      <CardHeader className="space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <MapPin className="size-5 shrink-0 text-primary" aria-hidden="true" />
+          {typeof serviceCount === "number" && serviceCountLabel ? (
+            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+              {serviceCountLabel}
+            </span>
+          ) : null}
+        </div>
         <CardTitle className="text-lg">{name}</CardTitle>
         {description ? <CardDescription>{description}</CardDescription> : null}
       </CardHeader>

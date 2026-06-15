@@ -10,6 +10,7 @@ import {
   buildBreadcrumbJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import { seoMetaRepository } from "@/server/repositories";
@@ -70,6 +71,7 @@ export default async function ServicesPage() {
   ]);
 
   const hasServices = categoryGroups.length > 0;
+  const serviceCardLabels = buildServiceCardLabels(tCommon, t);
 
   return (
     <>
@@ -102,9 +104,7 @@ export default async function ServicesPage() {
                 key={group.id}
                 group={group}
                 locale={locale}
-                learnMoreLabel={tCommon("learnMore")}
-                multipleRegionsLabel={t("services.multipleRegions")}
-                allProvincesLabel={t("services.allProvinces")}
+                labels={serviceCardLabels}
               />
             ))}
           </>

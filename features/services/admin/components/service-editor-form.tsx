@@ -316,6 +316,16 @@ export function ServiceEditorForm({
               }
             />
           </Field>
+          <Field label={labels.featuredDisplayOrder}>
+            <Input
+              type="number"
+              min={0}
+              value={values.featuredDisplayOrder}
+              onChange={(event) =>
+                updateField("featuredDisplayOrder", Number(event.target.value))
+              }
+            />
+          </Field>
           <div className="flex flex-col gap-3">
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -326,6 +336,16 @@ export function ServiceEditorForm({
                 }
               />
               {labels.requiresProof}
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={values.isFeatured}
+                onChange={(event) =>
+                  updateField("isFeatured", event.target.checked)
+                }
+              />
+              {labels.isFeatured}
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input

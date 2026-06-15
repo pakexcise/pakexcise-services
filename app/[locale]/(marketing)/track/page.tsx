@@ -136,7 +136,6 @@ export default async function TrackPage({ searchParams }: TrackPageProps) {
             labels={{
               error: t("track.error"),
               rateLimited: t("track.rateLimited"),
-              disclaimer: t("track.disclaimer"),
               whatsapp: t("track.whatsapp"),
               whatsappMessage: t("track.whatsappMessage"),
               resultTitle: t("track.result.title"),

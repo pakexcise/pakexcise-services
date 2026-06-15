@@ -14,6 +14,7 @@ export type {
 
 export {
   getActiveServices,
+  getFeaturedServices,
   serviceRepository,
   ServiceRepository,
 } from "./service-repository";
@@ -23,6 +24,11 @@ export type {
 } from "./service-repository";
 
 export { faqRepository, FaqRepository } from "./faq-repository";
+export {
+  documentRequirementRepository,
+  DocumentRequirementRepository,
+} from "./document-requirement-repository";
+export type { PublicDocumentPreview } from "./document-requirement-repository";
 export { regionRepository, RegionRepository } from "./region-repository";
 export { cityRepository, CityRepository } from "./city-repository";
 export { reviewRepository, ReviewRepository } from "./review-repository";
@@ -120,3 +126,19 @@ export type {
   AdminApplicationListItem,
   ApplicationDashboardStats,
 } from "./application-repository";
+export {
+  guestLeadRepository,
+  GuestLeadRepository,
+} from "./guest-lead-repository";
+export type {
+  GuestLeadDetail,
+  GuestLeadListItem,
+} from "./guest-lead-repository";
+export {
+  contactInquiryRepository,
+  ContactInquiryRepository,
+} from "./contact-inquiry-repository";
+export type {
+  ContactInquiryDetail,
+  ContactInquiryListItem,
+} from "./contact-inquiry-repository";

@@ -69,6 +69,27 @@ enum ApplicationStatus {
   CANCELLED
 }
 
+enum GuestLeadSource {
+  WHATSAPP
+  GUEST_FORM
+}
+
+enum GuestLeadStatus {
+  NEW
+  CONTACTED
+  IN_PROGRESS
+  CONVERTED
+  CLOSED
+  SPAM
+}
+
+enum ContactInquiryStatus {
+  NEW
+  CONTACTED
+  CLOSED
+  SPAM
+}
+
 enum InvoiceStatus {
   DRAFT
   SENT
@@ -186,6 +207,8 @@ model User {
   statusChanges        StatusHistory[]
   adminPermissionGrants AdminPermissionGrant[] @relation("AdminPermissionUser")
   grantedAdminPermissions AdminPermissionGrant[] @relation("AdminPermissionGranter")
+  guestLeadContacts    GuestLead[]           @relation("GuestLeadContactedBy")
+  contactInquiryContacts ContactInquiry[]    @relation("ContactInquiryContactedBy")
 
   @@index([role, status])
   @@map("users")
@@ -439,6 +462,8 @@ model Service {
   referenceLinksJson  Json?
   requiresProof       Boolean   @default(true)
   isActive            Boolean   @default(true)
+  isFeatured          Boolean   @default(false)
+  featuredDisplayOrder Int      @default(0)
   displayOrder        Int       @default(0)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
@@ -453,11 +478,13 @@ model Service {
   documentReqs    DocumentRequirement[]
   faqs            FAQ[]
   applications    Application[]
+  guestLeads      GuestLead[]
   seoMeta         SeoMeta?
   feeConfig       ServiceFeeConfig?
 
   @@index([slug])
   @@index([isActive, displayOrder])
+  @@index([isFeatured, featuredDisplayOrder])
   @@index([regionId, isActive])
   @@index([categoryId, isActive])
   @@index([parentServiceId, isActive, displayOrder])
@@ -973,4 +1000,64 @@ model Guide {
 
   @@index([isPublished, publishedAt])
   @@map("guides")
+}
+
+model GuestLead {
+  id              String          @id @default(cuid())
+  referenceId     String          @unique
+  source          GuestLeadSource @default(GUEST_FORM)
+  status          GuestLeadStatus @default(NEW)
+  serviceId       String?
+  serviceNameEn   String
+  serviceNameUr   String
+  regionNameEn    String?
+  regionNameUr    String?
+  cityName        String?
+  fullName        String
+  phone           String
+  email           String?
+  vehicleInfo     String?         @db.Text
+  licenseInfo     String?         @db.Text
+  message         String?         @db.Text
+  locale          String          @default("en")
+  adminNotes      String?         @db.Text
+  contactedAt     DateTime?
+  contactedById   String?
+  ipHash          String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  service       Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  contactedBy   User?    @relation("GuestLeadContactedBy", fields: [contactedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([serviceId, createdAt])
+  @@index([phone, createdAt])
+  @@map("guest_leads")
+}
+
+model ContactInquiry {
+  id              String               @id @default(cuid())
+  referenceId     String               @unique
+  status          ContactInquiryStatus @default(NEW)
+  fullName        String
+  phone           String
+  email           String?
+  serviceInterest String
+  regionName      String?
+  cityName        String?
+  message         String?              @db.Text
+  locale          String               @default("en")
+  adminNotes      String?              @db.Text
+  contactedAt     DateTime?
+  contactedById   String?
+  ipHash          String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  contactedBy User? @relation("ContactInquiryContactedBy", fields: [contactedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([phone, createdAt])
+  @@map("contact_inquiries")
 }

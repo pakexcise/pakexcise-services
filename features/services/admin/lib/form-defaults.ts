@@ -19,6 +19,8 @@ export type ServiceEditorValues = {
   referenceLinksJson: string;
   requiresProof: boolean;
   isActive: boolean;
+  isFeatured: boolean;
+  featuredDisplayOrder: number;
   displayOrder: number;
   seo: {
     metaTitleEn: string;
@@ -64,6 +66,8 @@ export function emptyServiceEditorValues(
     referenceLinksJson: "",
     requiresProof: true,
     isActive: true,
+    isFeatured: false,
+    featuredDisplayOrder: 0,
     displayOrder,
     seo: {
       metaTitleEn: "",
@@ -121,6 +125,8 @@ export function serviceToEditorValues(
     referenceLinksJson: jsonToString(service.referenceLinksJson),
     requiresProof: service.requiresProof,
     isActive: service.isActive,
+    isFeatured: service.isFeatured,
+    featuredDisplayOrder: service.featuredDisplayOrder,
     displayOrder: service.displayOrder,
     seo: {
       metaTitleEn: service.seoMeta?.metaTitleEn ?? "",

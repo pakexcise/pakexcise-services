@@ -128,7 +128,16 @@ export type PublicServiceSelect = Prisma.ServiceGetPayload<{
     shortDescriptionUr: true;
     requiresProof: true;
     displayOrder: true;
+    isFeatured: true;
+    featuredDisplayOrder: true;
     serviceRegions: typeof publicServiceRegionSelect;
+    category: {
+      select: {
+        slug: true;
+        nameEn: true;
+        nameUr: true;
+      };
+    };
   };
 }>;
 
@@ -141,7 +150,16 @@ export const publicServiceSelect = {
   shortDescriptionUr: true,
   requiresProof: true,
   displayOrder: true,
+  isFeatured: true,
+  featuredDisplayOrder: true,
   serviceRegions: publicServiceRegionSelect,
+  category: {
+    select: {
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
 } as const satisfies Prisma.ServiceSelect;
 
 export const publicServiceWhere = {

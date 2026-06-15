@@ -65,6 +65,8 @@ export const serviceCoreSchema = z.object({
   referenceLinksJson: jsonObjectSchema,
   requiresProof: z.boolean().default(true),
   isActive: z.boolean().default(true),
+  isFeatured: z.boolean().default(false),
+  featuredDisplayOrder: z.coerce.number().int().min(0).max(9999).default(0),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
 });
 

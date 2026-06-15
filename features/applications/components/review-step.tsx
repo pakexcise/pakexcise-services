@@ -11,7 +11,6 @@ import type {
   SavedDocumentMeta,
 } from "@/features/applications/types";
 import { formatPhoneForDisplay } from "@/lib/validations/phone";
-import { disclaimerBoxClassName } from "@/lib/styles/disclaimer-banner";
 
 type ReviewStepProps = {
   serviceName: string;
@@ -37,7 +36,6 @@ type ReviewStepProps = {
     back: string;
     submit: string;
     submitting: string;
-    disclaimer: string;
     edit: string;
   };
   isSubmitting: boolean;
@@ -225,10 +223,6 @@ export function ReviewStep({
           </ul>
         )}
       </section>
-
-      <p className={disclaimerBoxClassName}>
-        {labels.disclaimer}
-      </p>
 
       {submitError ? (
         <p className="text-sm text-destructive" role="alert">

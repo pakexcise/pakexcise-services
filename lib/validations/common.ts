@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { isValidPakistanPhone } from "@/lib/validations/phone";
+
 export type ActionResult<T> =
   | { success: true; data: T }
   | { success: false; error: string; fieldErrors?: Record<string, string[]> };
@@ -56,4 +58,14 @@ export const cnicSchema = z
 export const phoneSchema = z
   .string()
   .trim()
-  .regex(/^(\+92|0)?3\d{9}$/, "Invalid Pakistani mobile number");
+  .min(1, "Phone number is required")
+  .refine((value) => isValidPakistanPhone(value), {
+    message: "Invalid Pakistani mobile number",
+  });
+
+export function optionalEmailSchema(message = "Invalid email address") {
+  return z.union([
+    z.literal(""),
+    z.string().trim().email(message).max(160),
+  ]);
+}

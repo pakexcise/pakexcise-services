@@ -8,6 +8,7 @@ import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { RelatedServices } from "@/components/marketing/related-services";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
+import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import { getCanonicalRegionSlug } from "@/features/regions/lib/resolve-region-slug";
 import {
   buildBreadcrumbJsonLd,
@@ -137,10 +138,7 @@ export default async function CityDetailPage({ params }: CityPageProps) {
           title={t("regions.servicesInRegion")}
           services={services}
           locale={locale}
-          learnMoreLabel={tCommon("learnMore")}
-          multipleRegionsLabel={t("services.multipleRegions")}
-          allProvincesLabel={t("services.allProvinces")}
-          showRegionLabel={false}
+          labels={buildServiceCardLabels(tCommon, t)}
           variant="region"
           emptyMessage={t("regions.emptyServices")}
           serviceCountLabel={t("regions.serviceCount", { count: services.length })}

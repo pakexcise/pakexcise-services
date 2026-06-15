@@ -40,6 +40,8 @@ export async function getServiceEditorLabels() {
     noParentService: t("noParentService"),
     requiresProof: t("requiresProof"),
     isActive: t("isActive"),
+    isFeatured: t("isFeatured"),
+    featuredDisplayOrder: t("featuredDisplayOrder"),
     displayOrder: t("displayOrder"),
     metaTitleEn: t("metaTitleEn"),
     metaTitleUr: t("metaTitleUr"),

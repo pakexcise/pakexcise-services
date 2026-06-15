@@ -8,6 +8,15 @@ import {
   defaultTrackingSettings,
 } from "../features/settings/lib/defaults";
 import { SETTINGS_KEYS } from "../features/settings/lib/keys";
+import {
+  CONTACT_PAGE_SETTINGS_KEY,
+  defaultContactPageSettings,
+} from "../features/contact-page/lib/defaults";
+import {
+  HOME_PAGE_SETTINGS_KEY,
+  defaultHomePageSettings,
+} from "../features/home-page/lib/defaults";
+import { seedUpsertStaticPageSeo } from "./seed-helpers/upsert-static-page-seo";
 import { seedMarketingData } from "./seed-marketing-data";
 
 const prisma = new PrismaClient();
@@ -62,11 +71,12 @@ async function main() {
   });
 
   const business = defaultBusinessSettings();
-  business.whatsappNumber = "923001234567";
-  business.whatsappDefaultMessage =
-    "Hello PakExcise, I need help with an excise facilitation service.";
-  business.businessEmail = "support@pakexcise.com";
-  business.phoneNumber = "+92 300 0000000";
+  business.businessEmail = "info@pakexcise.com";
+  business.phoneNumber = "0345-0664441";
+  business.whatsappNumber = "0345-0664441";
+  business.whatsappDefaultMessage = "Hi PakExcise, I need help with a service.";
+  business.businessHoursEn = "Monday to Sunday · 7:00 AM – 12:00 PM";
+  business.businessHoursUr = "پیر تا اتوار · صبح 7:00 – 12:00";
 
   for (const [group, value] of [
     [SETTINGS_KEYS.business, business],
@@ -82,36 +92,181 @@ async function main() {
     });
   }
 
+  const contactPageSettings = defaultContactPageSettings();
+  await prisma.setting.upsert({
+    where: { key: CONTACT_PAGE_SETTINGS_KEY },
+    update: { value: contactPageSettings },
+    create: { key: CONTACT_PAGE_SETTINGS_KEY, value: contactPageSettings },
+  });
+
+  await seedUpsertStaticPageSeo(prisma, "contact", {
+    metaTitleEn: contactPageSettings.seo.metaTitleEn,
+    metaTitleUr: contactPageSettings.seo.metaTitleUr,
+    metaDescriptionEn: contactPageSettings.seo.metaDescriptionEn,
+    metaDescriptionUr: contactPageSettings.seo.metaDescriptionUr,
+    h1En: contactPageSettings.heroTitleEn,
+    h1Ur: contactPageSettings.heroTitleUr,
+    canonicalUrl: null,
+    ogTitleEn: contactPageSettings.seo.metaTitleEn,
+    ogTitleUr: contactPageSettings.seo.metaTitleUr,
+    ogDescriptionEn: contactPageSettings.seo.metaDescriptionEn,
+    ogDescriptionUr: contactPageSettings.seo.metaDescriptionUr,
+    ogImage: null,
+    twitterCard: "summary_large_image",
+    robotsIndex: true,
+    robotsFollow: true,
+    faqSchemaJson: null,
+    breadcrumbJson: null,
+  });
+
+  await seedUpsertStaticPageSeo(prisma, "contact", {
+    metaTitleEn: contactPageSettings.seo.metaTitleEn,
+    metaTitleUr: contactPageSettings.seo.metaTitleUr,
+    metaDescriptionEn: contactPageSettings.seo.metaDescriptionEn,
+    metaDescriptionUr: contactPageSettings.seo.metaDescriptionUr,
+    h1En: contactPageSettings.heroTitleEn,
+    h1Ur: contactPageSettings.heroTitleUr,
+    canonicalUrl: null,
+    ogTitleEn: contactPageSettings.seo.metaTitleEn,
+    ogTitleUr: contactPageSettings.seo.metaTitleUr,
+    ogDescriptionEn: contactPageSettings.seo.metaDescriptionEn,
+    ogDescriptionUr: contactPageSettings.seo.metaDescriptionUr,
+    ogImage: null,
+    twitterCard: "summary_large_image",
+    robotsIndex: true,
+    robotsFollow: true,
+    faqSchemaJson: null,
+    breadcrumbJson: null,
+  });
+
+  const homePageSettings = defaultHomePageSettings();
+  await prisma.setting.upsert({
+    where: { key: HOME_PAGE_SETTINGS_KEY },
+    update: { value: homePageSettings },
+    create: { key: HOME_PAGE_SETTINGS_KEY, value: homePageSettings },
+  });
+
+  await seedUpsertStaticPageSeo(prisma, "home", {
+    metaTitleEn: homePageSettings.seo.metaTitleEn,
+    metaTitleUr: homePageSettings.seo.metaTitleUr,
+    metaDescriptionEn: homePageSettings.seo.metaDescriptionEn,
+    metaDescriptionUr: homePageSettings.seo.metaDescriptionUr,
+    h1En: homePageSettings.seo.h1En,
+    h1Ur: homePageSettings.seo.h1Ur,
+    canonicalUrl: null,
+    ogTitleEn: homePageSettings.seo.metaTitleEn,
+    ogTitleUr: homePageSettings.seo.metaTitleUr,
+    ogDescriptionEn: homePageSettings.seo.metaDescriptionEn,
+    ogDescriptionUr: homePageSettings.seo.metaDescriptionUr,
+    ogImage: null,
+    twitterCard: "summary_large_image",
+    robotsIndex: true,
+    robotsFollow: true,
+    faqSchemaJson: null,
+    breadcrumbJson: null,
+  });
+
+  const featuredServiceSlugs = [
+    "vehicle-transfer",
+    "token-tax",
+    "new-vehicle-registration",
+    "driving-license-renewal",
+    "learner-license",
+    "e-challan",
+    "route-permit",
+    "vehicle-data-correction",
+  ] as const;
+
+  for (const [index, slug] of featuredServiceSlugs.entries()) {
+    await prisma.service.updateMany({
+      where: { slug, deletedAt: null },
+      data: {
+        isFeatured: true,
+        featuredDisplayOrder: index + 1,
+      },
+    });
+  }
+
   const globalFaqs = [
     {
       category: "general",
-      questionEn: "Is PakExcise.com a government website?",
-      questionUr: "کیا PakExcise.com سرکاری ویب سائٹ ہے؟",
+      questionEn: "What is PakExcise?",
+      questionUr: "PakExcise کیا ہے؟",
       answerEn:
-        "No. PakExcise.com is a private facilitation service and is not affiliated with any government department.",
+        "PakExcise is a private facilitation platform that helps users with vehicle services, license services, token tax, route permit, data correction, vehicle fitness, and e-challan support in Pakistan.",
       answerUr:
-        "نہیں۔ PakExcise.com ایک نجی سہولت سروس ہے اور کسی بھی سرکاری محکمے سے وابستہ نہیں ہے۔",
+        "PakExcise ایک نجی سہولت پلیٹ فارم ہے جو پاکستان میں گاڑی، لائسنس، ٹوکن ٹیکس، راؤٹ پرمٹ، ڈیٹا تصحیح، گاڑی فٹنس اور ای چالان میں مدد کرتا ہے۔",
       displayOrder: 1,
+    },
+    {
+      category: "general",
+      questionEn: "Is PakExcise a government website?",
+      questionUr: "کیا PakExcise سرکاری ویب سائٹ ہے؟",
+      answerEn:
+        "No. PakExcise is a private facilitation service and is not affiliated with any government department.",
+      answerUr:
+        "نہیں۔ PakExcise ایک نجی سہولت سروس ہے اور کسی بھی سرکاری محکمے سے وابستہ نہیں ہے۔",
+      displayOrder: 2,
+    },
+    {
+      category: "support",
+      questionEn: "Can I get help on WhatsApp?",
+      questionUr: "کیا میں واٹس ایپ پر مدد حاصل کر سکتا ہوں؟",
+      answerEn:
+        "Yes. You can use Quick WhatsApp Service to contact PakExcise support directly for fast guidance.",
+      answerUr:
+        "جی ہاں۔ فوری واٹس ایپ سروس کے ذریعے آپ براہِ راست PakExcise سپورٹ سے رابطہ کر سکتے ہیں۔",
+      displayOrder: 3,
+    },
+    {
+      category: "account",
+      questionEn: "Do I need to create an account?",
+      questionUr: "کیا مجھے اکاؤنٹ بنانا ضروری ہے؟",
+      answerEn:
+        "No. You can use WhatsApp support or Submit Request without creating an account. If you want full tracking, you can apply with an account.",
+      answerUr:
+        "نہیں۔ آپ واٹس ایپ سپورٹ یا درخواست بھیجیں بغیر اکاؤنٹ کے استعمال کر سکتے ہیں۔ مکمل ٹریکنگ کے لیے اکاؤنٹ کے ساتھ درخواست دیں۔",
+      displayOrder: 4,
+    },
+    {
+      category: "account",
+      questionEn: "What is the benefit of applying with an account?",
+      questionUr: "اکاؤنٹ کے ساتھ درخواست کا فائدہ کیا ہے؟",
+      answerEn:
+        "Account-based applications allow you to track status, history, invoices, documents, and updates from your dashboard.",
+      answerUr:
+        "اکاؤنٹ درخواستوں میں آپ ڈیش بورڈ سے اسٹیٹس، تاریخ، انوائس، دستاویزات اور اپڈیٹس ٹریک کر سکتے ہیں۔",
+      displayOrder: 5,
     },
     {
       category: "billing",
       questionEn: "Are service fees shown on the website?",
       questionUr: "کیا ویب سائٹ پر سروس فیس دکھائی جاتی ہے؟",
       answerEn:
-        "No. PakExcise facilitation fees are shared only through invoices after admin review. Government official fees are listed separately on invoices when applicable.",
+        "No. Pricing is not shown on the frontend. Any service charges are shared after application or document review.",
       answerUr:
-        "نہیں۔ PakExcise سہولت فیس صرف ایڈمن جائزے کے بعد انوائس کے ذریعے شیئر کی جاتی ہے۔ سرکاری فیس جب لاگو ہو تو الگ دکھائی جاتی ہے۔",
-      displayOrder: 2,
+        "نہیں۔ فرنٹ اینڈ پر قیمت نہیں دکھائی جاتی۔ سروس چارجز درخواست یا دستاویز جائزے کے بعد بتائے جاتے ہیں۔",
+      displayOrder: 6,
     },
     {
-      category: "tracking",
-      questionEn: "How do I track my application?",
-      questionUr: "میں اپنی درخواست کیسے ٹریک کروں؟",
+      category: "regions",
+      questionEn: "Which provinces does PakExcise support?",
+      questionUr: "PakExcise کون سے صوبوں میں سپورٹ کرتا ہے؟",
       answerEn:
-        "Use your tracking ID on the Track page after submitting your application.",
+        "Service availability depends on the selected service. Provinces and supported services are managed dynamically by Super Admin.",
       answerUr:
-        "درخواست جمع کرانے کے بعد Track صفحے پر اپنا tracking ID استعمال کریں۔",
-      displayOrder: 3,
+        "خدمت کی دستیابی منتخب سروس پر منحصر ہے۔ صوبے اور خدمات سپر ایڈمن کے ذریعے ڈائنامک طور پر منظم ہوتے ہیں۔",
+      displayOrder: 7,
+    },
+    {
+      category: "documents",
+      questionEn: "Can I see required documents before applying?",
+      questionUr: "کیا میں درخواست سے پہلے ضروری دستاویزات دیکھ سکتا ہوں؟",
+      answerEn:
+        "Yes. PakExcise shows document requirements where available, based on service and province.",
+      answerUr:
+        "جی ہاں۔ PakExcise دستیاب ہونے پر سروس اور صوبے کے مطابق دستاویزات کی ضروریات دکھاتا ہے۔",
+      displayOrder: 8,
     },
   ] as const;
 
@@ -382,31 +537,6 @@ async function main() {
       metaTitleUr: `${blogPost.titleUr} | PakExcise.com`,
       h1En: blogPost.titleEn,
       h1Ur: blogPost.titleUr,
-    },
-  });
-
-  await prisma.seoMeta.upsert({
-    where: { pageKey: "home" },
-    update: {
-      metaTitleEn: "PakExcise.com | Private Excise Facilitation Pakistan",
-      metaTitleUr: "PakExcise.com | پاکستان میں نجی ایکسائز سہولت",
-      metaDescriptionEn:
-        "Private excise facilitation for Pakistan. Not a government website.",
-      metaDescriptionUr:
-        "پاکستان کے لیے نجی ایکسائز سہولت۔ سرکاری ویب سائٹ نہیں۔",
-      h1En: "Excise facilitation made simple",
-      h1Ur: "ایکسائز سہولت اب آسان",
-    },
-    create: {
-      pageKey: "home",
-      metaTitleEn: "PakExcise.com | Private Excise Facilitation Pakistan",
-      metaTitleUr: "PakExcise.com | پاکستان میں نجی ایکسائز سہولت",
-      metaDescriptionEn:
-        "Private excise facilitation for Pakistan. Not a government website.",
-      metaDescriptionUr:
-        "پاکستان کے لیے نجی ایکسائز سہولت۔ سرکاری ویب سائٹ نہیں۔",
-      h1En: "Excise facilitation made simple",
-      h1Ur: "ایکسائز سہولت اب آسان",
     },
   });
 

@@ -9,6 +9,7 @@ export type SupportNavItem = {
 export const supportNavItems: SupportNavItem[] = [
   { href: "/support/dashboard", labelKey: "dashboard", icon: "layout-dashboard" },
   { href: "/support/applications", labelKey: "applications", icon: "file-stack" },
+  { href: "/support/guest-leads", labelKey: "guestLeads", icon: "message-square" },
   { href: "/contact", labelKey: "contact", icon: "headphones" },
 ];
 

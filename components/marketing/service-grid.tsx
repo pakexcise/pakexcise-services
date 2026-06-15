@@ -1,14 +1,12 @@
 import type { PublicServiceCard } from "@/server/repositories/service-repository";
 
-import { ServiceCard } from "@/components/marketing/service-card";
+import { ServiceCard, type ServiceCardLabels } from "@/components/marketing/service-card";
 
 type ServiceGridProps = {
   services: PublicServiceCard[];
   locale: string;
-  learnMoreLabel: string;
-  multipleRegionsLabel: string;
-  allProvincesLabel: string;
-  showRegionLabel?: boolean;
+  labels: ServiceCardLabels;
+  useDynamicSummary?: boolean;
   variant?: "default" | "elevated";
   emptyMessage?: string;
 };
@@ -16,10 +14,8 @@ type ServiceGridProps = {
 export function ServiceGrid({
   services,
   locale,
-  learnMoreLabel,
-  multipleRegionsLabel,
-  allProvincesLabel,
-  showRegionLabel = true,
+  labels,
+  useDynamicSummary = true,
   variant = "elevated",
   emptyMessage,
 }: ServiceGridProps) {
@@ -36,10 +32,8 @@ export function ServiceGrid({
           key={service.id}
           service={service}
           locale={locale}
-          learnMoreLabel={learnMoreLabel}
-          multipleRegionsLabel={multipleRegionsLabel}
-          allProvincesLabel={allProvincesLabel}
-          showRegionLabel={showRegionLabel}
+          labels={labels}
+          useDynamicSummary={useDynamicSummary}
           variant={variant}
         />
       ))}

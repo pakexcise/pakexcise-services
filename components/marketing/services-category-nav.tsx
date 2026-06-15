@@ -24,7 +24,7 @@ function normalizeCategoryHash(rawHash: string): string | null {
 
   for (let index = segments.length - 1; index >= 0; index -= 1) {
     const segment = segments[index];
-    if (segment.startsWith("category-")) {
+    if (segment?.startsWith("category-")) {
       return segment;
     }
   }

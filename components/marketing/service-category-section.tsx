@@ -1,3 +1,5 @@
+import { ServiceCompactCard } from "@/components/marketing/service-compact-card";
+import type { ServiceCardLabels } from "@/components/marketing/service-card";
 import { ServiceGrid } from "@/components/marketing/service-grid";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { pickLocalized } from "@/lib/i18n/content";
@@ -7,24 +9,23 @@ import type { PublicServiceCategoryGroup } from "@/server/repositories/service-c
 type ServiceCategorySectionProps = {
   group: PublicServiceCategoryGroup;
   locale: string;
-  learnMoreLabel: string;
-  multipleRegionsLabel: string;
-  allProvincesLabel: string;
-  showRegionLabel?: boolean;
+  labels: ServiceCardLabels;
+  useDynamicSummary?: boolean;
   heading?: "h2" | "h3";
   compact?: boolean;
+  layout?: "grid" | "compact";
 };
 
 export function ServiceCategorySection({
   group,
   locale,
-  learnMoreLabel,
-  multipleRegionsLabel,
-  allProvincesLabel,
-  showRegionLabel = true,
+  labels,
+  useDynamicSummary = true,
   heading = "h2",
   compact = false,
+  layout,
 }: ServiceCategorySectionProps) {
+  const resolvedLayout = layout ?? (compact ? "compact" : "grid");
   const title = pickLocalized(locale, {
     en: group.nameEn,
     ur: group.nameUr,
@@ -36,13 +37,47 @@ export function ServiceCategorySection({
 
   const HeadingTag = heading;
 
+  if (resolvedLayout === "compact") {
+    return (
+      <section
+        id={heading === "h2" ? `category-${group.slug}` : undefined}
+        className="scroll-mt-28 rounded-xl border border-border/60 bg-background/80 p-4 sm:p-5"
+      >
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+          <div className="space-y-1">
+            <HeadingTag className="text-lg font-semibold tracking-tight sm:text-xl">
+              {title}
+            </HeadingTag>
+            {description ? (
+              <ProseContent
+                content={description}
+                className="max-w-3xl text-sm text-muted-foreground line-clamp-2"
+              />
+            ) : null}
+          </div>
+          <span className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            {group.services.length}
+          </span>
+        </div>
+
+        <div className="grid gap-2 sm:grid-cols-2">
+          {group.services.map((service) => (
+            <ServiceCompactCard
+              key={service.id}
+              service={service}
+              locale={locale}
+              labels={labels}
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       id={heading === "h2" ? `category-${group.slug}` : undefined}
-      className={cn(
-        "scroll-mt-28",
-        compact ? "space-y-4" : "space-y-5",
-      )}
+      className={cn("scroll-mt-28", compact ? "space-y-4" : "space-y-5")}
     >
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-3">
@@ -68,10 +103,8 @@ export function ServiceCategorySection({
       <ServiceGrid
         services={group.services}
         locale={locale}
-        learnMoreLabel={learnMoreLabel}
-        multipleRegionsLabel={multipleRegionsLabel}
-        allProvincesLabel={allProvincesLabel}
-        showRegionLabel={showRegionLabel}
+        labels={labels}
+        useDynamicSummary={useDynamicSummary}
         variant="elevated"
       />
     </section>

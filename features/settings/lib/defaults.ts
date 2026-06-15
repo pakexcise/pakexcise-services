@@ -18,12 +18,12 @@ export const DEFAULT_DISCLAIMER_UR =
 export function defaultBusinessSettings(): BusinessSettings {
   return {
     siteName: siteConfig.name,
-    businessEmail: siteConfig.contact.email,
-    phoneNumber: siteConfig.contact.phone,
-    whatsappNumber: siteConfig.contact.whatsapp,
-    whatsappDefaultMessage: siteConfig.contact.whatsappMessage,
-    businessHoursEn: "Mon–Sat, 10:00 AM – 6:00 PM PKT",
-    businessHoursUr: "پیر تا ہفتہ، صبح 10:00 تا شام 6:00 بجے PKT",
+    businessEmail: "info@pakexcise.com",
+    phoneNumber: "0345-0664441",
+    whatsappNumber: "0345-0664441",
+    whatsappDefaultMessage: "Hi PakExcise, I need help with a service.",
+    businessHoursEn: "Monday to Sunday · 7:00 AM – 12:00 PM",
+    businessHoursUr: "پیر تا اتوار · صبح 7:00 – 12:00",
     addressEn: "Pakistan (Punjab & Islamabad ICT coverage)",
     addressUr: "پاکستان (پنجاب اور اسلام آباد ICT کوریج)",
     disclaimerEn: DEFAULT_DISCLAIMER_EN,

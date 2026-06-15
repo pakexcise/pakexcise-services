@@ -228,7 +228,6 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       back: t("actions.back"),
       submit: t("actions.submit"),
       submitting: t("actions.submitting"),
-      disclaimer: t("review.disclaimer", { service: serviceName }),
     },
     resumeNotice: t("resumeNotice"),
     saveFailed: t("saveFailed"),

@@ -7,14 +7,15 @@ import { DocumentChecklist } from "@/components/marketing/document-checklist";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { HowItWorksSteps } from "@/components/marketing/how-it-works-steps";
 import { JsonLd } from "@/components/marketing/json-ld";
-import { CTASection } from "@/components/marketing/cta-section";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { RelatedServices } from "@/components/marketing/related-services";
-import { ServiceApplySidebar } from "@/components/marketing/service-apply-sidebar";
+import { ServiceInfoSidebar } from "@/components/marketing/service-info-sidebar";
+import { ServiceOptionsSection } from "@/components/marketing/service-options-section";
 import { ServiceRegionsList } from "@/components/marketing/service-regions-list";
 import { ServiceSubServices } from "@/components/marketing/service-sub-services";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
+import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
@@ -188,10 +189,22 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const faqJsonLd =
     faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
 
-  const applyHref =
-    service.subServices.length > 0
-      ? undefined
-      : `/apply/${service.slug}`;
+  const serviceOptionsLabels = {
+    sectionTitle: t("serviceOptions.title"),
+    sectionDescription: t("serviceOptions.description"),
+    whatsappTitle: t("serviceOptions.whatsappTitle"),
+    whatsappDescription: t("serviceOptions.whatsappDescription"),
+    whatsappCta: t("serviceOptions.whatsappCta"),
+    guestTitle: t("serviceOptions.guestTitle"),
+    guestDescription: t("serviceOptions.guestDescription"),
+    guestCta: t("serviceOptions.guestCta"),
+    accountTitle: t("serviceOptions.accountTitle"),
+    accountDescription: t("serviceOptions.accountDescription"),
+    accountCta: t("serviceOptions.accountCta"),
+    accountSubServiceCta: t("serviceOptions.accountSubServiceCta"),
+    fastestBadge: t("serviceOptions.fastestBadge"),
+    trackingBadge: t("serviceOptions.trackingBadge"),
+  };
 
   return (
     <>
@@ -219,6 +232,17 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             ) : null}
 
             <ProseContent content={content ?? ""} />
+
+            <ServiceOptionsSection
+              serviceSlug={service.slug}
+              serviceName={name}
+              regionLabel={regionName}
+              whatsappPhone={businessSettings.whatsappNumber}
+              whatsappDefaultMessage={businessSettings.whatsappDefaultMessage}
+              locale={locale}
+              labels={serviceOptionsLabels}
+              hasSubServices={service.subServices.length > 0}
+            />
 
             <ServiceRegionsList
               title={t("service.availableIn")}
@@ -277,46 +301,19 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               title={t("service.relatedTitle")}
               services={relatedServices}
               locale={locale}
-              learnMoreLabel={tCommon("learnMore")}
-              multipleRegionsLabel={t("services.multipleRegions")}
-              allProvincesLabel={t("services.allProvinces")}
+              labels={buildServiceCardLabels(tCommon, t)}
             />
           </div>
 
-          <ServiceApplySidebar
+          <ServiceInfoSidebar
             serviceName={name}
             regionLabel={regionName}
             documentCount={documents.length}
             requiredDocumentCount={requiredDocumentCount}
-            applyHref={applyHref ?? `/services/${service.slug}#sub-services`}
-            applyLabel={
-              service.subServices.length > 0
-                ? t("service.chooseSubService")
-                : t("service.applyNow")
-            }
-            whatsappLabel={tCommon("whatsappHelp")}
-            whatsappPhone={businessSettings.whatsappNumber}
-            whatsappMessage={businessSettings.whatsappDefaultMessage}
             documentsLabel={t("service.documentsTitle")}
             regionLabelTitle={t("service.availableIn")}
-            ctaTitle={t("service.ctaTitle")}
-            ctaDescription={t("service.ctaDescription")}
           />
         </div>
-
-        {applyHref ? (
-          <div className="mt-12 lg:hidden">
-            <CTASection
-              title={t("service.ctaTitle")}
-              description={t("service.ctaDescription")}
-              applyLabel={t("service.applyNow")}
-              applyHref={applyHref}
-              whatsappLabel={tCommon("whatsappHelp")}
-              whatsappPhone={businessSettings.whatsappNumber}
-              whatsappMessage={businessSettings.whatsappDefaultMessage}
-            />
-          </div>
-        ) : null}
       </div>
     </>
   );

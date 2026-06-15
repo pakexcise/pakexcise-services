@@ -109,7 +109,6 @@ type ApplicationWizardLabels = {
     back: string;
     submit: string;
     submitting: string;
-    disclaimer: string;
     edit: string;
   };
   resumeNotice: string;

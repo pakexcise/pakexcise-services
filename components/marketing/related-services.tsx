@@ -1,16 +1,15 @@
 import type { PublicServiceCard } from "@/server/repositories/service-repository";
 
 import { ServiceGrid } from "@/components/marketing/service-grid";
+import type { ServiceCardLabels } from "@/components/marketing/service-card";
 import { cn } from "@/lib/utils";
 
 type RelatedServicesProps = {
   title: string;
   services: PublicServiceCard[];
   locale: string;
-  learnMoreLabel: string;
-  multipleRegionsLabel: string;
-  allProvincesLabel: string;
-  showRegionLabel?: boolean;
+  labels: ServiceCardLabels;
+  useDynamicSummary?: boolean;
   variant?: "default" | "region";
   emptyMessage?: string;
   serviceCountLabel?: string;
@@ -20,10 +19,8 @@ export function RelatedServices({
   title,
   services,
   locale,
-  learnMoreLabel,
-  multipleRegionsLabel,
-  allProvincesLabel,
-  showRegionLabel = true,
+  labels,
+  useDynamicSummary = true,
   variant = "default",
   emptyMessage,
   serviceCountLabel,
@@ -63,10 +60,8 @@ export function RelatedServices({
       <ServiceGrid
         services={services}
         locale={locale}
-        learnMoreLabel={learnMoreLabel}
-        multipleRegionsLabel={multipleRegionsLabel}
-        allProvincesLabel={allProvincesLabel}
-        showRegionLabel={showRegionLabel}
+        labels={labels}
+        useDynamicSummary={useDynamicSummary}
         variant="elevated"
       />
     </section>

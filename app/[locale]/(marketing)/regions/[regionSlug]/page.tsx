@@ -5,13 +5,14 @@ import { notFound } from "next/navigation";
 import { redirect } from "@/i18n/navigation";
 import { getCanonicalRegionSlug } from "@/features/regions/lib/resolve-region-slug";
 
-import { CTASection } from "@/components/marketing/cta-section";
+import { RegionHelpSection } from "@/components/marketing/region-help-section";
 import { CityCard } from "@/components/marketing/city-card";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { RelatedServices } from "@/components/marketing/related-services";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
+import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
@@ -127,10 +128,7 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
           title={t("regions.servicesInRegion")}
           services={services}
           locale={locale}
-          learnMoreLabel={tCommon("learnMore")}
-          multipleRegionsLabel={t("services.multipleRegions")}
-          allProvincesLabel={t("services.allProvinces")}
-          showRegionLabel={false}
+          labels={buildServiceCardLabels(tCommon, t)}
           variant="region"
           emptyMessage={t("regions.emptyServices")}
           serviceCountLabel={t("regions.serviceCount", { count: services.length })}
@@ -159,14 +157,17 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
           emptyMessage={t("faqs.empty")}
         />
 
-        <CTASection
-          title={t("service.ctaTitle")}
-          description={t("service.ctaDescription")}
-          applyLabel={t("service.applyNow")}
-          applyHref="/services"
-          whatsappLabel={tCommon("whatsappHelp")}
+        <RegionHelpSection
+          regionName={name}
           whatsappPhone={business.whatsappNumber}
-          whatsappMessage={business.whatsappDefaultMessage}
+          whatsappDefaultMessage={business.whatsappDefaultMessage}
+          locale={locale}
+          labels={{
+            title: t("regionHelp.title", { region: name }),
+            description: t("regionHelp.description"),
+            whatsappCta: t("serviceOptions.whatsappCta"),
+            browseServicesCta: t("regionHelp.browseServices"),
+          }}
         />
       </div>
     </>

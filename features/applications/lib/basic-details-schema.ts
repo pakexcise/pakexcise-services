@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { isValidPakistanPhone } from "@/lib/validations/phone";
+
 export type BasicDetailsValidationMessages = {
   fullNameRequired: string;
   fullNameTooLong: string;
@@ -37,7 +39,8 @@ export function createBasicApplicantDetailsSchema(
     phone: z
       .string()
       .trim()
-      .regex(/^(\+92|0)?3\d{9}$/, m.phoneInvalid),
+      .min(1, m.phoneInvalid)
+      .refine((value) => isValidPakistanPhone(value), m.phoneInvalid),
     cnic: z
       .string()
       .trim()

@@ -157,6 +157,8 @@ export async function createServiceAction(
       referenceLinksJson: toPrismaNullableJson(data.referenceLinksJson),
       requiresProof: data.requiresProof,
       isActive: data.isActive,
+      isFeatured: data.isFeatured,
+      featuredDisplayOrder: data.featuredDisplayOrder,
       displayOrder,
     },
   });
@@ -244,6 +246,8 @@ export async function updateServiceAction(
       referenceLinksJson: toPrismaNullableJson(data.referenceLinksJson),
       requiresProof: data.requiresProof,
       isActive: data.isActive,
+      isFeatured: data.isFeatured,
+      featuredDisplayOrder: data.featuredDisplayOrder,
       displayOrder: data.displayOrder,
     },
   });

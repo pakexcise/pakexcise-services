@@ -42,6 +42,8 @@ export const adminServiceDetailSelect = {
   referenceLinksJson: true,
   requiresProof: true,
   isActive: true,
+  isFeatured: true,
+  featuredDisplayOrder: true,
   displayOrder: true,
   deletedAt: true,
   createdAt: true,

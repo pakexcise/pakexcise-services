@@ -203,6 +203,26 @@ function regionAssignedWhere(regionId: string): Prisma.ServiceWhereInput {
 }
 
 export class ServiceRepository extends Repository {
+  async listFeatured(limit = 8): Promise<PublicServiceSelect[]> {
+    return this.query(
+      () =>
+        this.db.service.findMany({
+          where: {
+            ...publicTopLevelServiceWhere,
+            isFeatured: true,
+          },
+          orderBy: [
+            { featuredDisplayOrder: "asc" },
+            { displayOrder: "asc" },
+            { createdAt: "desc" },
+          ],
+          take: limit,
+          select: publicServiceSelect,
+        }),
+      [],
+    );
+  }
+
   async listPublic(limit = 6): Promise<PublicServiceSelect[]> {
     return this.query(
       () =>
@@ -398,6 +418,18 @@ export class ServiceRepository extends Repository {
 }
 
 export const serviceRepository = new ServiceRepository();
+
+export async function getFeaturedServices(
+  limit = 6,
+): Promise<PublicServiceSelect[]> {
+  const cappedLimit = Math.min(6, Math.max(1, limit));
+  const featured = await serviceRepository.listFeatured(cappedLimit);
+  if (featured.length > 0) {
+    return featured;
+  }
+
+  return serviceRepository.listPublic(limit);
+}
 
 export async function getActiveServices(limit = 6): Promise<PublicServiceSelect[]> {
   return serviceRepository.listPublic(limit);
