@@ -2,10 +2,12 @@ import type { GuestLeadStatus } from "@prisma/client";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Pencil } from "lucide-react";
 
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
+import { DeleteSupportRequestButton } from "@/features/guest-leads/admin/components/delete-support-request-button";
 import { GuestLeadStatusForm } from "@/features/guest-leads/admin/components/guest-lead-status-form";
+import { SupportRequestStatusBadge } from "@/features/guest-leads/admin/components/support-request-status-badge";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,9 @@ import { formatDate } from "@/lib/utils";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { guestLeadRepository } from "@/server/repositories/guest-lead-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePermissionAccess } from "@/server/permissions/permission-access";
+import { requireAdminPortal } from "@/server/permissions/guards";
+import { isSuperAdminRole } from "@/server/permissions/admin-scope";
 
 type AdminGuestLeadDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -43,6 +48,11 @@ const statusOptions: GuestLeadStatus[] = [
 export default async function AdminGuestLeadDetailPage({
   params,
 }: AdminGuestLeadDetailPageProps) {
+  await enforcePermissionAccess("application:read")();
+
+  const user = await requireAdminPortal();
+  const isSuperAdmin = isSuperAdminRole(user.role);
+
   const { id } = await params;
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
@@ -77,17 +87,38 @@ export default async function AdminGuestLeadDetailPage({
         title={lead.referenceId}
         description={t("guestLeads.detailDescription")}
         actions={
-          <Button asChild variant="outline">
-            <Link href="/admin/guest-leads">{t("guestLeads.backToList")}</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link href="/admin/guest-leads">{t("guestLeads.backToList")}</Link>
+            </Button>
+            {isSuperAdmin ? (
+              <Button asChild>
+                <Link href={`/admin/guest-leads/${lead.id}/edit`}>
+                  <Pencil className="size-4" aria-hidden="true" />
+                  {t("guestLeads.edit")}
+                </Link>
+              </Button>
+            ) : null}
+          </div>
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="flex flex-wrap items-center gap-2">
+        <SupportRequestStatusBadge
+          status={lead.status}
+          label={t(`guestLeads.status.${lead.status}`)}
+        />
+        <Badge variant="outline">{t(`guestLeads.source.${lead.source}`)}</Badge>
+        <span className="text-sm text-muted-foreground">
+          {t("guestLeads.columns.created")}: {formatDate(lead.createdAt, locale)}
+        </span>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="space-y-6">
-          <section className="rounded-lg border p-4">
+          <section className="rounded-xl border bg-card p-5">
             <h2 className="text-lg font-semibold">{t("guestLeads.detail.overview")}</h2>
-            <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
               <div>
                 <dt className="text-muted-foreground">{t("guestLeads.columns.name")}</dt>
                 <dd className="font-medium">{lead.fullName}</dd>
@@ -112,48 +143,55 @@ export default async function AdminGuestLeadDetailPage({
                 <dt className="text-muted-foreground">{t("guestLeads.detail.city")}</dt>
                 <dd>{lead.cityName ?? "—"}</dd>
               </div>
-              <div>
-                <dt className="text-muted-foreground">{t("guestLeads.columns.status")}</dt>
-                <dd>
-                  <Badge>{t(`guestLeads.status.${lead.status}`)}</Badge>
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">{t("guestLeads.columns.created")}</dt>
-                <dd>{formatDate(lead.createdAt, locale)}</dd>
-              </div>
             </dl>
           </section>
 
           {lead.vehicleInfo || lead.licenseInfo || lead.message ? (
-            <section className="rounded-lg border p-4">
-              <h2 className="text-lg font-semibold">{t("guestLeads.detail.requestDetails")}</h2>
-              <div className="mt-4 space-y-3 text-sm">
+            <section className="rounded-xl border bg-card p-5">
+              <h2 className="text-lg font-semibold">
+                {t("guestLeads.detail.requestDetails")}
+              </h2>
+              <div className="mt-4 space-y-4 text-sm">
                 {lead.vehicleInfo ? (
                   <div>
                     <p className="font-medium">{t("guestLeads.detail.vehicleInfo")}</p>
-                    <p className="text-muted-foreground">{lead.vehicleInfo}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-muted-foreground">
+                      {lead.vehicleInfo}
+                    </p>
                   </div>
                 ) : null}
                 {lead.licenseInfo ? (
                   <div>
                     <p className="font-medium">{t("guestLeads.detail.licenseInfo")}</p>
-                    <p className="text-muted-foreground">{lead.licenseInfo}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-muted-foreground">
+                      {lead.licenseInfo}
+                    </p>
                   </div>
                 ) : null}
                 {lead.message ? (
                   <div>
                     <p className="font-medium">{t("guestLeads.detail.message")}</p>
-                    <p className="whitespace-pre-wrap text-muted-foreground">{lead.message}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-muted-foreground">
+                      {lead.message}
+                    </p>
                   </div>
                 ) : null}
               </div>
             </section>
           ) : null}
+
+          {lead.adminNotes ? (
+            <section className="rounded-xl border bg-card p-5">
+              <h2 className="text-lg font-semibold">{t("guestLeads.detail.notesLabel")}</h2>
+              <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">
+                {lead.adminNotes}
+              </p>
+            </section>
+          ) : null}
         </div>
 
         <aside className="space-y-4">
-          <div className="rounded-lg border p-4">
+          <div className="rounded-xl border bg-card p-5">
             <h2 className="text-base font-semibold">{t("guestLeads.detail.contact")}</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               {t("guestLeads.detail.contactDescription")}
@@ -188,6 +226,30 @@ export default async function AdminGuestLeadDetailPage({
               error: t("guestLeads.detail.saveError"),
             }}
           />
+
+          {isSuperAdmin ? (
+            <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-5">
+              <h2 className="text-base font-semibold text-destructive">
+                {t("guestLeads.delete.title")}
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {t("guestLeads.delete.description")}
+              </p>
+              <div className="mt-4">
+                <DeleteSupportRequestButton
+                  leadId={lead.id}
+                  labels={{
+                    trigger: t("guestLeads.delete.trigger"),
+                    confirm: t("guestLeads.delete.confirm", {
+                      reference: lead.referenceId,
+                    }),
+                    deleting: t("guestLeads.delete.deleting"),
+                    error: t("guestLeads.delete.error"),
+                  }}
+                />
+              </div>
+            </div>
+          ) : null}
         </aside>
       </div>
     </div>

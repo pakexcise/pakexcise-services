@@ -1,6 +1,7 @@
 import type { ApplicationStatus } from "@prisma/client";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Plus } from "lucide-react";
 
 import { ApplicationFilters } from "@/features/admin/components/application-filters";
 import { ApplicationQueueStats } from "@/features/admin/components/application-queue-stats";
@@ -11,8 +12,12 @@ import { PaginationControls } from "@/features/admin/components/pagination-contr
 import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { adminDefaultPageSize } from "@/config/admin";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { requireAdminPortal } from "@/server/permissions/guards";
+import { isSuperAdminRole } from "@/server/permissions/admin-scope";
 
 const validStatuses = new Set<string>([
   "SUBMITTED",
@@ -69,6 +74,9 @@ export default async function AdminApplicationsPage({
   setRequestLocale(locale);
   const t = await getTranslations("admin");
 
+  const user = await requireAdminPortal();
+  const isSuperAdmin = isSuperAdminRole(user.role);
+
   const params = await searchParams;
   const page = Math.max(1, Number(params.page ?? "1") || 1);
   const search = params.q?.trim() || undefined;
@@ -120,6 +128,16 @@ export default async function AdminApplicationsPage({
       <AdminPageHeader
         title={t("applications.title")}
         description={t("applications.description")}
+        actions={
+          isSuperAdmin ? (
+            <Button asChild>
+              <Link href="/admin/applications/new">
+                <Plus className="size-4" aria-hidden="true" />
+                {t("applications.create")}
+              </Link>
+            </Button>
+          ) : undefined
+        }
       />
 
       <ApplicationQueueStats
@@ -147,6 +165,7 @@ export default async function AdminApplicationsPage({
           <ApplicationsBulkSelectTable
             applications={rows}
             locale={locale}
+            showEdit={isSuperAdmin}
             labels={{
               trackingId: t("applications.columns.trackingId"),
               service: t("applications.columns.service"),
@@ -155,6 +174,7 @@ export default async function AdminApplicationsPage({
               created: t("applications.columns.created"),
               actions: t("applications.columns.actions"),
               view: t("applications.view"),
+              edit: t("applications.edit"),
               select: t("applications.bulk.select"),
               bulkAssign: t("applications.bulk.assign"),
               bulkPending: t("applications.bulk.pending"),

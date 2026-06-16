@@ -60,6 +60,38 @@ export class ServiceRegionRepository extends Repository {
       await this.syncForService(service.id, [service.regionId]);
     }
   }
+  async listMatrixData(): Promise<{
+    services: Array<{ id: string; nameEn: string; nameUr: string; slug: string }>;
+    regions: Array<{ id: string; nameEn: string; nameUr: string; slug: string }>;
+    assignments: Record<string, string[]>;
+  }> {
+    const [services, regions, serviceRegions] = await Promise.all([
+      this.db.service.findMany({
+        where: { deletedAt: null, isActive: true },
+        orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+        select: { id: true, nameEn: true, nameUr: true, slug: true },
+      }),
+      this.db.region.findMany({
+        where: { deletedAt: null, isActive: true },
+        orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+        select: { id: true, nameEn: true, nameUr: true, slug: true },
+      }),
+      this.db.serviceRegion.findMany({
+        where: { isActive: true },
+        select: { serviceId: true, regionId: true },
+      }),
+    ]);
+
+    const assignments: Record<string, string[]> = {};
+
+    for (const row of serviceRegions) {
+      const existing = assignments[row.serviceId] ?? [];
+      existing.push(row.regionId);
+      assignments[row.serviceId] = existing;
+    }
+
+    return { services, regions, assignments };
+  }
 }
 
 export const serviceRegionRepository = new ServiceRegionRepository();

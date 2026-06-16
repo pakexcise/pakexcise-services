@@ -414,6 +414,119 @@ export class ApplicationRepository extends Repository {
       },
     });
   }
+
+  async createAdmin(input: {
+    trackingId: string;
+    userId: string;
+    serviceId: string;
+    agentId?: string | null;
+    locale: string;
+    status: ApplicationStatus;
+    adminNotes?: string | null;
+    statusChangeNote: string;
+    actorId: string;
+  }): Promise<{ id: string; trackingId: string }> {
+    return this.db.$transaction(async (tx) => {
+      const application = await tx.application.create({
+        data: {
+          trackingId: input.trackingId,
+          userId: input.userId,
+          serviceId: input.serviceId,
+          agentId: input.agentId ?? null,
+          locale: input.locale,
+          status: input.status,
+          adminNotes: input.adminNotes ?? null,
+          currentStep: input.status === "DRAFT" ? 1 : 4,
+        },
+        select: {
+          id: true,
+          trackingId: true,
+        },
+      });
+
+      await tx.statusHistory.create({
+        data: {
+          applicationId: application.id,
+          fromStatus: null,
+          toStatus: input.status,
+          note: input.statusChangeNote,
+          actorId: input.actorId,
+        },
+      });
+
+      return application;
+    });
+  }
+
+  async updateAdmin(input: {
+    id: string;
+    userId: string;
+    serviceId: string;
+    agentId?: string | null;
+    locale: string;
+    status: ApplicationStatus;
+    adminNotes?: string | null;
+    statusChangeNote?: string;
+    actorId: string;
+  }): Promise<{ id: string; trackingId: string; status: ApplicationStatus } | null> {
+    const existing = await this.db.application.findUnique({
+      where: { id: input.id },
+      select: { status: true, trackingId: true },
+    });
+
+    if (!existing) {
+      return null;
+    }
+
+    const statusChanged = existing.status !== input.status;
+
+    return this.db.$transaction(async (tx) => {
+      const application = await tx.application.update({
+        where: { id: input.id },
+        data: {
+          userId: input.userId,
+          serviceId: input.serviceId,
+          agentId: input.agentId ?? null,
+          locale: input.locale,
+          status: input.status,
+          adminNotes: input.adminNotes ?? null,
+        },
+        select: {
+          id: true,
+          trackingId: true,
+          status: true,
+        },
+      });
+
+      if (statusChanged) {
+        await tx.statusHistory.create({
+          data: {
+            applicationId: input.id,
+            fromStatus: existing.status,
+            toStatus: input.status,
+            note: input.statusChangeNote ?? "Status updated by Super Admin",
+            actorId: input.actorId,
+          },
+        });
+      }
+
+      return application;
+    });
+  }
+
+  async deleteAdmin(id: string): Promise<boolean> {
+    const existing = await this.db.application.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return false;
+    }
+
+    await this.db.application.delete({ where: { id } });
+    return true;
+  }
 }
 
 export const applicationRepository = new ApplicationRepository();

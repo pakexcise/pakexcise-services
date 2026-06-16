@@ -261,6 +261,16 @@ export class AdminServiceRepository extends Repository {
 
     return (last?.displayOrder ?? 0) + 1;
   }
+
+  async listOptions(): Promise<
+    Array<{ id: string; nameEn: string; nameUr: string; slug: string }>
+  > {
+    return this.db.service.findMany({
+      where: { deletedAt: null },
+      orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+      select: { id: true, nameEn: true, nameUr: true, slug: true },
+    });
+  }
 }
 
 export const adminServiceRepository = new AdminServiceRepository();

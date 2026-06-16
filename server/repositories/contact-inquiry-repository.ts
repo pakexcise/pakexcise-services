@@ -50,7 +50,23 @@ export type CreateContactInquiryInput = {
   cityName: string | null;
   message: string | null;
   locale: string;
-  ipHash: string | null;
+  ipHash?: string | null;
+  status?: ContactInquiryStatus;
+  adminNotes?: string | null;
+};
+
+export type AdminUpdateContactInquiryInput = {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string | null;
+  serviceInterest: string;
+  regionName: string | null;
+  cityName: string | null;
+  message: string | null;
+  locale: string;
+  status: ContactInquiryStatus;
+  adminNotes: string | null;
 };
 
 export type AdminContactInquiryListFilters = {
@@ -58,6 +74,9 @@ export type AdminContactInquiryListFilters = {
   pageSize?: number;
   status?: ContactInquiryStatus;
   query?: string;
+  serviceInterest?: string;
+  dateFrom?: Date;
+  dateTo?: Date;
 };
 
 export class ContactInquiryRepository extends Repository {
@@ -65,6 +84,7 @@ export class ContactInquiryRepository extends Repository {
     return this.db.contactInquiry.create({
       data: {
         referenceId: input.referenceId,
+        status: input.status ?? "NEW",
         fullName: input.fullName,
         phone: input.phone,
         email: input.email,
@@ -73,7 +93,8 @@ export class ContactInquiryRepository extends Repository {
         cityName: input.cityName,
         message: input.message,
         locale: input.locale,
-        ipHash: input.ipHash,
+        ipHash: input.ipHash ?? null,
+        adminNotes: input.adminNotes ?? null,
       },
       select: contactInquiryDetailSelect,
     });
@@ -97,6 +118,17 @@ export class ContactInquiryRepository extends Repository {
 
     const where: Prisma.ContactInquiryWhereInput = {
       ...(filters.status ? { status: filters.status } : {}),
+      ...(filters.serviceInterest
+        ? { serviceInterest: filters.serviceInterest }
+        : {}),
+      ...(filters.dateFrom || filters.dateTo
+        ? {
+            createdAt: {
+              ...(filters.dateFrom ? { gte: filters.dateFrom } : {}),
+              ...(filters.dateTo ? { lte: filters.dateTo } : {}),
+            },
+          }
+        : {}),
       ...(filters.query
         ? {
             OR: [
@@ -132,6 +164,68 @@ export class ContactInquiryRepository extends Repository {
       pageSize,
       totalPages: Math.max(1, Math.ceil(total / pageSize)),
     };
+  }
+
+  async listRecent(limit = 8): Promise<ContactInquiryListItem[]> {
+    return this.query(
+      () =>
+        this.db.contactInquiry.findMany({
+          orderBy: { createdAt: "desc" },
+          take: limit,
+          select: contactInquiryListSelect,
+        }),
+      [],
+    );
+  }
+
+  async updateAdmin(input: AdminUpdateContactInquiryInput): Promise<ContactInquiryDetail> {
+    const contactedAt = input.status === "CONTACTED" ? new Date() : undefined;
+
+    return this.db.contactInquiry.update({
+      where: { id: input.id },
+      data: {
+        fullName: input.fullName,
+        phone: input.phone,
+        email: input.email,
+        serviceInterest: input.serviceInterest,
+        regionName: input.regionName,
+        cityName: input.cityName,
+        message: input.message,
+        locale: input.locale,
+        status: input.status,
+        adminNotes: input.adminNotes,
+        ...(contactedAt ? { contactedAt } : {}),
+      },
+      select: contactInquiryDetailSelect,
+    });
+  }
+
+  async deleteAdmin(id: string): Promise<void> {
+    await this.db.contactInquiry.delete({ where: { id } });
+  }
+
+  async countByStatus(): Promise<Record<ContactInquiryStatus, number>> {
+    const rows = await this.query(
+      () =>
+        this.db.contactInquiry.groupBy({
+          by: ["status"],
+          _count: { _all: true },
+        }),
+      [],
+    );
+
+    const counts: Record<ContactInquiryStatus, number> = {
+      NEW: 0,
+      CONTACTED: 0,
+      CLOSED: 0,
+      SPAM: 0,
+    };
+
+    for (const row of rows) {
+      counts[row.status] = row._count._all;
+    }
+
+    return counts;
   }
 
   async updateAdminStatus(input: {

@@ -56,6 +56,8 @@ export type GuestLeadDetail = Prisma.GuestLeadGetPayload<{
 
 export type CreateGuestLeadInput = {
   referenceId: string;
+  source?: "WHATSAPP" | "GUEST_FORM";
+  status?: GuestLeadStatus;
   serviceId?: string | null;
   serviceNameEn: string;
   serviceNameUr: string;
@@ -70,6 +72,27 @@ export type CreateGuestLeadInput = {
   message?: string | null;
   locale: string;
   ipHash?: string | null;
+  adminNotes?: string | null;
+};
+
+export type AdminUpdateGuestLeadInput = {
+  id: string;
+  source: "WHATSAPP" | "GUEST_FORM";
+  status: GuestLeadStatus;
+  serviceId?: string | null;
+  serviceNameEn: string;
+  serviceNameUr: string;
+  regionNameEn?: string | null;
+  regionNameUr?: string | null;
+  cityName?: string | null;
+  fullName: string;
+  phone: string;
+  email?: string | null;
+  vehicleInfo?: string | null;
+  licenseInfo?: string | null;
+  message?: string | null;
+  locale: string;
+  adminNotes?: string | null;
 };
 
 export type AdminGuestLeadListFilters = {
@@ -78,6 +101,9 @@ export type AdminGuestLeadListFilters = {
   status?: GuestLeadStatus;
   search?: string;
   serviceId?: string;
+  source?: "WHATSAPP" | "GUEST_FORM";
+  dateFrom?: Date;
+  dateTo?: Date;
 };
 
 export class GuestLeadRepository extends Repository {
@@ -85,7 +111,8 @@ export class GuestLeadRepository extends Repository {
     return this.db.guestLead.create({
       data: {
         referenceId: input.referenceId,
-        source: "GUEST_FORM",
+        source: input.source ?? "GUEST_FORM",
+        status: input.status ?? "NEW",
         serviceId: input.serviceId ?? null,
         serviceNameEn: input.serviceNameEn,
         serviceNameUr: input.serviceNameUr,
@@ -100,6 +127,7 @@ export class GuestLeadRepository extends Repository {
         message: input.message ?? null,
         locale: input.locale,
         ipHash: input.ipHash ?? null,
+        adminNotes: input.adminNotes ?? null,
       },
       select: guestLeadDetailSelect,
     });
@@ -125,6 +153,15 @@ export class GuestLeadRepository extends Repository {
     const where: Prisma.GuestLeadWhereInput = {
       ...(filters.status ? { status: filters.status } : {}),
       ...(filters.serviceId ? { serviceId: filters.serviceId } : {}),
+      ...(filters.source ? { source: filters.source } : {}),
+      ...(filters.dateFrom || filters.dateTo
+        ? {
+            createdAt: {
+              ...(filters.dateFrom ? { gte: filters.dateFrom } : {}),
+              ...(filters.dateTo ? { lte: filters.dateTo } : {}),
+            },
+          }
+        : {}),
       ...(search
         ? {
             OR: [
@@ -151,6 +188,41 @@ export class GuestLeadRepository extends Repository {
       () => this.db.guestLead.count({ where }),
       { page, pageSize },
     );
+  }
+
+  async updateAdmin(input: AdminUpdateGuestLeadInput): Promise<GuestLeadDetail> {
+    const shouldMarkContacted =
+      input.status === "CONTACTED" ||
+      input.status === "IN_PROGRESS" ||
+      input.status === "CONVERTED";
+
+    return this.db.guestLead.update({
+      where: { id: input.id },
+      data: {
+        source: input.source,
+        status: input.status,
+        serviceId: input.serviceId ?? null,
+        serviceNameEn: input.serviceNameEn,
+        serviceNameUr: input.serviceNameUr,
+        regionNameEn: input.regionNameEn ?? null,
+        regionNameUr: input.regionNameUr ?? null,
+        cityName: input.cityName ?? null,
+        fullName: input.fullName,
+        phone: input.phone,
+        email: input.email ?? null,
+        vehicleInfo: input.vehicleInfo ?? null,
+        licenseInfo: input.licenseInfo ?? null,
+        message: input.message ?? null,
+        locale: input.locale,
+        adminNotes: input.adminNotes ?? null,
+        ...(shouldMarkContacted ? { contactedAt: new Date() } : {}),
+      },
+      select: guestLeadDetailSelect,
+    });
+  }
+
+  async deleteAdmin(id: string): Promise<void> {
+    await this.db.guestLead.delete({ where: { id } });
   }
 
   async updateAdminStatus(input: {

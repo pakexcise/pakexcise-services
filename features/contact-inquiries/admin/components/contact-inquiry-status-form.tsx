@@ -59,7 +59,7 @@ export function ContactInquiryStatusForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border p-4">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border bg-card p-5">
       <div className="space-y-2">
         <Label htmlFor="contact-inquiry-status">{labels.status}</Label>
         <select

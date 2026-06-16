@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Pencil } from "lucide-react";
 
 import { AdminInvoicePdfButton } from "@/components/admin/AdminInvoicePdfButton";
 import { InvoiceEditor } from "@/components/admin/InvoiceEditor";
@@ -46,10 +47,12 @@ import {
 } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
+import { DeleteApplicationButton } from "@/features/applications/admin/components/delete-application-button";
 import { adminPaymentMethodRepository } from "@/server/repositories/admin-payment-method-repository";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { isSuperAdminRole } from "@/server/permissions/admin-scope";
 import { roleHasPermission } from "@/server/permissions/roles";
 
 type ApplicationDetailPageProps = {
@@ -92,6 +95,7 @@ export default async function AdminApplicationDetailPage({
     user !== null && roleHasPermission(user.role, "invoice:manage");
   const canVerifyPayment =
     user !== null && roleHasPermission(user.role, "payment:verify");
+  const isSuperAdmin = user !== null && isSuperAdminRole(user.role);
 
   const hasActiveSentInvoice = application.invoices.some(
     (invoice) => invoice.status === "SENT",
@@ -160,11 +164,21 @@ export default async function AdminApplicationDetailPage({
         title={t("applications.detailTitle")}
         description={application.trackingId}
         actions={
-          <Button asChild variant="outline" size="sm">
-            <Link href="/admin/applications">
-              {t("applications.backToList")}
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/admin/applications">
+                {t("applications.backToList")}
+              </Link>
+            </Button>
+            {isSuperAdmin ? (
+              <Button asChild size="sm">
+                <Link href={`/admin/applications/${application.id}/edit`}>
+                  <Pencil className="size-4" aria-hidden="true" />
+                  {t("applications.edit")}
+                </Link>
+              </Button>
+            ) : null}
+          </div>
         }
       />
 
@@ -742,6 +756,32 @@ export default async function AdminApplicationDetailPage({
           )}
         </CardContent>
       </Card>
+
+      {isSuperAdmin ? (
+        <Card className="border-destructive/20 bg-destructive/5">
+          <CardHeader>
+            <CardTitle className="text-destructive">
+              {t("applications.delete.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              {t("applications.delete.description")}
+            </p>
+            <DeleteApplicationButton
+              applicationId={application.id}
+              labels={{
+                trigger: t("applications.delete.trigger"),
+                confirm: t("applications.delete.confirm", {
+                  reference: application.trackingId,
+                }),
+                deleting: t("applications.delete.deleting"),
+                error: t("applications.delete.error"),
+              }}
+            />
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }

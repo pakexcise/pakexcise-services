@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Link } from "@/i18n/navigation";
 import {
   createCityAction,
   deleteCityAction,
@@ -32,6 +33,7 @@ type RegionCitiesPanelProps = {
     active: string;
     inactive: string;
     empty: string;
+    edit: string;
   };
 };
 
@@ -152,6 +154,9 @@ export function RegionCitiesPanel({
                 <p className="text-xs text-muted-foreground">{city.slug}</p>
               </div>
               <div className="flex items-center gap-2">
+                <Button asChild size="sm" variant="ghost">
+                  <Link href={`/admin/cities/${city.id}/edit`}>{labels.edit}</Link>
+                </Button>
                 <Button
                   type="button"
                   size="sm"

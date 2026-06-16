@@ -3,11 +3,15 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { dashboardStatusCards } from "@/config/admin";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
+import { DashboardInsightCards } from "@/features/admin/components/dashboard-insight-cards";
 import { DashboardQuickLinks } from "@/features/admin/components/dashboard-quick-links";
 import { RecentApplicationsTable } from "@/features/admin/components/recent-applications-table";
+import { RecentContactInquiriesTable } from "@/features/admin/components/recent-contact-inquiries-table";
 import { StatCard } from "@/features/admin/components/stat-card";
 import { adminMetadata } from "@/features/admin/lib/metadata";
+import { adminDashboardRepository } from "@/server/repositories/admin-dashboard-repository";
 import { applicationRepository } from "@/server/repositories/application-repository";
+import { contactInquiryRepository } from "@/server/repositories/contact-inquiry-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { isSuperAdminRole } from "@/server/permissions/admin-scope";
 import { getCachedEffectivePermissions } from "@/server/permissions/effective-permissions";
@@ -26,6 +30,7 @@ export default async function AdminDashboardPage() {
     user.id,
     user.role,
   );
+  const canViewOperations = effectivePermissions.includes("application:read");
 
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
@@ -45,12 +50,34 @@ export default async function AdminDashboardPage() {
   let recentApplications: Awaited<
     ReturnType<typeof applicationRepository.listRecent>
   > = [];
+  let recentContactInquiries: Awaited<
+    ReturnType<typeof contactInquiryRepository.listRecent>
+  > = [];
+  let insights: Awaited<
+    ReturnType<typeof adminDashboardRepository.getInsights>
+  > | null = null;
 
   try {
-    [stats, recentApplications] = await Promise.all([
+    const fetches: Promise<unknown>[] = [
       applicationRepository.getDashboardStats(),
-      applicationRepository.listRecent(10),
-    ]);
+      applicationRepository.listRecent(8),
+    ];
+
+    if (canViewOperations) {
+      fetches.push(
+        contactInquiryRepository.listRecent(8),
+        adminDashboardRepository.getInsights(),
+      );
+    }
+
+    const results = await Promise.all(fetches);
+    stats = results[0] as typeof stats;
+    recentApplications = results[1] as typeof recentApplications;
+
+    if (canViewOperations) {
+      recentContactInquiries = results[2] as typeof recentContactInquiries;
+      insights = results[3] as NonNullable<typeof insights>;
+    }
   } catch {
     stats = {
       total: 0,
@@ -64,6 +91,8 @@ export default async function AdminDashboardPage() {
       rejectedCancelled: 0,
     };
     recentApplications = [];
+    recentContactInquiries = [];
+    insights = null;
   }
 
   const statHrefMap: Record<string, string | undefined> = {
@@ -97,24 +126,41 @@ export default async function AdminDashboardPage() {
         }
       />
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {dashboardStatusCards.map((card) => (
-          <StatCard
-            key={card.key}
-            title={t(`dashboard.cards.${card.key}`)}
-            value={stats[card.key as keyof typeof stats]}
-            href={statHrefMap[card.key]}
-          />
-        ))}
+      {insights ? <DashboardInsightCards insights={insights} /> : null}
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          {t("dashboard.pipelineTitle")}
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {dashboardStatusCards.map((card) => (
+            <StatCard
+              key={card.key}
+              title={t(`dashboard.cards.${card.key}`)}
+              value={stats[card.key as keyof typeof stats]}
+              href={statHrefMap[card.key]}
+            />
+          ))}
+        </div>
       </section>
 
       <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <RecentApplicationsTable
-          applications={recentApplications}
-          title={t("dashboard.recentApplications")}
-          emptyMessage={t("dashboard.recentEmpty")}
-          viewLabel={t("dashboard.viewAllApplications")}
-        />
+        <div className="space-y-6">
+          <RecentApplicationsTable
+            applications={recentApplications}
+            title={t("dashboard.recentApplications")}
+            emptyMessage={t("dashboard.recentEmpty")}
+            viewLabel={t("dashboard.viewAllApplications")}
+          />
+          {canViewOperations ? (
+            <RecentContactInquiriesTable
+              inquiries={recentContactInquiries}
+              title={t("dashboard.recentContactInquiries")}
+              emptyMessage={t("dashboard.recentContactEmpty")}
+              viewLabel={t("dashboard.viewAllContactInquiries")}
+            />
+          ) : null}
+        </div>
         <DashboardQuickLinks
           effectivePermissions={effectivePermissions}
           labels={{

@@ -87,6 +87,7 @@ export default async function EditRegionPage({ params }: EditRegionPageProps) {
           active: t("status.active"),
           inactive: t("status.inactive"),
           empty: t("cities.empty"),
+          edit: t("actions.edit"),
         }}
       />
     </div>

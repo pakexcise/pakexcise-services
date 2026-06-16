@@ -95,6 +95,11 @@ export async function requireAdminPortal(): Promise<CurrentUser> {
   return assertAdminTwoFactor(user);
 }
 
+export async function requireSuperAdmin(): Promise<CurrentUser> {
+  const user = await requireRole("SUPER_ADMIN");
+  return assertAdminTwoFactor(user);
+}
+
 export function assertAdminTwoFactor(user: CurrentUser): CurrentUser {
   if (!isAdminRoleRequiringTwoFactor(user.role)) {
     return user;

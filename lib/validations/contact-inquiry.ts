@@ -55,3 +55,29 @@ export const updateContactInquiryStatusSchema = z.object({
   status: z.enum(["NEW", "CONTACTED", "CLOSED", "SPAM"]),
   adminNotes: z.string().trim().max(5000).optional().or(z.literal("")),
 });
+
+const contactInquiryStatusSchema = z.enum(["NEW", "CONTACTED", "CLOSED", "SPAM"]);
+
+export const adminCreateContactInquirySchema = z.object({
+  fullName: z.string().trim().min(2).max(120),
+  phone: z
+    .string()
+    .trim()
+    .refine((value) => isValidPakistanPhone(value), "Invalid Pakistani mobile number"),
+  email: optionalEmailSchema(),
+  serviceInterest: z.string().trim().min(1).max(120),
+  regionName: z.string().trim().max(120).optional().nullable(),
+  cityName: z.string().trim().max(120).optional().nullable(),
+  message: z.string().trim().max(2000).optional().nullable(),
+  locale: localeSchema,
+  status: contactInquiryStatusSchema.default("NEW"),
+  adminNotes: z.string().trim().max(5000).optional().nullable(),
+});
+
+export const adminUpdateContactInquirySchema = adminCreateContactInquirySchema.extend({
+  id: z.string().cuid(),
+});
+
+export const deleteContactInquirySchema = z.object({
+  id: z.string().cuid(),
+});

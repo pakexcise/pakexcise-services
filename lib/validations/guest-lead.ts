@@ -61,4 +61,42 @@ export const updateGuestLeadStatusSchema = z.object({
   adminNotes: z.string().trim().max(5000).optional().or(z.literal("")),
 });
 
+const guestLeadStatusSchema = z.enum([
+  "NEW",
+  "CONTACTED",
+  "IN_PROGRESS",
+  "CONVERTED",
+  "CLOSED",
+  "SPAM",
+]);
+
+const guestLeadSourceSchema = z.enum(["WHATSAPP", "GUEST_FORM"]);
+
+export const adminCreateGuestLeadSchema = z.object({
+  serviceId: z.string().cuid().optional().nullable(),
+  serviceNameEn: z.string().trim().min(2).max(200),
+  serviceNameUr: z.string().trim().min(2).max(200),
+  source: guestLeadSourceSchema.default("GUEST_FORM"),
+  status: guestLeadStatusSchema.default("NEW"),
+  fullName: z.string().trim().min(2).max(120),
+  phone: phoneSchema,
+  email: optionalEmailSchema(),
+  regionNameEn: z.string().trim().max(120).optional().nullable(),
+  regionNameUr: z.string().trim().max(120).optional().nullable(),
+  cityName: z.string().trim().max(120).optional().nullable(),
+  vehicleInfo: z.string().trim().max(500).optional().nullable(),
+  licenseInfo: z.string().trim().max(500).optional().nullable(),
+  message: z.string().trim().max(2000).optional().nullable(),
+  adminNotes: z.string().trim().max(5000).optional().nullable(),
+  locale: localeSchema,
+});
+
+export const adminUpdateGuestLeadSchema = adminCreateGuestLeadSchema.extend({
+  id: z.string().cuid(),
+});
+
+export const deleteGuestLeadSchema = z.object({
+  id: z.string().cuid(),
+});
+
 export type SubmitGuestLeadInput = z.infer<typeof submitGuestLeadSchema>;

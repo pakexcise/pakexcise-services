@@ -30,6 +30,30 @@ export type AdminCustomerListItem = Prisma.UserGetPayload<{
 }>;
 
 export class CustomerRepository extends Repository {
+  async listForSelect(): Promise<
+    Array<{
+      id: string;
+      name: string | null;
+      email: string;
+      phone: string | null;
+    }>
+  > {
+    return this.db.user.findMany({
+      where: {
+        role: "CUSTOMER",
+        deletedAt: null,
+      },
+      orderBy: [{ name: "asc" }, { email: "asc" }],
+      take: 500,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+      },
+    });
+  }
+
   async listForAdmin(input?: {
     page?: number;
     pageSize?: number;

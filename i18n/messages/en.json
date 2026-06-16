@@ -892,7 +892,7 @@
       "section": "Support workspace",
       "dashboard": "Dashboard",
       "applications": "Applications",
-      "guestLeads": "Services requests",
+      "guestLeads": "Support requests",
       "contact": "Contact customers"
     },
     "dashboard": {
@@ -1285,16 +1285,29 @@
       "admin": "Admin",
       "superAdmin": "Super Admin"
     },
+    "navSections": {
+      "overview": "Overview",
+      "operations": "Operations",
+      "catalog": "Catalog & regions",
+      "content": "Content",
+      "people": "People",
+      "platform": "Platform",
+      "system": "System"
+    },
     "nav": {
       "dashboard": "Dashboard",
       "applications": "Applications",
-      "guestLeads": "Services requests",
+      "supportRequests": "Support requests",
+      "guestLeads": "Support requests",
       "contactInquiries": "Contact inquiries",
       "contactPage": "Contact page",
       "homePage": "Homepage",
       "services": "Services",
       "serviceCategories": "Service categories",
       "regions": "Regions",
+      "cities": "Cities",
+      "documentRequirements": "Document requirements",
+      "serviceAvailability": "Service availability",
       "faqs": "FAQs",
       "social": "Social links",
       "paymentMethods": "Payment methods",
@@ -1316,7 +1329,11 @@
       "description": "Overview of application volume, queues, and quick admin actions.",
       "descriptionAdmin": "Operational overview for day-to-day application, payment, and customer workflows.",
       "descriptionSuperAdmin": "Full platform overview with operations, SEO, redirects, guides, and system settings.",
+      "pipelineTitle": "Application pipeline",
       "recentApplications": "Recent applications",
+      "recentContactInquiries": "Recent contact inquiries",
+      "recentContactEmpty": "No contact inquiries submitted yet.",
+      "viewAllContactInquiries": "View all contact inquiries",
       "recentEmpty": "No applications submitted yet.",
       "viewAllApplications": "View all applications",
       "quickLinks": "Quick links",
@@ -1345,6 +1362,16 @@
         "inProgress": "In progress",
         "completed": "Completed",
         "rejectedCancelled": "Rejected / cancelled"
+      },
+      "insights": {
+        "title": "Today's snapshot",
+        "todayApplications": "Today's applications",
+        "todayContactInquiries": "Today's contact inquiries",
+        "pendingSupportRequests": "Pending support requests",
+        "paymentUploadedQueue": "Payment uploaded queue",
+        "mostRequestedService": "Most requested service",
+        "topProvince": "Top province",
+        "applicationCount": "{count, plural, one {# application} other {# applications}}"
       }
     },
     "users": {
@@ -1435,6 +1462,13 @@
       "statusHistory": "Status history",
       "noStatusHistory": "No status changes recorded yet.",
       "view": "View",
+      "create": "Add application",
+      "createTitle": "Create application",
+      "createDescription": "Manually create an application record for a customer. Use for walk-in, phone, or legacy cases.",
+      "edit": "Edit",
+      "editTitle": "Edit application",
+      "editDescription": "Update application {reference}. Status changes require a note and are recorded in status history.",
+      "backToDetail": "Back to application",
       "emptyTitle": "No applications found",
       "emptyDescription": "Try changing filters or search terms.",
       "searchPlaceholder": "Search by tracking ID, customer, email, or phone",
@@ -1525,6 +1559,35 @@
           "unsupported": "Inline preview is not available for this file type.",
           "openNewTab": "Open in new tab"
         }
+      },
+      "form": {
+        "sectionAssignment": "Assignment",
+        "sectionStatus": "Status",
+        "sectionNotes": "Internal notes",
+        "customer": "Customer",
+        "selectCustomer": "Select a customer",
+        "service": "Service",
+        "selectService": "Select a service",
+        "agent": "Assigned agent (optional)",
+        "noAgent": "No agent",
+        "status": "Status",
+        "preferredLocale": "Preferred language",
+        "adminNotes": "Internal admin notes",
+        "statusChangeNote": "Status change note",
+        "statusChangeNoteHelp": "Explain why this application is being created or why status/assignment is changing…",
+        "statusChangeNoteRequired": "A status change note is required.",
+        "trackingId": "Tracking ID",
+        "save": "Save application",
+        "saving": "Saving…",
+        "saveFailed": "Please select a customer and service."
+      },
+      "delete": {
+        "title": "Delete application",
+        "description": "Permanently remove this application and all related invoices, payments, documents, and status history. This cannot be undone.",
+        "trigger": "Delete application",
+        "confirm": "Delete application {reference}? This action cannot be undone.",
+        "deleting": "Deleting…",
+        "error": "Could not delete application."
       }
     },
     "invoices": {
@@ -1577,20 +1640,46 @@
       }
     },
     "guestLeads": {
-      "title": "Services requests",
+      "title": "Support requests",
       "description": "WhatsApp and service request form submissions that are handled outside the tracked application dashboard.",
-      "detailDescription": "Review service requests and contact customers on WhatsApp.",
-      "backToList": "Back to service requests",
+      "detailDescription": "Review support requests and contact customers on WhatsApp.",
+      "backToList": "Back to support requests",
+      "backToDetail": "Back to request",
+      "create": "Add support request",
+      "createTitle": "Create support request",
+      "createDescription": "Manually add a support request for phone, WhatsApp, or walk-in inquiries.",
+      "edit": "Edit",
+      "editTitle": "Edit support request",
+      "editDescription": "Update support request {reference}.",
       "searchPlaceholder": "Search by reference, name, phone, or service",
       "allStatuses": "All statuses",
-      "emptyTitle": "No service requests found",
-      "emptyDescription": "Service requests from service pages will appear here.",
+      "emptyTitle": "No support requests found",
+      "emptyDescription": "Support requests from service pages will appear here.",
       "view": "View",
+      "stats": {
+        "all": "All requests"
+      },
+      "filters": {
+        "search": "Search",
+        "apply": "Apply filters",
+        "reset": "Reset",
+        "clearStatus": "Clear status filter",
+        "allServices": "All services",
+        "allSources": "All sources",
+        "dateFrom": "From date",
+        "dateTo": "To date"
+      },
+      "source": {
+        "GUEST_FORM": "Web form",
+        "WHATSAPP": "WhatsApp"
+      },
       "columns": {
         "reference": "Reference",
         "name": "Name",
         "phone": "Phone",
         "service": "Service",
+        "region": "Region",
+        "source": "Source",
         "status": "Status",
         "created": "Submitted",
         "actions": "Actions"
@@ -1622,6 +1711,38 @@
         "saving": "Saving…",
         "saved": "Request updated.",
         "saveError": "Could not update request."
+      },
+      "form": {
+        "sectionCustomer": "Customer details",
+        "sectionService": "Service & location",
+        "sectionDetails": "Request details",
+        "sectionNotes": "Internal notes",
+        "service": "Service",
+        "selectService": "Select a service",
+        "source": "Source",
+        "status": "Status",
+        "fullName": "Full name",
+        "phone": "Phone",
+        "email": "Email",
+        "regionEn": "Region (English)",
+        "regionUr": "Region (Urdu)",
+        "city": "City",
+        "vehicleInfo": "Vehicle details",
+        "licenseInfo": "License details",
+        "message": "Message",
+        "adminNotes": "Internal notes",
+        "locale": "Preferred language",
+        "save": "Save support request",
+        "saving": "Saving…",
+        "saveFailed": "Please select a service and fill required fields."
+      },
+      "delete": {
+        "title": "Delete support request",
+        "description": "Permanently remove this support request from the admin panel. This cannot be undone.",
+        "trigger": "Delete request",
+        "confirm": "Delete support request {reference}? This action cannot be undone.",
+        "deleting": "Deleting…",
+        "error": "Could not delete support request."
       }
     },
     "homePage": {
@@ -1751,6 +1872,13 @@
       "description": "Messages submitted through the public contact page form.",
       "detailDescription": "Review contact form submissions and follow up with customers.",
       "backToList": "Back to contact inquiries",
+      "backToDetail": "Back to inquiry",
+      "create": "Add contact inquiry",
+      "createTitle": "Create contact inquiry",
+      "createDescription": "Manually log a phone, WhatsApp, or walk-in contact inquiry.",
+      "edit": "Edit",
+      "editTitle": "Edit contact inquiry",
+      "editDescription": "Update contact inquiry {reference}.",
       "search": "Search",
       "searchButton": "Search",
       "searchPlaceholder": "Search by reference, name, phone, or service",
@@ -1758,11 +1886,24 @@
       "emptyTitle": "No contact inquiries found",
       "emptyDescription": "Contact form submissions will appear here.",
       "view": "View",
+      "stats": {
+        "all": "All inquiries"
+      },
+      "filters": {
+        "search": "Search",
+        "apply": "Apply filters",
+        "reset": "Reset",
+        "allServices": "All services",
+        "otherService": "Other",
+        "dateFrom": "From date",
+        "dateTo": "To date"
+      },
       "columns": {
         "reference": "Reference",
         "name": "Name",
         "phone": "Phone",
         "service": "Service",
+        "region": "Region",
         "status": "Status",
         "created": "Submitted",
         "actions": "Actions"
@@ -1789,6 +1930,33 @@
         "saving": "Saving…",
         "saved": "Inquiry updated.",
         "saveError": "Could not update inquiry."
+      },
+      "form": {
+        "sectionCustomer": "Customer details",
+        "sectionInquiry": "Inquiry details",
+        "sectionNotes": "Internal notes",
+        "service": "Service interest",
+        "selectService": "Select a service",
+        "status": "Status",
+        "fullName": "Full name",
+        "phone": "Phone",
+        "email": "Email",
+        "region": "Region",
+        "city": "City",
+        "message": "Message",
+        "adminNotes": "Internal notes",
+        "preferredLocale": "Preferred language",
+        "save": "Save contact inquiry",
+        "saving": "Saving…",
+        "saveFailed": "Please select a service and fill required fields."
+      },
+      "delete": {
+        "title": "Delete contact inquiry",
+        "description": "Permanently remove this contact inquiry from the admin panel. This cannot be undone.",
+        "trigger": "Delete inquiry",
+        "confirm": "Delete contact inquiry {reference}? This action cannot be undone.",
+        "deleting": "Deleting…",
+        "error": "Could not delete contact inquiry."
       }
     },
     "agentVerifications": {
@@ -2565,7 +2733,111 @@
         "saving": "Saving...",
         "delete": "Delete",
         "confirmDelete": "Soft delete this city?",
-        "empty": "No cities in this region yet."
+        "empty": "No cities in this region yet.",
+        "manageAll": "Manage all cities"
+      }
+    },
+    "cities": {
+      "title": "City management",
+      "description": "Manage cities under provinces with SEO, intro content, and display order.",
+      "create": "Add city",
+      "createTitle": "Create city",
+      "createDescription": "Add a city under a province or region with SEO metadata.",
+      "editTitle": "Edit city",
+      "editDescription": "Update {name} and manage SEO for this city page.",
+      "searchPlaceholder": "Search by name or slug",
+      "emptyTitle": "No cities found",
+      "emptyDescription": "Create your first city or adjust filters.",
+      "columns": {
+        "name": "City",
+        "region": "Province",
+        "slug": "Slug",
+        "order": "Order",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "filters": {
+        "all": "All statuses",
+        "allRegions": "All provinces",
+        "apply": "Apply filters"
+      },
+      "actions": {
+        "edit": "Edit"
+      },
+      "form": {
+        "tabs": {
+          "general": "General",
+          "seo": "SEO"
+        },
+        "region": "Province / region",
+        "slug": "Slug",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "descriptionEn": "Intro content (English)",
+        "descriptionUr": "Intro content (Urdu)",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "metaTitleEn": "SEO title (English)",
+        "metaTitleUr": "SEO title (Urdu)",
+        "metaDescriptionEn": "Meta description (English)",
+        "metaDescriptionUr": "Meta description (Urdu)",
+        "h1En": "H1 (English)",
+        "h1Ur": "H1 (Urdu)",
+        "save": "Save city",
+        "saving": "Saving...",
+        "saveFailed": "Failed to save city"
+      }
+    },
+    "documentRequirements": {
+      "title": "Document requirements",
+      "description": "Review required documents per service and province. Edit details on the service editor.",
+      "searchPlaceholder": "Search by document type or label",
+      "emptyTitle": "No document requirements found",
+      "emptyDescription": "Add document requirements from a service edit page.",
+      "allRegions": "All provinces",
+      "required": "Required",
+      "optional": "Optional",
+      "columns": {
+        "document": "Document",
+        "service": "Service",
+        "region": "Province",
+        "required": "Requirement",
+        "order": "Order",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "filters": {
+        "all": "All statuses",
+        "allServices": "All services",
+        "allRegions": "All provinces",
+        "apply": "Apply filters"
+      },
+      "actions": {
+        "manage": "Edit on service"
+      }
+    },
+    "serviceAvailability": {
+      "title": "Service availability",
+      "description": "Assign services to provinces. Assigned services appear on the province page and all city pages under that province.",
+      "hint": "Check provinces where each service should be available, then save the row. Changes apply to public region and city service listings.",
+      "emptyServices": "No active services found.",
+      "emptyRegions": "No active provinces found. Create a region first.",
+      "columns": {
+        "service": "Service"
+      },
+      "actions": {
+        "save": "Save row",
+        "saving": "Saving...",
+        "saved": "Saved",
+        "saveFailed": "Failed to save availability"
       }
     },
     "faqs": {

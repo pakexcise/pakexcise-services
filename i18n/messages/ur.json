@@ -893,7 +893,7 @@
       "section": "سپورٹ ورک اسپیس",
       "dashboard": "ڈیش بورڈ",
       "applications": "درخواستیں",
-      "guestLeads": "سروس درخواستیں",
+      "guestLeads": "سپورٹ درخواستیں",
       "contact": "کسٹمرز سے رابطہ"
     },
     "dashboard": {
@@ -1286,16 +1286,29 @@
       "admin": "ایڈمن",
       "superAdmin": "سپر ایڈمن"
     },
+    "navSections": {
+      "overview": "جائزہ",
+      "operations": "آپریشنز",
+      "catalog": "فہرست اور علاقے",
+      "content": "مواد",
+      "people": "افراد",
+      "platform": "پلیٹ فارم",
+      "system": "سسٹم"
+    },
     "nav": {
       "dashboard": "ڈیش بورڈ",
       "applications": "درخواستیں",
-      "guestLeads": "سروس درخواستیں",
+      "supportRequests": "سپورٹ درخواستیں",
+      "guestLeads": "سپورٹ درخواستیں",
       "contactInquiries": "رابطہ درخواستیں",
       "contactPage": "رابطہ صفحہ",
       "homePage": "ہوم پیج",
       "services": "خدمات",
       "serviceCategories": "خدمات کی کیٹیگریز",
       "regions": "علاقے",
+      "cities": "شہر",
+      "documentRequirements": "دستاویزات کی ضروریات",
+      "serviceAvailability": "سروس دستیابی",
       "faqs": "سوالات",
       "social": "سوشل لنکس",
       "paymentMethods": "ادائیگی کے طریقے",
@@ -1317,7 +1330,11 @@
       "description": "درخواستوں کا مجموعی جائزہ، قطاریں، اور فوری ایڈمن اقدامات۔",
       "descriptionAdmin": "روزمرہ درخواست، ادائیگی اور کسٹمر ورک فلو کے لیے آپریشنل جائزہ۔",
       "descriptionSuperAdmin": "آپریشنز، SEO، ری ڈائریکٹس، رہنما اور سسٹم ترتیبات کے ساتھ مکمل پلیٹ فارم جائزہ۔",
+      "pipelineTitle": "درخواست پائپ لائن",
       "recentApplications": "حالیہ درخواستیں",
+      "recentContactInquiries": "حالیہ رابطہ درخواستیں",
+      "recentContactEmpty": "ابھی کوئی رابطہ درخواست جمع نہیں ہوئی۔",
+      "viewAllContactInquiries": "تمام رابطہ درخواستیں دیکھیں",
       "recentEmpty": "ابھی کوئی درخواست جمع نہیں ہوئی۔",
       "viewAllApplications": "تمام درخواستیں دیکھیں",
       "quickLinks": "فوری لنکس",
@@ -1346,6 +1363,16 @@
         "inProgress": "جاری",
         "completed": "مکمل",
         "rejectedCancelled": "مسترد / منسوخ"
+      },
+      "insights": {
+        "title": "آج کا خلاصہ",
+        "todayApplications": "آج کی درخواستیں",
+        "todayContactInquiries": "آج کی رابطہ درخواستیں",
+        "pendingSupportRequests": "زیر التوا سپورٹ درخواستیں",
+        "paymentUploadedQueue": "ادائیگی اپ لوڈ قطار",
+        "mostRequestedService": "سب سے زیادہ درخواست شدہ سروس",
+        "topProvince": "سب سے زیادہ درخواست والا صوبہ",
+        "applicationCount": "{count, plural, one {# درخواست} other {# درخواستیں}}"
       }
     },
     "users": {
@@ -1436,6 +1463,13 @@
       "statusHistory": "اسٹیٹس ہسٹری",
       "noStatusHistory": "ابھی کوئی اسٹیٹس تبدیلی ریکارڈ نہیں ہوئی۔",
       "view": "دیکھیں",
+      "create": "درخواست شامل کریں",
+      "createTitle": "درخواست بنائیں",
+      "createDescription": "کسٹمر کے لیے دستی طور پر درخواست ریکارڈ بنائیں۔ واک اِن، فون یا پرانی کیسز کے لیے استعمال کریں۔",
+      "edit": "ترمیم",
+      "editTitle": "درخواست میں ترمیم",
+      "editDescription": "درخواست {reference} اپڈیٹ کریں۔ اسٹیٹس تبدیلی کے لیے نوٹ لازمی ہے اور اسٹیٹس ہسٹری میں ریکارڈ ہوگا۔",
+      "backToDetail": "درخواست پر واپس",
       "emptyTitle": "کوئی درخواست نہیں ملی",
       "emptyDescription": "فلٹرز یا تلاش کی شرائط تبدیل کریں۔",
       "searchPlaceholder": "ٹریکنگ ID، کسٹمر، ای میل یا فون سے تلاش کریں",
@@ -1526,6 +1560,35 @@
           "unsupported": "اس فائل کی ان لائن پیش نظارہ دستیاب نہیں۔",
           "openNewTab": "نئی ٹیب میں کھولیں"
         }
+      },
+      "form": {
+        "sectionAssignment": "اسائنمنٹ",
+        "sectionStatus": "اسٹیٹس",
+        "sectionNotes": "اندرونی نوٹس",
+        "customer": "کسٹمر",
+        "selectCustomer": "کسٹمر منتخب کریں",
+        "service": "خدمت",
+        "selectService": "خدمت منتخب کریں",
+        "agent": "اسائن شدہ ایجنٹ (اختیاری)",
+        "noAgent": "کوئی ایجنٹ نہیں",
+        "status": "اسٹیٹس",
+        "preferredLocale": "ترجیحی زبان",
+        "adminNotes": "اندرونی ایڈمن نوٹس",
+        "statusChangeNote": "اسٹیٹس تبدیلی کا نوٹ",
+        "statusChangeNoteHelp": "وضاحت کریں کہ یہ درخواست کیوں بن رہی ہے یا اسائنمنٹ/اسٹیٹس کیوں بدل رہی ہے…",
+        "statusChangeNoteRequired": "اسٹیٹس تبدیلی کا نوٹ لازمی ہے۔",
+        "trackingId": "ٹریکنگ ID",
+        "save": "درخواست محفوظ کریں",
+        "saving": "محفوظ ہو رہی ہے…",
+        "saveFailed": "براہ کرم کسٹمر اور خدمت منتخب کریں۔"
+      },
+      "delete": {
+        "title": "درخواست حذف کریں",
+        "description": "یہ درخواست اور تمام متعلقہ انوائسز، ادائیگیاں، دستاویزات اور اسٹیٹس ہسٹری مستقل طور پر حذف کریں۔ یہ واپس نہیں ہو سکتا۔",
+        "trigger": "درخواست حذف کریں",
+        "confirm": "درخواست {reference} حذف کریں؟ یہ عمل واپس نہیں ہو سکتا۔",
+        "deleting": "حذف ہو رہی ہے…",
+        "error": "درخواست حذف نہیں ہو سکی۔"
       }
     },
     "invoices": {
@@ -1578,20 +1641,46 @@
       }
     },
     "guestLeads": {
-      "title": "سروس درخواستیں",
+      "title": "سپورٹ درخواستیں",
       "description": "واٹس ایپ اور سروس درخواست فارم جمع شدہ درخواستیں جو ٹریک شدہ درخواست ڈیش بورڈ سے الگ ہیں۔",
-      "detailDescription": "سروس درخواستوں کا جائزہ لیں اور واٹس ایپ پر رابطہ کریں۔",
-      "backToList": "سروس درخواستوں پر واپس",
+      "detailDescription": "سپورٹ درخواستوں کا جائزہ لیں اور واٹس ایپ پر رابطہ کریں۔",
+      "backToList": "سپورٹ درخواستوں پر واپس",
+      "backToDetail": "درخواست پر واپس",
+      "create": "سپورٹ درخواست شامل کریں",
+      "createTitle": "سپورٹ درخواست بنائیں",
+      "createDescription": "فون، واٹس ایپ، یا وalk-in درخواستیں دستی طور پر شامل کریں۔",
+      "edit": "ترمیم",
+      "editTitle": "سپورٹ درخواست میں ترمیم",
+      "editDescription": "سپورٹ درخواست {reference} اپ ڈیٹ کریں۔",
       "searchPlaceholder": "حوالہ، نام، فون، یا سروس سے تلاش کریں",
       "allStatuses": "تمام اسٹیٹس",
-      "emptyTitle": "کوئی سروس درخواست نہیں ملی",
-      "emptyDescription": "سروس صفحات سے درخواستیں یہاں ظاہر ہوں گی۔",
+      "emptyTitle": "کوئی سپورٹ درخواست نہیں ملی",
+      "emptyDescription": "سروس صفحات سے سپورٹ درخواستیں یہاں ظاہر ہوں گی۔",
       "view": "دیکھیں",
+      "stats": {
+        "all": "تمام درخواستیں"
+      },
+      "filters": {
+        "search": "تلاش",
+        "apply": "فلٹرز لاگو کریں",
+        "reset": "ری سیٹ",
+        "clearStatus": "اسٹیٹس فلٹر صاف کریں",
+        "allServices": "تمام سروسز",
+        "allSources": "تمام ذرائع",
+        "dateFrom": "تاریخ سے",
+        "dateTo": "تاریخ تک"
+      },
+      "source": {
+        "GUEST_FORM": "ویب فارم",
+        "WHATSAPP": "واٹس ایپ"
+      },
       "columns": {
         "reference": "حوالہ",
         "name": "نام",
         "phone": "فون",
         "service": "سروس",
+        "region": "علاقہ",
+        "source": "ذریعہ",
         "status": "اسٹیٹس",
         "created": "جمع شدہ",
         "actions": "اقدامات"
@@ -1623,6 +1712,38 @@
         "saving": "محفوظ ہو رہا ہے…",
         "saved": "درخواست اپ ڈیٹ ہو گئی۔",
         "saveError": "درخواست اپ ڈیٹ نہیں ہو سکی۔"
+      },
+      "form": {
+        "sectionCustomer": "کسٹمر کی تفصیلات",
+        "sectionService": "سروس اور مقام",
+        "sectionDetails": "درخواست کی تفصیلات",
+        "sectionNotes": "اندرونی نوٹس",
+        "service": "سروس",
+        "selectService": "سروس منتخب کریں",
+        "source": "ذریعہ",
+        "status": "اسٹیٹس",
+        "fullName": "مکمل نام",
+        "phone": "فون",
+        "email": "ای میل",
+        "regionEn": "علاقہ (انگریزی)",
+        "regionUr": "علاقہ (اردو)",
+        "city": "شہر",
+        "vehicleInfo": "گاڑی کی تفصیلات",
+        "licenseInfo": "لائسنس کی تفصیلات",
+        "message": "پیغام",
+        "adminNotes": "اندرونی نوٹس",
+        "locale": "ترجیحی زبان",
+        "save": "سپورٹ درخواست محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "saveFailed": "سروس منتخب کریں اور ضروری فیلڈز پُر کریں۔"
+      },
+      "delete": {
+        "title": "سپورٹ درخواست حذف کریں",
+        "description": "اس سپورٹ درخواست کو ایڈمن پینل سے مستقل طور پر ہٹائیں۔ یہ واپس نہیں ہو سکتا۔",
+        "trigger": "درخواست حذف کریں",
+        "confirm": "سپورٹ درخواست {reference} حذف کریں؟ یہ عمل واپس نہیں ہو سکتا۔",
+        "deleting": "حذف ہو رہا ہے…",
+        "error": "سپورٹ درخواست حذف نہیں ہو سکی۔"
       }
     },
     "homePage": {
@@ -1752,6 +1873,13 @@
       "description": "عوامی رابطہ صفحے کے فارم سے بھیجے گئے پیغامات۔",
       "detailDescription": "رابطہ فارم جمع شدہ درخواستوں کا جائزہ لیں اور گاہکوں سے رابطہ کریں۔",
       "backToList": "رابطہ درخواستوں پر واپس",
+      "backToDetail": "درخواست پر واپس",
+      "create": "رابطہ درخواست شامل کریں",
+      "createTitle": "رابطہ درخواست بنائیں",
+      "createDescription": "فون، واٹس ایپ، یا walk-in رابطہ درخواست دستی طور پر شامل کریں۔",
+      "edit": "ترمیم",
+      "editTitle": "رابطہ درخواست میں ترمیم",
+      "editDescription": "رابطہ درخواست {reference} اپ ڈیٹ کریں۔",
       "search": "تلاش",
       "searchButton": "تلاش",
       "searchPlaceholder": "حوالہ، نام، فون یا سروس سے تلاش کریں",
@@ -1759,11 +1887,24 @@
       "emptyTitle": "کوئی رابطہ درخواست نہیں ملی",
       "emptyDescription": "رابطہ فارم جمع شدہ درخواستیں یہاں ظاہر ہوں گی۔",
       "view": "دیکھیں",
+      "stats": {
+        "all": "تمام درخواستیں"
+      },
+      "filters": {
+        "search": "تلاش",
+        "apply": "فلٹرز لاگو کریں",
+        "reset": "ری سیٹ",
+        "allServices": "تمام سروسز",
+        "otherService": "دیگر",
+        "dateFrom": "تاریخ سے",
+        "dateTo": "تاریخ تک"
+      },
       "columns": {
         "reference": "حوالہ",
         "name": "نام",
         "phone": "فون",
         "service": "سروس",
+        "region": "علاقہ",
         "status": "اسٹیٹس",
         "created": "جمع",
         "actions": "عمل"
@@ -1790,6 +1931,33 @@
         "saving": "محفوظ ہو رہا ہے…",
         "saved": "درخواست اپڈیٹ ہو گئی۔",
         "saveError": "درخواست اپڈیٹ نہیں ہو سکی۔"
+      },
+      "form": {
+        "sectionCustomer": "کسٹمر کی تفصیلات",
+        "sectionInquiry": "درخواست کی تفصیلات",
+        "sectionNotes": "اندرونی نوٹس",
+        "service": "سروس دلچسپی",
+        "selectService": "سروس منتخب کریں",
+        "status": "اسٹیٹس",
+        "fullName": "مکمل نام",
+        "phone": "فون",
+        "email": "ای میل",
+        "region": "علاقہ",
+        "city": "شہر",
+        "message": "پیغام",
+        "adminNotes": "اندرونی نوٹس",
+        "preferredLocale": "ترجیحی زبان",
+        "save": "رابطہ درخواست محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "saveFailed": "سروس منتخب کریں اور ضروری فیلڈز پُر کریں۔"
+      },
+      "delete": {
+        "title": "رابطہ درخواست حذف کریں",
+        "description": "اس رابطہ درخواست کو ایڈمن پینل سے مستقل طور پر ہٹائیں۔ یہ واپس نہیں ہو سکتا۔",
+        "trigger": "درخواست حذف کریں",
+        "confirm": "رابطہ درخواست {reference} حذف کریں؟ یہ عمل واپس نہیں ہو سکتا۔",
+        "deleting": "حذف ہو رہا ہے…",
+        "error": "رابطہ درخواست حذف نہیں ہو سکی۔"
       }
     },
     "agentVerifications": {
@@ -2566,7 +2734,111 @@
         "saving": "محفوظ ہو رہا ہے…",
         "delete": "حذف",
         "confirmDelete": "یہ شہر حذف کریں؟",
-        "empty": "ابھی اس علاقے میں کوئی شہر نہیں۔"
+        "empty": "ابھی اس علاقے میں کوئی شہر نہیں۔",
+        "manageAll": "تمام شہر منظم کریں"
+      }
+    },
+    "cities": {
+      "title": "شہر کا انتظام",
+      "description": "صوبوں کے تحت شہر، SEO، تعارفی مواد، اور ترتیب منظم کریں۔",
+      "create": "شہر شامل کریں",
+      "createTitle": "شہر بنائیں",
+      "createDescription": "صوبے یا علاقے کے تحت SEO میٹا ڈیٹا کے ساتھ شہر شامل کریں۔",
+      "editTitle": "شہر میں ترمیم",
+      "editDescription": "{name} کو اپ ڈیٹ کریں اور اس شہر کے صفحے کے لیے SEO منظم کریں۔",
+      "searchPlaceholder": "نام یا slug سے تلاش کریں",
+      "emptyTitle": "کوئی شہر نہیں ملا",
+      "emptyDescription": "پہلا شہر بنائیں یا فلٹرز ایڈجسٹ کریں۔",
+      "columns": {
+        "name": "شہر",
+        "region": "صوبہ",
+        "slug": "Slug",
+        "order": "ترتیب",
+        "status": "اسٹیٹس",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "filters": {
+        "all": "تمام اسٹیٹس",
+        "allRegions": "تمام صوبے",
+        "apply": "فلٹرز لاگو کریں"
+      },
+      "actions": {
+        "edit": "ترمیم"
+      },
+      "form": {
+        "tabs": {
+          "general": "عام",
+          "seo": "SEO"
+        },
+        "region": "صوبہ / علاقہ",
+        "slug": "Slug",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "descriptionEn": "تعارفی مواد (انگریزی)",
+        "descriptionUr": "تعارفی مواد (اردو)",
+        "isActive": "فعال",
+        "displayOrder": "ترتیب",
+        "metaTitleEn": "SEO عنوان (انگریزی)",
+        "metaTitleUr": "SEO عنوان (اردو)",
+        "metaDescriptionEn": "میٹا تفصیل (انگریزی)",
+        "metaDescriptionUr": "میٹا تفصیل (اردو)",
+        "h1En": "H1 (انگریزی)",
+        "h1Ur": "H1 (اردو)",
+        "save": "شہر محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "saveFailed": "شہر محفوظ نہیں ہو سکا"
+      }
+    },
+    "documentRequirements": {
+      "title": "دستاویزات کی ضروریات",
+      "description": "ہر سروس اور صوبے کے لیے ضروری دستاویزات دیکھیں۔ تفصیلات سروس ایڈیٹر میں ترمیم کریں۔",
+      "searchPlaceholder": "دستاویز کی قسم یا لیبل سے تلاش کریں",
+      "emptyTitle": "کوئی دستاویز ضرورت نہیں ملی",
+      "emptyDescription": "سروس ایڈٹ صفحے سے دستاویزات کی ضروریات شامل کریں۔",
+      "allRegions": "تمام صوبے",
+      "required": "ضروری",
+      "optional": "اختیاری",
+      "columns": {
+        "document": "دستاویز",
+        "service": "سروس",
+        "region": "صوبہ",
+        "required": "ضرورت",
+        "order": "ترتیب",
+        "status": "اسٹیٹس",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "filters": {
+        "all": "تمام اسٹیٹس",
+        "allServices": "تمام سروسز",
+        "allRegions": "تمام صوبے",
+        "apply": "فلٹرز لاگو کریں"
+      },
+      "actions": {
+        "manage": "سروس پر ترمیم"
+      }
+    },
+    "serviceAvailability": {
+      "title": "سروس دستیابی",
+      "description": "سروسز کو صوبوں سے منسلک کریں۔ منسلک سروسز صوبے کے صفحے اور اس کے تمام شہر کے صفحات پر ظاہر ہوں گی۔",
+      "hint": "ہر سروس کے لیے صوبے منتخب کریں، پھر قطار محفوظ کریں۔ تبدیلیاں عوامی علاقے اور شہر کی فہرستوں پر لاگو ہوں گی۔",
+      "emptyServices": "کوئی فعال سروس نہیں ملی۔",
+      "emptyRegions": "کوئی فعال صوبہ نہیں ملا۔ پہلے علاقہ بنائیں۔",
+      "columns": {
+        "service": "سروس"
+      },
+      "actions": {
+        "save": "قطار محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "saved": "محفوظ",
+        "saveFailed": "دستیابی محفوظ نہیں ہو سکی"
       }
     },
     "faqs": {

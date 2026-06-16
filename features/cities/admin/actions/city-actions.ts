@@ -23,7 +23,7 @@ import { adminCityRepository } from "@/server/repositories/admin-city-repository
 
 function revalidateCityPaths(regionSlug: string, citySlug?: string) {
   revalidatePath("/admin/regions");
-  revalidatePath(`/admin/regions`);
+  revalidatePath("/admin/cities");
   revalidatePath("/regions");
   revalidatePath(`/regions/${regionSlug}`);
   if (citySlug) {

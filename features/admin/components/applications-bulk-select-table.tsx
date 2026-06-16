@@ -31,6 +31,7 @@ type ApplicationRow = {
 type ApplicationsBulkSelectTableProps = {
   applications: ApplicationRow[];
   locale: string;
+  showEdit?: boolean;
   labels: {
     trackingId: string;
     service: string;
@@ -39,6 +40,7 @@ type ApplicationsBulkSelectTableProps = {
     created: string;
     actions: string;
     view: string;
+    edit: string;
     select: string;
     bulkAssign: string;
     bulkPending: string;
@@ -50,6 +52,7 @@ type ApplicationsBulkSelectTableProps = {
 export function ApplicationsBulkSelectTable({
   applications,
   locale,
+  showEdit = false,
   labels,
 }: ApplicationsBulkSelectTableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -138,11 +141,20 @@ export function ApplicationsBulkSelectTable({
               </TableCell>
               <TableCell>{formatDate(application.createdAt, locale)}</TableCell>
               <TableCell className="text-right">
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={`/admin/applications/${application.id}`}>
-                    {labels.view}
-                  </Link>
-                </Button>
+                <div className="flex justify-end gap-1">
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href={`/admin/applications/${application.id}`}>
+                      {labels.view}
+                    </Link>
+                  </Button>
+                  {showEdit ? (
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href={`/admin/applications/${application.id}/edit`}>
+                        {labels.edit}
+                      </Link>
+                    </Button>
+                  ) : null}
+                </div>
               </TableCell>
             </TableRow>
           ))}

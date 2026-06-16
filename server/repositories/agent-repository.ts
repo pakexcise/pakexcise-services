@@ -351,6 +351,31 @@ export class AgentRepository extends Repository {
 
     return { total, pending, approved, rejected, active, inactive };
   }
+
+  async listUsersForSelect(): Promise<
+    Array<{
+      id: string;
+      name: string | null;
+      email: string;
+    }>
+  > {
+    return this.db.user.findMany({
+      where: {
+        ...activeAgentUserWhere,
+        agentProfile: {
+          approvalStatus: "APPROVED",
+          isActive: true,
+        },
+      },
+      orderBy: [{ name: "asc" }, { email: "asc" }],
+      take: 200,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+  }
 }
 
 export const agentRepository = new AgentRepository();
