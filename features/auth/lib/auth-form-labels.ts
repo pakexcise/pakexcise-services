@@ -19,6 +19,7 @@ export async function getLoginFormLabels() {
     phoneOrCnic: t("phoneOrCnic"),
     phoneHint: t("phoneHint"),
     phoneLoginHint: t("phoneLoginHint"),
+    phoneLoginPlaceholder: t("phoneLoginPlaceholder"),
     otp: t("otp"),
     otpHint: t("otpHint"),
     verifyOtp: t("verifyOtp"),
@@ -47,6 +48,7 @@ export async function getLoginFormLabels() {
     methodPhone: t("methodPhone"),
     forgotPassword: t("forgotPassword"),
     authError: t("authError"),
+    staleServerAction: t("staleServerAction"),
     noAccount: t("noAccount"),
     signupLink: t("signupLink"),
     orContinueWith: t("orContinueWith"),
@@ -110,6 +112,7 @@ export async function getSignupFormLabels() {
     google: tSocial("google"),
     socialFailed: tSocial("failed"),
     authError: tSocial("failed"),
+    staleServerAction: t("staleServerAction"),
     socialNotConfigured: tSocial("notConfigured"),
   };
 }

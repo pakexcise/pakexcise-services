@@ -43,7 +43,7 @@ export async function submitContactInquiryAction(
   }
 
   const inquiry = await contactInquiryRepository.create({
-    referenceId: generateContactInquiryReferenceId(),
+    referenceId: await generateContactInquiryReferenceId(),
     fullName: parsed.data.fullName.trim(),
     phone: formatPhoneForDisplay(parsed.data.phone.trim()),
     email: parsed.data.email?.trim() || null,

@@ -8,6 +8,14 @@ function run(command, args, options = {}) {
   });
 }
 
+const portCheckResult = run("node", ["scripts/check-dev-port.mjs"], {
+  stdio: "inherit",
+});
+
+if (portCheckResult.status !== 0) {
+  process.exit(portCheckResult.status ?? 1);
+}
+
 const syncResult = run("node", ["scripts/sync-env.mjs"]);
 
 if (syncResult.status !== 0) {

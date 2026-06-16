@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 import { JsonLd } from "@/components/marketing/json-ld";
+import { ChunkLoadRecovery } from "@/components/shared/chunk-load-recovery";
 import { DocumentLocaleSync } from "@/components/shared/DocumentLocaleSync";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
@@ -63,6 +64,7 @@ export default async function LocaleLayout({
     <>
       <JsonLd data={siteJsonLd} />
       <NextIntlClientProvider locale={locale} messages={messages}>
+        <ChunkLoadRecovery />
         <DocumentLocaleSync />
         <ThemeProvider>
           <Suspense fallback={null}>

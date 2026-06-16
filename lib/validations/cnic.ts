@@ -4,6 +4,17 @@ import {
   normalizePakistanPhone,
 } from "@/lib/validations/phone";
 
+export const CNIC_MAX_DIGITS = 13;
+
+/** Login field: digits only, no hyphens, capped at CNIC length. */
+export function formatLoginIdentifierInput(input: string): string {
+  return input.replace(/\D/g, "").slice(0, CNIC_MAX_DIGITS);
+}
+
+export function isValidLoginIdentifier(input: string): boolean {
+  return parsePhoneOrCnicInput(input).type !== "invalid";
+}
+
 /** Formats CNIC digits as XXXXX-XXXXXXX-X while the user types. */
 export function formatCnicInput(input: string): string {
   const digits = input.replace(/\D/g, "").slice(0, 13);

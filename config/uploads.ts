@@ -131,7 +131,7 @@ export function validateUploadFile(input: {
   return { valid: true, extension };
 }
 
-/** Safe R2 path segment from application tracking ID (e.g. PAX-20260612-09AA64). */
+/** Safe R2 path segment from application tracking ID (e.g. PE-00001). */
 export function sanitizeApplicationStorageFolder(trackingId: string): string {
   const normalized = trackingId.trim().toUpperCase();
   const safe = normalized.replace(/[^A-Z0-9_-]/g, "_");

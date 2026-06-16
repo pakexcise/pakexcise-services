@@ -2,7 +2,7 @@
 
 import { LayoutDashboard, LogIn, LogOut } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
@@ -19,6 +19,26 @@ type AuthNavProps = {
   onNavigate?: () => void;
 };
 
+function AuthNavPlaceholder({
+  loginLabel,
+  className,
+  compact = false,
+}: Pick<AuthNavProps, "loginLabel" | "className" | "compact">) {
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className={className}
+      disabled
+      aria-hidden="true"
+      tabIndex={-1}
+    >
+      <LogIn className="size-4 opacity-50" />
+      {!compact ? <span className="opacity-50">{loginLabel}</span> : null}
+    </Button>
+  );
+}
+
 export function AuthNav({
   loginLabel,
   dashboardLabel,
@@ -29,7 +49,12 @@ export function AuthNav({
 }: AuthNavProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [mounted, setMounted] = useState(false);
   const { data: session, isPending: sessionPending } = useSession();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function handleLogout() {
     startTransition(async () => {
@@ -40,21 +65,13 @@ export function AuthNav({
     });
   }
 
-  if (sessionPending) {
+  if (!mounted || sessionPending) {
     return (
-      <Button
-        variant="outline"
-        size="sm"
+      <AuthNavPlaceholder
+        loginLabel={loginLabel}
         className={className}
-        disabled
-        aria-hidden="true"
-        tabIndex={-1}
-      >
-        <LogIn className="size-4 opacity-50" />
-        {!compact ? (
-          <span className="opacity-50">{loginLabel}</span>
-        ) : null}
-      </Button>
+        compact={compact}
+      />
     );
   }
 

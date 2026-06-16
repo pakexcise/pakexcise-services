@@ -25,7 +25,9 @@
     "notFoundTitle": "Page not found",
     "notFoundDescription": "The page you are looking for does not exist or has been moved.",
     "errorTitle": "Unexpected error",
-    "errorDescription": "We could not load this page. Please try again in a moment."
+    "errorDescription": "We could not load this page. Please try again in a moment.",
+    "chunkLoadTitle": "Page update required",
+    "chunkLoadDescription": "A newer version of this page is available. Refresh to continue."
   },
   "disclaimer": {
     "banner": "PakExcise.com is a private facilitation service and is not affiliated with any government department.",
@@ -60,7 +62,8 @@
       "phone": "Mobile number",
       "phoneOrCnic": "Mobile number or CNIC",
       "phoneHint": "Sign in with your registered Pakistani mobile number and password.",
-      "phoneLoginHint": "Enter your registered mobile number (03XX XXXXXXX) or CNIC (12345-1234567-1).",
+      "phoneLoginHint": "Mobile: 11 digits (e.g. 03001234567). CNIC: 13 digits. No hyphens required.",
+      "phoneLoginPlaceholder": "03001234567 or 13-digit CNIC",
       "showPassword": "Show password",
       "invalidIdentifier": "Enter a valid mobile number or CNIC.",
       "otp": "Verification code",
@@ -100,6 +103,7 @@
       "methodPhone": "Phone",
       "forgotPassword": "Forgot password?",
       "authError": "Something went wrong while signing you in. Please try again.",
+      "staleServerAction": "This page session expired. Refresh the page and try again.",
       "noAccount": "Don't have an account?",
       "signupLink": "Create account",
       "orContinueWith": "Or continue with email or phone",
@@ -137,7 +141,7 @@
       "creatingAccount": "Creating account...",
       "signupVerifyHint": "Set a password, then verify your email once to activate your account.",
       "phone": "Mobile number",
-      "phoneHint": "Pakistani mobile number (e.g. 03XX XXXXXXX).",
+      "phoneHint": "Pakistani mobile number: 11 digits (e.g. 03XX-XXXXXXX).",
       "cnic": "CNIC number",
       "cnicHint": "Format: 12345-1234567-1",
       "cnicVerificationNote": "CNIC is required for identity verification when registering with a phone number. It is stored securely and is not shared with third parties.",
@@ -185,7 +189,8 @@
       "orContinueWith": "Or continue with email or phone",
       "google": "Continue with Google",
       "socialFailed": "Social sign-in failed. Please try again.",
-      "socialNotConfigured": "Social login is not configured yet. Use email or phone with your password."
+      "socialNotConfigured": "Social login is not configured yet. Use email or phone with your password.",
+      "staleServerAction": "This page session expired. Refresh the page and try again."
     },
     "social": {
       "google": "Continue with Google",
@@ -887,7 +892,7 @@
       "section": "Support workspace",
       "dashboard": "Dashboard",
       "applications": "Applications",
-      "guestLeads": "Guest leads",
+      "guestLeads": "Services requests",
       "contact": "Contact customers"
     },
     "dashboard": {
@@ -1283,7 +1288,7 @@
     "nav": {
       "dashboard": "Dashboard",
       "applications": "Applications",
-      "guestLeads": "Guest leads",
+      "guestLeads": "Services requests",
       "contactInquiries": "Contact inquiries",
       "contactPage": "Contact page",
       "homePage": "Homepage",
@@ -1572,14 +1577,14 @@
       }
     },
     "guestLeads": {
-      "title": "Guest leads",
-      "description": "WhatsApp and guest form requests that are handled outside the tracked application dashboard.",
-      "detailDescription": "Review guest support requests and contact customers on WhatsApp.",
-      "backToList": "Back to guest leads",
+      "title": "Services requests",
+      "description": "WhatsApp and service request form submissions that are handled outside the tracked application dashboard.",
+      "detailDescription": "Review service requests and contact customers on WhatsApp.",
+      "backToList": "Back to service requests",
       "searchPlaceholder": "Search by reference, name, phone, or service",
       "allStatuses": "All statuses",
-      "emptyTitle": "No guest leads found",
-      "emptyDescription": "Guest requests from service pages will appear here.",
+      "emptyTitle": "No service requests found",
+      "emptyDescription": "Service requests from service pages will appear here.",
       "view": "View",
       "columns": {
         "reference": "Reference",
@@ -1599,7 +1604,7 @@
         "SPAM": "Spam"
       },
       "detail": {
-        "overview": "Lead overview",
+        "overview": "Request overview",
         "requestDetails": "Request details",
         "email": "Email",
         "region": "Region",
@@ -1610,13 +1615,13 @@
         "contact": "Contact on WhatsApp",
         "contactDescription": "Reach the customer directly on WhatsApp for follow-up.",
         "whatsappCta": "Open WhatsApp chat",
-        "statusLabel": "Lead status",
+        "statusLabel": "Request status",
         "notesLabel": "Internal notes",
         "notesPlaceholder": "Notes for support/admin staff…",
         "save": "Save changes",
         "saving": "Saving…",
-        "saved": "Lead updated.",
-        "saveError": "Could not update lead."
+        "saved": "Request updated.",
+        "saveError": "Could not update request."
       }
     },
     "homePage": {

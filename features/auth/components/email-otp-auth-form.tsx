@@ -4,11 +4,9 @@ import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
-import {
-  checkEmailAuthEligibility,
-  getEmailOtpDeliveryMeta,
-  sendEmailVerificationOtp,
-} from "@/features/auth/actions/otp-flow-actions";
+import { checkEmailAuthEligibility } from "@/features/auth/actions/check-email-auth-eligibility";
+import { getEmailOtpDeliveryMeta } from "@/features/auth/actions/get-email-otp-delivery-meta";
+import { sendEmailVerificationOtp } from "@/features/auth/actions/send-email-verification-otp";
 import { resolveEmailOtpSentMessage } from "@/features/auth/lib/otp-delivery-messages";
 import { OtpCodeInput } from "@/features/auth/components/otp-code-input";
 import { PasswordInput } from "@/features/auth/components/password-input";
@@ -19,6 +17,7 @@ import {
   buildPostSignupRedirectUrl,
 } from "@/features/auth/lib/auth-url";
 import { buildAuthRedirectUrl } from "@/features/auth/lib/redirect";
+import { resolveAuthSubmitError } from "@/features/auth/lib/server-action-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,6 +61,7 @@ type EmailOtpAuthFormLabels = {
   loginPrompt?: string;
   signupLink?: string;
   loginLink?: string;
+  staleServerAction?: string;
 };
 
 type EmailOtpAuthFormProps = {
@@ -217,11 +217,13 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
         );
       } catch (submitError) {
         setError(
-          submitError instanceof Error
-            ? submitError.message
-            : mode === "login"
+          resolveAuthSubmitError(
+            submitError,
+            mode === "login"
               ? (labels.signInFailed ?? labels.verifyFailed)
               : labels.sendFailed,
+            labels.staleServerAction ?? labels.sendFailed,
+          ),
         );
       }
     });
@@ -244,7 +246,11 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
         );
       } catch (resendError) {
         setError(
-          resendError instanceof Error ? resendError.message : labels.sendFailed,
+          resolveAuthSubmitError(
+            resendError,
+            labels.sendFailed,
+            labels.staleServerAction ?? labels.sendFailed,
+          ),
         );
       }
     });
@@ -279,9 +285,11 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
         router.refresh();
       } catch (verifyError) {
         setError(
-          verifyError instanceof Error
-            ? verifyError.message
-            : labels.verifyFailed,
+          resolveAuthSubmitError(
+            verifyError,
+            labels.verifyFailed,
+            labels.staleServerAction ?? labels.verifyFailed,
+          ),
         );
       }
     });

@@ -63,6 +63,7 @@ type SignupFormLabels = {
   google: string;
   socialFailed: string;
   authError: string;
+  staleServerAction: string;
   socialNotConfigured: string;
   methodEmail: string;
   methodPhone: string;
@@ -112,6 +113,7 @@ function SignupFormContent({ labels, socialProviders, unified = false }: SignupF
     loginPrompt: labels.loginPrompt,
     signupLink: labels.signupLink,
     loginLink: labels.loginLink,
+    staleServerAction: labels.staleServerAction,
   };
 
   const phoneLabels = {
@@ -142,6 +144,7 @@ function SignupFormContent({ labels, socialProviders, unified = false }: SignupF
     loginPrompt: labels.loginPrompt,
     signupLink: labels.signupLink,
     loginLink: labels.loginLink,
+    staleServerAction: labels.staleServerAction,
   };
 
   return (

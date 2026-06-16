@@ -26,7 +26,7 @@ export async function updateGuestLeadStatusAction(
   const existing = await guestLeadRepository.findAdminById(parsed.data.leadId);
 
   if (!existing) {
-    return errorResult("Guest lead not found.");
+    return errorResult("Service request not found.");
   }
 
   const updated = await guestLeadRepository.updateAdminStatus({

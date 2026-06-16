@@ -1,12 +1,7 @@
 import "server-only";
 
-import { randomBytes } from "node:crypto";
+import { allocateContactInquiryReferenceId } from "@/server/id/sequential-reference-id";
 
-export function generateContactInquiryReferenceId(): string {
-  const datePart = new Date()
-    .toISOString()
-    .slice(0, 10)
-    .replace(/-/g, "");
-  const randomPart = randomBytes(3).toString("hex").toUpperCase();
-  return `CI-${datePart}-${randomPart}`;
+export async function generateContactInquiryReferenceId(): Promise<string> {
+  return allocateContactInquiryReferenceId();
 }

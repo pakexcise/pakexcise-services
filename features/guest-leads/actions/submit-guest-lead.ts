@@ -54,7 +54,7 @@ export async function submitGuestLeadAction(
   const regionInput = parsed.data.regionName?.trim() || null;
 
   const lead = await guestLeadRepository.create({
-    referenceId: generateGuestLeadReferenceId(),
+    referenceId: await generateGuestLeadReferenceId(),
     serviceId: service.id,
     serviceNameEn: service.nameEn,
     serviceNameUr: service.nameUr,

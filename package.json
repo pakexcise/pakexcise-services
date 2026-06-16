@@ -5,6 +5,8 @@
   "scripts": {
     "predev": "node scripts/predev.mjs",
     "dev": "next dev --webpack",
+    "dev:clean": "node scripts/reset-dev.mjs && npm run dev",
+    "dev:reset": "node scripts/reset-dev.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

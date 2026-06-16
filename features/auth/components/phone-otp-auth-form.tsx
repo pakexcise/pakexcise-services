@@ -4,12 +4,10 @@ import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
-import {
-  checkPhoneOrCnicLoginEligibility,
-  checkPhoneSignupEligibility,
-  getPhoneOrCnicLoginEmail,
-  linkPhoneAndCnicToUser,
-} from "@/features/auth/actions/otp-flow-actions";
+import { checkPhoneOrCnicLoginEligibility } from "@/features/auth/actions/check-phone-or-cnic-login-eligibility";
+import { checkPhoneSignupEligibility } from "@/features/auth/actions/check-phone-signup-eligibility";
+import { getPhoneOrCnicLoginEmail } from "@/features/auth/actions/get-phone-or-cnic-login-email";
+import { linkPhoneAndCnicToUser } from "@/features/auth/actions/link-phone-and-cnic-to-user";
 import { PasswordInput } from "@/features/auth/components/password-input";
 import { getTempPhoneEmail } from "@/features/auth/lib/temp-phone-email";
 import { useAuthPageQuery } from "@/features/auth/hooks/use-auth-page-query";
@@ -19,13 +17,21 @@ import {
   buildPostSignupRedirectUrl,
 } from "@/features/auth/lib/auth-url";
 import { buildAuthRedirectUrl } from "@/features/auth/lib/redirect";
+import { resolveAuthSubmitError } from "@/features/auth/lib/server-action-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn, signUp } from "@/lib/auth-client";
 import { disclaimerCompactClassName } from "@/lib/styles/disclaimer-banner";
-import { formatCnicInput, isValidCnicInput } from "@/lib/validations/cnic";
 import {
+  CNIC_MAX_DIGITS,
+  formatCnicInput,
+  formatLoginIdentifierInput,
+  isValidCnicInput,
+  isValidLoginIdentifier,
+} from "@/lib/validations/cnic";
+import {
+  formatPakistanPhoneInput,
   isValidPakistanPhone,
   normalizePakistanPhone,
 } from "@/lib/validations/phone";
@@ -39,6 +45,7 @@ type PhoneOtpAuthFormLabels = {
   phoneOrCnic?: string;
   phoneHint: string;
   phoneLoginHint?: string;
+  phoneLoginPlaceholder?: string;
   cnic?: string;
   cnicHint?: string;
   cnicVerificationNote?: string;
@@ -69,6 +76,7 @@ type PhoneOtpAuthFormLabels = {
   signupLink?: string;
   loginLink?: string;
   tryOtherMethods?: string;
+  staleServerAction?: string;
 };
 
 type PhoneOtpAuthFormProps = {
@@ -130,7 +138,10 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
         setErrorCode(null);
         return;
       }
-    } else if (!loginIdentifier.trim()) {
+    } else if (
+      !loginIdentifier.trim() ||
+      !isValidLoginIdentifier(loginIdentifier.trim())
+    ) {
       setError(labels.invalidIdentifier ?? labels.invalidPhone);
       setErrorCode(null);
       return;
@@ -267,13 +278,14 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
         router.push(buildPostSignupRedirectUrl({ intent, callbackUrl }));
         router.refresh();
       } catch (submitError) {
-        const message =
-          submitError instanceof Error ? submitError.message : undefined;
         setError(
-          message ??
-            (mode === "login"
+          resolveAuthSubmitError(
+            submitError,
+            mode === "login"
               ? (labels.signInFailed ?? fallbackError)
-              : labels.sendFailed),
+              : labels.sendFailed,
+            labels.staleServerAction ?? fallbackError,
+          ),
         );
       }
     });
@@ -338,11 +350,14 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             name="loginIdentifier"
             type="text"
             autoComplete="username"
-            inputMode="text"
-            placeholder="03XX XXXXXXX or 12345-1234567-1"
+            inputMode="numeric"
+            placeholder={labels.phoneLoginPlaceholder ?? "03001234567 or 13-digit CNIC"}
             required
+            maxLength={CNIC_MAX_DIGITS}
             value={loginIdentifier}
-            onChange={(event) => setLoginIdentifier(event.target.value)}
+            onChange={(event) =>
+              setLoginIdentifier(formatLoginIdentifierInput(event.target.value))
+            }
           />
           <p className="text-xs text-muted-foreground">
             {labels.phoneLoginHint ?? labels.phoneHint}
@@ -357,10 +372,13 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             type="tel"
             autoComplete="tel"
             inputMode="tel"
-            placeholder="03XX XXXXXXX"
+            placeholder="03XX-XXXXXXX"
             required
+            maxLength={12}
             value={phoneInput}
-            onChange={(event) => setPhoneInput(event.target.value)}
+            onChange={(event) =>
+              setPhoneInput(formatPakistanPhoneInput(event.target.value))
+            }
           />
           <p className="text-xs text-muted-foreground">{labels.phoneHint}</p>
         </div>

@@ -91,7 +91,7 @@ export async function saveApplicationDraftAction(
   }
 
   const created = await applicationWizardRepository.createDraft({
-    trackingId: generateTrackingId(),
+    trackingId: await generateTrackingId(),
     userId: user.id,
     agentId: user.role === "AGENT" ? user.id : null,
     serviceId: service.id,

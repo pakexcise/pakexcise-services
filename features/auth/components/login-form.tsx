@@ -22,6 +22,7 @@ type LoginFormLabels = {
   phoneOrCnic: string;
   phoneHint: string;
   phoneLoginHint: string;
+  phoneLoginPlaceholder: string;
   password: string;
   passwordHint: string;
   invalidPassword: string;
@@ -63,6 +64,7 @@ type LoginFormLabels = {
   methodPhone: string;
   forgotPassword: string;
   authError: string;
+  staleServerAction: string;
 };
 
 type LoginFormProps = {
@@ -106,6 +108,7 @@ function LoginFormContent({ labels, socialProviders, unified = false }: LoginFor
     loginPrompt: labels.loginPrompt,
     signupLink: labels.signupLink,
     loginLink: labels.loginLink,
+    staleServerAction: labels.staleServerAction,
   };
 
   const phoneLabels = {
@@ -113,6 +116,7 @@ function LoginFormContent({ labels, socialProviders, unified = false }: LoginFor
     phoneOrCnic: labels.phoneOrCnic,
     phoneHint: labels.phoneHint,
     phoneLoginHint: labels.phoneLoginHint,
+    phoneLoginPlaceholder: labels.phoneLoginPlaceholder,
     password: labels.password,
     invalidPassword: labels.invalidPassword,
     showPassword: labels.showPassword,
@@ -130,6 +134,7 @@ function LoginFormContent({ labels, socialProviders, unified = false }: LoginFor
     loginPrompt: labels.loginPrompt,
     signupLink: labels.signupLink,
     loginLink: labels.loginLink,
+    staleServerAction: labels.staleServerAction,
   };
 
   return (

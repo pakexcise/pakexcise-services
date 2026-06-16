@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -10,6 +10,12 @@ import {
   findUserByPhoneOrTempEmail,
   isTempPhoneEmail,
 } from "@/features/auth/lib/user-identity";
+import type {
+  AuthEligibilityResult,
+  EmailSignupInitResult,
+  LinkPhoneAndCnicResult,
+  PhoneLoginIdentityResult,
+} from "@/features/auth/types/otp-flow";
 import { isValidCnicInput, normalizeCnic, parsePhoneOrCnicInput } from "@/lib/validations/cnic";
 import { normalizePakistanPhone } from "@/lib/validations/phone";
 import { auth } from "@/server/auth/config";
@@ -20,28 +26,6 @@ import { encryptCnic } from "@/server/security/encryption";
 import { hashCnic } from "@/server/security/cnic-hash";
 
 const emailSchema = z.string().trim().email();
-
-export type AuthEligibilityResult =
-  | { ok: true; resumeVerification?: boolean }
-  | {
-      ok: false;
-      code:
-        | "ACCOUNT_NOT_FOUND"
-        | "ACCOUNT_EXISTS"
-        | "EMAIL_NOT_VERIFIED"
-        | "PHONE_EXISTS"
-        | "CNIC_EXISTS"
-        | "GOOGLE_ACCOUNT_EXISTS"
-        | "INVALID_INPUT";
-    };
-
-export type EmailSignupInitResult =
-  | { ok: true; delivery: SendEmailResult | null }
-  | { ok: false; code: "ACCOUNT_EXISTS" | "INVALID_INPUT" | "SIGNUP_FAILED" };
-
-export type PhoneLoginIdentityResult =
-  | { ok: true; email: string }
-  | { ok: false; code: "ACCOUNT_NOT_FOUND" | "INVALID_INPUT" };
 
 export async function checkEmailAuthEligibility(
   email: string,
@@ -191,10 +175,7 @@ export async function linkPhoneAndCnicToUser(
   phoneInput: string,
   email: string,
   cnicInput: string,
-): Promise<
-  | { ok: true }
-  | { ok: false; code: "INVALID_INPUT" | "CNIC_EXISTS" | "PHONE_EXISTS" }
-> {
+): Promise<LinkPhoneAndCnicResult> {
   const normalizedPhone = normalizePakistanPhone(phoneInput);
   const normalizedCnic = normalizeCnic(cnicInput);
   const parsedEmail = emailSchema.safeParse(email);

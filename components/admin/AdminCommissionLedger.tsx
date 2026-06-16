@@ -1045,7 +1045,7 @@ export function AdminCommissionLedger({
                     trackingId: event.target.value,
                   }))
                 }
-                placeholder="PAX-YYYYMMDD-XXXXXX"
+                placeholder="PE-00001"
               />
             </div>
             <div className="space-y-1.5">
