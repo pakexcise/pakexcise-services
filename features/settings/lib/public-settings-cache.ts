@@ -3,8 +3,12 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 
 import {
+  defaultBrandingSettings,
+  defaultBusinessSettings,
   defaultFeatureFlagSettings,
+  defaultFormsSettings,
   defaultPaymentSettings,
+  defaultPublicUiSettings,
   defaultSeoSettings,
   defaultTrackingSettings,
 } from "@/features/settings/lib/defaults";
@@ -13,11 +17,15 @@ import {
   SETTINGS_KEYS,
 } from "@/features/settings/lib/keys";
 import { mergeLegacyBusinessSettings } from "@/features/settings/lib/merge-legacy";
+import { normalizeBusinessSettings } from "@/features/settings/lib/resolve-public-contact";
 import type {
+  BrandingSettings,
   BusinessSettings,
   FeatureFlagSettings,
+  FormsSettings,
   PaymentSettings,
   PublicSettingsSnapshot,
+  PublicUiSettings,
   SeoSettings,
   TrackingSettings,
 } from "@/features/settings/types";
@@ -36,6 +44,9 @@ function mergeWithDefaults<T extends Record<string, unknown>>(
 
 const PUBLIC_SETTINGS_LOOKUP_KEYS = [
   SETTINGS_KEYS.business,
+  SETTINGS_KEYS.publicUi,
+  SETTINGS_KEYS.forms,
+  SETTINGS_KEYS.branding,
   SETTINGS_KEYS.payment,
   SETTINGS_KEYS.seo,
   SETTINGS_KEYS.tracking,
@@ -51,6 +62,15 @@ async function loadPublicSettingsSnapshot(): Promise<PublicSettingsSnapshot> {
 
   const businessRaw = stored[SETTINGS_KEYS.business] as
     | Partial<BusinessSettings>
+    | undefined;
+  const publicUiRaw = stored[SETTINGS_KEYS.publicUi] as
+    | Partial<PublicUiSettings>
+    | undefined;
+  const formsRaw = stored[SETTINGS_KEYS.forms] as
+    | Partial<FormsSettings>
+    | undefined;
+  const brandingRaw = stored[SETTINGS_KEYS.branding] as
+    | Partial<BrandingSettings>
     | undefined;
   const paymentRaw = stored[SETTINGS_KEYS.payment] as
     | Partial<PaymentSettings>
@@ -77,16 +97,31 @@ async function loadPublicSettingsSnapshot(): Promise<PublicSettingsSnapshot> {
       }
     | undefined;
 
+  const paymentDefaults = defaultPaymentSettings();
+  const paymentMerged = mergeWithDefaults(paymentDefaults, paymentRaw ?? null);
+
   return {
     business: mergeLegacyBusinessSettings({
       stored: businessRaw ?? null,
       legacySite: legacySite ?? null,
       legacyWhatsapp: legacyWhatsapp ?? null,
     }),
-    payment: mergeWithDefaults(defaultPaymentSettings(), paymentRaw ?? null),
+    publicUi: mergeWithDefaults(defaultPublicUiSettings(), publicUiRaw ?? null),
+    forms: mergeWithDefaults(defaultFormsSettings(), formsRaw ?? null),
+    branding: mergeWithDefaults(defaultBrandingSettings(), brandingRaw ?? null),
+    payment: {
+      ...paymentMerged,
+      paymentMethods:
+        paymentRaw?.paymentMethods && paymentRaw.paymentMethods.length > 0
+          ? paymentRaw.paymentMethods
+          : paymentDefaults.paymentMethods,
+    },
     seo: mergeWithDefaults(defaultSeoSettings(), seoRaw ?? null),
     tracking: mergeWithDefaults(defaultTrackingSettings(), trackingRaw ?? null),
-    features: mergeWithDefaults(defaultFeatureFlagSettings(), featuresRaw ?? null),
+    features: mergeWithDefaults(
+      defaultFeatureFlagSettings(),
+      featuresRaw ?? null,
+    ),
   };
 }
 
@@ -105,7 +140,22 @@ export async function getPublicSettings(): Promise<PublicSettingsSnapshot> {
 
 export async function getBusinessSettings(): Promise<BusinessSettings> {
   const settings = await getPublicSettings();
-  return settings.business;
+  return normalizeBusinessSettings(settings.business);
+}
+
+export async function getPublicUiSettings(): Promise<PublicUiSettings> {
+  const settings = await getPublicSettings();
+  return settings.publicUi;
+}
+
+export async function getFormsSettings(): Promise<FormsSettings> {
+  const settings = await getPublicSettings();
+  return settings.forms;
+}
+
+export async function getBrandingSettings(): Promise<BrandingSettings> {
+  const settings = await getPublicSettings();
+  return settings.branding;
 }
 
 export async function getPaymentSettings(): Promise<PaymentSettings> {

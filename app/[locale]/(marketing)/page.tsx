@@ -21,7 +21,7 @@ import { JsonLd } from "@/components/marketing/json-ld";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
-import { getContactPageSettings } from "@/features/contact-page/lib/contact-page-settings-cache";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
@@ -43,13 +43,17 @@ import {
   getServiceRegionLabel,
 } from "@/features/services/lib/service-regions";
 import {
+  getBusinessSettings,
   getFeatureFlagSettings,
   getSeoSettings,
 } from "@/features/settings/lib/public-settings-cache";
+import {
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
 import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
-import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import {
   blogPostRepository,
   documentRequirementRepository,
@@ -107,7 +111,7 @@ export default async function HomePage() {
   const [
     settings,
     content,
-    contactSettings,
+    businessSettings,
     seoSettings,
     featureFlags,
     categoryGroups,
@@ -124,7 +128,7 @@ export default async function HomePage() {
     getHomePageSettings().then((value) =>
       localizeHomePageSettings(value, locale),
     ),
-    getContactPageSettings(),
+    getBusinessSettings(),
     getSeoSettings(),
     getFeatureFlagSettings(),
     serviceCategoryRepository.listPublicGrouped(),
@@ -154,10 +158,9 @@ export default async function HomePage() {
   }
 
   const serviceCardLabels = buildServiceCardLabels(tCommon, tMarketing);
-  const whatsappHref = buildWhatsAppUrl(
-    contactSettings.whatsappNumber,
-    contactSettings.whatsappPrefillMessage,
-  );
+  const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
+  const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings, locale);
+  const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
   const faqItems = mapFaqsForLocale(faqs, locale);
   const baseUrl = absoluteUrl("/");
   const orderedSections = getOrderedActiveHomeSections(settings);
@@ -223,8 +226,8 @@ export default async function HomePage() {
         return (
           <HomeSectionShell key={key} tone={tone}>
             <ContactSupportOptionsSection
-              whatsappPhone={contactSettings.whatsappNumber}
-              whatsappMessage={contactSettings.whatsappPrefillMessage}
+              whatsappPhone={whatsappLinkNumber}
+              whatsappMessage={whatsappMessage}
               requestHref="/contact#contact-form"
               note={content.optionsNote}
               labels={supportOptionLabels}

@@ -24,6 +24,11 @@ import {
   updateSocialLinkAction,
 } from "@/features/social/admin/actions/social-actions";
 import type { SocialPanelLabels } from "@/features/social/admin/lib/labels";
+import {
+  getSocialPlatformIcon,
+  getSocialPlatformLabel,
+  SOCIAL_PLATFORMS,
+} from "@/features/social/lib/platforms";
 import type { AdminSocialLinkItem } from "@/server/repositories/admin-social-repository";
 
 type SocialLinksPanelProps = {
@@ -186,10 +191,14 @@ export function SocialLinksPanel({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {links.map((link) => (
+              {[...links]
+                .sort((a, b) => a.displayOrder - b.displayOrder)
+                .map((link) => (
                 <TableRow key={link.id}>
                   <TableCell>{link.displayOrder}</TableCell>
-                  <TableCell className="font-mono text-xs">{link.platform}</TableCell>
+                  <TableCell className="text-xs">
+                    {getSocialPlatformLabel(link.platform)}
+                  </TableCell>
                   <TableCell className="max-w-[200px] truncate text-xs">
                     {link.url}
                   </TableCell>
@@ -254,17 +263,30 @@ export function SocialLinksPanel({
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label={labels.platform}>
-            <Input
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={draft.platform}
-              onChange={(event) => updateDraft("platform", event.target.value)}
-              placeholder="facebook"
-            />
+              onChange={(event) => {
+                const platform = event.target.value;
+                updateDraft("platform", platform);
+                if (platform) {
+                  updateDraft("iconName", getSocialPlatformIcon(platform));
+                }
+              }}
+            >
+              <option value="">{labels.platformPlaceholder}</option>
+              {SOCIAL_PLATFORMS.map((platform) => (
+                <option key={platform.id} value={platform.id}>
+                  {platform.label}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label={labels.iconName}>
             <Input
               value={draft.iconName}
-              onChange={(event) => updateDraft("iconName", event.target.value)}
-              placeholder="Facebook"
+              readOnly
+              className="bg-muted/50"
             />
           </Field>
           <Field label={labels.url} className="md:col-span-2">

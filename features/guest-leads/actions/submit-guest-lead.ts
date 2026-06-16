@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 
 import { generateGuestLeadReferenceId } from "@/features/guest-leads/lib/reference-id";
+import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
 import {
   errorResult,
   parseInput,
@@ -35,6 +36,12 @@ export async function submitGuestLeadAction(
     await enforceRateLimit(publicFormRateLimit, `guest-lead:${rateLimitKey}`);
   } catch {
     return errorResult("Too many requests. Please try again in a minute.");
+  }
+
+  const featureFlags = await getFeatureFlagSettings();
+
+  if (!featureFlags.submitRequestEnabled) {
+    return errorResult("Service requests are currently unavailable.");
   }
 
   const parsed = parseInput(submitGuestLeadSchema, input);

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import { cookies } from "next/headers";
 
 import "@/app/globals.css";
+import { BrandThemeStyles } from "@/components/theme/BrandThemeStyles";
 import { defaultLocale, LOCALE_COOKIE_NAME } from "@/i18n/config";
 import { isValidLocale } from "@/i18n/locale";
 
@@ -37,11 +38,13 @@ export default async function RootLayout({
       lang={locale}
       dir={direction}
       translate="no"
+      data-brand-theme=""
       suppressHydrationWarning
     >
       <head>
         <meta name="google" content="notranslate" />
         <meta httpEquiv="Content-Language" content={locale} />
+        <BrandThemeStyles />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliq.variable} min-h-screen bg-background font-sans text-foreground antialiased ${locale === "ur" ? "font-urdu" : ""}`}

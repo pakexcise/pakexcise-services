@@ -11,6 +11,7 @@ export async function getSocialPanelLabels() {
     addLink: t("addLink"),
     editLink: t("editLink"),
     platform: t("platform"),
+    platformPlaceholder: t("platformPlaceholder"),
     url: t("url"),
     iconName: t("iconName"),
     labelEn: t("labelEn"),

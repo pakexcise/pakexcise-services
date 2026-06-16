@@ -127,7 +127,7 @@ export function buildLocalBusinessJsonLd(
     | "localBusinessPriceRange"
   >,
 ) {
-  return {
+  const payload: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: seo?.localBusinessName ?? "PakExcise.com",
@@ -136,8 +136,14 @@ export function buildLocalBusinessJsonLd(
       seo?.localBusinessDescriptionEn ??
       "Private excise facilitation service for Pakistan. Not affiliated with any government body.",
     areaServed: seo?.localBusinessAreaServed ?? "Pakistan",
-    priceRange: seo?.localBusinessPriceRange ?? "$$",
   };
+
+  const priceRange = seo?.localBusinessPriceRange?.trim();
+  if (priceRange) {
+    payload.priceRange = priceRange;
+  }
+
+  return payload;
 }
 
 export function buildBreadcrumbJsonLd(

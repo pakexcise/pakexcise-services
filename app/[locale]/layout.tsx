@@ -16,6 +16,11 @@ import {
 } from "@/features/seo/lib/metadata";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
 import { buildTrackingRuntimeConfig } from "@/features/settings/lib/tracking-runtime";
+import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
+import {
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
 import { routing, type Locale } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/utils";
 import { getCurrentLocale, isValidLocale } from "@/server/i18n/get-locale";
@@ -50,8 +55,9 @@ export default async function LocaleLayout({
   ]);
 
   const publicSettings = await getPublicSettings();
-  const { business, seo, tracking } = publicSettings;
+  const { business, seo, tracking, features, publicUi } = publicSettings;
   const trackingRuntime = buildTrackingRuntimeConfig(tracking);
+  const localized = localizeGlobalSiteContent(business, locale, publicUi);
 
   const baseUrl = absoluteUrl("/");
   const siteJsonLd = [
@@ -73,8 +79,17 @@ export default async function LocaleLayout({
             </AnalyticsProvider>
           </Suspense>
           <WhatsAppFAB
-            phoneNumber={business.whatsappNumber}
-            message={business.whatsappDefaultMessage}
+            phoneNumber={
+              features.floatingWhatsappEnabled
+                ? resolveWhatsappLinkNumber(business)
+                : null
+            }
+            message={
+              features.floatingWhatsappEnabled
+                ? localized.floatingWhatsappMessage
+                : null
+            }
+            position={publicUi.floatingWhatsappPosition}
             ariaLabel={tCommon("whatsappHelp")}
           />
         </ThemeProvider>

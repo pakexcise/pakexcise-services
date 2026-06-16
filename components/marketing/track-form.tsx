@@ -20,6 +20,8 @@ type TrackFormProps = {
   loginLabel: string;
   dashboardLabel: string;
   locale: "en" | "ur";
+  whatsappPhone?: string;
+  whatsappDefaultMessage?: string;
   labels: {
     error: string;
     rateLimited: string;
@@ -53,6 +55,8 @@ export function TrackForm({
   loginLabel,
   dashboardLabel,
   locale,
+  whatsappPhone,
+  whatsappDefaultMessage,
   labels,
   initialTrackingId = "",
 }: TrackFormProps) {
@@ -128,7 +132,7 @@ export function TrackForm({
       : labels.whatsappMessage;
 
   const whatsappHref = buildWhatsAppUrl(
-    siteConfig.contact.whatsapp,
+    whatsappPhone ?? siteConfig.contact.whatsapp,
     whatsappMessage,
   );
 

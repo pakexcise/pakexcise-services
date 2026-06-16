@@ -32,3 +32,27 @@ export async function requireGuidesEnabled(): Promise<void> {
     notFound();
   }
 }
+
+export async function requireReviewsEnabled(): Promise<void> {
+  const flags = await getFeatureFlags();
+
+  if (!flags.reviewsEnabled) {
+    notFound();
+  }
+}
+
+export async function requireContactFormEnabled(): Promise<void> {
+  const flags = await getFeatureFlags();
+
+  if (!flags.contactFormEnabled) {
+    notFound();
+  }
+}
+
+export async function requireSubmitRequestEnabled(): Promise<void> {
+  const flags = await getFeatureFlags();
+
+  if (!flags.submitRequestEnabled) {
+    notFound();
+  }
+}

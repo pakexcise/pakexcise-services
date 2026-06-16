@@ -8,6 +8,8 @@ import { pickLocalized } from "@/lib/i18n/content";
 import { redirectRepository, serviceRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { redirect } from "@/i18n/navigation";
+import { requireSubmitRequestEnabled } from "@/features/settings/lib/feature-gates";
+import { getFormsSettings } from "@/features/settings/lib/public-settings-cache";
 import { getServiceAssignedRegions } from "@/features/services/lib/service-regions";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +44,8 @@ export async function generateMetadata({
 }
 
 export default async function GuestRequestPage({ params }: GuestRequestPageProps) {
+  await requireSubmitRequestEnabled();
+
   const { serviceSlug } = await params;
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
@@ -64,6 +68,11 @@ export default async function GuestRequestPage({ params }: GuestRequestPageProps
   const t = await getTranslations("marketing");
   const tNav = await getTranslations("nav");
   const tGuest = await getTranslations("marketing.guestRequest");
+  const formsSettings = await getFormsSettings();
+  const submitSuccessDescription =
+    locale === "ur"
+      ? formsSettings.submitRequestSuccessMessageUr
+      : formsSettings.submitRequestSuccessMessageEn;
 
   const name = pickLocalized(locale, {
     en: service.nameEn,
@@ -125,7 +134,7 @@ export default async function GuestRequestPage({ params }: GuestRequestPageProps
             submit: tGuest("submit"),
             submitting: tGuest("submitting"),
             successTitle: tGuest("successTitle"),
-            successDescription: tGuest("successDescription"),
+            successDescription: submitSuccessDescription,
             backToService: tGuest("backToService"),
             error: tGuest("error"),
             whatsappFollowUp: tGuest("whatsappFollowUp"),

@@ -13,16 +13,9 @@ export type SettingsPanelLabels = {
   secretsNote: string;
   business: {
     siteName: string;
-    businessEmail: string;
-    phoneNumber: string;
-    whatsappNumber: string;
-    whatsappDefaultMessage: string;
-    businessHoursEn: string;
-    businessHoursUr: string;
     addressEn: string;
     addressUr: string;
-    disclaimerEn: string;
-    disclaimerUr: string;
+    globalSiteNote: string;
   };
   payment: {
     jazzCashInstructionsEn: string;
@@ -38,6 +31,20 @@ export type SettingsPanelLabels = {
     cardGatewayEnabled: string;
     gatewayPhase2Note: string;
     phase2Hint: string;
+    methodsTitle: string;
+    methodsEmpty: string;
+    addMethod: string;
+    removeMethod: string;
+    methodLabel: string;
+    methodNameEn: string;
+    methodNameUr: string;
+    accountTitle: string;
+    accountNumber: string;
+    iban: string;
+    methodInstructionsEn: string;
+    methodInstructionsUr: string;
+    methodActive: string;
+    displayOrder: string;
   };
   seo: {
     defaultMetaTitleEn: string;
@@ -45,6 +52,9 @@ export type SettingsPanelLabels = {
     defaultMetaDescriptionEn: string;
     defaultMetaDescriptionUr: string;
     defaultOgImage: string;
+    defaultTwitterImage: string;
+    canonicalDomain: string;
+    sitemapEnabled: string;
     organizationName: string;
     organizationDescriptionEn: string;
     organizationDescriptionUr: string;
@@ -54,6 +64,7 @@ export type SettingsPanelLabels = {
     localBusinessDescriptionEn: string;
     localBusinessDescriptionUr: string;
     localBusinessPriceRange: string;
+    localBusinessPriceRangeOptional: string;
     localBusinessAreaServed: string;
     organizationSection: string;
     localBusinessSection: string;
@@ -75,6 +86,11 @@ export type SettingsPanelLabels = {
     agentModuleEnabled: string;
     blogEnabled: string;
     guidesEnabled: string;
+    reviewsEnabled: string;
+    contactFormEnabled: string;
+    submitRequestEnabled: string;
+    floatingWhatsappEnabled: string;
+    whatsappChannelEnabled: string;
     whatsappNotificationsEnabled: string;
     smsFallbackEnabled: string;
     maintenanceMode: string;

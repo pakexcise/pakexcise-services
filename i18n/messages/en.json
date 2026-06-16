@@ -1322,7 +1322,8 @@
       "guides": "Guides",
       "auditLogs": "Audit logs",
       "settings": "Settings",
-      "users": "Admin users"
+      "users": "Admin users",
+      "siteSettings": "Site settings"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -2387,6 +2388,94 @@
         "emptyDescription": "System settings controls will appear here."
       }
     },
+    "siteSettings": {
+      "title": "Global site settings",
+      "description": "Manage contact, header, forms, branding, footer, and social links used across the public website.",
+      "save": "Save site settings",
+      "saving": "Saving…",
+      "saved": "Site settings saved. Public pages will update shortly.",
+      "error": "Could not save site settings.",
+      "tabs": {
+        "contact": "Contact & support",
+        "header": "Header & CTAs",
+        "fab": "Floating WhatsApp",
+        "contactForm": "Contact form",
+        "submitRequest": "Submit request",
+        "footer": "Footer & legal",
+        "branding": "Branding"
+      },
+      "contact": {
+        "businessEmail": "Support email",
+        "phoneDisplayNumber": "Phone display number",
+        "whatsappLinkNumber": "WhatsApp link number (wa.me)",
+        "whatsappDefaultMessageEn": "Default WhatsApp message (English)",
+        "whatsappDefaultMessageUr": "Default WhatsApp message (Urdu)",
+        "supportDaysEn": "Support days (English)",
+        "supportDaysUr": "Support days (Urdu)",
+        "supportHoursEn": "Support hours (English)",
+        "supportHoursUr": "Support hours (Urdu)",
+        "whatsappChannelUrl": "WhatsApp Channel URL"
+      },
+      "header": {
+        "headerWhatsappEnabled": "Show WhatsApp button in header",
+        "headerWhatsappLabelEn": "Header WhatsApp label (English)",
+        "headerWhatsappLabelUr": "Header WhatsApp label (Urdu)",
+        "announcementBarEnabled": "Show announcement bar on mobile",
+        "announcementBarTextEn": "Announcement bar text (English)",
+        "announcementBarTextUr": "Announcement bar text (Urdu)",
+        "defaultApplyCtaTextEn": "Default Apply CTA (English)",
+        "defaultApplyCtaTextUr": "Default Apply CTA (Urdu)",
+        "defaultSubmitRequestCtaTextEn": "Default Submit Request CTA (English)",
+        "defaultSubmitRequestCtaTextUr": "Default Submit Request CTA (Urdu)"
+      },
+      "fab": {
+        "floatingWhatsappMessageEn": "Floating button message (English)",
+        "floatingWhatsappMessageUr": "Floating button message (Urdu)",
+        "floatingWhatsappPosition": "Floating button position",
+        "positionBottomRight": "Bottom right",
+        "positionBottomLeft": "Bottom left",
+        "featureFlagNote": "Enable or disable the floating button in System settings → Feature flags."
+      },
+      "contactForm": {
+        "contactRecipientEmail": "Form recipient email",
+        "contactSuccessMessageEn": "Success message (English)",
+        "contactSuccessMessageUr": "Success message (Urdu)",
+        "contactAdminNotificationEnabled": "Notify admin on submission",
+        "contactAutoReplyEnabled": "Send auto-reply to customer (when available)",
+        "featureFlagNote": "Enable or disable the contact form in System settings → Feature flags."
+      },
+      "submitRequest": {
+        "submitRequestSuccessMessageEn": "Success message (English)",
+        "submitRequestSuccessMessageUr": "Success message (Urdu)",
+        "submitRequestSaveToSupportRequests": "Save submissions to support requests",
+        "submitRequestNotifyAdminEnabled": "Notify admin on submission",
+        "featureFlagNote": "Enable or disable guest service requests in System settings → Feature flags."
+      },
+      "footer": {
+        "footerDescriptionEn": "Footer description (English)",
+        "footerDescriptionUr": "Footer description (Urdu)",
+        "disclaimerEn": "Legal disclaimer (English)",
+        "disclaimerUr": "Legal disclaimer (Urdu)"
+      },
+      "branding": {
+        "logoPath": "Logo (light mode)",
+        "logoDarkPath": "Logo (dark mode)",
+        "footerLogoPath": "Footer logo",
+        "faviconPath": "Favicon path",
+        "defaultOgImagePath": "Default OG image",
+        "defaultTwitterImagePath": "Default Twitter/X image",
+        "defaultBlogFallbackImagePath": "Blog fallback image",
+        "defaultGuideFallbackImagePath": "Guide fallback image",
+        "defaultServiceFallbackImagePath": "Service fallback image",
+        "defaultRegionFallbackImagePath": "Region/city fallback image",
+        "primaryBrandColor": "Primary brand color",
+        "secondaryBrandColor": "Secondary brand color"
+      },
+      "social": {
+        "title": "Social links",
+        "description": "Manage Facebook, Instagram, TikTok, YouTube, LinkedIn, X/Twitter, WhatsApp Chat, and WhatsApp Channel links shown on the public site."
+      }
+    },
     "settingsPanel": {
       "title": "System settings",
       "description": "Manage business details, payments, SEO defaults, tracking IDs, and feature flags.",
@@ -2404,16 +2493,9 @@
       },
       "business": {
         "siteName": "Site name",
-        "businessEmail": "Business email",
-        "phoneNumber": "Phone number",
-        "whatsappNumber": "WhatsApp number (digits only)",
-        "whatsappDefaultMessage": "WhatsApp default message",
-        "businessHoursEn": "Business hours (English)",
-        "businessHoursUr": "Business hours (Urdu)",
         "addressEn": "Address / coverage (English)",
         "addressUr": "Address / coverage (Urdu)",
-        "disclaimerEn": "Private facilitation disclaimer (English)",
-        "disclaimerUr": "Private facilitation disclaimer (Urdu)"
+        "globalSiteNote": "Contact, WhatsApp, footer, branding, and social links are managed in Global site settings (Super Admin)."
       },
       "payment": {
         "jazzCashInstructionsEn": "JazzCash instructions (English)",
@@ -2428,7 +2510,21 @@
         "easypaisaGatewayEnabled": "Easypaisa gateway (Phase 2 placeholder)",
         "cardGatewayEnabled": "Card gateway (Phase 2 placeholder)",
         "gatewayPhase2Note": "Gateway Phase 2 note",
-        "phase2Hint": "Online gateways are placeholders until Phase 2. Manual payment instructions are shown on invoices."
+        "phase2Hint": "Online gateways are placeholders until Phase 2. Manual payment instructions are shown on invoices.",
+        "methodsTitle": "Structured payment methods",
+        "methodsEmpty": "No structured payment methods yet. Legacy JazzCash/Easypaisa/bank fields above still apply.",
+        "addMethod": "Add payment method",
+        "removeMethod": "Remove",
+        "methodLabel": "Method",
+        "methodNameEn": "Method name (English)",
+        "methodNameUr": "Method name (Urdu)",
+        "accountTitle": "Account title",
+        "accountNumber": "Account number",
+        "iban": "IBAN",
+        "methodInstructionsEn": "Instructions (English)",
+        "methodInstructionsUr": "Instructions (Urdu)",
+        "methodActive": "Active",
+        "displayOrder": "Display order"
       },
       "seo": {
         "defaultMetaTitleEn": "Default meta title (English)",
@@ -2436,6 +2532,9 @@
         "defaultMetaDescriptionEn": "Default meta description (English)",
         "defaultMetaDescriptionUr": "Default meta description (Urdu)",
         "defaultOgImage": "Default OG image path or URL",
+        "defaultTwitterImage": "Default Twitter/X image path or URL",
+        "canonicalDomain": "Canonical domain (https://…)",
+        "sitemapEnabled": "Sitemap enabled",
         "organizationSection": "Organization schema",
         "organizationName": "Organization name",
         "organizationDescriptionEn": "Organization description (English)",
@@ -2446,7 +2545,8 @@
         "localBusinessName": "Local business name",
         "localBusinessDescriptionEn": "Local business description (English)",
         "localBusinessDescriptionUr": "Local business description (Urdu)",
-        "localBusinessPriceRange": "Price range",
+        "localBusinessPriceRange": "Price range (optional)",
+        "localBusinessPriceRangeOptional": "Leave empty to omit from JSON-LD",
         "localBusinessAreaServed": "Local business area served"
       },
       "tracking": {
@@ -2466,6 +2566,11 @@
         "agentModuleEnabled": "Agent module enabled",
         "blogEnabled": "Blog enabled",
         "guidesEnabled": "Guides enabled",
+        "reviewsEnabled": "Reviews page enabled",
+        "contactFormEnabled": "Contact form enabled",
+        "submitRequestEnabled": "Submit request (guest leads) enabled",
+        "floatingWhatsappEnabled": "Floating WhatsApp button enabled",
+        "whatsappChannelEnabled": "WhatsApp Channel link enabled",
         "whatsappNotificationsEnabled": "WhatsApp notifications enabled",
         "smsFallbackEnabled": "SMS fallback enabled",
         "maintenanceMode": "Maintenance mode (public marketing pages)",
@@ -2543,7 +2648,7 @@
         "internalNotes": "Internal admin notes",
         "internalNotesHint": "Visible to admin only. Not shown on public pages.",
         "referenceLinksJson": "Reference links JSON",
-        "referenceLinksHint": "Optional array of objects: [{\"labelEn\":\"...\",\"labelUr\":\"...\",\"url\":\"https://...\"}]",
+        "referenceLinksHint": "Optional JSON array. Each item needs labelEn, labelUr, and url (HTTPS).",
         "category": "Service category",
         "selectCategory": "Select category",
         "parentService": "Parent service (sub-service of)",
@@ -2959,6 +3064,7 @@
       "addLink": "Add social link",
       "editLink": "Edit social link",
       "platform": "Platform",
+      "platformPlaceholder": "Select platform",
       "url": "URL",
       "iconName": "Lucide icon name",
       "labelEn": "Label (English)",

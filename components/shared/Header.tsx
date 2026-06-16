@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { disclaimerBannerClassName } from "@/lib/styles/disclaimer-banner";
-import { siteConfig } from "@/config/site";
 
 const navItems = [
   { href: "/services", key: "services" },
@@ -27,6 +26,12 @@ const navItems = [
 type HeaderProps = {
   whatsappPhone?: string | null;
   whatsappMessage?: string | null;
+  whatsappLabel?: string | null;
+  headerWhatsappEnabled?: boolean;
+  announcementBarEnabled?: boolean;
+  announcementBarText?: string | null;
+  logoPath?: string | null;
+  logoDarkPath?: string | null;
   embedded?: boolean;
 };
 
@@ -38,17 +43,26 @@ function buildWhatsAppUrl(phoneNumber: string, message: string): string {
 export function Header({
   whatsappPhone,
   whatsappMessage,
+  whatsappLabel,
+  headerWhatsappEnabled = true,
+  announcementBarEnabled = true,
+  announcementBarText,
+  logoPath,
+  logoDarkPath,
   embedded = false,
 }: HeaderProps) {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
-  const tDisclaimer = useTranslations("disclaimer");
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const phone = whatsappPhone ?? siteConfig.contact.whatsapp;
-  const message = whatsappMessage ?? siteConfig.contact.whatsappMessage;
-  const whatsappHref = buildWhatsAppUrl(phone, message);
+  const showWhatsapp = headerWhatsappEnabled && Boolean(whatsappPhone?.trim());
+  const whatsappHref =
+    showWhatsapp && whatsappPhone && whatsappMessage
+      ? buildWhatsAppUrl(whatsappPhone, whatsappMessage)
+      : null;
+  const desktopWhatsappLabel = whatsappLabel?.trim() || tCommon("whatsapp");
+  const mobileWhatsappLabel = whatsappLabel?.trim() || tCommon("whatsappHelp");
 
   return (
     <header
@@ -57,22 +71,29 @@ export function Header({
           "sticky top-0 z-40 isolate border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
       )}
     >
-      <div
-        className={cn(
-          "px-4 py-1.5 text-center text-xs leading-snug xl:hidden",
-          embedded ? "border-b border-border/60" : "border-b",
-          disclaimerBannerClassName,
-        )}
-      >
-        {tDisclaimer("short")}
-      </div>
+      {announcementBarEnabled && announcementBarText ? (
+        <div
+          className={cn(
+            "px-4 py-1.5 text-center text-xs leading-snug xl:hidden",
+            embedded ? "border-b border-border/60" : "border-b",
+            disclaimerBannerClassName,
+          )}
+        >
+          {announcementBarText}
+        </div>
+      ) : null}
 
       <div className="container-site flex min-h-16 items-center justify-between gap-3 py-2">
         <Link
           href="/"
           className="flex min-w-0 max-w-[55%] shrink-0 items-center text-start sm:max-w-none"
         >
-          <SiteLogo priority imageClassName="max-h-9 sm:max-h-10" />
+          <SiteLogo
+            priority
+            imageClassName="max-h-9 sm:max-h-10"
+            logoPath={logoPath}
+            logoDarkPath={logoDarkPath}
+          />
         </Link>
 
         <nav
@@ -96,24 +117,26 @@ export function Header({
         </nav>
 
         <div className="flex shrink-0 items-center justify-end gap-1 sm:gap-1.5">
-          <Button
-            asChild
-            size="sm"
-            variant="secondary"
-            className="hidden bg-[#25D366] px-2.5 text-white hover:bg-[#20bd5a] md:inline-flex"
-          >
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-analytics-event="click_whatsapp"
-              data-analytics-placement="header_desktop"
-              aria-label={tCommon("whatsapp")}
+          {showWhatsapp && whatsappHref ? (
+            <Button
+              asChild
+              size="sm"
+              variant="secondary"
+              className="hidden bg-[#25D366] px-2.5 text-white hover:bg-[#20bd5a] md:inline-flex"
             >
-              <MessageCircle className="size-4" />
-              <span className="hidden lg:inline">{tCommon("whatsapp")}</span>
-            </a>
-          </Button>
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-analytics-event="click_whatsapp"
+                data-analytics-placement="header_desktop"
+                aria-label={desktopWhatsappLabel}
+              >
+                <MessageCircle className="size-4" />
+                <span className="hidden lg:inline">{desktopWhatsappLabel}</span>
+              </a>
+            </Button>
+          ) : null}
 
           <LanguageSwitcher />
           <ThemeToggle />
@@ -169,21 +192,23 @@ export function Header({
                 logoutLabel={t("logout")}
                 onNavigate={() => setMobileOpen(false)}
               />
-              <Button
-                asChild
-                className="justify-start bg-[#25D366] text-white hover:bg-[#20bd5a] md:hidden"
-              >
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-analytics-event="click_whatsapp"
-                  data-analytics-placement="header_mobile"
+              {showWhatsapp && whatsappHref ? (
+                <Button
+                  asChild
+                  className="justify-start bg-[#25D366] text-white hover:bg-[#20bd5a] md:hidden"
                 >
-                  <MessageCircle className="size-4" />
-                  {tCommon("whatsappHelp")}
-                </a>
-              </Button>
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-analytics-event="click_whatsapp"
+                    data-analytics-placement="header_mobile"
+                  >
+                    <MessageCircle className="size-4" />
+                    {mobileWhatsappLabel}
+                  </a>
+                </Button>
+              ) : null}
             </div>
           </div>
         </nav>

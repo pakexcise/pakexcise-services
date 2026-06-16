@@ -3,9 +3,20 @@ import { getTranslations } from "next-intl/server";
 
 import { SocialLinks } from "@/components/marketing/social-links";
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { getContactPageSettings, localizeContactPageSettings } from "@/features/contact-page/lib/contact-page-settings-cache";
-import { getHomePageSettings, localizeHomePageSettings } from "@/features/home-page/lib/home-page-settings-cache";
-import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
+import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
+import {
+  getBrandingSettings,
+  getBusinessSettings,
+  getFeatureFlagSettings,
+  getPublicUiSettings,
+} from "@/features/settings/lib/public-settings-cache";
+import {
+  resolvePhoneDisplayNumber,
+  resolveSupportEmail,
+  resolveWhatsappChannelUrl,
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
 import { Link } from "@/i18n/navigation";
 import { buildTelHref } from "@/lib/contact/build-tel-href";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
@@ -62,33 +73,36 @@ export async function Footer() {
   let regions: Awaited<ReturnType<typeof regionRepository.listPublic>> = [];
   let socialLinks: Awaited<ReturnType<typeof getActiveSocialLinks>> = [];
   let description = t("description");
-  let contactEmail = "info@pakexcise.com";
-  let contactPhone = "0345-0664441";
-  let supportDays = "Monday to Sunday";
-  let supportHours = "7:00 AM – 12:00 PM";
-  let whatsappHref = buildWhatsAppUrl(
-    "0345-0664441",
-    "Hi PakExcise, I need help with a service.",
-  );
-  let whatsappChannelUrl = "https://whatsapp.com/channel/0029VbCsDJXHLHQUel3u8C1O";
+  let contactEmail = "";
+  let contactPhone = "";
+  let supportDays = "";
+  let supportHours = "";
+  let privateNotice = t("privateNotice");
+  let whatsappHref = "";
+  let whatsappChannelUrl = "";
   let showBlog = true;
   let showGuides = true;
+  let showWhatsappChannel = true;
+  let footerLogoPath: string | undefined;
+  let logoDarkPath: string | undefined;
 
   try {
     const [
       servicesResult,
       regionsResult,
       socialResult,
-      contactSettings,
-      homeSettings,
+      business,
       featureFlags,
+      branding,
+      publicUi,
     ] = await Promise.all([
       getFeaturedServices(6),
       regionRepository.listPublic(),
       getActiveSocialLinks(),
-      getContactPageSettings(),
-      getHomePageSettings(),
+      getBusinessSettings(),
       getFeatureFlagSettings(),
+      getBrandingSettings(),
+      getPublicUiSettings(),
     ]);
 
     services = servicesResult;
@@ -96,19 +110,22 @@ export async function Footer() {
     socialLinks = socialResult;
     showBlog = featureFlags.blogEnabled;
     showGuides = featureFlags.guidesEnabled;
+    showWhatsappChannel = featureFlags.whatsappChannelEnabled;
 
-    const contactContent = localizeContactPageSettings(contactSettings, locale);
-    const homeContent = localizeHomePageSettings(homeSettings, locale);
-    description = homeContent.footerDescription || description;
-    contactEmail = contactSettings.supportEmail;
-    contactPhone = contactSettings.phoneNumber;
-    supportDays = contactContent.supportDays;
-    supportHours = contactContent.supportHours;
-    whatsappChannelUrl = contactSettings.whatsappChannelUrl;
+    const localized = localizeGlobalSiteContent(business, locale, publicUi);
+    description = localized.footerDescription || description;
+    privateNotice = localized.disclaimer || privateNotice;
+    contactEmail = resolveSupportEmail(business);
+    contactPhone = resolvePhoneDisplayNumber(business);
+    supportDays = localized.supportDays;
+    supportHours = localized.supportHours;
+    whatsappChannelUrl = resolveWhatsappChannelUrl(business);
     whatsappHref = buildWhatsAppUrl(
-      contactSettings.whatsappNumber,
-      contactSettings.whatsappPrefillMessage,
+      resolveWhatsappLinkNumber(business),
+      resolveWhatsappDefaultMessage(business, locale),
     );
+    footerLogoPath = branding.footerLogoPath;
+    logoDarkPath = branding.logoDarkPath;
   } catch {
     services = [];
     regions = [];
@@ -119,7 +136,11 @@ export async function Footer() {
     <footer className="border-t bg-linear-to-b from-muted/20 to-muted/40">
       <div className="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
         <div className="space-y-5 sm:col-span-2 lg:col-span-4">
-          <SiteLogo imageClassName="max-h-9" />
+          <SiteLogo
+            imageClassName="max-h-9"
+            footerLogoPath={footerLogoPath}
+            logoDarkPath={logoDarkPath}
+          />
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
             {description}
           </p>
@@ -232,7 +253,7 @@ export async function Footer() {
                 {t("whatsapp")}
               </a>
             </li>
-            {whatsappChannelUrl ? (
+            {whatsappChannelUrl && showWhatsappChannel ? (
               <li>
                 <a
                   href={whatsappChannelUrl}
@@ -270,7 +291,10 @@ export async function Footer() {
               </li>
             ))}
           </ul>
-          <p>{t("copyright", { year })}</p>
+          <div className="space-y-1 text-center sm:text-right">
+            <p>{t("copyright", { year })}</p>
+            <p>{privateNotice}</p>
+          </div>
         </div>
       </div>
     </footer>

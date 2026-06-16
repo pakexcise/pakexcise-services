@@ -8,7 +8,9 @@ import { ProseContent } from "@/components/marketing/prose-content";
 import { ReviewCard } from "@/components/marketing/review-card";
 import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { requireReviewsEnabled } from "@/features/settings/lib/feature-gates";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
+import { resolveWhatsappLinkNumber } from "@/features/settings/lib/resolve-public-contact";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import { getPageContent, reviewRepository, seoMetaRepository } from "@/server/repositories";
@@ -43,6 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ReviewsPage() {
+  await requireReviewsEnabled();
+
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
@@ -98,7 +102,7 @@ export default async function ReviewsPage() {
           applyLabel={tMarketing("service.applyNow")}
           applyHref="/services"
           whatsappLabel={tCommon("whatsappHelp")}
-          whatsappPhone={business.whatsappNumber}
+          whatsappPhone={resolveWhatsappLinkNumber(business)}
           whatsappMessage={business.whatsappDefaultMessage}
         />
       </div>

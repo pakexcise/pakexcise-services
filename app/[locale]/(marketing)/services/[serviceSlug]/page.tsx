@@ -35,6 +35,10 @@ import {
   serviceRepository,
 } from "@/server/repositories";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
+import {
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
@@ -105,6 +109,9 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     serviceRepository.listRelatedServices(service.id, 3),
     getBusinessSettings(),
   ]);
+
+  const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
+  const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings, locale);
 
   const name = pickLocalized(locale, {
     en: service.nameEn,
@@ -237,8 +244,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               serviceSlug={service.slug}
               serviceName={name}
               regionLabel={regionName}
-              whatsappPhone={businessSettings.whatsappNumber}
-              whatsappDefaultMessage={businessSettings.whatsappDefaultMessage}
+              whatsappPhone={whatsappLinkNumber}
+              whatsappDefaultMessage={whatsappMessage}
               locale={locale}
               labels={serviceOptionsLabels}
               hasSubServices={service.subServices.length > 0}

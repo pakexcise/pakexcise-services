@@ -4,21 +4,21 @@ const optionalTrackingId = z.string().trim().max(64).default("");
 
 const businessSettingsSchema = z.object({
   siteName: z.string().trim().min(1).max(120),
-  businessEmail: z.string().trim().email().max(160),
-  phoneNumber: z.string().trim().min(5).max(40),
-  whatsappNumber: z
-    .string()
-    .trim()
-    .min(8)
-    .max(20)
-    .regex(/^\d+$/, "WhatsApp number must contain digits only"),
-  whatsappDefaultMessage: z.string().trim().min(5).max(500),
-  businessHoursEn: z.string().trim().min(1).max(200),
-  businessHoursUr: z.string().trim().min(1).max(200),
   addressEn: z.string().trim().min(1).max(500),
   addressUr: z.string().trim().min(1).max(500),
-  disclaimerEn: z.string().trim().min(10).max(1000),
-  disclaimerUr: z.string().trim().min(10).max(1000),
+});
+
+const paymentMethodSchema = z.object({
+  id: z.string().trim().min(1).max(64),
+  nameEn: z.string().trim().min(1).max(120),
+  nameUr: z.string().trim().min(1).max(120),
+  accountTitle: z.string().trim().max(160),
+  accountNumber: z.string().trim().max(80),
+  iban: z.string().trim().max(80),
+  instructionsEn: z.string().trim().max(2000),
+  instructionsUr: z.string().trim().max(2000),
+  isActive: z.boolean(),
+  displayOrder: z.number().int().min(0).max(9999),
 });
 
 const paymentSettingsSchema = z.object({
@@ -34,6 +34,7 @@ const paymentSettingsSchema = z.object({
   easypaisaGatewayEnabled: z.boolean(),
   cardGatewayEnabled: z.boolean(),
   gatewayPhase2Note: z.string().trim().max(500),
+  paymentMethods: z.array(paymentMethodSchema).default([]),
 });
 
 const seoSettingsSchema = z.object({
@@ -50,6 +51,24 @@ const seoSettingsSchema = z.object({
       (value) => value.startsWith("/") || value.startsWith("http"),
       "OG image must be a site path or URL",
     ),
+  defaultTwitterImage: z
+    .string()
+    .trim()
+    .max(500)
+    .refine(
+      (value) => value === "" || value.startsWith("/") || value.startsWith("http"),
+      "Twitter image must be a site path or URL",
+    ),
+  canonicalDomain: z
+    .string()
+    .trim()
+    .max(200)
+    .refine(
+      (value) =>
+        value === "" || value.startsWith("http") || value.startsWith("https"),
+      "Canonical domain must be a valid URL",
+    ),
+  sitemapEnabled: z.boolean(),
   organizationName: z.string().trim().min(1).max(120),
   organizationDescriptionEn: z.string().trim().min(1).max(500),
   organizationDescriptionUr: z.string().trim().min(1).max(500),
@@ -58,7 +77,7 @@ const seoSettingsSchema = z.object({
   localBusinessName: z.string().trim().min(1).max(120),
   localBusinessDescriptionEn: z.string().trim().min(1).max(500),
   localBusinessDescriptionUr: z.string().trim().min(1).max(500),
-  localBusinessPriceRange: z.string().trim().min(1).max(20),
+  localBusinessPriceRange: z.string().trim().max(20),
   localBusinessAreaServed: z.string().trim().min(1).max(120),
 });
 
@@ -76,6 +95,11 @@ const featureFlagSettingsSchema = z.object({
   agentModuleEnabled: z.boolean(),
   blogEnabled: z.boolean(),
   guidesEnabled: z.boolean(),
+  reviewsEnabled: z.boolean(),
+  contactFormEnabled: z.boolean(),
+  submitRequestEnabled: z.boolean(),
+  floatingWhatsappEnabled: z.boolean(),
+  whatsappChannelEnabled: z.boolean(),
   whatsappNotificationsEnabled: z.boolean(),
   smsFallbackEnabled: z.boolean(),
   maintenanceMode: z.boolean(),

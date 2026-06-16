@@ -19,6 +19,10 @@ import {
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
+import {
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import {
@@ -94,6 +98,9 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
     getBusinessSettings(),
   ]);
 
+  const whatsappLinkNumber = resolveWhatsappLinkNumber(business);
+  const whatsappMessage = resolveWhatsappDefaultMessage(business, locale);
+
   const name = pickLocalized(locale, {
     en: region.nameEn,
     ur: region.nameUr,
@@ -159,8 +166,8 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
 
         <RegionHelpSection
           regionName={name}
-          whatsappPhone={business.whatsappNumber}
-          whatsappDefaultMessage={business.whatsappDefaultMessage}
+          whatsappPhone={whatsappLinkNumber}
+          whatsappDefaultMessage={whatsappMessage}
           locale={locale}
           labels={{
             title: t("regionHelp.title", { region: name }),

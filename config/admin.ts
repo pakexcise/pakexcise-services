@@ -18,6 +18,8 @@ export type AdminNavItem = {
   section?: AdminNavSection;
   /** When set, the nav item is shown only if the user has this permission. */
   permission?: Permission;
+  /** When true, only Super Admin users see this nav item. */
+  superAdminOnly?: boolean;
 };
 
 export const dashboardStatusCards = [
@@ -213,6 +215,14 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "users:manage",
   },
   {
+    href: "/admin/site-settings",
+    labelKey: "siteSettings",
+    icon: "globe",
+    section: "system",
+    permission: "settings:manage",
+    superAdminOnly: true,
+  },
+  {
     href: "/admin/settings",
     labelKey: "settings",
     icon: "settings",
@@ -233,10 +243,16 @@ export const adminNavSectionOrder: AdminNavSection[] = [
 
 export function getAdminNavForPermissions(
   effectivePermissions: readonly Permission[],
+  options?: { isSuperAdmin?: boolean },
 ): AdminNavItem[] {
   const permissionSet = new Set(effectivePermissions);
+  const isSuperAdmin = options?.isSuperAdmin ?? false;
 
   return adminNavItems.filter((item) => {
+    if (item.superAdminOnly && !isSuperAdmin) {
+      return false;
+    }
+
     if (!item.permission) {
       return true;
     }

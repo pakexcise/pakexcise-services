@@ -12,6 +12,7 @@ import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import { getPageContent, seoMetaRepository } from "@/server/repositories";
+import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
@@ -56,9 +57,10 @@ export default async function TrackPage({ searchParams }: TrackPageProps) {
   const tStatus = await getTranslations("admin.statuses");
   const tPublicStatus = await getTranslations("marketing.track.publicStatus");
 
-  const [content, seo] = await Promise.all([
+  const [content, seo, business] = await Promise.all([
     getPageContent("track"),
     seoMetaRepository.findByPageKey("track"),
+    getBusinessSettings(),
   ]);
 
   if (!content) {
@@ -133,6 +135,8 @@ export default async function TrackPage({ searchParams }: TrackPageProps) {
             dashboardLabel={tNav("dashboard")}
             locale={locale === "ur" ? "ur" : "en"}
             initialTrackingId={trackingId ?? ""}
+            whatsappPhone={business.whatsappNumber}
+            whatsappDefaultMessage={business.whatsappDefaultMessage}
             labels={{
               error: t("track.error"),
               rateLimited: t("track.rateLimited"),

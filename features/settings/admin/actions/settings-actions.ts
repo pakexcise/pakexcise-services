@@ -9,6 +9,7 @@ import {
   seoSettingsSnapshot,
   trackingSettingsSnapshot,
 } from "@/features/settings/admin/lib/snapshots";
+import { CONTACT_PAGE_SETTINGS_CACHE_TAG } from "@/features/contact-page/lib/defaults";
 import { PUBLIC_SETTINGS_CACHE_TAG } from "@/features/settings/lib/keys";
 import { loadAdminSettingsSnapshot, saveSettingsGroup } from "@/server/repositories/admin-settings-repository";
 import {
@@ -30,7 +31,9 @@ const ADMIN_SETTINGS_PATH = "/admin/settings";
 
 function revalidateAfterSettingsUpdate() {
   revalidateTag(PUBLIC_SETTINGS_CACHE_TAG, "max");
+  revalidateTag(CONTACT_PAGE_SETTINGS_CACHE_TAG, "max");
   revalidatePath(ADMIN_SETTINGS_PATH);
+  revalidatePath("/admin/site-settings");
   revalidatePath("/", "layout");
   revalidatePath("/about");
   revalidatePath("/contact");
@@ -51,7 +54,14 @@ export async function updateBusinessSettingsAction(
 
   const before = await loadAdminSettingsSnapshot();
 
-  await saveSettingsGroup("business", parsed.data);
+  const businessPayload = {
+    ...before.business,
+    siteName: parsed.data.siteName,
+    addressEn: parsed.data.addressEn,
+    addressUr: parsed.data.addressUr,
+  };
+
+  await saveSettingsGroup("business", businessPayload);
 
   await auditAdminAction({
     actorId: user.id,
@@ -59,7 +69,7 @@ export async function updateBusinessSettingsAction(
     entityType: "settings",
     entityId: "business",
     before: businessSettingsSnapshot(before.business),
-    after: businessSettingsSnapshot(parsed.data),
+    after: businessSettingsSnapshot(businessPayload),
   });
 
   revalidateAfterSettingsUpdate();

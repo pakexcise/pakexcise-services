@@ -124,193 +124,62 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
       </div>
 
       {activeTab === "business" ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="siteName">{labels.business.siteName}</Label>
-            <Input
-              id="siteName"
-              value={values.business.siteName}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    siteName: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="businessEmail">{labels.business.businessEmail}</Label>
-            <Input
-              id="businessEmail"
-              type="email"
-              value={values.business.businessEmail}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    businessEmail: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber">{labels.business.phoneNumber}</Label>
-            <Input
-              id="phoneNumber"
-              value={values.business.phoneNumber}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    phoneNumber: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="whatsappNumber">{labels.business.whatsappNumber}</Label>
-            <Input
-              id="whatsappNumber"
-              value={values.business.whatsappNumber}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    whatsappNumber: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="whatsappDefaultMessage">
-              {labels.business.whatsappDefaultMessage}
-            </Label>
-            <Textarea
-              id="whatsappDefaultMessage"
-              rows={2}
-              value={values.business.whatsappDefaultMessage}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    whatsappDefaultMessage: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="businessHoursEn">{labels.business.businessHoursEn}</Label>
-            <Input
-              id="businessHoursEn"
-              value={values.business.businessHoursEn}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    businessHoursEn: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="businessHoursUr">{labels.business.businessHoursUr}</Label>
-            <Input
-              id="businessHoursUr"
-              dir="rtl"
-              value={values.business.businessHoursUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    businessHoursUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="addressEn">{labels.business.addressEn}</Label>
-            <Textarea
-              id="addressEn"
-              rows={2}
-              value={values.business.addressEn}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    addressEn: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="addressUr">{labels.business.addressUr}</Label>
-            <Textarea
-              id="addressUr"
-              dir="rtl"
-              rows={2}
-              value={values.business.addressUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    addressUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="disclaimerEn">{labels.business.disclaimerEn}</Label>
-            <Textarea
-              id="disclaimerEn"
-              rows={3}
-              value={values.business.disclaimerEn}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    disclaimerEn: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="disclaimerUr">{labels.business.disclaimerUr}</Label>
-            <Textarea
-              id="disclaimerUr"
-              dir="rtl"
-              rows={3}
-              value={values.business.disclaimerUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    disclaimerUr: event.target.value,
-                  },
-                }))
-              }
-            />
+        <div className="space-y-4">
+          <p className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+            {labels.business.globalSiteNote}
+          </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="siteName">{labels.business.siteName}</Label>
+              <Input
+                id="siteName"
+                value={values.business.siteName}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    business: {
+                      ...current.business,
+                      siteName: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="addressEn">{labels.business.addressEn}</Label>
+              <Textarea
+                id="addressEn"
+                rows={2}
+                value={values.business.addressEn}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    business: {
+                      ...current.business,
+                      addressEn: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="addressUr">{labels.business.addressUr}</Label>
+              <Textarea
+                id="addressUr"
+                dir="rtl"
+                rows={2}
+                value={values.business.addressUr}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    business: {
+                      ...current.business,
+                      addressUr: event.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
           </div>
         </div>
       ) : null}
@@ -532,6 +401,257 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               }
             />
           </div>
+
+          <div className="space-y-4 border-t pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold">{labels.payment.methodsTitle}</h3>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  setValues((current) => ({
+                    ...current,
+                    payment: {
+                      ...current.payment,
+                      paymentMethods: [
+                        ...current.payment.paymentMethods,
+                        {
+                          id: crypto.randomUUID(),
+                          nameEn: "",
+                          nameUr: "",
+                          accountTitle: "",
+                          accountNumber: "",
+                          iban: "",
+                          instructionsEn: "",
+                          instructionsUr: "",
+                          isActive: true,
+                          displayOrder: current.payment.paymentMethods.length,
+                        },
+                      ],
+                    },
+                  }))
+                }
+              >
+                {labels.payment.addMethod}
+              </Button>
+            </div>
+            {values.payment.paymentMethods.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{labels.payment.methodsEmpty}</p>
+            ) : (
+              values.payment.paymentMethods.map((method, index) => (
+                <div
+                  key={method.id}
+                  className="space-y-3 rounded-lg border p-4"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-medium">
+                      {labels.payment.methodLabel} {index + 1}
+                    </p>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      onClick={() =>
+                        setValues((current) => ({
+                          ...current,
+                          payment: {
+                            ...current.payment,
+                            paymentMethods: current.payment.paymentMethods.filter(
+                              (item) => item.id !== method.id,
+                            ),
+                          },
+                        }))
+                      }
+                    >
+                      {labels.payment.removeMethod}
+                    </Button>
+                  </div>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>{labels.payment.methodNameEn}</Label>
+                      <Input
+                        value={method.nameEn}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? { ...item, nameEn: event.target.value }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{labels.payment.methodNameUr}</Label>
+                      <Input
+                        dir="rtl"
+                        value={method.nameUr}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? { ...item, nameUr: event.target.value }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{labels.payment.accountTitle}</Label>
+                      <Input
+                        value={method.accountTitle}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? { ...item, accountTitle: event.target.value }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{labels.payment.accountNumber}</Label>
+                      <Input
+                        value={method.accountNumber}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? { ...item, accountNumber: event.target.value }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>{labels.payment.iban}</Label>
+                      <Input
+                        value={method.iban}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? { ...item, iban: event.target.value }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>{labels.payment.methodInstructionsEn}</Label>
+                      <Textarea
+                        rows={2}
+                        value={method.instructionsEn}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? { ...item, instructionsEn: event.target.value }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>{labels.payment.methodInstructionsUr}</Label>
+                      <Textarea
+                        dir="rtl"
+                        rows={2}
+                        value={method.instructionsUr}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? { ...item, instructionsUr: event.target.value }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{labels.payment.displayOrder}</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={method.displayOrder}
+                        onChange={(event) =>
+                          setValues((current) => ({
+                            ...current,
+                            payment: {
+                              ...current.payment,
+                              paymentMethods: current.payment.paymentMethods.map((item) =>
+                                item.id === method.id
+                                  ? {
+                                      ...item,
+                                      displayOrder: Number(event.target.value),
+                                    }
+                                  : item,
+                              ),
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <CheckboxField
+                      id={`method-active-${method.id}`}
+                      label={labels.payment.methodActive}
+                      checked={method.isActive}
+                      onChange={(checked) =>
+                        setValues((current) => ({
+                          ...current,
+                          payment: {
+                            ...current.payment,
+                            paymentMethods: current.payment.paymentMethods.map((item) =>
+                              item.id === method.id
+                                ? { ...item, isActive: checked }
+                                : item,
+                            ),
+                          },
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       ) : null}
 
@@ -620,6 +740,48 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               }
             />
           </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="defaultTwitterImage">
+              {labels.seo.defaultTwitterImage}
+            </Label>
+            <Input
+              id="defaultTwitterImage"
+              value={values.seo.defaultTwitterImage}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    defaultTwitterImage: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="canonicalDomain">{labels.seo.canonicalDomain}</Label>
+            <Input
+              id="canonicalDomain"
+              value={values.seo.canonicalDomain}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: { ...current.seo, canonicalDomain: event.target.value },
+                }))
+              }
+            />
+          </div>
+          <CheckboxField
+            id="sitemapEnabled"
+            label={labels.seo.sitemapEnabled}
+            checked={values.seo.sitemapEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                seo: { ...current.seo, sitemapEnabled: checked },
+              }))
+            }
+          />
           <div className="md:col-span-2">
             <h3 className="text-sm font-semibold">{labels.seo.organizationSection}</h3>
           </div>
@@ -735,6 +897,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
             </Label>
             <Input
               id="localBusinessPriceRange"
+              placeholder={labels.seo.localBusinessPriceRangeOptional}
               value={values.seo.localBusinessPriceRange}
               onChange={(event) =>
                 setValues((current) => ({
@@ -962,6 +1125,67 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               setValues((current) => ({
                 ...current,
                 features: { ...current.features, guidesEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="reviewsEnabled"
+            label={labels.features.reviewsEnabled}
+            checked={values.features.reviewsEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, reviewsEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="contactFormEnabled"
+            label={labels.features.contactFormEnabled}
+            checked={values.features.contactFormEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, contactFormEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="submitRequestEnabled"
+            label={labels.features.submitRequestEnabled}
+            checked={values.features.submitRequestEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: { ...current.features, submitRequestEnabled: checked },
+              }))
+            }
+          />
+          <CheckboxField
+            id="floatingWhatsappEnabled"
+            label={labels.features.floatingWhatsappEnabled}
+            checked={values.features.floatingWhatsappEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: {
+                  ...current.features,
+                  floatingWhatsappEnabled: checked,
+                },
+              }))
+            }
+          />
+          <CheckboxField
+            id="whatsappChannelEnabled"
+            label={labels.features.whatsappChannelEnabled}
+            checked={values.features.whatsappChannelEnabled}
+            onChange={(checked) =>
+              setValues((current) => ({
+                ...current,
+                features: {
+                  ...current.features,
+                  whatsappChannelEnabled: checked,
+                },
               }))
             }
           />

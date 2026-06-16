@@ -1323,7 +1323,8 @@
       "guides": "رہنما",
       "auditLogs": "آڈٹ لاگز",
       "settings": "ترتیبات",
-      "users": "ایڈمن صارفین"
+      "users": "ایڈمن صارفین",
+      "siteSettings": "سائٹ کی ترتیبات"
     },
     "dashboard": {
       "title": "ڈیش بورڈ",
@@ -2388,6 +2389,94 @@
         "emptyDescription": "سسٹم ترتیبات کے کنٹرولز یہاں ظاہر ہوں گے۔"
       }
     },
+    "siteSettings": {
+      "title": "عالمی سائٹ کی ترتیبات",
+      "description": "رابطہ، ہیڈر، فارمز، برانڈنگ، فوٹر، اور سوشل لنکس منظم کریں جو عوامی ویب سائٹ پر استعمال ہوتے ہیں۔",
+      "save": "سائٹ کی ترتیبات محفوظ کریں",
+      "saving": "محفوظ ہو رہا ہے…",
+      "saved": "سائٹ کی ترتیبات محفوظ ہو گئیں۔ عوامی صفحات جلد اپڈیٹ ہوں گے۔",
+      "error": "سائٹ کی ترتیبات محفوظ نہیں ہو سکیں۔",
+      "tabs": {
+        "contact": "رابطہ اور سپورٹ",
+        "header": "ہیڈر اور CTAs",
+        "fab": "فلوٹنگ واٹس ایپ",
+        "contactForm": "رابطہ فارم",
+        "submitRequest": "درخواست جمع کروائیں",
+        "footer": "فوٹر اور قانونی",
+        "branding": "برانڈنگ"
+      },
+      "contact": {
+        "businessEmail": "سپورٹ ای میل",
+        "phoneDisplayNumber": "فون ڈسپلے نمبر",
+        "whatsappLinkNumber": "واٹس ایپ لنک نمبر (wa.me)",
+        "whatsappDefaultMessageEn": "ڈیفالٹ واٹس ایپ پیغام (انگریزی)",
+        "whatsappDefaultMessageUr": "ڈیفالٹ واٹس ایپ پیغام (اردو)",
+        "supportDaysEn": "سپورٹ کے دن (انگریزی)",
+        "supportDaysUr": "سپورٹ کے دن (اردو)",
+        "supportHoursEn": "سپورٹ کے اوقات (انگریزی)",
+        "supportHoursUr": "سپورٹ کے اوقات (اردو)",
+        "whatsappChannelUrl": "واٹس ایپ چینل URL"
+      },
+      "header": {
+        "headerWhatsappEnabled": "ہیڈر میں واٹس ایپ بٹن دکھائیں",
+        "headerWhatsappLabelEn": "ہیڈر واٹس ایپ لیبل (انگریزی)",
+        "headerWhatsappLabelUr": "ہیڈر واٹس ایپ لیبل (اردو)",
+        "announcementBarEnabled": "موبائل پر اعلان بار دکھائیں",
+        "announcementBarTextEn": "اعلان بار متن (انگریزی)",
+        "announcementBarTextUr": "اعلان بار متن (اردو)",
+        "defaultApplyCtaTextEn": "ڈیفالٹ Apply CTA (انگریزی)",
+        "defaultApplyCtaTextUr": "ڈیفالٹ Apply CTA (اردو)",
+        "defaultSubmitRequestCtaTextEn": "ڈیفالٹ Submit Request CTA (انگریزی)",
+        "defaultSubmitRequestCtaTextUr": "ڈیفالٹ Submit Request CTA (اردو)"
+      },
+      "fab": {
+        "floatingWhatsappMessageEn": "فلوٹنگ بٹن پیغام (انگریزی)",
+        "floatingWhatsappMessageUr": "فلوٹنگ بٹن پیغام (اردو)",
+        "floatingWhatsappPosition": "فلوٹنگ بٹن کی پوزیشن",
+        "positionBottomRight": "نیچے دائیں",
+        "positionBottomLeft": "نیچے بائیں",
+        "featureFlagNote": "سسٹم ترتیبات → فیچر فلیگز میں فلوٹنگ بٹن فعال/غیر فعال کریں۔"
+      },
+      "contactForm": {
+        "contactRecipientEmail": "فارم وصول کنندہ ای میل",
+        "contactSuccessMessageEn": "کامیابی کا پیغام (انگریزی)",
+        "contactSuccessMessageUr": "کامیابی کا پیغام (اردو)",
+        "contactAdminNotificationEnabled": "جمع پر ایڈمن کو مطلع کریں",
+        "contactAutoReplyEnabled": "گاہک کو خودکار جواب بھیجیں (جب دستیاب ہو)",
+        "featureFlagNote": "سسٹم ترتیبات → فیچر فلیگز میں رابطہ فارم فعال/غیر فعال کریں۔"
+      },
+      "submitRequest": {
+        "submitRequestSuccessMessageEn": "کامیابی کا پیغام (انگریزی)",
+        "submitRequestSuccessMessageUr": "کامیابی کا پیغام (اردو)",
+        "submitRequestSaveToSupportRequests": "جمع شدہ درخواستیں سپورٹ ریکویسٹس میں محفوظ کریں",
+        "submitRequestNotifyAdminEnabled": "جمع پر ایڈمن کو مطلع کریں",
+        "featureFlagNote": "سسٹم ترتیبات → فیچر فلیگز میں مہمان سروس درخواستیں فعال/غیر فعال کریں۔"
+      },
+      "footer": {
+        "footerDescriptionEn": "فوٹر تفصیل (انگریزی)",
+        "footerDescriptionUr": "فوٹر تفصیل (اردو)",
+        "disclaimerEn": "قانونی دستبرداری (انگریزی)",
+        "disclaimerUr": "قانونی دستبرداری (اردو)"
+      },
+      "branding": {
+        "logoPath": "لوگو (لائٹ موڈ)",
+        "logoDarkPath": "لوگو (ڈارک موڈ)",
+        "footerLogoPath": "فوٹر لوگو",
+        "faviconPath": "Favicon path",
+        "defaultOgImagePath": "ڈیفالٹ OG تصویر",
+        "defaultTwitterImagePath": "ڈیفالٹ Twitter/X تصویر",
+        "defaultBlogFallbackImagePath": "بلاگ fallback تصویر",
+        "defaultGuideFallbackImagePath": "گائیڈ fallback تصویر",
+        "defaultServiceFallbackImagePath": "سروس fallback تصویر",
+        "defaultRegionFallbackImagePath": "ریجن/شہر fallback تصویر",
+        "primaryBrandColor": "پرائمری برانڈ رنگ",
+        "secondaryBrandColor": "سیکنڈری برانڈ رنگ"
+      },
+      "social": {
+        "title": "سوشل لنکس",
+        "description": "Facebook، Instagram، TikTok، YouTube، LinkedIn، X/Twitter، WhatsApp Chat، اور WhatsApp Channel لنکس منظم کریں۔"
+      }
+    },
     "settingsPanel": {
       "title": "سسٹم ترتیبات",
       "description": "کاروباری تفصیلات، ادائیگی، SEO ڈیفالٹس، ٹریکنگ IDs، اور فیچر فلیگز منظم کریں۔",
@@ -2405,16 +2494,9 @@
       },
       "business": {
         "siteName": "سائٹ کا نام",
-        "businessEmail": "کاروباری ای میل",
-        "phoneNumber": "فون نمبر",
-        "whatsappNumber": "واٹس ایپ نمبر (صرف ہندسے)",
-        "whatsappDefaultMessage": "واٹس ایپ ڈیفالٹ پیغام",
-        "businessHoursEn": "کاروباری اوقات (انگریزی)",
-        "businessHoursUr": "کاروباری اوقات (اردو)",
         "addressEn": "پتہ / کوریج (انگریزی)",
         "addressUr": "پتہ / کوریج (اردو)",
-        "disclaimerEn": "نجی سہولت ڈس کلیمر (انگریزی)",
-        "disclaimerUr": "نجی سہولت ڈس کلیمر (اردو)"
+        "globalSiteNote": "رابطہ، واٹس ایپ، فوٹر، برانڈنگ، اور سوشل لنکس عالمی سائٹ کی ترتیبات (Super Admin) میں منظم ہوتے ہیں۔"
       },
       "payment": {
         "jazzCashInstructionsEn": "JazzCash ہدایات (انگریزی)",
@@ -2429,7 +2511,21 @@
         "easypaisaGatewayEnabled": "Easypaisa گیٹ وے (فیز 2 placeholder)",
         "cardGatewayEnabled": "کارڈ گیٹ وے (فیز 2 placeholder)",
         "gatewayPhase2Note": "گیٹ وے فیز 2 نوٹ",
-        "phase2Hint": "آن لائن گیٹ وے فیز 2 تک placeholder ہیں۔ دستی ادائیگی کی ہدایات انوائسز پر دکھائی جاتی ہیں۔"
+        "phase2Hint": "آن لائن گیٹ وے فیز 2 تک placeholder ہیں۔ دستی ادائیگی کی ہدایات انوائسز پر دکھائی جاتی ہیں۔",
+        "methodsTitle": "ساختہ یافتہ ادائیگی کے طریقے",
+        "methodsEmpty": "ابھی کوئی ساختہ یافتہ ادائیگی کا طریقہ نہیں۔ اوپر والے JazzCash/Easypaisa/بینک فیلڈز اب بھی لاگو ہیں۔",
+        "addMethod": "ادائیگی کا طریقہ شامل کریں",
+        "removeMethod": "ہٹائیں",
+        "methodLabel": "طریقہ",
+        "methodNameEn": "طریقے کا نام (انگریزی)",
+        "methodNameUr": "طریقے کا نام (اردو)",
+        "accountTitle": "اکاؤنٹ عنوان",
+        "accountNumber": "اکاؤنٹ نمبر",
+        "iban": "IBAN",
+        "methodInstructionsEn": "ہدایات (انگریزی)",
+        "methodInstructionsUr": "ہدایات (اردو)",
+        "methodActive": "فعال",
+        "displayOrder": "ترتیب"
       },
       "seo": {
         "defaultMetaTitleEn": "ڈیفالٹ میٹا عنوان (انگریزی)",
@@ -2437,6 +2533,9 @@
         "defaultMetaDescriptionEn": "ڈیفالٹ میٹا تفصیل (انگریزی)",
         "defaultMetaDescriptionUr": "ڈیفالٹ میٹا تفصیل (اردو)",
         "defaultOgImage": "ڈیفالٹ OG تصویر path یا URL",
+        "defaultTwitterImage": "ڈیفالٹ Twitter/X تصویر path یا URL",
+        "canonicalDomain": "Canonical domain (https://…)",
+        "sitemapEnabled": "Sitemap فعال",
         "organizationSection": "Organization schema",
         "organizationName": "تنظیم کا نام",
         "organizationDescriptionEn": "تنظیم کی تفصیل (انگریزی)",
@@ -2447,7 +2546,8 @@
         "localBusinessName": "مقامی کاروبار کا نام",
         "localBusinessDescriptionEn": "مقامی کاروبار کی تفصیل (انگریزی)",
         "localBusinessDescriptionUr": "مقامی کاروبار کی تفصیل (اردو)",
-        "localBusinessPriceRange": "قیمت کی حد",
+        "localBusinessPriceRange": "قیمت کی حد (اختیاری)",
+        "localBusinessPriceRangeOptional": "JSON-LD سے خارج کرنے کے لیے خالی چھوڑیں",
         "localBusinessAreaServed": "مقامی کاروبار کی کوریج"
       },
       "tracking": {
@@ -2467,6 +2567,11 @@
         "agentModuleEnabled": "ایجنٹ ماڈیول فعال",
         "blogEnabled": "بلاگ فعال",
         "guidesEnabled": "گائیڈز فعال",
+        "reviewsEnabled": "Reviews صفحہ فعال",
+        "contactFormEnabled": "رابطہ فارم فعال",
+        "submitRequestEnabled": "Submit request (مہمان leads) فعال",
+        "floatingWhatsappEnabled": "فلوٹنگ واٹس ایپ بٹن فعال",
+        "whatsappChannelEnabled": "واٹس ایپ چینل لنک فعال",
         "whatsappNotificationsEnabled": "واٹس ایپ نوٹیفیکیشنز فعال",
         "smsFallbackEnabled": "SMS fallback فعال",
         "maintenanceMode": "مینٹیننس موڈ (عوامی مارکیٹنگ صفحات)",
@@ -2544,7 +2649,7 @@
         "internalNotes": "اندرونی ایڈمن نوٹس",
         "internalNotesHint": "صرف ایڈمن کو نظر آتے ہیں۔ عوامی صفحات پر نہیں دکھائے جاتے۔",
         "referenceLinksJson": "حوالہ لنکس JSON",
-        "referenceLinksHint": "اختیاری array: [{\"labelEn\":\"...\",\"labelUr\":\"...\",\"url\":\"https://...\"}]",
+        "referenceLinksHint": "اختیاری JSON array۔ ہر item میں labelEn، labelUr، اور url (HTTPS) شامل کریں۔",
         "category": "خدمت کی کیٹیگری",
         "selectCategory": "کیٹیگری منتخب کریں",
         "parentService": "والدین خدمت (ذیلی خدمت)",
@@ -2960,6 +3065,7 @@
       "addLink": "سوشل لنک شامل کریں",
       "editLink": "سوشل لنک میں ترمیم",
       "platform": "پلیٹ فارم",
+      "platformPlaceholder": "پلیٹ فارم منتخب کریں",
       "url": "URL",
       "iconName": "Lucide آئیکن نام",
       "labelEn": "لیبل (انگریزی)",

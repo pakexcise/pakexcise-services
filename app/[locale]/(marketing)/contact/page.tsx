@@ -13,6 +13,7 @@ import {
   getContactPageSettings,
   localizeContactPageSettings,
 } from "@/features/contact-page/lib/contact-page-settings-cache";
+import { getFeatureFlagSettings, getFormsSettings } from "@/features/settings/lib/public-settings-cache";
 import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { pickLocalized } from "@/lib/i18n/content";
@@ -54,10 +55,13 @@ export default async function ContactPage() {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
-  const [settings, socialLinks, regions, tContact, tNav, tOptions] = await Promise.all([
+  const [settings, socialLinks, regions, featureFlags, formsSettings, tContact, tNav, tOptions] =
+    await Promise.all([
     getContactPageSettings(),
     getActiveSocialLinks(),
     regionRepository.listPublic(),
+    getFeatureFlagSettings(),
+    getFormsSettings(),
     getTranslations("marketing.contact"),
     getTranslations("nav"),
     getTranslations("marketing.contact.options"),
@@ -71,6 +75,10 @@ export default async function ContactPage() {
   const regionOptions = regions.map((region) =>
     pickLocalized(locale, { en: region.nameEn, ur: region.nameUr }),
   );
+  const contactSuccessDescription =
+    locale === "ur"
+      ? formsSettings.contactSuccessMessageUr
+      : formsSettings.contactSuccessMessageEn;
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -112,6 +120,7 @@ export default async function ContactPage() {
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-8">
+            {featureFlags.contactFormEnabled ? (
             <ContactInquiryFormSection
               heading={content.formHeading}
               description={content.formDescription}
@@ -135,7 +144,7 @@ export default async function ContactPage() {
                 submit: tContact("form.submit"),
                 submitting: tContact("form.submitting"),
                 successTitle: tContact("form.successTitle"),
-                successDescription: tContact("form.successDescription"),
+                successDescription: contactSuccessDescription,
                 validationSummary: tContact("form.validationSummary"),
                 errors: {
                   fullNameRequired: tContact("form.errors.fullNameRequired"),
@@ -147,6 +156,7 @@ export default async function ContactPage() {
                 },
               }}
             />
+            ) : null}
 
             {socialLinks.length > 0 ? (
               <section className="space-y-3 rounded-2xl border bg-muted/20 p-5 sm:p-6">

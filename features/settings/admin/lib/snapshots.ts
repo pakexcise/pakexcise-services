@@ -6,32 +6,26 @@ import type {
   TrackingSettings,
 } from "@/features/settings/types";
 
-export function businessSettingsSnapshot(
-  value: BusinessSettings,
-): Record<string, string | boolean> {
+type AuditSnapshot = Record<string, unknown>;
+
+export function businessSettingsSnapshot(value: BusinessSettings): AuditSnapshot {
   return { ...value };
 }
 
-export function paymentSettingsSnapshot(
-  value: PaymentSettings,
-): Record<string, string | boolean> {
+export function paymentSettingsSnapshot(value: PaymentSettings): AuditSnapshot {
   return { ...value };
 }
 
-export function seoSettingsSnapshot(
-  value: SeoSettings,
-): Record<string, string> {
+export function seoSettingsSnapshot(value: SeoSettings): AuditSnapshot {
   return { ...value };
 }
 
-export function trackingSettingsSnapshot(
-  value: TrackingSettings,
-): Record<string, string | boolean> {
+export function trackingSettingsSnapshot(value: TrackingSettings): AuditSnapshot {
   return { ...value };
 }
 
 export function featureFlagSettingsSnapshot(
   value: FeatureFlagSettings,
-): Record<string, string | boolean> {
+): AuditSnapshot {
   return { ...value };
 }

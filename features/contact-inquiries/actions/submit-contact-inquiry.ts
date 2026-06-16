@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 
 import { generateContactInquiryReferenceId } from "@/features/contact-inquiries/lib/reference-id";
+import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
 import {
   errorResult,
   parseInput,
@@ -34,6 +35,12 @@ export async function submitContactInquiryAction(
     await enforceRateLimit(publicFormRateLimit, `contact-inquiry:${rateLimitKey}`);
   } catch {
     return errorResult("Too many requests. Please try again in a minute.");
+  }
+
+  const featureFlags = await getFeatureFlagSettings();
+
+  if (!featureFlags.contactFormEnabled) {
+    return errorResult("Contact form is currently unavailable.");
   }
 
   const parsed = parseInput(submitContactInquirySchema, input);

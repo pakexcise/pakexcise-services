@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
+import { getFeatureFlagSettings, getSeoSettings } from "@/features/settings/lib/public-settings-cache";
 import { absoluteUrl } from "@/lib/utils";
 import {
   blogPostRepository,
@@ -38,7 +38,14 @@ const staticPaths: Array<{
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const featureFlags = await getFeatureFlagSettings();
+  const [featureFlags, seoSettings] = await Promise.all([
+    getFeatureFlagSettings(),
+    getSeoSettings(),
+  ]);
+
+  if (!seoSettings.sitemapEnabled) {
+    return [];
+  }
 
   const [services, regions, cities, guides, posts] = await Promise.all([
     serviceRepository.listActiveSlugs().catch(() => []),
@@ -59,6 +66,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (entry.path === "/guides") {
       return featureFlags.guidesEnabled;
+    }
+
+    if (entry.path === "/reviews") {
+      return featureFlags.reviewsEnabled;
     }
 
     return true;

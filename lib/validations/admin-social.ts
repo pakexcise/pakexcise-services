@@ -1,11 +1,13 @@
 import { z } from "zod";
 
-const platformSchema = z
-  .string()
-  .trim()
-  .min(2)
-  .max(40)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and hyphens");
+import { SOCIAL_PLATFORMS } from "@/features/social/lib/platforms";
+
+const platformIds = SOCIAL_PLATFORMS.map((item) => item.id) as [
+  (typeof SOCIAL_PLATFORMS)[number]["id"],
+  ...(typeof SOCIAL_PLATFORMS)[number]["id"][],
+];
+
+const platformSchema = z.enum(platformIds);
 
 const iconNameSchema = z
   .string()

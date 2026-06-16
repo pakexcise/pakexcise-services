@@ -8,6 +8,9 @@ type SiteLogoProps = {
   className?: string;
   imageClassName?: string;
   priority?: boolean;
+  logoPath?: string | null;
+  logoDarkPath?: string | null;
+  footerLogoPath?: string | null;
 };
 
 export function SiteLogo({
@@ -15,7 +18,14 @@ export function SiteLogo({
   className,
   imageClassName,
   priority = false,
+  logoPath,
+  logoDarkPath,
+  footerLogoPath,
 }: SiteLogoProps) {
+  const lightLogo = logoPath?.trim() || brandingAssets.logo;
+  const darkLogo = logoDarkPath?.trim() || brandingAssets.logoDark;
+  const footerLogo = footerLogoPath?.trim() || lightLogo;
+
   if (variant === "icon") {
     return (
       <Image
@@ -33,7 +43,7 @@ export function SiteLogo({
   if (variant === "onPrimary") {
     return (
       <Image
-        src={brandingAssets.logoDark}
+        src={darkLogo}
         alt="PakExcise"
         width={220}
         height={52}
@@ -47,7 +57,7 @@ export function SiteLogo({
   return (
     <span className={cn("relative inline-flex max-w-full items-center", className)}>
       <Image
-        src={brandingAssets.logo}
+        src={footerLogoPath ? footerLogo : lightLogo}
         alt="PakExcise"
         width={220}
         height={52}
@@ -59,7 +69,7 @@ export function SiteLogo({
         priority={priority}
       />
       <Image
-        src={brandingAssets.logoDark}
+        src={darkLogo}
         alt="PakExcise"
         width={220}
         height={52}

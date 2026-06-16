@@ -1,15 +1,92 @@
 export type BusinessSettings = {
   siteName: string;
   businessEmail: string;
-  phoneNumber: string;
-  whatsappNumber: string;
-  whatsappDefaultMessage: string;
+  /** @deprecated Use phoneDisplayNumber */
+  phoneNumber?: string;
+  /** @deprecated Use whatsappLinkNumber */
+  whatsappNumber?: string;
+  /** @deprecated Use whatsappDefaultMessageEn/Ur */
+  whatsappDefaultMessage?: string;
+  phoneDisplayNumber: string;
+  whatsappLinkNumber: string;
+  whatsappDefaultMessageEn: string;
+  whatsappDefaultMessageUr: string;
+  supportDaysEn: string;
+  supportDaysUr: string;
+  supportHoursEn: string;
+  supportHoursUr: string;
+  whatsappChannelUrl: string;
   businessHoursEn: string;
   businessHoursUr: string;
   addressEn: string;
   addressUr: string;
   disclaimerEn: string;
   disclaimerUr: string;
+  footerDescriptionEn: string;
+  footerDescriptionUr: string;
+};
+
+export type PublicUiSettings = {
+  headerWhatsappEnabled: boolean;
+  headerWhatsappLabelEn: string;
+  headerWhatsappLabelUr: string;
+  announcementBarEnabled: boolean;
+  announcementBarTextEn: string;
+  announcementBarTextUr: string;
+  defaultApplyCtaTextEn: string;
+  defaultApplyCtaTextUr: string;
+  defaultSubmitRequestCtaTextEn: string;
+  defaultSubmitRequestCtaTextUr: string;
+  floatingWhatsappMessageEn: string;
+  floatingWhatsappMessageUr: string;
+  floatingWhatsappPosition: "bottom-right" | "bottom-left";
+};
+
+export type FormsSettings = {
+  contactRecipientEmail: string;
+  contactSuccessMessageEn: string;
+  contactSuccessMessageUr: string;
+  contactAdminNotificationEnabled: boolean;
+  contactAutoReplyEnabled: boolean;
+  submitRequestSuccessMessageEn: string;
+  submitRequestSuccessMessageUr: string;
+  submitRequestSaveToSupportRequests: boolean;
+  submitRequestNotifyAdminEnabled: boolean;
+};
+
+export type BrandingSettings = {
+  logoPath: string;
+  logoDarkPath: string;
+  footerLogoPath: string;
+  faviconPath: string;
+  defaultOgImagePath: string;
+  defaultTwitterImagePath: string;
+  defaultBlogFallbackImagePath: string;
+  defaultGuideFallbackImagePath: string;
+  defaultServiceFallbackImagePath: string;
+  defaultRegionFallbackImagePath: string;
+  primaryBrandColor: string;
+  secondaryBrandColor: string;
+};
+
+export type StructuredPaymentMethodSettings = {
+  id: string;
+  nameEn: string;
+  nameUr: string;
+  accountTitle: string;
+  accountNumber: string;
+  iban: string;
+  instructionsEn: string;
+  instructionsUr: string;
+  isActive: boolean;
+  displayOrder: number;
+};
+
+export type GlobalSiteSettingsSnapshot = {
+  business: BusinessSettings;
+  publicUi: PublicUiSettings;
+  forms: FormsSettings;
+  branding: BrandingSettings;
 };
 
 export type PaymentSettings = {
@@ -25,6 +102,7 @@ export type PaymentSettings = {
   easypaisaGatewayEnabled: boolean;
   cardGatewayEnabled: boolean;
   gatewayPhase2Note: string;
+  paymentMethods: StructuredPaymentMethodSettings[];
 };
 
 export type SeoSettings = {
@@ -33,6 +111,9 @@ export type SeoSettings = {
   defaultMetaDescriptionEn: string;
   defaultMetaDescriptionUr: string;
   defaultOgImage: string;
+  defaultTwitterImage: string;
+  canonicalDomain: string;
+  sitemapEnabled: boolean;
   organizationName: string;
   organizationDescriptionEn: string;
   organizationDescriptionUr: string;
@@ -61,6 +142,11 @@ export type FeatureFlagSettings = {
   agentModuleEnabled: boolean;
   blogEnabled: boolean;
   guidesEnabled: boolean;
+  reviewsEnabled: boolean;
+  contactFormEnabled: boolean;
+  submitRequestEnabled: boolean;
+  floatingWhatsappEnabled: boolean;
+  whatsappChannelEnabled: boolean;
   whatsappNotificationsEnabled: boolean;
   smsFallbackEnabled: boolean;
   maintenanceMode: boolean;
@@ -70,6 +156,9 @@ export type FeatureFlagSettings = {
 
 export type PublicSettingsSnapshot = {
   business: BusinessSettings;
+  publicUi: PublicUiSettings;
+  forms: FormsSettings;
+  branding: BrandingSettings;
   payment: PaymentSettings;
   seo: SeoSettings;
   tracking: TrackingSettings;

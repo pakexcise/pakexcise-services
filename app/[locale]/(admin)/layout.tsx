@@ -22,6 +22,7 @@ export default async function AdminLayout({
   );
   const navItems = getAdminNavForPermissions(
     await getCachedEffectivePermissions(user.id, user.role),
+    { isSuperAdmin: user.role === "SUPER_ADMIN" },
   );
 
   return (

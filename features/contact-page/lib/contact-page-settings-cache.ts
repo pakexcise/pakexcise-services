@@ -8,15 +8,21 @@ import {
   mergeContactPageSettings,
 } from "@/features/contact-page/lib/defaults";
 import type { ContactPageSettings } from "@/features/contact-page/types";
+import { overlayGlobalContactOnContactPage } from "@/features/settings/lib/global-site-content";
+import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { pickLocalized } from "@/lib/i18n/content";
 import type { Locale } from "@/i18n/config";
 import { settingsRepository } from "@/server/repositories/settings-repository";
 
 async function loadContactPageSettings(): Promise<ContactPageSettings> {
-  const stored = await settingsRepository.getValue<Partial<ContactPageSettings>>(
-    CONTACT_PAGE_SETTINGS_KEY,
-  );
-  return mergeContactPageSettings(stored);
+  const [stored, business] = await Promise.all([
+    settingsRepository.getValue<Partial<ContactPageSettings>>(
+      CONTACT_PAGE_SETTINGS_KEY,
+    ),
+    getBusinessSettings(),
+  ]);
+  const merged = mergeContactPageSettings(stored);
+  return overlayGlobalContactOnContactPage(merged, business);
 }
 
 const getCachedContactPageSettings = unstable_cache(
