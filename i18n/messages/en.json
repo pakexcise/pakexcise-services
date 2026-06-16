@@ -2661,6 +2661,7 @@
         "referenceLinksHint": "Optional JSON array. Each item needs labelEn, labelUr, and url (HTTPS).",
         "category": "Service category",
         "selectCategory": "Select category",
+        "inactiveCategory": "inactive",
         "parentService": "Parent service (sub-service of)",
         "noParentService": "Top-level service",
         "requiresProof": "Requires completion proof",

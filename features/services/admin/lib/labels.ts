@@ -36,6 +36,7 @@ export async function getServiceEditorLabels() {
     referenceLinksHint: t("referenceLinksHint"),
     category: t("category"),
     selectCategory: t("selectCategory"),
+    inactiveCategory: t("inactiveCategory"),
     parentService: t("parentService"),
     noParentService: t("noParentService"),
     requiresProof: t("requiresProof"),

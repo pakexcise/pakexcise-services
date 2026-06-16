@@ -27,6 +27,7 @@ type CategoryOption = {
   id: string;
   nameEn: string;
   nameUr: string;
+  isActive: boolean;
 };
 
 type ParentServiceOption = {
@@ -160,6 +161,7 @@ export function ServiceEditorForm({
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.nameEn}
+                  {!category.isActive ? ` (${labels.inactiveCategory})` : ""}
                 </option>
               ))}
             </select>

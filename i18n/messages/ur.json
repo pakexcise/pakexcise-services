@@ -2662,6 +2662,7 @@
         "referenceLinksHint": "اختیاری JSON array۔ ہر item میں labelEn، labelUr، اور url (HTTPS) شامل کریں۔",
         "category": "خدمت کی کیٹیگری",
         "selectCategory": "کیٹیگری منتخب کریں",
+        "inactiveCategory": "غیر فعال",
         "parentService": "والدین خدمت (ذیلی خدمت)",
         "noParentService": "اعلیٰ سطح کی خدمت",
         "requiresProof": "تکمیل کا ثبوت درکار",

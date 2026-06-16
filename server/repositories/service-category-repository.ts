@@ -28,10 +28,6 @@ export type PublicServiceCategoryGroup = PublicServiceCategory & {
   }>[];
 };
 
-/** ServiceCategory has no soft-delete field — use isActive only. */
-const publicCategoryWhere = {
-  isActive: true,
-} as const satisfies Prisma.ServiceCategoryWhereInput;
 
 const publicTopLevelServiceWhere = {
   ...activeOnly(),
@@ -70,24 +66,29 @@ export class ServiceCategoryRepository extends Repository {
         ),
       ];
 
-      const categories =
-        categoryIds.length > 0
-          ? await this.db.serviceCategory.findMany({
-              where: {
-                ...publicCategoryWhere,
-                id: { in: categoryIds },
-              },
-              orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-              select: publicCategorySelect,
-            })
-          : [];
+      if (categoryIds.length === 0) {
+        return uncategorizedGroup(services);
+      }
 
-      const grouped = categories.map((category) => ({
-        ...category,
-        services: services
-          .filter((service) => service.categoryId === category.id)
-          .map(({ categoryId: _categoryId, ...service }) => service),
-      }));
+      // Include inactive categories when they still have public services.
+      // Otherwise active services assigned to an inactive category disappear
+      // from the homepage and /services page entirely.
+      const categories = await this.db.serviceCategory.findMany({
+        where: {
+          id: { in: categoryIds },
+        },
+        orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+        select: publicCategorySelect,
+      });
+
+      const grouped = categories
+        .map((category) => ({
+          ...category,
+          services: services
+            .filter((service) => service.categoryId === category.id)
+            .map(({ categoryId: _categoryId, ...service }) => service),
+        }))
+        .filter((group) => group.services.length > 0);
 
       const uncategorized = services
         .filter((service) => !service.categoryId)
@@ -106,9 +107,34 @@ export class ServiceCategoryRepository extends Repository {
         });
       }
 
-      return grouped.filter((group) => group.services.length > 0);
+      return grouped;
     }, []);
   }
+}
+
+function uncategorizedGroup(
+  services: Array<
+    Prisma.ServiceGetPayload<{
+      select: typeof publicTopLevelServiceSelect;
+    }>
+  >,
+): PublicServiceCategoryGroup[] {
+  if (services.length === 0) {
+    return [];
+  }
+
+  return [
+    {
+      id: "uncategorized",
+      slug: "other-services",
+      nameEn: "Other services",
+      nameUr: "دیگر خدمات",
+      descriptionEn: null,
+      descriptionUr: null,
+      displayOrder: 9999,
+      services: services.map(({ categoryId: _categoryId, ...service }) => service),
+    },
+  ];
 }
 
 export const serviceCategoryRepository = new ServiceCategoryRepository();
