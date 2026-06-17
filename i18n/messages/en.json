@@ -1095,7 +1095,11 @@
       "categoryLabel": "Category: {category}",
       "subServicesTitle": "Sub-services",
       "subServicesDescription": "Choose the specific route permit service you need.",
-      "allRegionsScope": "All assigned provinces"
+      "allRegionsScope": "All assigned provinces",
+      "fieldsTitle": "Required information",
+      "fieldsDescription": "These details may be required depending on your selected province.",
+      "fieldsEmpty": "No additional fields are configured for this service yet.",
+      "regionSupportTitle": "Province support notes"
     },
     "serviceOptions": {
       "title": "Choose how you'd like to get started",
@@ -1317,6 +1321,7 @@
       "regions": "Regions",
       "cities": "Cities",
       "documentRequirements": "Document requirements",
+      "checklistItems": "Checklist items",
       "serviceAvailability": "Service availability",
       "faqs": "FAQs",
       "social": "Social links",
@@ -2940,6 +2945,32 @@
         "manage": "Edit on service"
       }
     },
+    "checklistItems": {
+      "title": "Checklist items",
+      "description": "Manage reusable document and field checklist items. Assign them to services from each service editor.",
+      "panel": {
+        "empty": "No checklist items yet. Create the first reusable item.",
+        "createTitle": "Add checklist item",
+        "editTitle": "Edit checklist item",
+        "slug": "Slug",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "itemType": "Type",
+        "descriptionEn": "Help text (English)",
+        "displayOrder": "Display order",
+        "active": "Active",
+        "inactive": "Inactive",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save item",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "saveFailed": "Could not save checklist item",
+        "deleteFailed": "Could not delete checklist item",
+        "confirmDelete": "Delete this checklist item?",
+        "assignHint": "After creating an item, assign it to services from Admin → Services → Edit → Document requirements."
+      }
+    },
     "serviceAvailability": {
       "title": "Service availability",
       "description": "Assign services to provinces. Assigned services appear on the province page and all city pages under that province.",
@@ -3141,6 +3172,9 @@
       "title": "Service details",
       "description": "Confirm the service for this application or choose a different one.",
       "serviceSection": "Select service",
+      "regionSection": "Select province / region",
+      "regionPlaceholder": "Choose your province",
+      "regionRequired": "Please select your province before continuing.",
       "selectedBadge": "Current",
       "switchServiceNotice": "You selected __SERVICE__. Continue to load this service's requirements.",
       "additionalSection": "Additional information",

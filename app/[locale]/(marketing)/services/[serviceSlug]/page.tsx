@@ -3,15 +3,17 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { ViewServiceTracker } from "@/components/analytics/ViewServiceTracker";
-import { DocumentChecklist } from "@/components/marketing/document-checklist";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { HowItWorksSteps } from "@/components/marketing/how-it-works-steps";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
+import { RegionGroupedDocumentChecklist } from "@/components/marketing/region-grouped-document-checklist";
 import { RelatedServices } from "@/components/marketing/related-services";
+import { ServiceFieldsPreview } from "@/components/marketing/service-fields-preview";
 import { ServiceInfoSidebar } from "@/components/marketing/service-info-sidebar";
 import { ServiceOptionsSection } from "@/components/marketing/service-options-section";
+import { ServiceRegionNotes } from "@/components/marketing/service-region-notes";
 import { ServiceRegionsList } from "@/components/marketing/service-regions-list";
 import { ServiceSubServices } from "@/components/marketing/service-sub-services";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
@@ -27,6 +29,12 @@ import {
   getServiceAssignedRegions,
   getServiceRegionLabel,
 } from "@/features/services/lib/service-regions";
+import {
+  getRegionSupportNotes,
+  groupDocumentsByRegion,
+  mapServiceDocumentsForLocale,
+  mapServiceFieldsForLocale,
+} from "@/features/services/lib/map-service-requirements";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import {
@@ -153,22 +161,21 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   const faqItems = mapFaqsForLocale(serviceFaqs, locale);
   const allRegionsLabel = t("service.allRegionsScope");
-  const documents = service.documentReqs.map((doc) => ({
-    id: doc.id,
-    label: pickLocalized(locale, { en: doc.labelEn, ur: doc.labelUr }),
-    instructions: pickLocalized(locale, {
-      en: doc.instructionsEn,
-      ur: doc.instructionsUr,
-    }),
-    isRequired: doc.isRequired,
-    scopeLabel: doc.region
-      ? pickLocalized(locale, {
-          en: doc.region.nameEn,
-          ur: doc.region.nameUr,
-        })
-      : allRegionsLabel,
-  }));
-  const requiredDocumentCount = documents.filter((doc) => doc.isRequired).length;
+  const mappedDocuments = mapServiceDocumentsForLocale(
+    service.documentReqs,
+    locale,
+    allRegionsLabel,
+  );
+  const documentGroups = groupDocumentsByRegion(mappedDocuments, allRegionsLabel);
+  const mappedFields = mapServiceFieldsForLocale(
+    service.formFields,
+    locale,
+    allRegionsLabel,
+  );
+  const regionSupportNotes = getRegionSupportNotes(service.serviceRegions, locale);
+  const requiredDocumentCount = mappedDocuments.filter(
+    (doc) => doc.isRequired && doc.kind === "FILE",
+  ).length;
 
   const serviceUrl = absoluteUrl(`/services/${service.slug}`);
   const breadcrumbItems = [
@@ -262,7 +269,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               description={t("service.subServicesDescription")}
               services={service.subServices}
               locale={locale}
-              applyLabel={tCommon("learnMore")}
+              applyLabel={t("serviceOptions.accountSubServiceCta")}
+            />
+
+            <ServiceRegionNotes
+              title={t("service.regionSupportTitle")}
+              notes={regionSupportNotes}
             />
 
             {processingNotes?.trim() ? (
@@ -272,9 +284,18 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               </section>
             ) : null}
 
-            <DocumentChecklist
+            <ServiceFieldsPreview
+              title={t("service.fieldsTitle")}
+              description={t("service.fieldsDescription")}
+              fields={mappedFields}
+              requiredLabel={t("service.required")}
+              optionalLabel={t("service.optional")}
+              emptyMessage={t("service.fieldsEmpty")}
+            />
+
+            <RegionGroupedDocumentChecklist
               title={t("service.documentsTitle")}
-              items={documents}
+              groups={documentGroups}
               requiredLabel={t("service.required")}
               optionalLabel={t("service.optional")}
               emptyMessage={t("service.documentsEmpty")}
@@ -315,7 +336,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           <ServiceInfoSidebar
             serviceName={name}
             regionLabel={regionName}
-            documentCount={documents.length}
+            documentCount={mappedDocuments.filter((doc) => doc.kind === "FILE").length}
             requiredDocumentCount={requiredDocumentCount}
             documentsLabel={t("service.documentsTitle")}
             regionLabelTitle={t("service.availableIn")}

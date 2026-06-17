@@ -44,6 +44,7 @@ export function parseDraftJson(
   trackingId: string;
   currentStep: 1 | 2 | 3 | 4;
   basic?: ApplicationDraftJson["basic"];
+  selectedRegionId?: string | null;
   fields?: ApplicationDraftJson["fields"];
 } {
   const draftJson = (draft.draftJson ?? {}) as ApplicationDraftJson;
@@ -54,6 +55,7 @@ export function parseDraftJson(
     trackingId: draft.trackingId,
     currentStep: step,
     basic: draftJson.basic,
+    selectedRegionId: draftJson.selectedRegionId,
     fields: draftJson.fields,
   };
 }

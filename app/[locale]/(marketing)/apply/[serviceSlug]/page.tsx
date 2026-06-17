@@ -137,6 +137,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
 
     initialDraft = {
       ...parsed,
+      selectedRegionId: parsed.selectedRegionId,
       documents: documentsForWizard,
     };
   }
@@ -178,6 +179,9 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       title: t("fields.title"),
       description: t("fields.description"),
       serviceSection: t("fields.serviceSection"),
+      regionSection: t("fields.regionSection"),
+      regionPlaceholder: t("fields.regionPlaceholder"),
+      regionRequired: t("fields.regionRequired"),
       selectedBadge: t("fields.selectedBadge"),
       switchServiceNotice: t("fields.switchServiceNotice"),
       additionalSection: t("fields.additionalSection"),

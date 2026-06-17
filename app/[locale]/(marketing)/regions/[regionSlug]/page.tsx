@@ -170,10 +170,10 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
           whatsappDefaultMessage={whatsappMessage}
           locale={locale}
           labels={{
-            title: t("regionHelp.title", { region: name }),
-            description: t("regionHelp.description"),
+            title: t("regions.regionHelp.title", { region: name }),
+            description: t("regions.regionHelp.description"),
             whatsappCta: t("serviceOptions.whatsappCta"),
-            browseServicesCta: t("regionHelp.browseServices"),
+            browseServicesCta: t("regions.regionHelp.browseServices"),
           }}
         />
       </div>

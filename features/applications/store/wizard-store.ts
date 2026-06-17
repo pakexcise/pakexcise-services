@@ -16,6 +16,7 @@ type WizardInitInput = {
   trackingId?: string | null;
   currentStep?: WizardStep;
   basic?: Partial<BasicApplicantDetails>;
+  selectedRegionId?: string | null;
   fields?: Record<string, string | string[] | boolean>;
   documents?: Record<string, SavedDocumentMeta>;
   userDefaults?: Partial<BasicApplicantDetails>;
@@ -27,6 +28,7 @@ type WizardState = {
   applicationId: string | null;
   trackingId: string | null;
   currentStep: WizardStep;
+  selectedRegionId: string | null;
   basic: Partial<BasicApplicantDetails>;
   fields: Record<string, string | string[] | boolean>;
   documents: Record<string, SavedDocumentMeta>;
@@ -38,6 +40,7 @@ type WizardState = {
   initialize: (input: WizardInitInput) => void;
   setStep: (step: WizardStep) => void;
   setBasic: (basic: Partial<BasicApplicantDetails>) => void;
+  setSelectedRegionId: (regionId: string | null) => void;
   setFields: (fields: Record<string, string | string[] | boolean>) => void;
   setDocument: (requirementId: string, document: SavedDocumentMeta) => void;
   removeDocument: (requirementId: string) => void;
@@ -58,6 +61,7 @@ const initialState = {
   applicationId: null,
   trackingId: null,
   currentStep: 1 as WizardStep,
+  selectedRegionId: null,
   basic: {},
   fields: {},
   documents: {},
@@ -94,6 +98,7 @@ export const useWizardStore = create<WizardState>((set) => ({
       applicationId: input.applicationId ?? null,
       trackingId: input.trackingId ?? null,
       currentStep,
+      selectedRegionId: input.selectedRegionId ?? null,
       basic,
       fields: input.fields ?? {},
       documents: input.documents ?? {},
@@ -109,6 +114,7 @@ export const useWizardStore = create<WizardState>((set) => ({
     set((state) => ({
       basic: { ...state.basic, ...basic },
     })),
+  setSelectedRegionId: (selectedRegionId) => set({ selectedRegionId }),
   setFields: (fields) => set({ fields }),
   setDocument: (requirementId, document) =>
     set((state) => ({

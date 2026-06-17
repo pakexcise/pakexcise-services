@@ -18,6 +18,10 @@ import {
   getStoredAttribution,
 } from "@/features/applications/lib/attribution";
 import { filterServiceSpecificFields } from "@/features/applications/lib/basic-field-keys";
+import {
+  buildScopedApplyConfig,
+  resolveDefaultRegionId,
+} from "@/features/applications/lib/filter-apply-config";
 import { formatActionErrorMessage } from "@/features/applications/lib/format-action-error";
 import { useWizardStore } from "@/features/applications/store/wizard-store";
 import type {
@@ -60,6 +64,9 @@ type ApplicationWizardLabels = {
     title: string;
     description: string;
     serviceSection: string;
+    regionSection: string;
+    regionPlaceholder: string;
+    regionRequired: string;
     selectedBadge: string;
     switchServiceNotice: string;
     additionalSection: string;
@@ -118,6 +125,7 @@ type ApplicationWizardLabels = {
 
 type DraftSnapshot = {
   basic?: Partial<BasicApplicantDetails>;
+  selectedRegionId?: string | null;
   fields?: Record<string, string | string[] | boolean>;
   documents?: Record<string, SavedDocumentMeta>;
 };
@@ -132,6 +140,7 @@ type ApplicationWizardProps = {
     trackingId: string;
     currentStep: WizardStep;
     basic?: Partial<BasicApplicantDetails>;
+    selectedRegionId?: string | null;
     fields?: Record<string, string | string[] | boolean>;
     documents?: Record<string, SavedDocumentMeta>;
   } | null;
@@ -167,6 +176,7 @@ export function ApplicationWizard({
     applicationId,
     trackingId,
     currentStep,
+    selectedRegionId,
     basic,
     fields,
     documents,
@@ -178,6 +188,7 @@ export function ApplicationWizard({
     initialize,
     setStep,
     setBasic,
+    setSelectedRegionId,
     setFields,
     setDocument,
     removeDocument,
@@ -191,6 +202,32 @@ export function ApplicationWizard({
     () => filterServiceSpecificFields(service.formFields),
     [service.formFields],
   );
+
+  const resolvedRegionId = useMemo(
+    () =>
+      selectedRegionId ??
+      resolveDefaultRegionId(
+        service.assignedRegions,
+        initialDraft?.selectedRegionId,
+      ),
+    [
+      selectedRegionId,
+      service.assignedRegions,
+      initialDraft?.selectedRegionId,
+    ],
+  );
+
+  const scopedConfig = useMemo(
+    () => buildScopedApplyConfig(service, resolvedRegionId),
+    [service, resolvedRegionId],
+  );
+
+  const activeServiceFields = useMemo(
+    () => filterServiceSpecificFields(scopedConfig.formFields),
+    [scopedConfig.formFields],
+  );
+
+  const uploadRequirements = scopedConfig.uploadRequirements;
 
   const initKey = `${service.id}:${initialDraft?.applicationId ?? "new"}`;
 
@@ -207,6 +244,9 @@ export function ApplicationWizard({
       trackingId: initialDraft?.trackingId,
       currentStep: initialDraft?.currentStep,
       basic: initialDraft?.basic,
+      selectedRegionId:
+        initialDraft?.selectedRegionId ??
+        resolveDefaultRegionId(service.assignedRegions),
       fields: initialDraft?.fields,
       documents: initialDraft?.documents,
       userDefaults,
@@ -250,6 +290,7 @@ export function ApplicationWizard({
       currentStep: nextStep,
       locale,
       basic: snapshot.basic ?? basic,
+      selectedRegionId: snapshot.selectedRegionId ?? resolvedRegionId,
       fields: snapshot.fields ?? fields,
       documents: snapshot.documents ?? documents,
       attribution,
@@ -296,9 +337,14 @@ export function ApplicationWizard({
 
   async function handleServiceDetailsSubmit(
     values: Record<string, string | string[] | boolean>,
+    nextRegionId: string | null,
   ) {
+    setSelectedRegionId(nextRegionId);
     setFields(values);
-    const saved = await persistDraft(3, { fields: values });
+    const saved = await persistDraft(3, {
+      fields: values,
+      selectedRegionId: nextRegionId,
+    });
 
     if (!saved) {
       return;
@@ -346,7 +392,7 @@ export function ApplicationWizard({
   }
 
   async function handleDocumentsSubmit() {
-    const required = service.documentRequirements.filter((doc) => doc.isRequired);
+    const required = uploadRequirements.filter((doc) => doc.isRequired);
     const missing = required.filter((doc) => !documents[doc.id]);
 
     if (missing.length > 0) {
@@ -466,7 +512,10 @@ export function ApplicationWizard({
         <ServiceDetailsStep
           service={service}
           availableServices={availableServices}
-          serviceFields={serviceSpecificFields}
+          serviceFields={activeServiceFields}
+          assignedRegions={service.assignedRegions}
+          selectedRegionId={resolvedRegionId}
+          onRegionChange={setSelectedRegionId}
           defaultValues={fields}
           labels={labels.fields}
           isSaving={isSaving}
@@ -479,7 +528,7 @@ export function ApplicationWizard({
       {currentStep === 3 && applicationId ? (
         <DocumentsStep
           applicationId={applicationId}
-          requirements={service.documentRequirements}
+          requirements={uploadRequirements}
           documents={documents}
           labels={labels.documents}
           isSaving={isSaving}
@@ -496,9 +545,9 @@ export function ApplicationWizard({
           serviceName={service.name}
           basic={resolvedBasic}
           basicComplete={basicComplete}
-          fields={serviceSpecificFields}
+          fields={activeServiceFields}
           fieldValues={fields}
-          documentRequirements={service.documentRequirements}
+          documentRequirements={uploadRequirements}
           documents={documents}
           labels={labels.review}
           isSubmitting={isSubmitting}

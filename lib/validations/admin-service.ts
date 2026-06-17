@@ -125,12 +125,16 @@ export const documentRequirementSchema = z.object({
   id: z.string().cuid().optional(),
   serviceId: z.string().cuid(),
   regionId: z.string().cuid().optional().nullable(),
+  checklistItemId: z.string().cuid().optional().nullable(),
   docType: z
     .string()
     .trim()
     .min(2)
     .max(80)
     .regex(/^[a-z0-9_]+$/, "Use lowercase letters, numbers, and underscores"),
+  kind: z
+    .enum(["FILE", "NOTE", "BIOMETRIC", "INSPECTION", "DELIVERY"])
+    .default("FILE"),
   labelEn: z.string().trim().min(2).max(200),
   labelUr: z.string().trim().min(2).max(200),
   instructionsEn: z.string().trim().max(5000).optional().nullable(),
@@ -152,6 +156,7 @@ export const deleteDocumentRequirementSchema = z.object({
 export const serviceFormFieldSchema = z.object({
   id: z.string().cuid().optional(),
   serviceId: z.string().cuid(),
+  regionId: z.string().cuid().optional().nullable(),
   fieldKey: z
     .string()
     .trim()

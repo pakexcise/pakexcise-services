@@ -2,6 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 
 import { REGION_SLUG_ALIASES } from "../config/region-slugs";
 import { CITY_SEED } from "./seed-cities-data";
+import { seedServiceConfig } from "./seed-service-config";
 
 const DEFAULT_MIME_TYPES = [
   "image/jpeg",
@@ -235,8 +236,8 @@ export const SERVICE_SEED = [
     slug: "token-tax",
     regionSlugs: TOKEN_TAX_REGION_SLUGS,
     categorySlug: "vehicle-services",
-    nameEn: "Token Tax",
-    nameUr: "ٹوکن ٹیکس",
+    nameEn: "Token Tax Payment",
+    nameUr: "ٹوکن ٹیکس ادائیگی",
     shortDescriptionEn:
       "Private facilitation support for token tax payment across supported provinces.",
     shortDescriptionUr:
@@ -282,7 +283,7 @@ export const SERVICE_SEED = [
   {
     slug: "route-permit-new",
     parentSlug: "route-permit",
-    regionSlugs: ["punjab", "islamabad"],
+    regionSlugs: ["punjab"],
     categorySlug: "vehicle-services",
     nameEn: "New Route Permit",
     nameUr: "نیا راؤٹ پرمٹ",
@@ -293,7 +294,7 @@ export const SERVICE_SEED = [
   {
     slug: "route-permit-noc",
     parentSlug: "route-permit",
-    regionSlugs: ["punjab", "islamabad"],
+    regionSlugs: ["punjab"],
     categorySlug: "vehicle-services",
     nameEn: "Route Permit NOC",
     nameUr: "راؤٹ پرمٹ NOC",
@@ -304,7 +305,7 @@ export const SERVICE_SEED = [
   {
     slug: "route-permit-duplicate",
     parentSlug: "route-permit",
-    regionSlugs: ["punjab", "islamabad"],
+    regionSlugs: ["punjab"],
     categorySlug: "vehicle-services",
     nameEn: "Route Permit Duplicate",
     nameUr: "راؤٹ پرمٹ ڈپلیکیٹ",
@@ -821,6 +822,8 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       },
     });
   }
+
+  await seedServiceConfig(prisma, regionMap, serviceMap);
 
   const serviceIds = (
     await prisma.service.findMany({ select: { id: true, slug: true } })

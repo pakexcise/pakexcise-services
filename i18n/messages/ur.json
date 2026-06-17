@@ -1096,7 +1096,11 @@
       "categoryLabel": "کیٹیگری: {category}",
       "subServicesTitle": "ذیلی خدمات",
       "subServicesDescription": "وہ مخصوص راؤٹ پرمٹ خدمت منتخب کریں جس کی آپ کو ضرورت ہے۔",
-      "allRegionsScope": "تمام تفویض شدہ صوبے"
+      "allRegionsScope": "تمام تفویض شدہ صوبے",
+      "fieldsTitle": "ضروری معلومات",
+      "fieldsDescription": "یہ تفصیلات آپ کے منتخب صوبے کے مطابق درکار ہو سکتی ہیں۔",
+      "fieldsEmpty": "اس خدمت کے لیے ابھی کوئی اضافی فیلڈز ترتیب نہیں دیے گئے۔",
+      "regionSupportTitle": "صوبہ وار سپورٹ نوٹس"
     },
     "serviceOptions": {
       "title": "آغاز کیسے کریں",
@@ -1318,6 +1322,7 @@
       "regions": "علاقے",
       "cities": "شہر",
       "documentRequirements": "دستاویزات کی ضروریات",
+      "checklistItems": "چیک لسٹ آئٹمز",
       "serviceAvailability": "سروس دستیابی",
       "faqs": "سوالات",
       "social": "سوشل لنکس",
@@ -2941,6 +2946,32 @@
         "manage": "سروس پر ترمیم"
       }
     },
+    "checklistItems": {
+      "title": "چیک لسٹ آئٹمز",
+      "description": "دوبارہ استعمال ہونے والے دستاویزات اور فیلڈ چیک لسٹ آئٹمز منظم کریں۔ انہیں ہر سروس ایڈیٹر سے منسلک کریں۔",
+      "panel": {
+        "empty": "ابھی کوئی چیک لسٹ آئٹم نہیں۔ پہلا آئٹم بنائیں۔",
+        "createTitle": "چیک لسٹ آئٹم شامل کریں",
+        "editTitle": "چیک لسٹ آئٹم میں ترمیم",
+        "slug": "سلگ",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "itemType": "قسم",
+        "descriptionEn": "مددگار متن (انگریزی)",
+        "displayOrder": "نمائش ترتیب",
+        "active": "فعال",
+        "inactive": "غیر فعال",
+        "edit": "ترمیم",
+        "delete": "حذف",
+        "save": "آئٹم محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے…",
+        "cancel": "منسوخ",
+        "saveFailed": "چیک لسٹ آئٹم محفوظ نہیں ہو سکا",
+        "deleteFailed": "چیک لسٹ آئٹم حذف نہیں ہو سکا",
+        "confirmDelete": "یہ چیک لسٹ آئٹم حذف کریں؟",
+        "assignHint": "آئٹم بنانے کے بعد اسے Admin → Services → Edit → Document requirements سے سروسز میں منسلک کریں۔"
+      }
+    },
     "serviceAvailability": {
       "title": "سروس دستیابی",
       "description": "سروسز کو صوبوں سے منسلک کریں۔ منسلک سروسز صوبے کے صفحے اور اس کے تمام شہر کے صفحات پر ظاہر ہوں گی۔",
@@ -3142,6 +3173,9 @@
       "title": "خدمت کی تفصیلات",
       "description": "اس درخواست کے لیے خدمت کی تصدیق کریں یا مختلف خدمت منتخب کریں۔",
       "serviceSection": "خدمت منتخب کریں",
+      "regionSection": "صوبہ / علاقہ منتخب کریں",
+      "regionPlaceholder": "اپنا صوبہ منتخب کریں",
+      "regionRequired": "جاری رکھنے سے پہلے اپنا صوبہ منتخب کریں۔",
       "selectedBadge": "موجودہ",
       "switchServiceNotice": "آپ نے __SERVICE__ منتخب کیا ہے۔ جاری رکھیں تاکہ اس خدمت کی ضروریات لوڈ ہوں۔",
       "additionalSection": "اضافی معلومات",

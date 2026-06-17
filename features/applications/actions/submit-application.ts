@@ -4,6 +4,7 @@ import type { Prisma } from "@prisma/client";
 
 import { buildDynamicFieldsSchema, serializeFieldValue } from "@/features/applications/lib/build-field-schema";
 import { filterServiceSpecificFields } from "@/features/applications/lib/basic-field-keys";
+import { buildScopedApplyConfig } from "@/features/applications/lib/filter-apply-config";
 import { mapServiceApplyConfig } from "@/features/applications/lib/map-service-config";
 import type { ApplicationDraftJson } from "@/features/applications/types";
 import {
@@ -65,7 +66,10 @@ export async function submitApplicationAction(
   }
 
   const service = mapServiceApplyConfig(serviceRecord, parsed.data.locale);
-  const serviceSpecificFields = filterServiceSpecificFields(service.formFields);
+  const draftJson = (draft.draftJson ?? {}) as ApplicationDraftJson;
+  const selectedRegionId = draftJson.selectedRegionId ?? null;
+  const scopedConfig = buildScopedApplyConfig(service, selectedRegionId);
+  const serviceSpecificFields = filterServiceSpecificFields(scopedConfig.formFields);
   const dynamicSchema = buildDynamicFieldsSchema(serviceSpecificFields);
   const dynamicResult = dynamicSchema.safeParse(parsed.data.fields);
 
@@ -91,7 +95,7 @@ export async function submitApplicationAction(
     },
   });
 
-  const requiredDocs = service.documentRequirements.filter((doc) => doc.isRequired);
+  const requiredDocs = scopedConfig.uploadRequirements.filter((doc) => doc.isRequired);
   const uploadedRequirementIds = new Set(
     documents.map((doc) => doc.requirementId).filter(Boolean),
   );
@@ -104,7 +108,6 @@ export async function submitApplicationAction(
     return errorResult("Please upload all required documents before submitting");
   }
 
-  const draftJson = (draft.draftJson ?? {}) as ApplicationDraftJson;
   const attribution = parsed.data.attribution ?? draftJson.attribution;
 
   if (!canTransitionStatus("DRAFT", "SUBMITTED")) {

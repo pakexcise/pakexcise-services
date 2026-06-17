@@ -110,6 +110,13 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "region:manage",
   },
   {
+    href: "/admin/checklist-items",
+    labelKey: "checklistItems",
+    icon: "list-checks",
+    section: "catalog",
+    permission: "service:manage",
+  },
+  {
     href: "/admin/document-requirements",
     labelKey: "documentRequirements",
     icon: "file-text",

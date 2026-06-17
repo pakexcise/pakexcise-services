@@ -54,6 +54,7 @@ export function mapServiceApplyConfig(
   const formFields: ApplyFormFieldConfig[] = service.formFields.map((field) => ({
     id: field.id,
     fieldKey: field.fieldKey,
+    regionId: field.regionId,
     label: pickLocalized(locale, {
       en: field.labelEn,
       ur: field.labelUr,
@@ -87,6 +88,8 @@ export function mapServiceApplyConfig(
     service.documentReqs.map((req) => ({
       id: req.id,
       docType: req.docType,
+      regionId: req.regionId,
+      kind: req.kind,
       label: pickLocalized(locale, {
         en: req.labelEn,
         ur: req.labelUr,
@@ -107,6 +110,27 @@ export function mapServiceApplyConfig(
         : [],
       displayOrder: req.displayOrder,
     }));
+
+  const assignedRegions = service.serviceRegions
+    .map((entry) => {
+      if (!entry.region) {
+        return null;
+      }
+
+      return {
+        id: entry.region.id,
+        slug: entry.region.slug,
+        name: pickLocalized(locale, {
+          en: entry.region.nameEn,
+          ur: entry.region.nameUr,
+        }),
+        supportNotes: pickLocalized(locale, {
+          en: entry.supportNotesEn ?? "",
+          ur: entry.supportNotesUr ?? entry.supportNotesEn ?? "",
+        }),
+      };
+    })
+    .filter((region): region is NonNullable<typeof region> => Boolean(region));
 
   return {
     id: service.id,
@@ -129,6 +153,7 @@ export function mapServiceApplyConfig(
       "Multiple provinces",
       "All Provinces",
     ),
+    assignedRegions,
     formFields,
     documentRequirements,
   };

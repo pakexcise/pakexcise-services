@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
@@ -11,6 +11,7 @@ import { DynamicFieldInput } from "@/features/applications/components/dynamic-fi
 import { buildDynamicFieldsSchema } from "@/features/applications/lib/build-field-schema";
 import type {
   ApplyFormFieldConfig,
+  ApplyRegionOption,
   ApplyServiceConfig,
   ApplyServiceOption,
 } from "@/features/applications/types";
@@ -21,11 +22,17 @@ type ServiceDetailsStepProps = {
   service: ApplyServiceConfig;
   availableServices: ApplyServiceOption[];
   serviceFields: ApplyFormFieldConfig[];
+  assignedRegions: ApplyRegionOption[];
+  selectedRegionId: string | null;
+  onRegionChange: (regionId: string | null) => void;
   defaultValues: Record<string, string | string[] | boolean>;
   labels: {
     title: string;
     description: string;
     serviceSection: string;
+    regionSection: string;
+    regionPlaceholder: string;
+    regionRequired: string;
     selectedBadge: string;
     switchServiceNotice: string;
     additionalSection: string;
@@ -39,6 +46,7 @@ type ServiceDetailsStepProps = {
   onBack: () => void;
   onContinueSameService: (
     values: Record<string, string | string[] | boolean>,
+    selectedRegionId: string | null,
   ) => Promise<void>;
   onSwitchService: (nextServiceSlug: string) => Promise<void>;
 };
@@ -47,6 +55,9 @@ export function ServiceDetailsStep({
   service,
   availableServices,
   serviceFields,
+  assignedRegions,
+  selectedRegionId: initialRegionId,
+  onRegionChange,
   defaultValues,
   labels,
   isSaving,
@@ -55,7 +66,17 @@ export function ServiceDetailsStep({
   onSwitchService,
 }: ServiceDetailsStepProps) {
   const [selectedSlug, setSelectedSlug] = useState(service.slug);
+  const [selectedRegionId, setSelectedRegionId] = useState<string | null>(
+    initialRegionId,
+  );
+  const [regionError, setRegionError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSelectedRegionId(initialRegionId);
+  }, [initialRegionId]);
+
   const isSwitchingService = selectedSlug !== service.slug;
+  const requiresRegionSelection = assignedRegions.length > 1;
 
   const schema = useMemo(
     () => buildDynamicFieldsSchema(serviceFields),
@@ -82,12 +103,21 @@ export function ServiceDetailsStep({
       return;
     }
 
-    if (serviceFields.length === 0) {
-      await onContinueSameService({});
+    if (requiresRegionSelection && !selectedRegionId) {
+      setRegionError(labels.regionRequired);
       return;
     }
 
-    await handleSubmit(onContinueSameService)();
+    setRegionError(null);
+
+    if (serviceFields.length === 0) {
+      await onContinueSameService({}, selectedRegionId);
+      return;
+    }
+
+    await handleSubmit((values) =>
+      onContinueSameService(values, selectedRegionId),
+    )();
   }
 
   return (
@@ -151,6 +181,46 @@ export function ServiceDetailsStep({
 
       {!isSwitchingService ? (
         <section className="space-y-4">
+          {requiresRegionSelection ? (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">{labels.regionSection}</h3>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {assignedRegions.map((region) => {
+                  const isSelected = selectedRegionId === region.id;
+
+                  return (
+                    <button
+                      key={region.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedRegionId(region.id);
+                        onRegionChange(region.id);
+                        setRegionError(null);
+                      }}
+                      className={cn(
+                        "rounded-lg border p-4 text-start transition-colors",
+                        isSelected
+                          ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                          : "border-border hover:border-primary/40 hover:bg-muted/30",
+                      )}
+                      aria-pressed={isSelected}
+                    >
+                      <p className="font-medium">{region.name}</p>
+                      {region.supportNotes ? (
+                        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                          {region.supportNotes}
+                        </p>
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+              {regionError ? (
+                <p className="text-sm text-destructive">{regionError}</p>
+              ) : null}
+            </div>
+          ) : null}
+
           <h3 className="text-sm font-medium">{labels.additionalSection}</h3>
 
           {serviceFields.length === 0 ? (

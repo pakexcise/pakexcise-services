@@ -42,6 +42,7 @@ export async function saveApplicationDraftAction(
 
   const draftJson: ApplicationDraftJson = {
     basic: parsed.data.basic,
+    selectedRegionId: parsed.data.selectedRegionId,
     fields: parsed.data.fields,
     documents: parsed.data.documents,
     attribution: parsed.data.attribution,

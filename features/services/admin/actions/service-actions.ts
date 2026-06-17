@@ -406,7 +406,9 @@ export async function upsertDocumentRequirementAction(
 
   const payload = {
     regionId: data.regionId ?? null,
+    checklistItemId: data.checklistItemId ?? null,
     docType: data.docType,
+    kind: data.kind,
     labelEn: data.labelEn,
     labelUr: data.labelUr,
     instructionsEn: data.instructionsEn,
@@ -532,6 +534,7 @@ export async function upsertServiceFormFieldAction(
   }
 
   const payload = {
+    regionId: data.regionId ?? null,
     fieldKey: data.fieldKey,
     labelEn: data.labelEn,
     labelUr: data.labelUr,

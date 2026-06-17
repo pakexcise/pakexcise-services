@@ -15,6 +15,7 @@ export type { PublicServiceSelect as PublicServiceCard };
 
 const publicFormFieldSelect = {
   id: true,
+  regionId: true,
   fieldKey: true,
   labelEn: true,
   labelUr: true,
@@ -29,11 +30,19 @@ const publicFormFieldSelect = {
   validationJson: true,
   conditionalJson: true,
   displayOrder: true,
+  region: {
+    select: {
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
 } as const;
 
 const publicDocumentRequirementSelect = {
   id: true,
   docType: true,
+  kind: true,
   regionId: true,
   labelEn: true,
   labelUr: true,
@@ -56,8 +65,11 @@ const publicAssignedRegionsSelect = {
   where: { isActive: true },
   orderBy: { displayOrder: "asc" },
   select: {
+    supportNotesEn: true,
+    supportNotesUr: true,
     region: {
       select: {
+        id: true,
         slug: true,
         nameEn: true,
         nameUr: true,
@@ -137,6 +149,11 @@ export const publicServiceDetailSelect = {
     select: publicSubServiceSelect,
   },
   serviceRegions: publicAssignedRegionsSelect,
+  formFields: {
+    where: isActiveOnly(),
+    orderBy: { displayOrder: "asc" },
+    select: publicFormFieldSelect,
+  },
   documentReqs: {
     where: isActiveOnly(),
     orderBy: { displayOrder: "asc" },
@@ -302,7 +319,7 @@ export class ServiceRepository extends Repository {
         this.db.service.findFirst({
           where: {
             slug,
-            ...activeOnly(),
+            ...publicServiceWhere,
           },
           select: publicServiceApplySelect,
         }),

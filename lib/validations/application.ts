@@ -23,6 +23,7 @@ export const saveApplicationDraftSchema = z.object({
   currentStep: z.number().int().min(1).max(4),
   locale: localeSchema,
   basic: basicApplicantDetailsSchema.partial().optional(),
+  selectedRegionId: z.string().cuid().nullable().optional(),
   fields: z.record(z.union([z.string(), z.array(z.string()), z.boolean()])).optional(),
   documents: z
     .record(

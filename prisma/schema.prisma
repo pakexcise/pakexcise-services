@@ -162,6 +162,24 @@ enum FieldType {
   CNIC
 }
 
+enum ChecklistItemType {
+  DOCUMENT
+  TEXT_FIELD
+  SELECT_FIELD
+  NOTE
+  BIOMETRIC
+  INSPECTION
+  DELIVERY_INSTRUCTION
+}
+
+enum DocumentRequirementKind {
+  FILE
+  NOTE
+  BIOMETRIC
+  INSPECTION
+  DELIVERY
+}
+
 enum AuditAction {
   CREATE
   UPDATE
@@ -360,6 +378,7 @@ model Region {
   services            Service[]
   serviceRegions      ServiceRegion[]
   documentReqs        DocumentRequirement[]
+  formFields          ServiceFormField[]
   seoMeta             SeoMeta?
 
   @@index([isActive, displayOrder])
@@ -425,13 +444,15 @@ model Review {
 }
 
 model ServiceRegion {
-  id           String   @id @default(cuid())
-  serviceId    String
-  regionId     String
-  isActive     Boolean  @default(true)
-  displayOrder Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String   @id @default(cuid())
+  serviceId      String
+  regionId       String
+  supportNotesEn String?  @db.Text
+  supportNotesUr String?  @db.Text
+  isActive       Boolean  @default(true)
+  displayOrder   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   region  Region  @relation(fields: [regionId], references: [id], onDelete: Cascade)
@@ -509,6 +530,7 @@ model ServiceFeeConfig {
 model ServiceFormField {
   id               String    @id @default(cuid())
   serviceId        String
+  regionId         String?
   fieldKey         String
   labelEn          String
   labelUr          String
@@ -528,36 +550,63 @@ model ServiceFormField {
   updatedAt        DateTime  @updatedAt
 
   service     Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  region      Region?                 @relation(fields: [regionId], references: [id], onDelete: SetNull)
   fieldValues ApplicationFieldValue[]
 
   @@unique([serviceId, fieldKey])
   @@index([serviceId, isActive, displayOrder])
+  @@index([serviceId, regionId, isActive, displayOrder])
   @@map("service_form_fields")
 }
 
+model ChecklistItem {
+  id                       String            @id @default(cuid())
+  slug                     String            @unique
+  nameEn                   String
+  nameUr                   String
+  descriptionEn            String?           @db.Text
+  descriptionUr            String?           @db.Text
+  itemType                 ChecklistItemType @default(DOCUMENT)
+  defaultMaxSizeBytes      Int               @default(5242880)
+  defaultAcceptedMimeTypes Json
+  isActive                 Boolean           @default(true)
+  displayOrder             Int               @default(0)
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+
+  assignments DocumentRequirement[]
+
+  @@index([isActive, displayOrder])
+  @@map("checklist_items")
+}
+
 model DocumentRequirement {
-  id                String   @id @default(cuid())
+  id                String                  @id @default(cuid())
   serviceId         String
   regionId          String?
+  checklistItemId   String?
   docType           String
+  kind              DocumentRequirementKind @default(FILE)
   labelEn           String
   labelUr           String
-  instructionsEn    String?  @db.Text
-  instructionsUr    String?  @db.Text
-  isRequired        Boolean  @default(true)
-  maxSizeBytes      Int      @default(5242880)
+  instructionsEn    String?                 @db.Text
+  instructionsUr    String?                 @db.Text
+  isRequired        Boolean                 @default(true)
+  maxSizeBytes      Int                     @default(5242880)
   acceptedMimeTypes Json
-  displayOrder      Int      @default(0)
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  displayOrder      Int                     @default(0)
+  isActive          Boolean                 @default(true)
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
 
-  service   Service    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  region    Region?    @relation(fields: [regionId], references: [id], onDelete: SetNull)
-  documents Document[]
+  service       Service        @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  region        Region?        @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  checklistItem ChecklistItem? @relation(fields: [checklistItemId], references: [id], onDelete: SetNull)
+  documents     Document[]
 
   @@index([serviceId, isActive, displayOrder])
   @@index([serviceId, regionId, docType])
+  @@index([checklistItemId])
   @@map("document_requirements")
 }
 

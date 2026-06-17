@@ -49,7 +49,7 @@ export function ServiceSubServices({
                 <p className="mt-2 text-sm text-muted-foreground">{summary}</p>
               ) : null}
               <Link
-                href={`/services/${service.slug}`}
+                href={`/apply/${service.slug}`}
                 className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
               >
                 {applyLabel}
