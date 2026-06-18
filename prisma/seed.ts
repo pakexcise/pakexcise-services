@@ -168,7 +168,7 @@ async function main() {
 
   const featuredServiceSlugs = [
     "vehicle-transfer",
-    "token-tax",
+    "token-tax-payment",
     "new-vehicle-registration",
     "driving-license-renewal",
     "learner-license",

@@ -87,11 +87,16 @@ export function ServiceDetailsStep({
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues,
   });
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, reset, serviceFields, selectedRegionId]);
 
   const values = watch();
   const selectedService =

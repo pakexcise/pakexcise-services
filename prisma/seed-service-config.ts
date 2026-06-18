@@ -174,7 +174,7 @@ export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
       doc("fitness_certificate", "Fitness certificate", "فٹنس سرٹیفکیٹ", { regionSlug: "islamabad", displayOrder: 6, isRequired: false, instructionsEn: "Required only for commercial vehicles.", instructionsUr: "صرف تجارتی گاڑیوں کے لیے درکار۔" }),
     ],
   },
-  "token-tax": {
+  "token-tax-payment": {
     fields: [
       field("vehicle_registration_number", "Vehicle registration number", "گاڑی رجسٹریشن نمبر", "TEXT", {
         regionSlug: "punjab",

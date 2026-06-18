@@ -233,7 +233,7 @@ export const SERVICE_SEED = [
     displayOrder: 1,
   },
   {
-    slug: "token-tax",
+    slug: "token-tax-payment",
     regionSlugs: TOKEN_TAX_REGION_SLUGS,
     categorySlug: "vehicle-services",
     nameEn: "Token Tax Payment",
@@ -929,7 +929,6 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     "vehicle-transfer-islamabad-ict",
     "token-tax",
     "token-tax-all-provinces",
-    "token-tax-payment",
     "new-vehicle-registration-punjab",
     "new-vehicle-registration-islamabad-ict",
     "vehicle-inspection",
@@ -951,9 +950,8 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   });
 
   const redirects = [
-    { oldSlug: "token-tax-all-provinces", newSlug: "token-tax" },
-    { oldSlug: "token-tax", newSlug: "token-tax" },
-    { oldSlug: "token-tax-payment", newSlug: "token-tax" },
+    { oldSlug: "token-tax-all-provinces", newSlug: "token-tax-payment" },
+    { oldSlug: "token-tax", newSlug: "token-tax-payment" },
     { oldSlug: "vehicle-transfer-punjab", newSlug: "vehicle-transfer" },
     { oldSlug: "vehicle-transfer-islamabad-ict", newSlug: "vehicle-transfer" },
     {
@@ -1001,6 +999,12 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       create: { ...redirect, isActive: true },
     });
   }
+
+  // Remove legacy redirect that sent the canonical slug to the old slug.
+  await prisma.redirect.updateMany({
+    where: { oldSlug: "token-tax-payment", newSlug: "token-tax" },
+    data: { isActive: false },
+  });
 
   const staticPages: Array<{
     key: string;
