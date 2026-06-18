@@ -3,33 +3,42 @@ import { z } from "zod";
 
 import { cnicSchema, phoneSchema } from "@/lib/validations/common";
 import type { ApplyFormFieldConfig } from "@/features/applications/types";
+import {
+  getFieldPatternErrorMessage,
+  valueMatchesFieldPatterns,
+} from "@/features/applications/lib/field-validation";
 
 function buildStringSchema(
   field: ApplyFormFieldConfig,
   validation: Record<string, unknown>,
 ): z.ZodTypeAny {
-  let schema = z.string().trim();
+  let schema: z.ZodTypeAny = z.string().trim();
 
   if (typeof validation.minLength === "number") {
-    schema = schema.min(
+    schema = (schema as z.ZodString).min(
       validation.minLength,
       `${field.label} must be at least ${validation.minLength} characters`,
     );
   } else if (field.isRequired) {
-    schema = schema.min(1, `${field.label} is required`);
+    schema = (schema as z.ZodString).min(1, `${field.label} is required`);
   }
 
   if (typeof validation.maxLength === "number") {
-    schema = schema.max(
+    schema = (schema as z.ZodString).max(
       validation.maxLength,
       `${field.label} must be at most ${validation.maxLength} characters`,
     );
   }
 
-  if (typeof validation.pattern === "string") {
-    schema = schema.regex(
-      new RegExp(validation.pattern),
-      `${field.label} format is invalid`,
+  const hasPatterns =
+    (Array.isArray(validation.patterns) &&
+      validation.patterns.some((item) => typeof item === "string" && item.length > 0)) ||
+    (typeof validation.pattern === "string" && validation.pattern.length > 0);
+
+  if (hasPatterns) {
+    schema = schema.refine(
+      (value) => valueMatchesFieldPatterns(value, validation),
+      getFieldPatternErrorMessage(field, validation),
     );
   }
 

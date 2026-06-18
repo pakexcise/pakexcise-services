@@ -1,5 +1,4 @@
 const BASIC_FIELD_KEYS = new Set([
-  "applicant_name",
   "full_name",
   "name",
   "applicant_email",
@@ -22,7 +21,6 @@ export function filterServiceSpecificFields<
 }
 
 export const BASIC_FIELD_MATCHERS = [
-  "applicant_name",
   "full_name",
   "name",
   "applicant_email",

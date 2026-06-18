@@ -11,6 +11,19 @@ import { Label } from "@/components/ui/label";
 import { createBasicApplicantDetailsSchema } from "@/features/applications/lib/basic-details-schema";
 import type { BasicApplicantDetails } from "@/features/applications/types";
 import { formatCnicInput } from "@/lib/validations/cnic";
+import {
+  formatPakistanPhoneInput,
+  formatPhoneForDisplay,
+} from "@/lib/validations/phone";
+
+function formatBasicPhoneDefault(value?: string): string {
+  if (!value?.trim()) {
+    return "";
+  }
+
+  const formatted = formatPhoneForDisplay(value);
+  return formatted || formatPakistanPhoneInput(value);
+}
 
 type BasicDetailsStepProps = {
   defaultValues: Partial<BasicApplicantDetails>;
@@ -20,6 +33,7 @@ type BasicDetailsStepProps = {
     fullName: string;
     email: string;
     phone: string;
+    phonePlaceholder: string;
     phoneHint: string;
     cnic: string;
     cnicHint: string;
@@ -30,6 +44,7 @@ type BasicDetailsStepProps = {
       fullNameRequired: string;
       fullNameTooLong: string;
       emailInvalid: string;
+      phoneRequired: string;
       phoneInvalid: string;
       cnicInvalid: string;
     };
@@ -63,7 +78,7 @@ export function BasicDetailsStep({
     defaultValues: {
       fullName: defaultValues.fullName ?? "",
       email: defaultValues.email ?? "",
-      phone: defaultValues.phone ?? "",
+      phone: formatBasicPhoneDefault(defaultValues.phone),
       cnic: defaultValues.cnic ?? "",
     },
   });
@@ -152,12 +167,25 @@ export function BasicDetailsStep({
 
         <div className="space-y-2">
           <Label htmlFor="phone">{labels.phone}</Label>
-          <Input
-            id="phone"
-            type="tel"
-            autoComplete="tel"
-            {...register("phone")}
-            aria-invalid={Boolean(errors.phone)}
+          <Controller
+            name="phone"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                maxLength={12}
+                placeholder={labels.phonePlaceholder}
+                value={field.value}
+                onChange={(event) =>
+                  field.onChange(formatPakistanPhoneInput(event.target.value))
+                }
+                onBlur={field.onBlur}
+                aria-invalid={Boolean(errors.phone)}
+              />
+            )}
           />
           <p className="text-xs text-muted-foreground">{labels.phoneHint}</p>
           {errors.phone ? (

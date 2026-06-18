@@ -63,6 +63,7 @@ export type AdminApplicationListItem = Prisma.ApplicationGetPayload<{
 
 const adminApplicationDetailSelect = {
   ...adminApplicationListSelect,
+  draftJson: true,
   locale: true,
   adminNotes: true,
   service: {
@@ -97,6 +98,7 @@ const adminApplicationDetailSelect = {
           fieldType: true,
           isEncrypted: true,
           displayOrder: true,
+          optionsJson: true,
         },
       },
     },

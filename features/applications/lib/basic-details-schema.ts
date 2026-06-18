@@ -6,6 +6,7 @@ export type BasicDetailsValidationMessages = {
   fullNameRequired: string;
   fullNameTooLong: string;
   emailInvalid: string;
+  phoneRequired: string;
   phoneInvalid: string;
   cnicInvalid: string;
 };
@@ -14,6 +15,7 @@ const defaultMessages: BasicDetailsValidationMessages = {
   fullNameRequired: "Full name is required",
   fullNameTooLong: "Full name is too long",
   emailInvalid: "Enter a valid email address",
+  phoneRequired: "Mobile number is required",
   phoneInvalid: "Invalid Pakistani mobile number",
   cnicInvalid: "Invalid CNIC format",
 };
@@ -39,7 +41,7 @@ export function createBasicApplicantDetailsSchema(
     phone: z
       .string()
       .trim()
-      .min(1, m.phoneInvalid)
+      .min(1, m.phoneRequired)
       .refine((value) => isValidPakistanPhone(value), m.phoneInvalid),
     cnic: z
       .string()

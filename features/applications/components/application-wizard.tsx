@@ -18,10 +18,12 @@ import {
   getStoredAttribution,
 } from "@/features/applications/lib/attribution";
 import { filterServiceSpecificFields } from "@/features/applications/lib/basic-field-keys";
+import { prefillServiceFieldsFromBasic } from "@/features/applications/lib/prefill-service-fields-from-basic";
 import {
   buildScopedApplyConfig,
   resolveDefaultRegionId,
 } from "@/features/applications/lib/filter-apply-config";
+import { filterVisibleFields } from "@/features/applications/lib/evaluate-conditional-fields";
 import { formatActionErrorMessage } from "@/features/applications/lib/format-action-error";
 import { useWizardStore } from "@/features/applications/store/wizard-store";
 import type {
@@ -46,6 +48,7 @@ type ApplicationWizardLabels = {
     fullName: string;
     email: string;
     phone: string;
+    phonePlaceholder: string;
     phoneHint: string;
     cnic: string;
     cnicHint: string;
@@ -56,6 +59,7 @@ type ApplicationWizardLabels = {
       fullNameRequired: string;
       fullNameTooLong: string;
       emailInvalid: string;
+      phoneRequired: string;
       phoneInvalid: string;
       cnicInvalid: string;
     };
@@ -67,6 +71,7 @@ type ApplicationWizardLabels = {
     regionSection: string;
     regionPlaceholder: string;
     regionRequired: string;
+    selectRegionForFields: string;
     selectedBadge: string;
     switchServiceNotice: string;
     additionalSection: string;
@@ -225,6 +230,15 @@ export function ApplicationWizard({
   const activeServiceFields = useMemo(
     () => filterServiceSpecificFields(scopedConfig.formFields),
     [scopedConfig.formFields],
+  );
+
+  const visibleServiceFields = useMemo(
+    () =>
+      filterVisibleFields(
+        activeServiceFields,
+        fields as Record<string, unknown>,
+      ),
+    [activeServiceFields, fields],
   );
 
   const uploadRequirements = scopedConfig.uploadRequirements;
@@ -479,6 +493,16 @@ export function ApplicationWizard({
 
   const basicComplete = hasCompleteBasic(resolvedBasic);
 
+  const serviceFieldDefaults = useMemo(
+    () =>
+      prefillServiceFieldsFromBasic(
+        activeServiceFields,
+        resolvedBasic,
+        fields as Record<string, string | string[] | boolean>,
+      ),
+    [activeServiceFields, resolvedBasic, fields],
+  );
+
   return (
     <div className="space-y-8">
       <WizardStepIndicator currentStep={currentStep} labels={labels.steps} />
@@ -516,7 +540,7 @@ export function ApplicationWizard({
           assignedRegions={service.assignedRegions}
           selectedRegionId={resolvedRegionId}
           onRegionChange={setSelectedRegionId}
-          defaultValues={fields}
+          defaultValues={serviceFieldDefaults}
           labels={labels.fields}
           isSaving={isSaving}
           onBack={() => setStep(1)}
@@ -545,7 +569,7 @@ export function ApplicationWizard({
           serviceName={service.name}
           basic={resolvedBasic}
           basicComplete={basicComplete}
-          fields={activeServiceFields}
+          fields={visibleServiceFields}
           fieldValues={fields}
           documentRequirements={uploadRequirements}
           documents={documents}

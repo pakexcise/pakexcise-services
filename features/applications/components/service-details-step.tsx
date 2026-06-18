@@ -1,14 +1,16 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { DynamicFieldInput } from "@/features/applications/components/dynamic-field-input";
 import { buildDynamicFieldsSchema } from "@/features/applications/lib/build-field-schema";
+import {
+  filterVisibleFields,
+  isFieldVisible,
+} from "@/features/applications/lib/evaluate-conditional-fields";
 import type {
   ApplyFormFieldConfig,
   ApplyRegionOption,
@@ -33,6 +35,7 @@ type ServiceDetailsStepProps = {
     regionSection: string;
     regionPlaceholder: string;
     regionRequired: string;
+    selectRegionForFields: string;
     selectedBadge: string;
     switchServiceNotice: string;
     additionalSection: string;
@@ -78,19 +81,14 @@ export function ServiceDetailsStep({
   const isSwitchingService = selectedSlug !== service.slug;
   const requiresRegionSelection = assignedRegions.length > 1;
 
-  const schema = useMemo(
-    () => buildDynamicFieldsSchema(serviceFields),
-    [serviceFields],
-  );
-
   const {
-    handleSubmit,
     setValue,
     watch,
     reset,
+    setError,
+    clearErrors,
     formState: { errors },
-  } = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  } = useForm<Record<string, string | string[] | boolean>>({
     defaultValues,
   });
 
@@ -99,6 +97,43 @@ export function ServiceDetailsStep({
   }, [defaultValues, reset, serviceFields, selectedRegionId]);
 
   const values = watch();
+
+  const visibleFields = useMemo(
+    () =>
+      filterVisibleFields(
+        serviceFields,
+        values as Record<string, unknown>,
+      ),
+    [serviceFields, values],
+  );
+
+  useEffect(() => {
+    for (const field of serviceFields) {
+      if (isFieldVisible(field, values as Record<string, unknown>)) {
+        continue;
+      }
+
+      const current = values[field.fieldKey];
+      const isEmpty =
+        current === undefined ||
+        current === null ||
+        current === "" ||
+        (Array.isArray(current) && current.length === 0);
+
+      if (!isEmpty) {
+        setValue(
+          field.fieldKey,
+          field.fieldType === "MULTI_SELECT"
+            ? []
+            : field.fieldType === "CHECKBOX"
+              ? false
+              : "",
+          { shouldValidate: false },
+        );
+        clearErrors(field.fieldKey);
+      }
+    }
+  }, [values, serviceFields, setValue, clearErrors]);
   const selectedService =
     availableServices.find((item) => item.slug === selectedSlug) ?? null;
 
@@ -120,9 +155,37 @@ export function ServiceDetailsStep({
       return;
     }
 
-    await handleSubmit((values) =>
-      onContinueSameService(values, selectedRegionId),
-    )();
+    const visible = filterVisibleFields(
+      serviceFields,
+      values as Record<string, unknown>,
+    );
+    const validationSchema = buildDynamicFieldsSchema(visible);
+    const parsed = validationSchema.safeParse(values);
+
+    if (!parsed.success) {
+      clearErrors();
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+
+      for (const [key, messages] of Object.entries(fieldErrors)) {
+        if (messages?.[0]) {
+          setError(key as keyof typeof values, { message: messages[0] });
+        }
+      }
+
+      return;
+    }
+
+    const submissionValues: Record<string, string | string[] | boolean> = {
+      ...(values as Record<string, string | string[] | boolean>),
+    };
+
+    for (const field of serviceFields) {
+      if (!isFieldVisible(field, submissionValues as Record<string, unknown>)) {
+        delete submissionValues[field.fieldKey];
+      }
+    }
+
+    await onContinueSameService(submissionValues, selectedRegionId);
   }
 
   return (
@@ -229,6 +292,11 @@ export function ServiceDetailsStep({
           <h3 className="text-sm font-medium">{labels.additionalSection}</h3>
 
           {serviceFields.length === 0 ? (
+            requiresRegionSelection && !selectedRegionId ? (
+              <p className="rounded-lg border border-dashed bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+                {labels.selectRegionForFields}
+              </p>
+            ) : (
             <div className="rounded-lg border border-dashed bg-muted/20 p-6 text-center">
               <div className="mx-auto mb-3 flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <CheckCircle2 className="size-5" aria-hidden="true" />
@@ -238,9 +306,10 @@ export function ServiceDetailsStep({
                 {labels.noAdditionalFields}
               </p>
             </div>
+            )
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              {serviceFields.map((field) => (
+              {visibleFields.map((field) => (
                 <div
                   key={field.id}
                   className={

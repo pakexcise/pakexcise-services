@@ -356,6 +356,14 @@
         "empty": "No additional form data was submitted.",
         "protected": "Sensitive field"
       },
+      "applicantDetails": {
+        "title": "Applicant details",
+        "fullName": "Full name",
+        "email": "Email address",
+        "phone": "Mobile number",
+        "cnic": "CNIC",
+        "empty": "No applicant details were saved for this application."
+      },
       "documents": {
         "title": "Documents",
         "empty": "No documents uploaded yet.",
@@ -1526,6 +1534,12 @@
         "customerEmail": "Email",
         "customerPhone": "Phone",
         "sensitiveMasked": "Sensitive contact fields are masked in the admin view.",
+        "applicantDetailsTitle": "Applicant details",
+        "applicantFullName": "Full name",
+        "applicantEmail": "Email address",
+        "applicantPhone": "Mobile number",
+        "applicantCnic": "CNIC",
+        "noApplicantDetails": "No applicant details were saved for this application.",
         "statusManager": "Status manager",
         "statusManagerDescription": "Every status change requires an internal note. Invalid transitions are blocked.",
         "currentStatus": "Current status",
@@ -3156,7 +3170,8 @@
       "fullName": "Full name",
       "email": "Email address (optional)",
       "phone": "Mobile number",
-      "phoneHint": "Pakistani mobile number (e.g. 03001234567)",
+      "phonePlaceholder": "03XX-XXXXXXX",
+      "phoneHint": "Pakistani mobile number (e.g. 0300-1234567)",
       "cnic": "CNIC",
       "cnicHint": "Format: 12345-1234567-1",
       "validationSummary": "Please fix the following before continuing:",
@@ -3164,7 +3179,8 @@
         "fullNameRequired": "Full name is required",
         "fullNameTooLong": "Full name is too long",
         "emailInvalid": "Enter a valid email address",
-        "phoneInvalid": "Invalid Pakistani mobile number",
+        "phoneRequired": "Mobile number is required",
+        "phoneInvalid": "Enter a valid Pakistani mobile number (e.g. 0300-1234567)",
         "cnicInvalid": "Invalid CNIC format"
       }
     },
@@ -3175,6 +3191,7 @@
       "regionSection": "Select province / region",
       "regionPlaceholder": "Choose your province",
       "regionRequired": "Please select your province before continuing.",
+      "selectRegionForFields": "Select your province above to see the required vehicle registration number format.",
       "selectedBadge": "Current",
       "switchServiceNotice": "You selected __SERVICE__. Continue to load this service's requirements.",
       "additionalSection": "Additional information",

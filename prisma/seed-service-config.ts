@@ -49,6 +49,7 @@ type SeedField = {
   isRequired?: boolean;
   optionsJson?: Array<{ value: string; labelEn: string; labelUr: string }>;
   validationJson?: Record<string, unknown>;
+  conditionalJson?: Record<string, unknown>;
   displayOrder?: number;
 };
 
@@ -140,6 +141,140 @@ function field(
   };
 }
 
+type VehicleRegistrationRegion =
+  | "punjab"
+  | "islamabad"
+  | "sindh"
+  | "balochistan"
+  | "kpk"
+  | "ajk"
+  | "gilgit-baltistan";
+
+const VEHICLE_REGISTRATION_FIELD_CONFIG: Record<
+  VehicleRegistrationRegion,
+  Pick<
+    SeedField,
+    | "placeholderEn"
+    | "placeholderUr"
+    | "helpTextEn"
+    | "helpTextUr"
+    | "validationJson"
+  >
+> = {
+  punjab: {
+    placeholderEn: "e.g. ABC 123 or ABC-07-1111",
+    placeholderUr: "مثال: ABC 123 یا ABC-07-1111",
+    helpTextEn: "Accepted formats: ABC 123, ABC 0123, ABC 1111, ABC-07-1111",
+    helpTextUr: "قبول شدہ فارمیٹس: ABC 123، ABC 0123، ABC 1111، ABC-07-1111",
+    validationJson: {
+      normalize: "uppercase",
+      patterns: ["^[A-Z]{3}\\s\\d{3,4}$", "^[A-Z]{3}-\\d{2}-\\d{4}$"],
+      patternMessageEn:
+        "Enter a valid Punjab registration number (e.g. ABC 123 or ABC-07-1111)",
+      patternMessageUr:
+        "درست پنجاب رجسٹریشن نمبر درج کریں (مثال: ABC 123 یا ABC-07-1111)",
+    },
+  },
+  islamabad: {
+    placeholderEn: "e.g. ABC-123",
+    placeholderUr: "مثال: ABC-123",
+    helpTextEn: "Accepted format: ABC-123",
+    helpTextUr: "قبول شدہ فارمیٹ: ABC-123",
+    validationJson: {
+      normalize: "uppercase",
+      patterns: ["^[A-Z]{3}-\\d{3}$"],
+      patternMessageEn: "Enter a valid Islamabad ICT registration number (e.g. ABC-123)",
+      patternMessageUr: "درست اسلام آباد ICT رجسٹریشن نمبر درج کریں (مثال: ABC-123)",
+    },
+  },
+  sindh: {
+    placeholderEn: "e.g. ABC-123",
+    placeholderUr: "مثال: ABC-123",
+    helpTextEn: "Accepted format: ABC-123",
+    helpTextUr: "قبول شدہ فارمیٹ: ABC-123",
+    validationJson: {
+      normalize: "uppercase",
+      patterns: ["^[A-Z]{3}-\\d{3}$"],
+      patternMessageEn: "Enter a valid Sindh registration number (e.g. ABC-123)",
+      patternMessageUr: "درست سندھ رجسٹریشن نمبر درج کریں (مثال: ABC-123)",
+    },
+  },
+  balochistan: {
+    placeholderEn: "e.g. ABC-123",
+    placeholderUr: "مثال: ABC-123",
+    helpTextEn: "Accepted format: ABC-123",
+    helpTextUr: "قبول شدہ فارمیٹ: ABC-123",
+    validationJson: {
+      normalize: "uppercase",
+      patterns: ["^[A-Z]{3}-\\d{3}$"],
+      patternMessageEn: "Enter a valid Balochistan registration number (e.g. ABC-123)",
+      patternMessageUr: "درست بلوچستان رجسٹریشن نمبر درج کریں (مثال: ABC-123)",
+    },
+  },
+  kpk: {
+    placeholderEn: "e.g. ABC-1234",
+    placeholderUr: "مثال: ABC-1234",
+    helpTextEn: "Accepted formats: ABC-1234, ABC-123",
+    helpTextUr: "قبول شدہ فارمیٹس: ABC-1234، ABC-123",
+    validationJson: {
+      normalize: "uppercase",
+      patterns: ["^[A-Z]{3}-\\d{4}$", "^[A-Z]{3}-\\d{3}$"],
+      patternMessageEn:
+        "Enter a valid Khyber Pakhtunkhwa registration number (e.g. ABC-1234 or ABC-123)",
+      patternMessageUr:
+        "درست خیبر پختونخوا رجسٹریشن نمبر درج کریں (مثال: ABC-1234 یا ABC-123)",
+    },
+  },
+  ajk: {
+    placeholderEn: "e.g. AA-BB-1234 or AB-123",
+    placeholderUr: "مثال: AA-BB-1234 یا AB-123",
+    helpTextEn: "Accepted formats: AA-BB-1234, AB-123",
+    helpTextUr: "قبول شدہ فارمیٹس: AA-BB-1234، AB-123",
+    validationJson: {
+      normalize: "uppercase",
+      patterns: ["^[A-Z]{2}-[A-Z]{2}-\\d{4}$", "^[A-Z]{2}-\\d{3}$"],
+      patternMessageEn:
+        "Enter a valid AJK registration number (e.g. AA-BB-1234 or AB-123)",
+      patternMessageUr:
+        "درست آزاد کشمیر رجسٹریشن نمبر درج کریں (مثال: AA-BB-1234 یا AB-123)",
+    },
+  },
+  "gilgit-baltistan": {
+    placeholderEn: "e.g. ABC-123",
+    placeholderUr: "مثال: ABC-123",
+    helpTextEn: "Accepted format: ABC-123",
+    helpTextUr: "قبول شدہ فارمیٹ: ABC-123",
+    validationJson: {
+      normalize: "uppercase",
+      patterns: ["^[A-Z]{3}-\\d{3}$"],
+      patternMessageEn:
+        "Enter a valid Gilgit-Baltistan registration number (e.g. ABC-123)",
+      patternMessageUr:
+        "درست گلگت بلتستان رجسٹریشن نمبر درج کریں (مثال: ABC-123)",
+    },
+  },
+};
+
+function vehicleRegistrationNumberField(
+  regionSlug: VehicleRegistrationRegion,
+  overrides: Partial<SeedField> = {},
+): SeedField {
+  const config = VEHICLE_REGISTRATION_FIELD_CONFIG[regionSlug];
+
+  return field(
+    "vehicle_registration_number",
+    "Vehicle registration number",
+    "گاڑی رجسٹریشن نمبر",
+    "TEXT",
+    {
+      regionSlug,
+      displayOrder: 1,
+      ...config,
+      ...overrides,
+    },
+  );
+}
+
 export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
   "vehicle-transfer": {
     regionNotes: [
@@ -176,41 +311,11 @@ export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
   },
   "token-tax-payment": {
     fields: [
-      field("vehicle_registration_number", "Vehicle registration number", "گاڑی رجسٹریشن نمبر", "TEXT", {
-        regionSlug: "punjab",
-        placeholderEn: "e.g. ABC 123 or ABC-07-1111",
-        helpTextEn: "Accepted formats: ABC 123, ABC 0123, ABC 1111, ABC-07-1111",
-        helpTextUr: "قبول شدہ فارمیٹس: ABC 123، ABC 0123، ABC 1111، ABC-07-1111",
-        displayOrder: 1,
-      }),
-      field("vehicle_registration_number", "Vehicle registration number", "گاڑی رجسٹریشن نمبر", "TEXT", {
-        regionSlug: "islamabad",
-        placeholderEn: "e.g. ABC-123",
-        helpTextEn: "Accepted format: ABC-123",
-        helpTextUr: "قبول شدہ فارمیٹ: ABC-123",
-        displayOrder: 1,
-      }),
-      field("vehicle_registration_number", "Vehicle registration number", "گاڑی رجسٹریشن نمبر", "TEXT", {
-        regionSlug: "sindh",
-        placeholderEn: "e.g. ABC-123",
-        helpTextEn: "Accepted format: ABC-123",
-        helpTextUr: "قبول شدہ فارمیٹ: ABC-123",
-        displayOrder: 1,
-      }),
-      field("vehicle_registration_number", "Vehicle registration number", "گاڑی رجسٹریشن نمبر", "TEXT", {
-        regionSlug: "balochistan",
-        placeholderEn: "e.g. ABC-123",
-        helpTextEn: "Accepted format: ABC-123",
-        helpTextUr: "قبول شدہ فارمیٹ: ABC-123",
-        displayOrder: 1,
-      }),
-      field("vehicle_registration_number", "Vehicle registration number", "گاڑی رجسٹریشن نمبر", "TEXT", {
-        regionSlug: "kpk",
-        placeholderEn: "e.g. ABC-1234",
-        helpTextEn: "Accepted formats: ABC-1234, ABC-123",
-        helpTextUr: "قبول شدہ فارمیٹس: ABC-1234، ABC-123",
-        displayOrder: 1,
-      }),
+      vehicleRegistrationNumberField("punjab"),
+      vehicleRegistrationNumberField("islamabad"),
+      vehicleRegistrationNumberField("sindh"),
+      vehicleRegistrationNumberField("balochistan"),
+      vehicleRegistrationNumberField("kpk"),
     ],
   },
   "new-vehicle-registration": {
@@ -303,13 +408,46 @@ export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
         regionSlug: null,
         isRequired: true,
         displayOrder: 2,
+        conditionalJson: {
+          showWhen: {
+            fieldKey: "correction_type",
+            operator: "includes",
+            value: "other",
+          },
+        },
       }),
     ],
   },
   "driving-license-renewal": {
     fields: [
-      field("applicant_name", "Applicant name", "درخواست دہندہ کا نام", "TEXT", { regionSlug: "punjab", displayOrder: 1 }),
-      field("phone_number", "Phone number", "فون نمبر", "PHONE", { regionSlug: "punjab", displayOrder: 2 }),
+      field("applicant_name", "Applicant name", "درخواست دہندہ کا نام", "TEXT", {
+        regionSlug: "punjab",
+        placeholderEn: "Enter applicant full name",
+        placeholderUr: "درخواست دہندہ کا مکمل نام درج کریں",
+        displayOrder: 1,
+      }),
+      field("phone_number", "Phone number", "فون نمبر", "PHONE", {
+        regionSlug: "punjab",
+        placeholderEn: "03XX-XXXXXXX",
+        placeholderUr: "03XX-XXXXXXX",
+        helpTextEn: "Pakistani mobile number (e.g. 0300-1234567)",
+        helpTextUr: "Pakistani mobile number (مثلاً 0300-1234567)",
+        displayOrder: 2,
+      }),
+      field("applicant_name", "Applicant name", "درخواست دہندہ کا نام", "TEXT", {
+        regionSlug: "islamabad",
+        placeholderEn: "Enter applicant full name",
+        placeholderUr: "درخواست دہندہ کا مکمل نام درج کریں",
+        displayOrder: 1,
+      }),
+      field("phone_number", "Phone number", "فون نمبر", "PHONE", {
+        regionSlug: "islamabad",
+        placeholderEn: "03XX-XXXXXXX",
+        placeholderUr: "03XX-XXXXXXX",
+        helpTextEn: "Pakistani mobile number (e.g. 0300-1234567)",
+        helpTextUr: "Pakistani mobile number (مثلاً 0300-1234567)",
+        displayOrder: 2,
+      }),
     ],
     documents: [
       doc("applicant_cnic_front", "Applicant original CNIC front picture", "درخواست دہندہ کا اصل شناختی کارڈ سامنے", { regionSlug: "punjab", displayOrder: 1 }),
@@ -326,8 +464,20 @@ export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
   },
   "learner-license": {
     fields: [
-      field("applicant_name", "Applicant name", "درخواست دہندہ کا نام", "TEXT", { regionSlug: null, displayOrder: 1 }),
-      field("phone_number", "Phone number", "فون نمبر", "PHONE", { regionSlug: null, displayOrder: 2 }),
+      field("applicant_name", "Applicant name", "درخواست دہندہ کا نام", "TEXT", {
+        regionSlug: null,
+        placeholderEn: "Enter applicant full name",
+        placeholderUr: "درخواست دہندہ کا مکمل نام درج کریں",
+        displayOrder: 1,
+      }),
+      field("phone_number", "Phone number", "فون نمبر", "PHONE", {
+        regionSlug: null,
+        placeholderEn: "03XX-XXXXXXX",
+        placeholderUr: "03XX-XXXXXXX",
+        helpTextEn: "Pakistani mobile number (e.g. 0300-1234567)",
+        helpTextUr: "Pakistani mobile number (مثلاً 0300-1234567)",
+        displayOrder: 2,
+      }),
     ],
     documents: [
       doc("applicant_cnic_front", "Applicant original CNIC front picture", "درخواست دہندہ کا اصل شناختی کارڈ سامنے", { regionSlug: null, displayOrder: 1 }),
@@ -348,13 +498,13 @@ export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
       doc("applicant_cnic_back", "Applicant original CNIC back picture", "درخواست دہندہ کا اصل شناختی کارڈ پیچھے", { regionSlug: null, displayOrder: 2 }),
     ],
     fields: [
-      field("vehicle_number", "Vehicle number", "گاڑی نمبر", "TEXT", {
-        regionSlug: null,
-        placeholderEn: "Enter vehicle registration number",
-        helpTextEn: "Enter the vehicle number related to the e-challan.",
-        helpTextUr: "ای چالان سے متعلق گاڑی نمبر درج کریں۔",
-        displayOrder: 1,
-      }),
+      vehicleRegistrationNumberField("punjab"),
+      vehicleRegistrationNumberField("islamabad"),
+      vehicleRegistrationNumberField("sindh"),
+      vehicleRegistrationNumberField("balochistan"),
+      vehicleRegistrationNumberField("kpk"),
+      vehicleRegistrationNumberField("ajk"),
+      vehicleRegistrationNumberField("gilgit-baltistan"),
     ],
   },
 };
@@ -518,6 +668,9 @@ export async function seedServiceConfig(
         isRequired: seedField.isRequired ?? true,
         optionsJson: (seedField.optionsJson ?? undefined) as Prisma.InputJsonValue | undefined,
         validationJson: (seedField.validationJson ?? undefined) as
+          | Prisma.InputJsonValue
+          | undefined,
+        conditionalJson: (seedField.conditionalJson ?? undefined) as
           | Prisma.InputJsonValue
           | undefined,
         displayOrder: seedField.displayOrder ?? 0,

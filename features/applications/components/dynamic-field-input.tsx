@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { ApplyFormFieldConfig } from "@/features/applications/types";
+import { applyFieldInputTransform } from "@/features/applications/lib/field-validation";
+import { formatPakistanPhoneInput } from "@/lib/validations/phone";
 
 type DynamicFieldInputProps = {
   field: ApplyFormFieldConfig;
@@ -140,10 +142,14 @@ export function DynamicFieldInput({
             id={fieldId}
             name={field.fieldKey}
             type="tel"
+            inputMode="tel"
             autoComplete="tel"
+            maxLength={12}
             value={typeof value === "string" ? value : ""}
             placeholder={field.placeholder ?? undefined}
-            onChange={(event) => onChange(event.target.value)}
+            onChange={(event) =>
+              onChange(formatPakistanPhoneInput(event.target.value))
+            }
             aria-invalid={Boolean(error)}
           />
         );
@@ -175,7 +181,11 @@ export function DynamicFieldInput({
             type="text"
             value={typeof value === "string" ? value : ""}
             placeholder={field.placeholder ?? undefined}
-            onChange={(event) => onChange(event.target.value)}
+            onChange={(event) =>
+              onChange(
+                applyFieldInputTransform(event.target.value, field.validation),
+              )
+            }
             aria-invalid={Boolean(error)}
           />
         );

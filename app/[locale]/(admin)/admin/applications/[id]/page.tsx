@@ -24,10 +24,13 @@ import { serializeInvoiceForEditor } from "@/features/invoices/lib/serialize-inv
 import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligibility";
 import { formatPkr } from "@/features/invoices/lib/format-pkr";
 import { buildFileContentVersion } from "@/lib/utils/file-content-version";
+import { ApplicantDetailsSummary } from "@/components/shared/ApplicantDetailsSummary";
 import {
+  filterApplicantFieldValues,
   resolveAdminFieldDisplayValues,
   resolveCustomerContactDisplay,
 } from "@/features/applications/lib/resolve-admin-display";
+import { resolveApplicantDetailsFromApplication } from "@/features/applications/lib/resolve-applicant-details";
 import { COMPLETION_PROOF_DOC_TYPE } from "@/config/uploads";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -130,7 +133,19 @@ export default async function AdminApplicationDetailPage({
     revealSensitive: false,
   });
 
-  const fieldValues = resolveAdminFieldDisplayValues(application.fieldValues);
+  const applicantDetails = resolveApplicantDetailsFromApplication({
+    draftJson: application.draftJson,
+    fieldValues: application.fieldValues,
+    revealSensitive: true,
+  });
+
+  const fieldValues = resolveAdminFieldDisplayValues(
+    filterApplicantFieldValues(application.fieldValues),
+    {
+      revealSensitive: true,
+      locale: locale === "ur" ? "ur" : "en",
+    },
+  );
   const serviceName =
     locale === "ur"
       ? application.service.nameUr
@@ -255,6 +270,18 @@ export default async function AdminApplicationDetailPage({
           </CardContent>
         </Card>
       </div>
+
+      <ApplicantDetailsSummary
+        details={applicantDetails}
+        labels={{
+          title: t("applications.detail.applicantDetailsTitle"),
+          fullName: t("applications.detail.applicantFullName"),
+          email: t("applications.detail.applicantEmail"),
+          phone: t("applications.detail.applicantPhone"),
+          cnic: t("applications.detail.applicantCnic"),
+          empty: t("applications.detail.noApplicantDetails"),
+        }}
+      />
 
       <div className="grid gap-4 lg:grid-cols-2">
         {canManageStatus ? (

@@ -58,6 +58,15 @@ function formatFieldValue(
     return value === true ? "Yes" : "No";
   }
 
+  if (field.fieldType === "MULTI_SELECT" && Array.isArray(value)) {
+    return value
+      .map(
+        (item) =>
+          field.options.find((opt) => opt.value === item)?.label ?? item,
+      )
+      .join(", ");
+  }
+
   if (Array.isArray(value)) {
     return value.join(", ");
   }
@@ -67,22 +76,7 @@ function formatFieldValue(
     return option?.label ?? String(value);
   }
 
-  if (field.fieldType === "MULTI_SELECT" && Array.isArray(value)) {
-    return value
-      .map((item) => field.options.find((opt) => opt.value === item)?.label ?? item)
-      .join(", ");
-  }
-
   return String(value);
-}
-
-function maskCnic(cnic: string): string {
-  const parts = cnic.split("-");
-  if (parts.length !== 3) {
-    return "•••••-•••••••-•";
-  }
-
-  return `${parts[0]}-*******-${parts[2]}`;
 }
 
 function displayValue(value: string): string {
@@ -174,7 +168,7 @@ export function ReviewStep({
           <div>
             <dt className="text-muted-foreground">{labels.cnic}</dt>
             <dd className="font-medium">
-              {basic.cnic ? maskCnic(basic.cnic) : "—"}
+              {basic.cnic ? displayValue(basic.cnic) : "—"}
             </dd>
           </div>
         </dl>

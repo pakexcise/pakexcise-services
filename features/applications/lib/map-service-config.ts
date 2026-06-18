@@ -1,4 +1,5 @@
 import type { Locale } from "@/i18n/config";
+import { parseFieldConditional } from "@/features/applications/lib/evaluate-conditional-fields";
 import { getServiceRegionLabel } from "@/features/services/lib/service-regions";
 import { pickLocalized } from "@/lib/i18n/content";
 import type {
@@ -79,8 +80,32 @@ export function mapServiceApplyConfig(
     options: parseOptions(field.optionsJson, locale),
     validation:
       field.validationJson && typeof field.validationJson === "object"
-        ? (field.validationJson as Record<string, unknown>)
+        ? (() => {
+            const raw = field.validationJson as Record<string, unknown>;
+            const patternMessage = pickLocalized(locale, {
+              en:
+                typeof raw.patternMessageEn === "string"
+                  ? raw.patternMessageEn
+                  : typeof raw.patternMessage === "string"
+                    ? raw.patternMessage
+                    : "",
+              ur:
+                typeof raw.patternMessageUr === "string"
+                  ? raw.patternMessageUr
+                  : typeof raw.patternMessageEn === "string"
+                    ? raw.patternMessageEn
+                    : typeof raw.patternMessage === "string"
+                      ? raw.patternMessage
+                      : "",
+            });
+
+            return {
+              ...raw,
+              ...(patternMessage ? { patternMessage } : {}),
+            };
+          })()
         : null,
+    conditional: parseFieldConditional(field.conditionalJson),
     displayOrder: field.displayOrder,
   }));
 

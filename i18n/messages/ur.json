@@ -357,6 +357,14 @@
         "empty": "کوئی اضافی فارم ڈیٹا جمع نہیں ہوا۔",
         "protected": "حساس فیلڈ"
       },
+      "applicantDetails": {
+        "title": "درخواست گزار کی تفصیلات",
+        "fullName": "مکمل نام",
+        "email": "ای میل ایڈریس",
+        "phone": "موبائل نمبر",
+        "cnic": "شناختی کارڈ",
+        "empty": "اس درخواست کے لیے درخواست گزار کی تفصیلات محفوظ نہیں ہوئیں۔"
+      },
       "documents": {
         "title": "دستاویزات",
         "empty": "ابھی کوئی دستاویز اپ لوڈ نہیں ہوئی۔",
@@ -1527,6 +1535,12 @@
         "customerEmail": "ای میل",
         "customerPhone": "فون",
         "sensitiveMasked": "حساس رابطے کی تفصیلات ایڈمن ویو میں مخفی ہیں۔",
+        "applicantDetailsTitle": "درخواست گزار کی تفصیلات",
+        "applicantFullName": "مکمل نام",
+        "applicantEmail": "ای میل ایڈریس",
+        "applicantPhone": "موبائل نمبر",
+        "applicantCnic": "شناختی کارڈ",
+        "noApplicantDetails": "اس درخواست کے لیے درخواست گزار کی تفصیلات محفوظ نہیں ہوئیں۔",
         "statusManager": "اسٹیٹس مینیجر",
         "statusManagerDescription": "ہر اسٹیٹس تبدیلی کے لیے اندرونی نوٹ لازمی ہے۔ غلط منتقلی روکی جاتی ہے۔",
         "currentStatus": "موجودہ اسٹیٹس",
@@ -3157,7 +3171,8 @@
       "fullName": "مکمل نام",
       "email": "ای میل (اختیاری)",
       "phone": "موبائل نمبر",
-      "phoneHint": "پاکستانی موبائل (مثال: 03001234567)",
+      "phonePlaceholder": "03XX-XXXXXXX",
+      "phoneHint": "پاکستانی موبائل نمبر (مثال: 0300-1234567)",
       "cnic": "شناختی کارڈ",
       "cnicHint": "فارمیٹ: 12345-1234567-1",
       "validationSummary": "جاری رکھنے سے پہلے درج ذیل درست کریں:",
@@ -3165,7 +3180,8 @@
         "fullNameRequired": "مکمل نام درکار ہے",
         "fullNameTooLong": "مکمل نام بہت لمبا ہے",
         "emailInvalid": "درست ای میل درج کریں",
-        "phoneInvalid": "غلط پاکستانی موبائل نمبر",
+        "phoneRequired": "موبائل نمبر درکار ہے",
+        "phoneInvalid": "درست پاکستانی موبائل نمبر درج کریں (مثال: 0300-1234567)",
         "cnicInvalid": "غلط شناختی کارڈ فارمیٹ"
       }
     },
@@ -3176,6 +3192,7 @@
       "regionSection": "صوبہ / علاقہ منتخب کریں",
       "regionPlaceholder": "اپنا صوبہ منتخب کریں",
       "regionRequired": "جاری رکھنے سے پہلے اپنا صوبہ منتخب کریں۔",
+      "selectRegionForFields": "گاڑی رجسٹریشن نمبر کا مطلوب فارمیٹ دیکھنے کے لیے اوپر اپنا صوبہ منتخب کریں۔",
       "selectedBadge": "موجودہ",
       "switchServiceNotice": "آپ نے __SERVICE__ منتخب کیا ہے۔ جاری رکھیں تاکہ اس خدمت کی ضروریات لوڈ ہوں۔",
       "additionalSection": "اضافی معلومات",

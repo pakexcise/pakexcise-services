@@ -9,11 +9,16 @@ import { NextActionBadge } from "@/components/customer/NextActionBadge";
 import { PaymentUpload } from "@/components/customer/PaymentUpload";
 import { ProofDownload } from "@/components/customer/ProofDownload";
 import { StatusTimeline } from "@/components/customer/StatusTimeline";
+import { ApplicantDetailsSummary } from "@/components/shared/ApplicantDetailsSummary";
 import { SubmittedDataSummary } from "@/components/customer/SubmittedDataSummary";
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { buildDocumentStatusLabels } from "@/features/documents/lib/build-document-status-labels";
-import { resolveAdminFieldDisplayValues } from "@/features/applications/lib/resolve-admin-display";
+import {
+  filterApplicantFieldValues,
+  resolveAdminFieldDisplayValues,
+} from "@/features/applications/lib/resolve-admin-display";
+import { resolveApplicantDetailsFromApplication } from "@/features/applications/lib/resolve-applicant-details";
 import { serializeCustomerInvoiceForView } from "@/features/invoices/lib/serialize-customer-invoice";
 import { resolveCustomerNextAction } from "@/features/customer/lib/next-action";
 import { Button } from "@/components/ui/button";
@@ -90,9 +95,19 @@ export default async function CustomerApplicationPage({
     hasCompletionProof: Boolean(completionProof),
   });
 
-  const fieldValues = resolveAdminFieldDisplayValues(application.fieldValues, {
+  const applicantDetails = resolveApplicantDetailsFromApplication({
+    draftJson: application.draftJson,
+    fieldValues: application.fieldValues,
     revealSensitive: true,
-  }).map((field) => ({
+  });
+
+  const fieldValues = resolveAdminFieldDisplayValues(
+    filterApplicantFieldValues(application.fieldValues),
+    {
+      revealSensitive: true,
+      locale: locale === "ur" ? "ur" : "en",
+    },
+  ).map((field) => ({
     fieldId: field.fieldId,
     label: locale === "ur" ? field.labelUr : field.labelEn,
     displayValue: field.displayValue,
@@ -166,6 +181,18 @@ export default async function CustomerApplicationPage({
           current: t("timeline.current"),
         }}
         statusLabel={statusLabel}
+      />
+
+      <ApplicantDetailsSummary
+        details={applicantDetails}
+        labels={{
+          title: t("applicantDetails.title"),
+          fullName: t("applicantDetails.fullName"),
+          email: t("applicantDetails.email"),
+          phone: t("applicantDetails.phone"),
+          cnic: t("applicantDetails.cnic"),
+          empty: t("applicantDetails.empty"),
+        }}
       />
 
       <SubmittedDataSummary

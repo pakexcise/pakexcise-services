@@ -5,6 +5,7 @@ import type { Prisma } from "@prisma/client";
 import { buildDynamicFieldsSchema, serializeFieldValue } from "@/features/applications/lib/build-field-schema";
 import { filterServiceSpecificFields } from "@/features/applications/lib/basic-field-keys";
 import { buildScopedApplyConfig } from "@/features/applications/lib/filter-apply-config";
+import { filterVisibleFields } from "@/features/applications/lib/evaluate-conditional-fields";
 import { mapServiceApplyConfig } from "@/features/applications/lib/map-service-config";
 import type { ApplicationDraftJson } from "@/features/applications/types";
 import {
@@ -70,7 +71,11 @@ export async function submitApplicationAction(
   const selectedRegionId = draftJson.selectedRegionId ?? null;
   const scopedConfig = buildScopedApplyConfig(service, selectedRegionId);
   const serviceSpecificFields = filterServiceSpecificFields(scopedConfig.formFields);
-  const dynamicSchema = buildDynamicFieldsSchema(serviceSpecificFields);
+  const visibleFields = filterVisibleFields(
+    serviceSpecificFields,
+    parsed.data.fields as Record<string, unknown>,
+  );
+  const dynamicSchema = buildDynamicFieldsSchema(visibleFields);
   const dynamicResult = dynamicSchema.safeParse(parsed.data.fields);
 
   if (!dynamicResult.success) {
@@ -116,7 +121,7 @@ export async function submitApplicationAction(
 
   const fieldValueRows: Prisma.ApplicationFieldValueCreateManyInput[] = [];
 
-  for (const field of serviceSpecificFields) {
+  for (const field of visibleFields) {
     const rawValue = parsed.data.fields[field.fieldKey];
 
     if (

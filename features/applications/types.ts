@@ -1,5 +1,6 @@
 import type { DocumentRequirementKind, FieldType } from "@prisma/client";
 
+import type { FieldConditionalRule } from "@/features/applications/lib/evaluate-conditional-fields";
 import type { AttributionData } from "@/lib/attribution";
 
 export type LocalizedText = {
@@ -26,6 +27,7 @@ export type ApplyFormFieldConfig = {
   isEncrypted: boolean;
   options: Array<{ value: string; label: string }>;
   validation: Record<string, unknown> | null;
+  conditional: FieldConditionalRule | null;
   displayOrder: number;
 };
 
