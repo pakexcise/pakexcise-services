@@ -6,11 +6,13 @@ import { redirect } from "@/i18n/navigation";
 import { getCanonicalRegionSlug } from "@/features/regions/lib/resolve-region-slug";
 
 import { RegionHelpSection } from "@/components/marketing/region-help-section";
+import { RegionNumberPlateFormatsSection } from "@/components/marketing/region-number-plate-formats-section";
 import { CityCard } from "@/components/marketing/city-card";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { RelatedServices } from "@/components/marketing/related-services";
+import { mapRegionPlateFormatsSection } from "@/features/regions/lib/map-region-plate-formats";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import {
@@ -29,6 +31,7 @@ import {
   cityRepository,
   faqRepository,
   regionRepository,
+  regionPlateFormatRepository,
   serviceRepository,
 } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
@@ -91,11 +94,12 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
 
   const t = await getTranslations("marketing");
   const tCommon = await getTranslations("common");
-  const [services, cities, faqs, business] = await Promise.all([
+  const [services, cities, faqs, business, plateBundle] = await Promise.all([
     serviceRepository.listPublicByRegionId(region.id),
     cityRepository.listPublicByRegionId(region.id),
     faqRepository.listPublic(),
     getBusinessSettings(),
+    regionPlateFormatRepository.findPublicByRegionId(region.id),
   ]);
 
   const whatsappLinkNumber = resolveWhatsappLinkNumber(business);
@@ -111,7 +115,26 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
   });
 
   const faqItems = mapFaqsForLocale(faqs.slice(0, 6), locale);
-  const faqJsonLd = faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
+  const plateFormatsSection = mapRegionPlateFormatsSection({
+    regionName: name,
+    section: plateBundle.section,
+    formats: plateBundle.formats,
+    locale,
+    fallbacks: {
+      sectionTitle: t("regions.plateFormats.sectionTitle"),
+      sectionDescription: t("regions.plateFormats.sectionDescription"),
+    },
+  });
+  const plateFaqItems = plateFormatsSection?.faqItems ?? [];
+  const combinedFaqItems = [
+    ...plateFaqItems.map((item, index) => ({
+      id: `region-plate-faq-${index}`,
+      question: item.question,
+      answer: item.answer,
+    })),
+    ...faqItems,
+  ].slice(0, 8);
+  const faqJsonLd = combinedFaqItems.length > 0 ? buildFaqJsonLd(combinedFaqItems) : null;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: t("regions.title"), url: absoluteUrl("/regions") },
@@ -141,6 +164,34 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
           serviceCountLabel={t("regions.serviceCount", { count: services.length })}
         />
 
+        {plateFormatsSection ? (
+          <RegionNumberPlateFormatsSection
+            data={plateFormatsSection}
+            relatedServices={services.map((service) => ({
+              slug: service.slug,
+              name: pickLocalized(locale, {
+                en: service.nameEn,
+                ur: service.nameUr,
+              }),
+            }))}
+            labels={{
+              formatsLabel: t("regions.plateFormats.formatsLabel"),
+              relatedServicesLabel: t("regions.plateFormats.relatedServicesLabel"),
+              featuredBadge: t("regions.plateFormats.featuredBadge"),
+              disclaimer: t("regions.plateFormats.disclaimer"),
+              fallbackImageAlt: t("regions.plateFormats.fallbackImageAlt"),
+              vehicleTypes: {
+                CAR: t("regions.plateFormats.vehicleTypes.CAR"),
+                MOTORCYCLE: t("regions.plateFormats.vehicleTypes.MOTORCYCLE"),
+                PUBLIC_TRANSPORT: t("regions.plateFormats.vehicleTypes.PUBLIC_TRANSPORT"),
+                COMMERCIAL: t("regions.plateFormats.vehicleTypes.COMMERCIAL"),
+                GOVERNMENT: t("regions.plateFormats.vehicleTypes.GOVERNMENT"),
+                OTHER: t("regions.plateFormats.vehicleTypes.OTHER"),
+              },
+            }}
+          />
+        ) : null}
+
         {cities.length > 0 ? (
           <section className="space-y-4">
             <h2 className="text-2xl font-bold">{t("regions.citiesTitle")}</h2>
@@ -160,7 +211,7 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
 
         <FaqAccordion
           title={t("faqs.title")}
-          items={faqItems}
+          items={combinedFaqItems}
           emptyMessage={t("faqs.empty")}
         />
 

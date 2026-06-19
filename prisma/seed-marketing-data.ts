@@ -3,6 +3,7 @@ import type { PrismaClient } from "@prisma/client";
 import { REGION_SLUG_ALIASES } from "../config/region-slugs";
 import { CITY_SEED } from "./seed-cities-data";
 import { seedServiceConfig } from "./seed-service-config";
+import { seedRegionPlateFormats } from "./seed-region-plate-formats";
 
 const DEFAULT_MIME_TYPES = [
   "image/jpeg",
@@ -824,6 +825,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   }
 
   await seedServiceConfig(prisma, regionMap, serviceMap);
+  await seedRegionPlateFormats(prisma, regionMap);
 
   const serviceIds = (
     await prisma.service.findMany({ select: { id: true, slug: true } })

@@ -2,19 +2,38 @@ import "server-only";
 
 import { PrismaClient } from "@prisma/client";
 
+import { isPlateFormatSchemaReady } from "@/server/db/is-plate-format-schema-ready";
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrismaClient(): PrismaClient {
+  return new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["warn"] : ["error"],
   });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
 }
+
+function resolvePrismaClient(): PrismaClient {
+  const cached = globalForPrisma.prisma;
+
+  if (
+    process.env.NODE_ENV === "development" &&
+    cached &&
+    !isPlateFormatSchemaReady(cached)
+  ) {
+    void cached.$disconnect();
+    globalForPrisma.prisma = undefined;
+  }
+
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+
+  return globalForPrisma.prisma;
+}
+
+export const prisma = resolvePrismaClient();
 
 export async function connectDatabase(): Promise<void> {
   await prisma.$connect();

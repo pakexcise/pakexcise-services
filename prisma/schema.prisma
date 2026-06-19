@@ -180,6 +180,15 @@ enum DocumentRequirementKind {
   DELIVERY
 }
 
+enum VehiclePlateType {
+  CAR
+  MOTORCYCLE
+  PUBLIC_TRANSPORT
+  COMMERCIAL
+  GOVERNMENT
+  OTHER
+}
+
 enum AuditAction {
   CREATE
   UPDATE
@@ -380,9 +389,59 @@ model Region {
   documentReqs        DocumentRequirement[]
   formFields          ServiceFormField[]
   seoMeta             SeoMeta?
+  plateFormatSection  RegionPlateFormatSection?
+  numberPlateFormats  RegionNumberPlateFormat[]
 
   @@index([isActive, displayOrder])
   @@map("regions")
+}
+
+model RegionPlateFormatSection {
+  id               String   @id @default(cuid())
+  regionId         String   @unique
+  sectionTitleEn   String?
+  sectionTitleUr   String?
+  sectionDescEn    String?  @db.Text
+  sectionDescUr    String?  @db.Text
+  faqJson          Json?
+  isActive         Boolean  @default(true)
+  showOnRegionPage Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  region Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@map("region_plate_format_sections")
+}
+
+model RegionNumberPlateFormat {
+  id                  String           @id @default(cuid())
+  regionId            String
+  vehicleType         VehiclePlateType @default(CAR)
+  titleEn             String
+  titleUr             String
+  formatsJson         Json
+  descriptionEn       String?          @db.Text
+  descriptionUr       String?          @db.Text
+  relatedServiceSlugs Json?
+  imageR2Key          String?
+  imageMimeType       String?
+  imageAltEn          String?
+  imageAltUr          String?
+  imageCaptionEn      String?
+  imageCaptionUr      String?
+  isActive            Boolean          @default(true)
+  isFeatured          Boolean          @default(false)
+  showOnRegionPage    Boolean          @default(true)
+  displayOrder        Int              @default(0)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  deletedAt           DateTime?
+
+  region Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@index([regionId, isActive, showOnRegionPage, displayOrder])
+  @@map("region_number_plate_formats")
 }
 
 model City {

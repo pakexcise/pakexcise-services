@@ -30,6 +30,14 @@ export {
 } from "./document-requirement-repository";
 export type { PublicDocumentPreview } from "./document-requirement-repository";
 export { regionRepository, RegionRepository } from "./region-repository";
+export {
+  regionPlateFormatRepository,
+  RegionPlateFormatRepository,
+} from "./region-plate-format-repository";
+export {
+  adminRegionPlateFormatRepository,
+  AdminRegionPlateFormatRepository,
+} from "./admin-region-plate-format-repository";
 export { cityRepository, CityRepository } from "./city-repository";
 export { reviewRepository, ReviewRepository } from "./review-repository";
 export {
