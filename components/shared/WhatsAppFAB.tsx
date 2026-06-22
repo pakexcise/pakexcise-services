@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { cn } from "@/lib/utils";
 
@@ -46,7 +46,7 @@ export function WhatsAppFAB({
         className,
       )}
     >
-      <MessageCircle className="size-7" aria-hidden="true" />
+      <WhatsAppIcon className="size-7" />
       <span className="sr-only">{ariaLabel}</span>
     </a>
   );

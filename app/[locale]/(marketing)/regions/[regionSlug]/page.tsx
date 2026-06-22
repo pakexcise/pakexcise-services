@@ -7,7 +7,7 @@ import { getCanonicalRegionSlug } from "@/features/regions/lib/resolve-region-sl
 
 import { RegionHelpSection } from "@/components/marketing/region-help-section";
 import { RegionNumberPlateFormatsSection } from "@/components/marketing/region-number-plate-formats-section";
-import { CityCard } from "@/components/marketing/city-card";
+import { RegionCitiesSection } from "@/components/marketing/region-cities-section";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
@@ -193,20 +193,26 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
         ) : null}
 
         {cities.length > 0 ? (
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold">{t("regions.citiesTitle")}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {cities.map((city) => (
-                <CityCard
-                  key={city.id}
-                  city={city}
-                  regionSlug={region.slug}
-                  locale={locale}
-                  viewLabel={t("regions.viewCity")}
-                />
-              ))}
-            </div>
-          </section>
+          <RegionCitiesSection
+            regionSlug={region.slug}
+            cities={cities.map((city) => ({
+              id: city.id,
+              slug: city.slug,
+              name: pickLocalized(locale, {
+                en: city.nameEn,
+                ur: city.nameUr,
+              }),
+            }))}
+            labels={{
+              title: t("regions.citiesTitle"),
+              citiesCount: t("regions.citiesCount", { count: cities.length }),
+              description: t("regions.citiesDescription"),
+              searchPlaceholder: t("regions.searchCities"),
+              searchAriaLabel: t("regions.searchCitiesAria"),
+              noMatch: t("regions.noCitiesMatch"),
+              viewCity: t("regions.viewCity"),
+            }}
+          />
         ) : null}
 
         <FaqAccordion

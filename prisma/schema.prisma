@@ -378,6 +378,8 @@ model Region {
   descriptionEn String?   @db.Text
   descriptionUr String?   @db.Text
   isActive      Boolean   @default(true)
+  showInFooter  Boolean   @default(false)
+  footerDisplayOrder Int  @default(0)
   displayOrder  Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -393,6 +395,7 @@ model Region {
   numberPlateFormats  RegionNumberPlateFormat[]
 
   @@index([isActive, displayOrder])
+  @@index([showInFooter, footerDisplayOrder])
   @@map("regions")
 }
 
@@ -544,6 +547,8 @@ model Service {
   isActive            Boolean   @default(true)
   isFeatured          Boolean   @default(false)
   featuredDisplayOrder Int      @default(0)
+  showInFooter        Boolean   @default(false)
+  footerDisplayOrder  Int       @default(0)
   displayOrder        Int       @default(0)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
@@ -565,6 +570,7 @@ model Service {
   @@index([slug])
   @@index([isActive, displayOrder])
   @@index([isFeatured, featuredDisplayOrder])
+  @@index([showInFooter, footerDisplayOrder])
   @@index([regionId, isActive])
   @@index([categoryId, isActive])
   @@index([parentServiceId, isActive, displayOrder])

@@ -10,6 +10,8 @@ export const regionCoreSchema = z.object({
   descriptionEn: z.string().trim().max(10000).optional().nullable(),
   descriptionUr: z.string().trim().max(10000).optional().nullable(),
   isActive: z.boolean().default(true),
+  showInFooter: z.boolean().default(false),
+  footerDisplayOrder: z.coerce.number().int().min(0).max(9999).default(0),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
 });
 

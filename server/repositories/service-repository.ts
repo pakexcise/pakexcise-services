@@ -10,6 +10,7 @@ import {
   type PaginatedResult,
   type PublicServiceSelect,
 } from "@/server/repositories/base/repository";
+import { isFooterNavigationSchemaReady } from "@/server/db/is-footer-navigation-schema-ready";
 
 export type { PublicServiceSelect as PublicServiceCard };
 
@@ -93,6 +94,20 @@ const publicSubServiceSelect = {
   shortDescriptionUr: true,
   displayOrder: true,
 } as const;
+
+const footerServiceSelect = {
+  id: true,
+  slug: true,
+  nameEn: true,
+  nameUr: true,
+} as const;
+
+export type FooterServiceLink = {
+  id: string;
+  slug: string;
+  nameEn: string;
+  nameUr: string;
+};
 
 export const publicServiceWhere = {
   ...activeOnly(),
@@ -238,6 +253,56 @@ export class ServiceRepository extends Repository {
         }),
       [],
     );
+  }
+
+  async listFooterServices(): Promise<FooterServiceLink[]> {
+    if (!isFooterNavigationSchemaReady()) {
+      return this.listFooterServicesFallback();
+    }
+
+    const footerServices = await this.query(
+      () =>
+        this.db.service.findMany({
+          where: {
+            ...publicTopLevelServiceWhere,
+            showInFooter: true,
+          },
+          orderBy: [
+            { footerDisplayOrder: "asc" },
+            { displayOrder: "asc" },
+            { createdAt: "desc" },
+          ],
+          select: footerServiceSelect,
+        }),
+      [],
+    );
+
+    if (footerServices.length > 0) {
+      return footerServices;
+    }
+
+    return this.listFooterServicesFallback();
+  }
+
+  private async listFooterServicesFallback(): Promise<FooterServiceLink[]> {
+    const featured = await this.listFeatured(12);
+
+    if (featured.length > 0) {
+      return featured.map(({ id, slug, nameEn, nameUr }) => ({
+        id,
+        slug,
+        nameEn,
+        nameUr,
+      }));
+    }
+
+    const services = await this.listPublic(12);
+    return services.map(({ id, slug, nameEn, nameUr }) => ({
+      id,
+      slug,
+      nameEn,
+      nameUr,
+    }));
   }
 
   async listPublic(limit = 6): Promise<PublicServiceSelect[]> {
@@ -435,6 +500,10 @@ export class ServiceRepository extends Repository {
 }
 
 export const serviceRepository = new ServiceRepository();
+
+export async function getFooterServices() {
+  return serviceRepository.listFooterServices();
+}
 
 export async function getFeaturedServices(
   limit = 6,

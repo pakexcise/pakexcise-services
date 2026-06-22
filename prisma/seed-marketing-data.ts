@@ -580,9 +580,11 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         descriptionEn: region.descriptionEn,
         descriptionUr: region.descriptionUr,
         displayOrder: region.displayOrder,
+        footerDisplayOrder: region.displayOrder,
+        showInFooter: true,
         isActive: true,
       },
-      create: { ...region, isActive: true },
+      create: { ...region, isActive: true, showInFooter: true, footerDisplayOrder: region.displayOrder },
     });
   }
 

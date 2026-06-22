@@ -67,6 +67,8 @@ export const serviceCoreSchema = z.object({
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
   featuredDisplayOrder: z.coerce.number().int().min(0).max(9999).default(0),
+  showInFooter: z.boolean().default(false),
+  footerDisplayOrder: z.coerce.number().int().min(0).max(9999).default(0),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
 });
 

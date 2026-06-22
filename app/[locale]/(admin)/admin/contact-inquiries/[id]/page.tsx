@@ -2,7 +2,9 @@ import type { ContactInquiryStatus } from "@prisma/client";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { MessageCircle, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
+
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { adminMetadata } from "@/features/admin/lib/metadata";
@@ -153,7 +155,7 @@ export default async function AdminContactInquiryDetailPage({
             </p>
             <Button asChild className="mt-4 w-full bg-[#25D366] text-white hover:bg-[#20bd5a]">
               <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="size-4" aria-hidden="true" />
+                <WhatsAppIcon className="size-4" />
                 {t("detail.whatsappCta")}
               </a>
             </Button>

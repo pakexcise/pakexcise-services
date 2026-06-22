@@ -7,6 +7,8 @@ export type RegionEditorValues = {
   descriptionEn: string;
   descriptionUr: string;
   isActive: boolean;
+  showInFooter: boolean;
+  footerDisplayOrder: number;
   displayOrder: number;
   seo: {
     metaTitleEn: string;
@@ -37,6 +39,8 @@ export function emptyRegionEditorValues(displayOrder = 0): RegionEditorValues {
     descriptionEn: "",
     descriptionUr: "",
     isActive: true,
+    showInFooter: false,
+    footerDisplayOrder: 0,
     displayOrder,
     seo: {
       metaTitleEn: "",
@@ -77,6 +81,8 @@ export function regionToEditorValues(region: AdminRegionDetail): RegionEditorVal
     descriptionEn: region.descriptionEn ?? "",
     descriptionUr: region.descriptionUr ?? "",
     isActive: region.isActive,
+    showInFooter: region.showInFooter,
+    footerDisplayOrder: region.footerDisplayOrder,
     displayOrder: region.displayOrder,
     seo: {
       metaTitleEn: region.seoMeta?.metaTitleEn ?? "",

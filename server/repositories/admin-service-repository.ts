@@ -44,6 +44,8 @@ export const adminServiceDetailSelect = {
   isActive: true,
   isFeatured: true,
   featuredDisplayOrder: true,
+  showInFooter: true,
+  footerDisplayOrder: true,
   displayOrder: true,
   deletedAt: true,
   createdAt: true,

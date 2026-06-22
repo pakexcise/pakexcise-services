@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,7 @@ export function MarketingCta({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <MessageCircle className="size-4" aria-hidden="true" />
+            <WhatsAppIcon className="size-4" />
             {whatsappLabel}
           </a>
         </Button>

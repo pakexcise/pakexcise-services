@@ -98,6 +98,8 @@ export async function createRegionAction(
       descriptionEn: data.descriptionEn,
       descriptionUr: data.descriptionUr,
       isActive: data.isActive,
+      showInFooter: data.showInFooter,
+      footerDisplayOrder: data.footerDisplayOrder,
       displayOrder: data.displayOrder,
     },
   });
@@ -167,6 +169,8 @@ export async function updateRegionAction(
       descriptionEn: data.descriptionEn,
       descriptionUr: data.descriptionUr,
       isActive: data.isActive,
+      showInFooter: data.showInFooter,
+      footerDisplayOrder: data.footerDisplayOrder,
       displayOrder: data.displayOrder,
     },
   });

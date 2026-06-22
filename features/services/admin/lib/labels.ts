@@ -43,6 +43,8 @@ export async function getServiceEditorLabels() {
     isActive: t("isActive"),
     isFeatured: t("isFeatured"),
     featuredDisplayOrder: t("featuredDisplayOrder"),
+    showInFooter: t("showInFooter"),
+    footerDisplayOrder: t("footerDisplayOrder"),
     displayOrder: t("displayOrder"),
     metaTitleEn: t("metaTitleEn"),
     metaTitleUr: t("metaTitleUr"),

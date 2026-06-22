@@ -31,6 +31,9 @@ const BRAND_PLATFORMS = new Set([
   "linkedin",
   "x",
   "twitter",
+  "whatsapp",
+  "whatsapp-chat",
+  "whatsapp-channel",
 ]);
 
 function resolveSocialIcon(iconName: string): LucideIcon {
@@ -69,6 +72,8 @@ const FOOTER_PLATFORM_STYLES: Record<string, string> = {
   x: "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground",
   twitter: "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground",
   whatsapp: "hover:border-[#25D366]/50 hover:bg-[#25D366]/10 hover:text-[#25D366]",
+  "whatsapp-chat": "hover:border-[#25D366]/50 hover:bg-[#25D366]/10 hover:text-[#25D366]",
+  "whatsapp-channel": "hover:border-[#25D366]/50 hover:bg-[#25D366]/10 hover:text-[#25D366]",
 };
 
 function footerPlatformStyle(platform: string): string {
@@ -199,7 +204,8 @@ export function SocialLinks({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="flex items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted/50"
+                  title={label}
+                  className="flex items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                   data-analytics-event="click_social_link"
                   data-platform={link.platform}
                 >
@@ -230,7 +236,9 @@ export function SocialLinks({
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                aria-label={label}
+                title={label}
+                className="text-primary transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"
                 data-analytics-event="click_social_link"
                 data-platform={link.platform}
               >

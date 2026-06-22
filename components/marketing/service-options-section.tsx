@@ -1,4 +1,6 @@
-import { ClipboardList, LogIn, MessageCircle } from "lucide-react";
+import { ClipboardList, LogIn } from "lucide-react";
+
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
@@ -82,7 +84,7 @@ export function ServiceOptionsSection({
         <Card className="border-[#25D366]/30 bg-[#25D366]/5 shadow-sm">
           <CardHeader className="space-y-2 pb-3">
             <div className="flex items-center justify-between gap-2">
-              <MessageCircle className="size-5 text-[#25D366]" aria-hidden="true" />
+              <WhatsAppIcon className="size-5 text-[#25D366]" />
               <span className="rounded-full bg-[#25D366]/15 px-2 py-0.5 text-xs font-medium text-[#1a8f47]">
                 {labels.fastestBadge}
               </span>
@@ -102,7 +104,7 @@ export function ServiceOptionsSection({
                 data-analytics-event="click_whatsapp"
                 data-analytics-placement="service_options_whatsapp"
               >
-                <MessageCircle className="size-4" aria-hidden="true" />
+                <WhatsAppIcon className="size-4" />
                 {labels.whatsappCta}
               </a>
             </Button>

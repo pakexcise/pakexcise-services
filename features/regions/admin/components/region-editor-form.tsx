@@ -25,7 +25,9 @@ type RegionEditorLabels = {
   descriptionEn: string;
   descriptionUr: string;
   isActive: string;
+  showInFooter: string;
   displayOrder: string;
+  footerDisplayOrder: string;
   metaTitleEn: string;
   metaTitleUr: string;
   metaDescriptionEn: string;
@@ -150,6 +152,17 @@ export function RegionEditorForm({
             />
           </div>
           <div className="space-y-2">
+            <Label>{labels.footerDisplayOrder}</Label>
+            <Input
+              type="number"
+              min={0}
+              value={values.footerDisplayOrder}
+              onChange={(event) =>
+                updateField("footerDisplayOrder", Number(event.target.value) || 0)
+              }
+            />
+          </div>
+          <div className="space-y-2">
             <Label>{labels.nameEn}</Label>
             <Input
               value={values.nameEn}
@@ -185,6 +198,16 @@ export function RegionEditorForm({
               dir="rtl"
             />
           </div>
+          <label className="flex items-center gap-2 text-sm lg:col-span-2">
+            <input
+              type="checkbox"
+              checked={values.showInFooter}
+              onChange={(event) =>
+                updateField("showInFooter", event.target.checked)
+              }
+            />
+            {labels.showInFooter}
+          </label>
           <label className="flex items-center gap-2 text-sm lg:col-span-2">
             <input
               type="checkbox"

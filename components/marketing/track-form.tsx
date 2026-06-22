@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { TrackResult } from "@/components/marketing/TrackResult";
 import { Button } from "@/components/ui/button";
@@ -173,7 +173,7 @@ export function TrackForm({
               data-analytics-event="click_whatsapp"
               data-analytics-placement="track_page"
             >
-              <MessageCircle className="size-4" />
+              <WhatsAppIcon className="size-4" />
               {labels.whatsapp}
             </a>
           </Button>

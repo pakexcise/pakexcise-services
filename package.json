@@ -17,6 +17,7 @@
     "db:push": "node scripts/sync-env.mjs && prisma db push",
     "db:migrate": "node scripts/sync-env.mjs && prisma migrate dev",
     "db:seed": "node scripts/sync-env.mjs && tsx prisma/seed.ts",
+    "db:sync-footer": "node scripts/sync-footer-navigation.mjs",
     "db:setup": "docker compose up -d && node scripts/sync-env.mjs && prisma db push && tsx prisma/seed.ts",
     "db:studio": "node scripts/sync-env.mjs && prisma studio",
     "env:sync": "node scripts/sync-env.mjs",

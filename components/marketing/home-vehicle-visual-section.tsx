@@ -2,9 +2,10 @@ import {
   Car,
   CreditCard,
   FileText,
-  MessageCircle,
 } from "lucide-react";
 import Image from "next/image";
+
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ type HomeVehicleVisualSectionProps = {
   className?: string;
 };
 
-const FEATURE_ICONS = [FileText, Car, CreditCard, MessageCircle] as const;
+const FEATURE_ICONS = [FileText, Car, CreditCard] as const;
 
 export function HomeVehicleVisualSection({
   title,
@@ -113,7 +114,7 @@ export function HomeVehicleVisualSection({
                   data-analytics-event="click_whatsapp"
                   data-analytics-placement="home_vehicle_visual_whatsapp"
                 >
-                  <MessageCircle className="size-4" aria-hidden="true" />
+                  <WhatsAppIcon className="size-4" />
                   {whatsappCta}
                 </a>
               </Button>

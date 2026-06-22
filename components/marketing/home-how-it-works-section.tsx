@@ -2,10 +2,10 @@ import {
   CheckCircle2,
   ClipboardList,
   FileText,
-  MessageCircle,
 } from "lucide-react";
 
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { cn } from "@/lib/utils";
 
 type HomeHowItWorksStep = {
@@ -21,7 +21,7 @@ type HomeHowItWorksSectionProps = {
   className?: string;
 };
 
-const STEP_ICONS = [MessageCircle, ClipboardList, FileText, CheckCircle2] as const;
+const STEP_ICONS = [ClipboardList, FileText, CheckCircle2] as const;
 
 export function HomeHowItWorksSection({
   title,
@@ -39,7 +39,7 @@ export function HomeHowItWorksSection({
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, index) => {
-          const Icon = STEP_ICONS[index] ?? CheckCircle2;
+          const StepIcon = STEP_ICONS[index - 1] ?? CheckCircle2;
 
           return (
             <div
@@ -53,7 +53,11 @@ export function HomeHowItWorksSection({
                 <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                   {index + 1}
                 </span>
-                <Icon className="size-4 text-primary" aria-hidden="true" />
+                {index === 0 ? (
+                  <WhatsAppIcon className="size-4 text-primary" />
+                ) : (
+                  <StepIcon className="size-4 text-primary" aria-hidden="true" />
+                )}
               </div>
               <h3 className="text-base font-semibold leading-snug">{step.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

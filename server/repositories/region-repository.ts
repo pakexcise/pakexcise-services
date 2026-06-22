@@ -1,6 +1,21 @@
 import "server-only";
 
 import { activeOnly, Repository } from "@/server/repositories/base/repository";
+import { isFooterNavigationSchemaReady } from "@/server/db/is-footer-navigation-schema-ready";
+
+const footerRegionSelect = {
+  id: true,
+  slug: true,
+  nameEn: true,
+  nameUr: true,
+} as const;
+
+export type FooterRegionLink = {
+  id: string;
+  slug: string;
+  nameEn: string;
+  nameUr: string;
+};
 
 export class RegionRepository extends Repository {
   async listPublicWithServiceCounts() {
@@ -62,6 +77,43 @@ export class RegionRepository extends Repository {
     );
   }
 
+  async listFooterRegions(): Promise<FooterRegionLink[]> {
+    if (!isFooterNavigationSchemaReady()) {
+      return this.listFooterRegionsFallback();
+    }
+
+    const footerRegions = await this.query(
+      () =>
+        this.db.region.findMany({
+          where: {
+            ...activeOnly(),
+            showInFooter: true,
+          },
+          orderBy: [{ footerDisplayOrder: "asc" }, { displayOrder: "asc" }],
+          select: footerRegionSelect,
+        }),
+      [],
+    );
+
+    if (footerRegions.length > 0) {
+      return footerRegions;
+    }
+
+    return this.listFooterRegionsFallback();
+  }
+
+  private async listFooterRegionsFallback(): Promise<FooterRegionLink[]> {
+    return this.query(
+      () =>
+        this.db.region.findMany({
+          where: activeOnly(),
+          orderBy: { displayOrder: "asc" },
+          select: footerRegionSelect,
+        }),
+      [],
+    );
+  }
+
   async findPublicBySlug(slug: string) {
     return this.query(
       () =>
@@ -117,3 +169,7 @@ export class RegionRepository extends Repository {
 }
 
 export const regionRepository = new RegionRepository();
+
+export async function getFooterRegions() {
+  return regionRepository.listFooterRegions();
+}

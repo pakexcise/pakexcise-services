@@ -2,7 +2,9 @@ import type { GuestLeadStatus } from "@prisma/client";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { MessageCircle, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
+
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { DeleteSupportRequestButton } from "@/features/guest-leads/admin/components/delete-support-request-button";
@@ -202,7 +204,7 @@ export default async function AdminGuestLeadDetailPage({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle className="size-4" aria-hidden="true" />
+                <WhatsAppIcon className="size-4" />
                 {t("guestLeads.detail.whatsappCta")}
               </a>
             </Button>

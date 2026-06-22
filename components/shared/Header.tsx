@@ -1,6 +1,8 @@
 "use client";
 
-import { Menu, MessageCircle, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -132,7 +134,7 @@ export function Header({
                 data-analytics-placement="header_desktop"
                 aria-label={desktopWhatsappLabel}
               >
-                <MessageCircle className="size-4" />
+                <WhatsAppIcon className="size-4" />
                 <span className="hidden lg:inline">{desktopWhatsappLabel}</span>
               </a>
             </Button>
@@ -204,7 +206,7 @@ export function Header({
                     data-analytics-event="click_whatsapp"
                     data-analytics-placement="header_mobile"
                   >
-                    <MessageCircle className="size-4" />
+                    <WhatsAppIcon className="size-4" />
                     {mobileWhatsappLabel}
                   </a>
                 </Button>

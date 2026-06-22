@@ -30,6 +30,10 @@ export type PublicUiSettings = {
   headerWhatsappEnabled: boolean;
   headerWhatsappLabelEn: string;
   headerWhatsappLabelUr: string;
+  footerWhatsappLabelEn: string;
+  footerWhatsappLabelUr: string;
+  footerWhatsappChannelLabelEn: string;
+  footerWhatsappChannelLabelUr: string;
   announcementBarEnabled: boolean;
   announcementBarTextEn: string;
   announcementBarTextUr: string;

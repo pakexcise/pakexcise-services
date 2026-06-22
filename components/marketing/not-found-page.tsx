@@ -11,6 +11,7 @@ import {
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
 import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
@@ -163,7 +164,7 @@ export async function NotFoundPageView() {
                     data-analytics-event="click_whatsapp"
                     data-analytics-placement="not_found"
                   >
-                    <MessageCircle className="size-4 text-[#25D366]" aria-hidden="true" />
+                    <WhatsAppIcon className="size-4 text-[#25D366]" />
                     {t("whatsappHelp")}
                   </a>
                 </Button>

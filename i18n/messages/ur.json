@@ -960,7 +960,7 @@
     }
   },
   "footer": {
-    "description": "PakExcise.com پاکستان میں ایکسائز سے متعلق عملوں میں نجی سہولت کے ذریعے مدد فراہم کرتا ہے۔",
+    "description": "PakExcise گاہکوں کو گاڑی، لائنس، ٹوکن ٹیکس اور ای چالان سروس درخواستیں جمع کرنے اور منظم کرنے میں ایک نجی سہولت پلیٹ فارم کے ذریعے مدد کرتا ہے۔",
     "legal": "قانونی",
     "privacy": "رازداری کی پالیسی",
     "terms": "شرائط و ضوابط",
@@ -975,8 +975,10 @@
     "regionsEmpty": "ایڈمن کی ترتیب کے بعد صوبے یہاں ظاہر ہوں گے۔",
     "exploreTitle": "دریافت کریں",
     "contactTitle": "رابطہ",
-    "whatsapp": "واٹس ایپ سپورٹ",
-    "whatsappChannel": "واٹس ایپ چینل",
+    "whatsapp": "واٹس ایپ پر چیٹ کریں",
+    "whatsappChannel": "واٹس ایپ چینل جوائن کریں",
+    "emailAria": "PakExcise کو ای میل کریں: {email}",
+    "phoneAria": "PakExcise پر کال کریں: {phone}",
     "followUs": "ہمیں فالو کریں",
     "connect": "ہم سے جڑیں",
     "socialEmpty": "ایڈمن کی ترتیب کے بعد سوشل لنکس یہاں ظاہر ہوں گے۔",
@@ -1223,6 +1225,11 @@
       "viewServices": "خدمات دیکھیں",
       "viewCity": "شہر دیکھیں",
       "citiesTitle": "اس علاقے کے شہر",
+      "citiesDescription": "اس صوبے میں مقامی سروس کی تفصیلات اور رہنمائی کے لیے شہر کے صفحات دیکھیں۔",
+      "citiesCount": "{count, plural, one {# شہر} other {# شہر}}",
+      "searchCities": "شہر تلاش کریں…",
+      "searchCitiesAria": "اس علاقے میں شہر تلاش کریں",
+      "noCitiesMatch": "آپ کی تلاش سے کوئی شہر نہیں ملا۔",
       "servicesInRegion": "اس علاقے کی خدمات",
       "regionHelp": {
         "title": "{region} میں مدد چاہیے؟",
@@ -2501,8 +2508,13 @@
       "footer": {
         "footerDescriptionEn": "فوٹر تفصیل (انگریزی)",
         "footerDescriptionUr": "فوٹر تفصیل (اردو)",
-        "disclaimerEn": "قانونی دستبرداری (انگریزی)",
-        "disclaimerUr": "قانونی دستبرداری (اردو)"
+        "footerWhatsappLabelEn": "فوٹر واٹس ایپ لیبل (انگریزی)",
+        "footerWhatsappLabelUr": "فوٹر واٹس ایپ لیبل (اردو)",
+        "footerWhatsappChannelLabelEn": "فوٹر واٹس ایپ چینل لیبل (انگریزی)",
+        "footerWhatsappChannelLabelUr": "فوٹر واٹس ایپ چینل لیبل (اردو)",
+        "disclaimerEn": "سائٹ بینر دستبرداری (انگریزی)",
+        "disclaimerUr": "سائٹ بینر دستبرداری (اردو)",
+        "catalogNote": "فوٹر سروس اور صوبہ لنکس کیٹلاگ → Services اور کیٹلاگ → Regions میں \"سائٹ فوٹر میں دکھائیں\" اور فوٹر ترتیب سے منظم ہوتے ہیں۔"
       },
       "branding": {
         "logoPath": "لوگو (لائٹ موڈ)",
@@ -2705,6 +2717,8 @@
         "isActive": "فعال",
         "isFeatured": "ہوم پیج پر نمایاں",
         "featuredDisplayOrder": "نمایاں خدمات کی ترتیب",
+        "showInFooter": "سائٹ فوٹر میں دکھائیں",
+        "footerDisplayOrder": "فوٹر ترتیب",
         "displayOrder": "ڈسپلے ترتیب",
         "metaTitleEn": "میٹا عنوان (انگریزی)",
         "metaTitleUr": "میٹا عنوان (اردو)",
@@ -2863,7 +2877,9 @@
         "descriptionEn": "تعارفی مواد (انگریزی)",
         "descriptionUr": "تعارفی مواد (اردو)",
         "isActive": "فعال",
+        "showInFooter": "سائٹ فوٹر میں دکھائیں",
         "displayOrder": "ترتیب",
+        "footerDisplayOrder": "فوٹر ترتیب",
         "metaTitleEn": "میٹا عنوان (انگریزی)",
         "metaTitleUr": "میٹا عنوان (اردو)",
         "metaDescriptionEn": "میٹا تفصیل (انگریزی)",

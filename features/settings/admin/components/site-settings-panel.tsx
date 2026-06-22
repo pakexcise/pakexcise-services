@@ -76,8 +76,13 @@ export type SiteSettingsPanelLabels = {
   footer: {
     footerDescriptionEn: string;
     footerDescriptionUr: string;
+    footerWhatsappLabelEn: string;
+    footerWhatsappLabelUr: string;
+    footerWhatsappChannelLabelEn: string;
+    footerWhatsappChannelLabelUr: string;
     disclaimerEn: string;
     disclaimerUr: string;
+    catalogNote: string;
   };
   branding: {
     logoPath: string;
@@ -698,6 +703,9 @@ export function SiteSettingsPanel({
 
       {activeTab === "footer" ? (
         <div className="grid gap-4 md:grid-cols-2">
+          <p className="md:col-span-2 text-sm text-muted-foreground">
+            {labels.footer.catalogNote}
+          </p>
           <Field label={labels.footer.footerDescriptionEn} className="md:col-span-2">
             <Textarea
               rows={3}
@@ -724,6 +732,64 @@ export function SiteSettingsPanel({
                   business: {
                     ...current.business,
                     footerDescriptionUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </Field>
+          <Field label={labels.footer.footerWhatsappLabelEn}>
+            <Input
+              value={values.publicUi.footerWhatsappLabelEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  publicUi: {
+                    ...current.publicUi,
+                    footerWhatsappLabelEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </Field>
+          <Field label={labels.footer.footerWhatsappLabelUr}>
+            <Input
+              dir="rtl"
+              value={values.publicUi.footerWhatsappLabelUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  publicUi: {
+                    ...current.publicUi,
+                    footerWhatsappLabelUr: event.target.value,
+                  },
+                }))
+              }
+            />
+          </Field>
+          <Field label={labels.footer.footerWhatsappChannelLabelEn}>
+            <Input
+              value={values.publicUi.footerWhatsappChannelLabelEn}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  publicUi: {
+                    ...current.publicUi,
+                    footerWhatsappChannelLabelEn: event.target.value,
+                  },
+                }))
+              }
+            />
+          </Field>
+          <Field label={labels.footer.footerWhatsappChannelLabelUr}>
+            <Input
+              dir="rtl"
+              value={values.publicUi.footerWhatsappChannelLabelUr}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  publicUi: {
+                    ...current.publicUi,
+                    footerWhatsappChannelLabelUr: event.target.value,
                   },
                 }))
               }

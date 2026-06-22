@@ -109,8 +109,13 @@ export default async function AdminSiteSettingsPage() {
             footer: {
               footerDescriptionEn: t("footer.footerDescriptionEn"),
               footerDescriptionUr: t("footer.footerDescriptionUr"),
+              footerWhatsappLabelEn: t("footer.footerWhatsappLabelEn"),
+              footerWhatsappLabelUr: t("footer.footerWhatsappLabelUr"),
+              footerWhatsappChannelLabelEn: t("footer.footerWhatsappChannelLabelEn"),
+              footerWhatsappChannelLabelUr: t("footer.footerWhatsappChannelLabelUr"),
               disclaimerEn: t("footer.disclaimerEn"),
               disclaimerUr: t("footer.disclaimerUr"),
+              catalogNote: t("footer.catalogNote"),
             },
             branding: {
               logoPath: t("branding.logoPath"),

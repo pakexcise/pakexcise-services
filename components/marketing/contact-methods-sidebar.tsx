@@ -1,10 +1,10 @@
 import {
   Clock,
   Mail,
-  MessageCircle,
   Phone,
-  Radio,
 } from "lucide-react";
+
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,13 +25,13 @@ type ContactMethodCardProps = {
 function ContactMethodIcon({ variant }: { variant: ContactMethodCardProps["variant"] }) {
   switch (variant) {
     case "whatsapp":
-      return <MessageCircle className="size-5 text-[#25D366]" aria-hidden="true" />;
+      return <WhatsAppIcon className="size-5 text-[#25D366]" />;
     case "call":
       return <Phone className="size-5 text-primary" aria-hidden="true" />;
     case "email":
       return <Mail className="size-5 text-primary" aria-hidden="true" />;
     case "channel":
-      return <Radio className="size-5 text-[#25D366]" aria-hidden="true" />;
+      return <WhatsAppIcon className="size-5 text-[#25D366]" />;
     case "hours":
       return <Clock className="size-5 text-primary" aria-hidden="true" />;
   }
@@ -86,7 +86,7 @@ export function ContactMethodCard({
               data-analytics-placement={`contact_${variant}`}
             >
               {isWhatsApp || variant === "channel" ? (
-                <MessageCircle className="size-4" aria-hidden="true" />
+                <WhatsAppIcon className="size-4" />
               ) : variant === "call" ? (
                 <Phone className="size-4" aria-hidden="true" />
               ) : (

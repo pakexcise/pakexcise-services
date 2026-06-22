@@ -15,6 +15,7 @@ export type {
 export {
   getActiveServices,
   getFeaturedServices,
+  getFooterServices,
   serviceRepository,
   ServiceRepository,
 } from "./service-repository";
@@ -29,7 +30,7 @@ export {
   DocumentRequirementRepository,
 } from "./document-requirement-repository";
 export type { PublicDocumentPreview } from "./document-requirement-repository";
-export { regionRepository, RegionRepository } from "./region-repository";
+export { regionRepository, RegionRepository, getFooterRegions } from "./region-repository";
 export {
   regionPlateFormatRepository,
   RegionPlateFormatRepository,

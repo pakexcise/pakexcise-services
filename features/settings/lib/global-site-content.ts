@@ -76,6 +76,18 @@ export function localizeGlobalSiteContent(
           ur: publicUi.headerWhatsappLabelUr,
         })
       : undefined,
+    footerWhatsappLabel: publicUi
+      ? pickLocalized(locale, {
+          en: publicUi.footerWhatsappLabelEn,
+          ur: publicUi.footerWhatsappLabelUr,
+        })
+      : undefined,
+    footerWhatsappChannelLabel: publicUi
+      ? pickLocalized(locale, {
+          en: publicUi.footerWhatsappChannelLabelEn,
+          ur: publicUi.footerWhatsappChannelLabelUr,
+        })
+      : undefined,
     floatingWhatsappMessage: publicUi
       ? pickLocalized(locale, {
           en: publicUi.floatingWhatsappMessageEn,

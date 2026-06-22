@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
@@ -91,7 +91,7 @@ export function HomeHeroSection({
                 data-analytics-event="click_whatsapp"
                 data-analytics-placement="home_hero_whatsapp"
               >
-                <MessageCircle className="size-4" aria-hidden="true" />
+                <WhatsAppIcon className="size-4" />
                 {whatsappCta}
               </a>
             </Button>

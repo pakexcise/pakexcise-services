@@ -1,5 +1,7 @@
 import type { SVGProps } from "react";
 
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
+
 type BrandSocialIconProps = SVGProps<SVGSVGElement> & {
   platform: string;
 };
@@ -55,6 +57,10 @@ export function BrandSocialIcon({
           <path d="M16.9 3H20l-6.4 7.3L21 21h-6.2l-4.8-6.3L4.4 21H1.3l6.8-7.8L3 3h6.4l4.4 5.8L16.9 3Zm-1.1 16h1.7L7.9 4.9H6.1L15.8 19Z" />
         </svg>
       );
+    case "whatsapp":
+    case "whatsapp-chat":
+    case "whatsapp-channel":
+      return <WhatsAppIcon className={className} {...props} />;
     default:
       return null;
   }

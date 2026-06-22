@@ -159,6 +159,8 @@ export async function createServiceAction(
       isActive: data.isActive,
       isFeatured: data.isFeatured,
       featuredDisplayOrder: data.featuredDisplayOrder,
+      showInFooter: data.showInFooter,
+      footerDisplayOrder: data.footerDisplayOrder,
       displayOrder,
     },
   });
@@ -248,6 +250,8 @@ export async function updateServiceAction(
       isActive: data.isActive,
       isFeatured: data.isFeatured,
       featuredDisplayOrder: data.featuredDisplayOrder,
+      showInFooter: data.showInFooter,
+      footerDisplayOrder: data.footerDisplayOrder,
       displayOrder: data.displayOrder,
     },
   });

@@ -1,8 +1,11 @@
-import { Clock, Mail, MessageCircle, Phone } from "lucide-react";
+import { Clock, Mail, Phone } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { SocialLinks } from "@/components/marketing/social-links";
+import { FooterProvinceLinks } from "@/components/marketing/footer-province-links";
 import { SiteLogo } from "@/components/shared/SiteLogo";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
+import { resolveFooterSocialLinks } from "@/features/marketing/lib/resolve-footer-social-links";
 import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
 import {
   getBrandingSettings,
@@ -18,13 +21,14 @@ import {
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
 import { Link } from "@/i18n/navigation";
+import { pickLocalized } from "@/lib/i18n/content";
 import { buildTelHref } from "@/lib/contact/build-tel-href";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import {
-  getFeaturedServices,
   getActiveSocialLinks,
-  regionRepository,
+  getFooterRegions,
+  getFooterServices,
 } from "@/server/repositories";
 
 const legalLinks = [
@@ -40,26 +44,54 @@ function FooterLink({
   href,
   children,
   external = false,
+  ariaLabel,
 }: {
   href: string;
   children: React.ReactNode;
   external?: boolean;
+  ariaLabel?: string;
 }) {
   const className =
-    "text-sm text-muted-foreground transition-colors hover:text-foreground";
+    "inline-block text-sm text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm";
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        aria-label={ariaLabel}
+        title={ariaLabel}
+      >
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={className}>
+    <Link href={href} className={className} aria-label={ariaLabel}>
       {children}
     </Link>
+  );
+}
+
+function FooterNavSection({
+  title,
+  children,
+  className,
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <nav className={className} aria-label={title}>
+      <h2 className="mb-3 text-sm font-semibold tracking-tight text-foreground">
+        {title}
+      </h2>
+      <ul className="space-y-1.5">{children}</ul>
+    </nav>
   );
 }
 
@@ -69,17 +101,20 @@ export async function Footer() {
   const locale = await getCurrentLocale();
   const year = new Date().getFullYear();
 
-  let services: Awaited<ReturnType<typeof getFeaturedServices>> = [];
-  let regions: Awaited<ReturnType<typeof regionRepository.listPublic>> = [];
+  let services: Awaited<ReturnType<typeof getFooterServices>> = [];
+  let regions: Awaited<ReturnType<typeof getFooterRegions>> = [];
   let socialLinks: Awaited<ReturnType<typeof getActiveSocialLinks>> = [];
   let description = t("description");
   let contactEmail = "";
   let contactPhone = "";
   let supportDays = "";
   let supportHours = "";
-  let privateNotice = t("privateNotice");
   let whatsappHref = "";
   let whatsappChannelUrl = "";
+  let whatsappLabel = t("whatsapp");
+  let whatsappChannelLabel = t("whatsappChannel");
+  let whatsappChannelLabelEn = t("whatsappChannel");
+  let whatsappChannelLabelUr = t("whatsappChannel");
   let showBlog = true;
   let showGuides = true;
   let showWhatsappChannel = true;
@@ -96,8 +131,8 @@ export async function Footer() {
       branding,
       publicUi,
     ] = await Promise.all([
-      getFeaturedServices(6),
-      regionRepository.listPublic(),
+      getFooterServices(),
+      getFooterRegions(),
       getActiveSocialLinks(),
       getBusinessSettings(),
       getFeatureFlagSettings(),
@@ -106,7 +141,7 @@ export async function Footer() {
     ]);
 
     services = servicesResult;
-    regions = regionsResult.slice(0, 6);
+    regions = regionsResult;
     socialLinks = socialResult;
     showBlog = featureFlags.blogEnabled;
     showGuides = featureFlags.guidesEnabled;
@@ -114,11 +149,15 @@ export async function Footer() {
 
     const localized = localizeGlobalSiteContent(business, locale, publicUi);
     description = localized.footerDescription || description;
-    privateNotice = localized.disclaimer || privateNotice;
-    contactEmail = resolveSupportEmail(business);
-    contactPhone = resolvePhoneDisplayNumber(business);
+    whatsappLabel = localized.footerWhatsappLabel || whatsappLabel;
+    whatsappChannelLabel =
+      localized.footerWhatsappChannelLabel || whatsappChannelLabel;
+    whatsappChannelLabelEn = publicUi.footerWhatsappChannelLabelEn;
+    whatsappChannelLabelUr = publicUi.footerWhatsappChannelLabelUr;
     supportDays = localized.supportDays;
     supportHours = localized.supportHours;
+    contactEmail = resolveSupportEmail(business);
+    contactPhone = resolvePhoneDisplayNumber(business);
     whatsappChannelUrl = resolveWhatsappChannelUrl(business);
     whatsappHref = buildWhatsAppUrl(
       resolveWhatsappLinkNumber(business),
@@ -132,6 +171,17 @@ export async function Footer() {
     socialLinks = [];
   }
 
+  const emailLabel = t("emailAria", { email: contactEmail });
+  const phoneLabel = t("phoneAria", { phone: contactPhone });
+  const footerSocialLinks = resolveFooterSocialLinks({
+    links: socialLinks,
+    whatsappChatHref: whatsappHref,
+    whatsappChannelUrl,
+    showWhatsappChannel,
+    channelLabelEn: whatsappChannelLabelEn,
+    channelLabelUr: whatsappChannelLabelUr,
+  });
+
   return (
     <footer className="border-t bg-linear-to-b from-muted/20 to-muted/40">
       <div className="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
@@ -144,9 +194,9 @@ export async function Footer() {
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
             {description}
           </p>
-          {socialLinks.length > 0 ? (
+          {footerSocialLinks.length > 0 ? (
             <SocialLinks
-              links={socialLinks}
+              links={footerSocialLinks}
               locale={locale}
               title={t("followUs")}
               variant="footer"
@@ -154,88 +204,91 @@ export async function Footer() {
           ) : null}
         </div>
 
-        <div className="lg:col-span-2">
-          <h2 className="mb-4 text-sm font-semibold tracking-tight">{t("servicesTitle")}</h2>
+        <FooterNavSection
+          title={t("servicesTitle")}
+          className="lg:col-span-2"
+        >
           {services.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("servicesEmpty")}</p>
+            <li className="text-sm text-muted-foreground">{t("servicesEmpty")}</li>
           ) : (
-            <ul className="space-y-2.5">
-              {services.map((service) => (
-                <li key={service.id}>
-                  <FooterLink href={`/services/${service.slug}`}>
-                    {locale === "ur" ? service.nameUr : service.nameEn}
-                  </FooterLink>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="lg:col-span-2">
-          <h2 className="mb-4 text-sm font-semibold tracking-tight">{t("regionsTitle")}</h2>
-          {regions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("regionsEmpty")}</p>
-          ) : (
-            <ul className="space-y-2.5">
-              {regions.map((region) => (
-                <li key={region.id}>
-                  <FooterLink href={`/regions/${region.slug}`}>
-                    {locale === "ur" ? region.nameUr : region.nameEn}
-                  </FooterLink>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="lg:col-span-2">
-          <h2 className="mb-4 text-sm font-semibold tracking-tight">{t("exploreTitle")}</h2>
-          <ul className="space-y-2.5">
-            {showBlog ? (
-              <li>
-                <FooterLink href="/blog">{tNav("blog")}</FooterLink>
+            services.map((service) => (
+              <li key={service.id}>
+                <FooterLink href={`/services/${service.slug}`}>
+                  {pickLocalized(locale, {
+                    en: service.nameEn,
+                    ur: service.nameUr,
+                  })}
+                </FooterLink>
               </li>
-            ) : null}
-            {showGuides ? (
-              <li>
-                <FooterLink href="/guides">{tNav("guides")}</FooterLink>
-              </li>
-            ) : null}
-            <li>
-              <FooterLink href="/faqs">{tNav("faqs")}</FooterLink>
-            </li>
-            <li>
-              <FooterLink href="/about">{tNav("about")}</FooterLink>
-            </li>
-            <li>
-              <FooterLink href="/contact">{tNav("contact")}</FooterLink>
-            </li>
-          </ul>
-        </div>
+            ))
+          )}
+        </FooterNavSection>
 
-        <div className="lg:col-span-2">
-          <h2 className="mb-4 text-sm font-semibold tracking-tight">{t("contactTitle")}</h2>
+        <FooterProvinceLinks
+          title={t("regionsTitle")}
+          className="lg:col-span-2"
+          emptyMessage={t("regionsEmpty")}
+          provinces={regions.map((region) => ({
+            id: region.id,
+            slug: region.slug,
+            name: pickLocalized(locale, {
+              en: region.nameEn,
+              ur: region.nameUr,
+            }),
+          }))}
+        />
+
+        <FooterNavSection title={t("exploreTitle")} className="lg:col-span-2">
+          {showBlog ? (
+            <li>
+              <FooterLink href="/blog">{tNav("blog")}</FooterLink>
+            </li>
+          ) : null}
+          {showGuides ? (
+            <li>
+              <FooterLink href="/guides">{tNav("guides")}</FooterLink>
+            </li>
+          ) : null}
+          <li>
+            <FooterLink href="/faqs">{tNav("faqs")}</FooterLink>
+          </li>
+          <li>
+            <FooterLink href="/about">{tNav("about")}</FooterLink>
+          </li>
+          <li>
+            <FooterLink href="/contact">{tNav("contact")}</FooterLink>
+          </li>
+        </FooterNavSection>
+
+        <nav className="lg:col-span-2" aria-label={t("contactTitle")}>
+          <h2 className="mb-3 text-sm font-semibold tracking-tight text-foreground">
+            {t("contactTitle")}
+          </h2>
           <ul className="space-y-3">
             <li>
               <a
                 href={`mailto:${contactEmail}`}
-                className="inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                aria-label={emailLabel}
+                title={emailLabel}
+                className="group inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"
               >
-                <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
                   <Mail className="size-3.5" aria-hidden="true" />
                 </span>
-                {contactEmail}
+                <span>{contactEmail}</span>
               </a>
             </li>
             <li>
               <a
                 href={buildTelHref(contactPhone)}
-                className="inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                aria-label={phoneLabel}
+                title={phoneLabel}
+                className="group inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"
               >
-                <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
                   <Phone className="size-3.5" aria-hidden="true" />
                 </span>
-                {contactPhone}
+                <span>{contactPhone}</span>
               </a>
             </li>
             <li>
@@ -243,14 +296,16 @@ export async function Footer() {
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                aria-label={whatsappLabel}
+                title={whatsappLabel}
+                className="group inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-[#25D366] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]/40 rounded-sm"
                 data-analytics-event="click_whatsapp"
                 data-analytics-placement="footer_whatsapp"
               >
-                <span className="flex size-8 items-center justify-center rounded-lg bg-[#25D366]/15 text-[#25D366]">
-                  <MessageCircle className="size-3.5" aria-hidden="true" />
+                <span className="flex size-8 items-center justify-center rounded-lg bg-[#25D366]/15 text-[#25D366] transition-colors group-hover:bg-[#25D366]/20">
+                  <WhatsAppIcon className="size-3.5" />
                 </span>
-                {t("whatsapp")}
+                <span>{whatsappLabel}</span>
               </a>
             </li>
             {whatsappChannelUrl && showWhatsappChannel ? (
@@ -259,12 +314,14 @@ export async function Footer() {
                   href={whatsappChannelUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={whatsappChannelLabel}
+                  title={whatsappChannelLabel}
+                  className="group inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-[#25D366] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]/40 rounded-sm"
                 >
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-[#25D366]/15 text-[#25D366]">
-                    <MessageCircle className="size-3.5" aria-hidden="true" />
+                  <span className="flex size-8 items-center justify-center rounded-lg bg-[#25D366]/15 text-[#25D366] transition-colors group-hover:bg-[#25D366]/20">
+                    <WhatsAppIcon className="size-3.5" />
                   </span>
-                  {t("whatsappChannel")}
+                  <span>{whatsappChannelLabel}</span>
                 </a>
               </li>
             ) : null}
@@ -279,22 +336,23 @@ export async function Footer() {
               </span>
             </li>
           </ul>
-        </div>
+        </nav>
       </div>
 
       <div className="border-t border-border/60">
-        <div className="container-site flex flex-col items-center justify-between gap-3 py-5 text-center text-xs text-muted-foreground sm:flex-row sm:text-left">
-          <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 sm:justify-start">
-            {legalLinks.map((link) => (
-              <li key={link.href}>
-                <FooterLink href={link.href}>{t(link.key)}</FooterLink>
-              </li>
-            ))}
-          </ul>
-          <div className="space-y-1 text-center sm:text-right">
-            <p>{t("copyright", { year })}</p>
-            <p>{privateNotice}</p>
-          </div>
+        <div className="container-site flex flex-col items-center justify-between gap-4 py-5 sm:flex-row">
+          <nav aria-label={t("legal")}>
+            <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 sm:justify-start">
+              {legalLinks.map((link) => (
+                <li key={link.href}>
+                  <FooterLink href={link.href}>{t(link.key)}</FooterLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <p className="text-center text-xs text-muted-foreground sm:text-right">
+            {t("copyright", { year })}
+          </p>
         </div>
       </div>
     </footer>

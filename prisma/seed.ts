@@ -183,6 +183,8 @@ async function main() {
       data: {
         isFeatured: true,
         featuredDisplayOrder: index + 1,
+        showInFooter: true,
+        footerDisplayOrder: index + 1,
       },
     });
   }

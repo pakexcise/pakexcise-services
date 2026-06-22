@@ -2,11 +2,18 @@ import "server-only";
 
 import { PrismaClient } from "@prisma/client";
 
+import { isFooterNavigationSchemaReady } from "@/server/db/is-footer-navigation-schema-ready";
 import { isPlateFormatSchemaReady } from "@/server/db/is-plate-format-schema-ready";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
+
+function isPrismaClientSchemaCurrent(client: PrismaClient): boolean {
+  return (
+    isPlateFormatSchemaReady(client) && isFooterNavigationSchemaReady()
+  );
+}
 
 function createPrismaClient(): PrismaClient {
   return new PrismaClient({
@@ -20,7 +27,7 @@ function resolvePrismaClient(): PrismaClient {
   if (
     process.env.NODE_ENV === "development" &&
     cached &&
-    !isPlateFormatSchemaReady(cached)
+    !isPrismaClientSchemaCurrent(cached)
   ) {
     void cached.$disconnect();
     globalForPrisma.prisma = undefined;

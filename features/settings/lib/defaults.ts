@@ -30,6 +30,12 @@ export const DEFAULT_SUPPORT_EMAIL = "info@pakexcise.com";
 export const DEFAULT_WHATSAPP_CHANNEL_URL =
   "https://whatsapp.com/channel/0029VbCsDJXHLHQUel3u8C1O";
 
+export const DEFAULT_FOOTER_DESCRIPTION_EN =
+  "PakExcise helps customers submit and manage vehicle, license, token tax, and e-challan service requests through a private facilitation platform.";
+
+export const DEFAULT_FOOTER_DESCRIPTION_UR =
+  "PakExcise گاہکوں کو گاڑی، لائنس، ٹوکن ٹیکس اور ای چالان سروس درخواستیں جمع کرنے اور منظم کرنے میں ایک نجی سہولت پلیٹ فارم کے ذریعے مدد کرتا ہے۔";
+
 export function defaultBusinessSettings(): BusinessSettings {
   const supportDaysEn = "Monday to Sunday";
   const supportDaysUr = "پیر تا اتوار";
@@ -54,9 +60,8 @@ export function defaultBusinessSettings(): BusinessSettings {
     addressUr: "پاکستان (پنجاب اور اسلام آباد ICT کوریج)",
     disclaimerEn: DEFAULT_DISCLAIMER_EN,
     disclaimerUr: DEFAULT_DISCLAIMER_UR,
-    footerDescriptionEn: siteConfig.description,
-    footerDescriptionUr:
-      "PakExcise.com پاکستان میں ایکسائز سے متعلق عملوں کے لیے نجی سہولت سروس فراہم کرتا ہے۔",
+    footerDescriptionEn: DEFAULT_FOOTER_DESCRIPTION_EN,
+    footerDescriptionUr: DEFAULT_FOOTER_DESCRIPTION_UR,
   };
 }
 
@@ -65,6 +70,10 @@ export function defaultPublicUiSettings(): PublicUiSettings {
     headerWhatsappEnabled: true,
     headerWhatsappLabelEn: "WhatsApp",
     headerWhatsappLabelUr: "واٹس ایپ",
+    footerWhatsappLabelEn: "Chat on WhatsApp",
+    footerWhatsappLabelUr: "واٹس ایپ پر چیٹ کریں",
+    footerWhatsappChannelLabelEn: "Join WhatsApp Channel",
+    footerWhatsappChannelLabelUr: "واٹس ایپ چینل جوائن کریں",
     announcementBarEnabled: true,
     announcementBarTextEn: DEFAULT_DISCLAIMER_EN,
     announcementBarTextUr: DEFAULT_DISCLAIMER_UR,

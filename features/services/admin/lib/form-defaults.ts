@@ -21,6 +21,8 @@ export type ServiceEditorValues = {
   isActive: boolean;
   isFeatured: boolean;
   featuredDisplayOrder: number;
+  showInFooter: boolean;
+  footerDisplayOrder: number;
   displayOrder: number;
   seo: {
     metaTitleEn: string;
@@ -68,6 +70,8 @@ export function emptyServiceEditorValues(
     isActive: true,
     isFeatured: false,
     featuredDisplayOrder: 0,
+    showInFooter: false,
+    footerDisplayOrder: 0,
     displayOrder,
     seo: {
       metaTitleEn: "",
@@ -127,6 +131,8 @@ export function serviceToEditorValues(
     isActive: service.isActive,
     isFeatured: service.isFeatured,
     featuredDisplayOrder: service.featuredDisplayOrder,
+    showInFooter: service.showInFooter,
+    footerDisplayOrder: service.footerDisplayOrder,
     displayOrder: service.displayOrder,
     seo: {
       metaTitleEn: service.seoMeta?.metaTitleEn ?? "",

@@ -328,6 +328,16 @@ export function ServiceEditorForm({
               }
             />
           </Field>
+          <Field label={labels.footerDisplayOrder}>
+            <Input
+              type="number"
+              min={0}
+              value={values.footerDisplayOrder}
+              onChange={(event) =>
+                updateField("footerDisplayOrder", Number(event.target.value))
+              }
+            />
+          </Field>
           <div className="flex flex-col gap-3">
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -348,6 +358,16 @@ export function ServiceEditorForm({
                 }
               />
               {labels.isFeatured}
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={values.showInFooter}
+                onChange={(event) =>
+                  updateField("showInFooter", event.target.checked)
+                }
+              />
+              {labels.showInFooter}
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input
