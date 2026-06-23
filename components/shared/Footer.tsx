@@ -27,18 +27,10 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import {
   getActiveSocialLinks,
+  getFooterLegalPages,
   getFooterRegions,
   getFooterServices,
 } from "@/server/repositories";
-
-const legalLinks = [
-  { href: "/privacy-policy", key: "privacy" },
-  { href: "/terms-and-conditions", key: "terms" },
-  { href: "/disclaimer", key: "disclaimer" },
-  { href: "/refund-policy", key: "refund" },
-  { href: "/payment-policy", key: "paymentPolicy" },
-  { href: "/cookie-policy", key: "cookiePolicy" },
-] as const;
 
 function FooterLink({
   href,
@@ -120,12 +112,14 @@ export async function Footer() {
   let showWhatsappChannel = true;
   let footerLogoPath: string | undefined;
   let logoDarkPath: string | undefined;
+  let legalPages: Awaited<ReturnType<typeof getFooterLegalPages>> = [];
 
   try {
     const [
       servicesResult,
       regionsResult,
       socialResult,
+      legalPagesResult,
       business,
       featureFlags,
       branding,
@@ -134,6 +128,7 @@ export async function Footer() {
       getFooterServices(),
       getFooterRegions(),
       getActiveSocialLinks(),
+      getFooterLegalPages(),
       getBusinessSettings(),
       getFeatureFlagSettings(),
       getBrandingSettings(),
@@ -143,6 +138,7 @@ export async function Footer() {
     services = servicesResult;
     regions = regionsResult;
     socialLinks = socialResult;
+    legalPages = legalPagesResult;
     showBlog = featureFlags.blogEnabled;
     showGuides = featureFlags.guidesEnabled;
     showWhatsappChannel = featureFlags.whatsappChannelEnabled;
@@ -343,9 +339,14 @@ export async function Footer() {
         <div className="container-site flex flex-col items-center justify-between gap-4 py-5 sm:flex-row">
           <nav aria-label={t("legal")}>
             <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 sm:justify-start">
-              {legalLinks.map((link) => (
-                <li key={link.href}>
-                  <FooterLink href={link.href}>{t(link.key)}</FooterLink>
+              {legalPages.map((link) => (
+                <li key={link.slug}>
+                  <FooterLink href={`/${link.slug}`}>
+                    {pickLocalized(locale, {
+                      en: link.titleEn,
+                      ur: link.titleUr,
+                    })}
+                  </FooterLink>
                 </li>
               ))}
             </ul>

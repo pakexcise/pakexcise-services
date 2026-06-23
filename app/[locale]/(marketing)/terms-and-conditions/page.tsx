@@ -1,11 +1,9 @@
-import { createMarketingPage } from "@/features/marketing/lib/create-marketing-page";
+import { createLegalPage } from "@/features/legal-pages/lib/create-legal-page";
 
-const { generateMetadata, default: TermsPage } = createMarketingPage({
-  pageKey: "terms-and-conditions",
-  path: "/terms-and-conditions",
-  breadcrumbLabel: { en: "Terms and conditions", ur: "شرائط و ضوابط" },
-  showCta: false,
+const { generateMetadata, default: TermsAndConditionsPage } = createLegalPage({
+  slug: "terms-and-conditions",
+  breadcrumbLabel: { en: "Terms and Conditions", ur: "شرائط و ضوابط" },
 });
 
 export { generateMetadata };
-export default TermsPage;
+export default TermsAndConditionsPage;

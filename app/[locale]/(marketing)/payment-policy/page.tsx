@@ -1,10 +1,8 @@
-import { createMarketingPage } from "@/features/marketing/lib/create-marketing-page";
+import { createLegalPage } from "@/features/legal-pages/lib/create-legal-page";
 
-const { generateMetadata, default: PaymentPolicyPage } = createMarketingPage({
-  pageKey: "payment-policy",
-  path: "/payment-policy",
-  breadcrumbLabel: { en: "Payment policy", ur: "ادائیگی کی پالیسی" },
-  showCta: false,
+const { generateMetadata, default: PaymentPolicyPage } = createLegalPage({
+  slug: "payment-policy",
+  breadcrumbLabel: { en: "Payment Policy", ur: "ادائیگی کی پالیسی" },
 });
 
 export { generateMetadata };

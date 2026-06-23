@@ -1030,6 +1030,7 @@ model SeoMeta {
   cityId            String?  @unique
   blogPostId        String?  @unique
   guideId           String?  @unique
+  legalPageId       String?  @unique
   metaTitleEn       String?
   metaTitleUr       String?
   metaDescriptionEn String?  @db.Text
@@ -1055,6 +1056,7 @@ model SeoMeta {
   city     City?     @relation(fields: [cityId], references: [id])
   blogPost BlogPost? @relation(fields: [blogPostId], references: [id])
   guide    Guide?    @relation(fields: [guideId], references: [id])
+  legalPage LegalPage? @relation(fields: [legalPageId], references: [id])
 
   @@map("seo_meta")
 }
@@ -1114,6 +1116,29 @@ model Guide {
 
   @@index([isPublished, publishedAt])
   @@map("guides")
+}
+
+model LegalPage {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  titleEn      String
+  titleUr      String
+  excerptEn    String?   @db.Text
+  excerptUr    String?   @db.Text
+  contentEn    String    @db.Text
+  contentUr    String    @db.Text
+  isPublished  Boolean   @default(false)
+  isActive     Boolean   @default(true)
+  displayOrder Int       @default(0)
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  seoMeta SeoMeta?
+
+  @@index([isActive, displayOrder])
+  @@index([isPublished, isActive])
+  @@map("legal_pages")
 }
 
 model GuestLead {

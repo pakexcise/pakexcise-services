@@ -70,6 +70,28 @@ export async function upsertGuideSeo(
   });
 }
 
+export async function upsertLegalPageSeo(
+  legalPageId: string,
+  slug: string,
+  seo?: SeoMetaInput,
+) {
+  if (!seo) {
+    return;
+  }
+
+  const data = normalizeSeoInput(seo);
+
+  await prisma.seoMeta.upsert({
+    where: { legalPageId },
+    update: data,
+    create: {
+      pageKey: `legal:${slug}`,
+      legalPageId,
+      ...data,
+    },
+  });
+}
+
 export async function upsertStaticPageSeo(
   pageKey: string,
   seo?: SeoMetaInput,

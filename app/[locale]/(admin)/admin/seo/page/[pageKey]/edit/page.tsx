@@ -1,61 +1,42 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { redirect } from "next/navigation";
 
-import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
-import { emptySeoInput, seoFromRecord } from "@/features/cms/lib/default-seo";
-import { LegalPageEditorForm } from "@/features/seo/admin/components/legal-page-editor-form";
-import { adminMetadata } from "@/features/admin/lib/metadata";
+import {
+  LEGACY_LEGAL_PAGE_KEY_MAP,
+  type CanonicalLegalPageSlug,
+} from "@/features/legal-pages/lib/constants";
 import { legalPageKeys, type LegalPageKey } from "@/lib/validations/admin-page-content";
-import { adminPageContentRepository } from "@/server/repositories/admin-page-content-repository";
-import { adminSeoRepository } from "@/server/repositories/admin-seo-repository";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { adminLegalPageRepository } from "@/server/repositories/admin-legal-page-repository";
 import { enforcePlatformManageAccess } from "@/server/permissions/platform-access";
 
-type LegalEditPageProps = {
+type LegacyLegalEditPageProps = {
   params: Promise<{ pageKey: string }>;
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  return adminMetadata("Edit legal page");
+function resolveLegacySlug(pageKey: string): CanonicalLegalPageSlug | null {
+  if (pageKey in LEGACY_LEGAL_PAGE_KEY_MAP) {
+    return LEGACY_LEGAL_PAGE_KEY_MAP[pageKey] ?? null;
+  }
+
+  return null;
 }
 
-export default async function AdminLegalPageEditPage({ params }: LegalEditPageProps) {
+export default async function AdminLegacyLegalPageEditRedirect({
+  params,
+}: LegacyLegalEditPageProps) {
   await enforcePlatformManageAccess();
 
   const { pageKey } = await params;
 
   if (!legalPageKeys.includes(pageKey as LegalPageKey)) {
-    notFound();
+    redirect("/admin/legal-pages");
   }
 
-  const locale = await getCurrentLocale();
-  setRequestLocale(locale);
-  const t = await getTranslations("admin.resources.seo");
+  const slug = resolveLegacySlug(pageKey) ?? pageKey;
+  const page = await adminLegalPageRepository.findBySlug(slug);
 
-  const [content, seo] = await Promise.all([
-    adminPageContentRepository.getByPageKey(pageKey),
-    adminSeoRepository.findByPageKey(pageKey),
-  ]);
+  if (page) {
+    redirect(`/admin/legal-pages/${page.id}/edit`);
+  }
 
-  return (
-    <div className="space-y-6">
-      <AdminPageHeader
-        title={`Edit ${pageKey} page`}
-        description={t("description")}
-      />
-      <LegalPageEditorForm
-        pageKey={pageKey as LegalPageKey}
-        initialValues={{
-          titleEn: content?.titleEn ?? "",
-          titleUr: content?.titleUr ?? "",
-          excerptEn: content?.excerptEn ?? "",
-          excerptUr: content?.excerptUr ?? "",
-          contentEn: content?.contentEn ?? "",
-          contentUr: content?.contentUr ?? "",
-          seo: seo ? seoFromRecord(seo) : { ...emptySeoInput },
-        }}
-      />
-    </div>
-  );
+  redirect("/admin/legal-pages");
 }

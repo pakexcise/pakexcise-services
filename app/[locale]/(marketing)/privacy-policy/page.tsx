@@ -1,10 +1,8 @@
-import { createMarketingPage } from "@/features/marketing/lib/create-marketing-page";
+import { createLegalPage } from "@/features/legal-pages/lib/create-legal-page";
 
-const { generateMetadata, default: PrivacyPolicyPage } = createMarketingPage({
-  pageKey: "privacy-policy",
-  path: "/privacy-policy",
-  breadcrumbLabel: { en: "Privacy policy", ur: "رازداری کی پالیسی" },
-  showCta: false,
+const { generateMetadata, default: PrivacyPolicyPage } = createLegalPage({
+  slug: "privacy-policy",
+  breadcrumbLabel: { en: "Privacy Policy", ur: "رازداری کی پالیسی" },
 });
 
 export { generateMetadata };

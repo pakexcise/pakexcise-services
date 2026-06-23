@@ -1,8 +1,7 @@
-import { createContentPage } from "@/features/marketing/lib/content-page";
+import { createLegalPage } from "@/features/legal-pages/lib/create-legal-page";
 
-const { generateMetadata, default: DisclaimerPage } = createContentPage({
-  pageKey: "disclaimer",
-  path: "/disclaimer",
+const { generateMetadata, default: DisclaimerPage } = createLegalPage({
+  slug: "disclaimer",
   breadcrumbLabel: { en: "Disclaimer", ur: "ڈس کلیمر" },
 });
 

@@ -1,10 +1,8 @@
-import { createMarketingPage } from "@/features/marketing/lib/create-marketing-page";
+import { createLegalPage } from "@/features/legal-pages/lib/create-legal-page";
 
-const { generateMetadata, default: CookiePolicyPage } = createMarketingPage({
-  pageKey: "cookie-policy",
-  path: "/cookie-policy",
-  breadcrumbLabel: { en: "Cookie policy", ur: "کوکی پالیسی" },
-  showCta: false,
+const { generateMetadata, default: CookiePolicyPage } = createLegalPage({
+  slug: "cookie-policy",
+  breadcrumbLabel: { en: "Cookie Policy", ur: "کوکی پالیسی" },
 });
 
 export { generateMetadata };

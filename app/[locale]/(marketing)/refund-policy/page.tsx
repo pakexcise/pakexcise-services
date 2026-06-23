@@ -1,10 +1,8 @@
-import { createMarketingPage } from "@/features/marketing/lib/create-marketing-page";
+import { createLegalPage } from "@/features/legal-pages/lib/create-legal-page";
 
-const { generateMetadata, default: RefundPolicyPage } = createMarketingPage({
-  pageKey: "refund-policy",
-  path: "/refund-policy",
-  breadcrumbLabel: { en: "Refund policy", ur: "واپسی کی پالیسی" },
-  showCta: false,
+const { generateMetadata, default: RefundPolicyPage } = createLegalPage({
+  slug: "refund-policy",
+  breadcrumbLabel: { en: "Refund Policy", ur: "واپسی کی پالیسی" },
 });
 
 export { generateMetadata };

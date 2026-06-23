@@ -159,6 +159,13 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "platform:manage",
   },
   {
+    href: "/admin/legal-pages",
+    labelKey: "legalPages",
+    icon: "file-text",
+    section: "content",
+    superAdminOnly: true,
+  },
+  {
     href: "/admin/home-page",
     labelKey: "homePage",
     icon: "home",

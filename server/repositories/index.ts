@@ -78,6 +78,25 @@ export {
   AdminRedirectRepository,
 } from "./admin-redirect-repository";
 export {
+  adminLegalPageRepository,
+  AdminLegalPageRepository,
+} from "./admin-legal-page-repository";
+export type {
+  AdminLegalPageDetail,
+  AdminLegalPageListItem,
+} from "./admin-legal-page-repository";
+export {
+  getFooterLegalPages,
+  legalPageRepository,
+  LegalPageRepository,
+  resolveLegalPageContent,
+} from "./legal-page-repository";
+export type {
+  FooterLegalPageLink,
+  PublicLegalPage,
+  ResolvedLegalPageContent,
+} from "./legal-page-repository";
+export {
   adminPageContentRepository,
   AdminPageContentRepository,
 } from "./admin-page-content-repository";

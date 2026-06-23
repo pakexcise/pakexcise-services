@@ -4,6 +4,7 @@ import { REGION_SLUG_ALIASES } from "../config/region-slugs";
 import { CITY_SEED } from "./seed-cities-data";
 import { seedServiceConfig } from "./seed-service-config";
 import { seedRegionPlateFormats } from "./seed-region-plate-formats";
+import { seedLegalPages } from "./seed-legal-pages";
 
 const DEFAULT_MIME_TYPES = [
   "image/jpeg",
@@ -1189,6 +1190,8 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       },
     });
   }
+
+  await seedLegalPages(prisma);
 
   console.log("Marketing content seeded.");
 }

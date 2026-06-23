@@ -5,7 +5,6 @@ import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { adminMetadata } from "@/features/admin/lib/metadata";
-import { legalPageKeys } from "@/lib/validations/admin-page-content";
 import { adminDefaultPageSize } from "@/config/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,18 +53,14 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
       <AdminPageHeader title={t("title")} description={t("description")} />
 
       <section className="rounded-xl border p-4">
-        <h2 className="text-sm font-semibold">Legal & static pages</h2>
+        <h2 className="text-sm font-semibold">{t("legalPagesLinkTitle")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage privacy, terms, disclaimer, and refund content with SEO fields.
+          {t("legalPagesLinkDescription")}
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {legalPageKeys.map((pageKey) => (
-            <Button key={pageKey} size="sm" variant="outline" asChild>
-              <Link href={`/admin/seo/page/${pageKey}/edit`}>
-                Edit {pageKey}
-              </Link>
-            </Button>
-          ))}
+        <div className="mt-4">
+          <Button size="sm" variant="outline" asChild>
+            <Link href="/admin/legal-pages">{t("manageLegalPages")}</Link>
+          </Button>
         </div>
       </section>
 
