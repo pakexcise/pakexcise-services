@@ -137,6 +137,28 @@
     --popover-foreground: oklch(0.13 0 0);
     --muted-foreground: oklch(0.26 0 0);
     --accent-foreground: oklch(0.2 0.08 258);
+
+    /* Urdu / Nastaliq needs taller line boxes than Latin defaults. */
+    --leading-none: 2.05;
+    --leading-tight: 2.2;
+    --leading-snug: 2.35;
+    --leading-normal: 2.5;
+    --leading-relaxed: 2.65;
+    --leading-loose: 2.9;
+
+    --text-xs--line-height: 2.15;
+    --text-sm--line-height: 2.35;
+    --text-base--line-height: 2.45;
+    --text-lg--line-height: 2.5;
+    --text-xl--line-height: 2.55;
+    --text-2xl--line-height: 2.45;
+    --text-3xl--line-height: 2.4;
+    --text-4xl--line-height: 2.35;
+    --text-5xl--line-height: 2.25;
+    --text-6xl--line-height: 2.15;
+    --text-7xl--line-height: 2.05;
+    --text-8xl--line-height: 2;
+    --text-9xl--line-height: 1.95;
   }
 
   html.dark[dir="rtl"] {
@@ -151,30 +173,9 @@
   .font-urdu {
     font-family: var(--font-urdu), var(--font-sans), system-ui, sans-serif;
     font-weight: 500;
-    line-height: 1.8;
+    line-height: 2.45;
     -webkit-font-smoothing: auto;
     -moz-osx-font-smoothing: auto;
-  }
-
-  html[dir="rtl"] h1,
-  html[dir="rtl"] h2,
-  html[dir="rtl"] h3,
-  html[dir="rtl"] h4,
-  html[dir="rtl"] [data-slot="card-title"] {
-    font-weight: 700;
-    color: var(--foreground);
-    line-height: 1.65;
-    letter-spacing: 0;
-  }
-
-  html[dir="rtl"] .text-sm {
-    font-size: 0.9375rem;
-    line-height: 1.75;
-  }
-
-  html[dir="rtl"] .text-xs {
-    font-size: 0.8125rem;
-    line-height: 1.65;
   }
 }
 
@@ -186,5 +187,115 @@
   .text-bidi-auto {
     unicode-bidi: plaintext;
     text-align: start;
+  }
+
+  html[dir="rtl"] .text-bidi-auto {
+    line-height: inherit;
+  }
+
+  html[dir="rtl"] :where(h1, h2, h3, h4, h5, h6, [data-slot="card-title"]) {
+    font-weight: 700;
+    color: var(--foreground);
+    line-height: 2.4;
+    letter-spacing: 0;
+    overflow: visible;
+  }
+
+  html[dir="rtl"] :where([data-slot="card-description"]) {
+    font-weight: 500;
+    color: var(--muted-foreground);
+    line-height: 2.5;
+    letter-spacing: 0;
+    overflow: visible;
+  }
+
+  html[dir="rtl"] :where(p, li, dd, blockquote, figcaption, label, span, td, th) {
+    overflow: visible;
+  }
+
+  html[dir="rtl"] :where(.tracking-tight, .tracking-tighter) {
+    letter-spacing: 0;
+  }
+
+  html[dir="rtl"] :where(.leading-none) {
+    line-height: var(--leading-none);
+  }
+
+  html[dir="rtl"] :where(.leading-tight) {
+    line-height: var(--leading-tight);
+  }
+
+  html[dir="rtl"] :where(.leading-snug) {
+    line-height: var(--leading-snug);
+  }
+
+  html[dir="rtl"] :where(.leading-normal) {
+    line-height: var(--leading-normal);
+  }
+
+  html[dir="rtl"] :where(.leading-relaxed) {
+    line-height: var(--leading-relaxed);
+  }
+
+  html[dir="rtl"] :where(.leading-loose) {
+    line-height: var(--leading-loose);
+  }
+
+  html[dir="rtl"] .text-xs {
+    font-size: 0.8125rem;
+    line-height: var(--text-xs--line-height);
+  }
+
+  html[dir="rtl"] .text-sm {
+    font-size: 0.9375rem;
+    line-height: var(--text-sm--line-height);
+  }
+
+  html[dir="rtl"] .text-base {
+    line-height: var(--text-base--line-height);
+  }
+
+  html[dir="rtl"] .text-lg {
+    line-height: var(--text-lg--line-height);
+  }
+
+  html[dir="rtl"] .text-xl {
+    line-height: var(--text-xl--line-height);
+  }
+
+  html[dir="rtl"] .text-2xl {
+    line-height: var(--text-2xl--line-height);
+  }
+
+  html[dir="rtl"] .text-3xl {
+    line-height: var(--text-3xl--line-height);
+  }
+
+  html[dir="rtl"] .text-4xl {
+    line-height: var(--text-4xl--line-height);
+  }
+
+  html[dir="rtl"] .text-5xl {
+    line-height: var(--text-5xl--line-height);
+  }
+
+  html[dir="rtl"] .text-6xl {
+    line-height: var(--text-6xl--line-height);
+  }
+
+  html[dir="rtl"] [data-slot="card-header"] {
+    gap: 0.75rem;
+  }
+
+  html[dir="rtl"] [data-slot="card-description"].text-sm {
+    line-height: 2.5;
+  }
+
+  html[dir="rtl"] [data-slot="card-title"].leading-none {
+    line-height: 2.35;
+  }
+
+  html[dir="rtl"] .prose-content :where(p, li, dd) {
+    line-height: 2.5;
   }
 }

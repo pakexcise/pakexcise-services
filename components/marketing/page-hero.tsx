@@ -24,7 +24,7 @@ export function PageHero({
       <div className="container-site space-y-5 py-10 md:space-y-6 md:py-12">
         {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
         <div className="space-y-3 md:space-y-4">
-          <h1 className="text-bidi-auto text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="text-bidi-auto text-3xl font-bold sm:text-4xl">
             {title}
           </h1>
           {description ? (
