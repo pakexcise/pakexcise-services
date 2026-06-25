@@ -19,6 +19,9 @@ export const faqCoreSchema = z.object({
   answerUr: faqAnswerSchema,
   categoryId: z.string().cuid("Select a valid category"),
   serviceId: z.string().cuid().optional().nullable(),
+  regionId: z.string().cuid().optional().nullable(),
+  seoKeywordsEn: z.string().trim().max(500).optional().nullable(),
+  seoKeywordsUr: z.string().trim().max(500).optional().nullable(),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
@@ -56,6 +59,7 @@ export const faqListFiltersSchema = paginationSchema.extend({
   q: z.string().trim().optional(),
   categoryId: z.string().cuid().optional(),
   serviceId: z.string().cuid().optional(),
+  regionId: z.string().cuid().optional(),
   active: z.enum(["true", "false", "all"]).optional().default("all"),
   featured: z.enum(["true", "false", "all"]).optional().default("all"),
 });

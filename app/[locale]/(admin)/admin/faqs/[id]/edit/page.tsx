@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { adminFaqCategoryRepository } from "@/server/repositories/admin-faq-category-repository";
 import { adminFaqRepository } from "@/server/repositories/admin-faq-repository";
+import { adminRegionRepository } from "@/server/repositories/admin-region-repository";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { enforcePermissionAccess } from "@/server/permissions/permission-access";
@@ -32,10 +33,11 @@ export default async function EditFaqPage({ params }: EditFaqPageProps) {
   setRequestLocale(locale);
   const t = await getTranslations("admin.faqs");
 
-  const [faq, services, categories, labels] = await Promise.all([
+  const [faq, services, categories, regions, labels] = await Promise.all([
     adminFaqRepository.findById(id),
     adminServiceRepository.listForSelect(),
     adminFaqCategoryRepository.listForSelect(),
+    adminRegionRepository.listForSelect(),
     getFaqEditorLabels(),
   ]);
 
@@ -60,6 +62,7 @@ export default async function EditFaqPage({ params }: EditFaqPageProps) {
         initialValues={faqDetailToEditorValues(faq)}
         services={services}
         categories={categories}
+        regions={regions}
         locale={locale}
         labels={labels}
       />

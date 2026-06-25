@@ -133,6 +133,18 @@ export class AdminRegionRepository extends Repository {
       },
     });
   }
+  async listForSelect() {
+    return this.db.region.findMany({
+      where: activeOnly(),
+      orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+      select: {
+        id: true,
+        slug: true,
+        nameEn: true,
+        nameUr: true,
+      },
+    });
+  }
 }
 
 export const adminRegionRepository = new AdminRegionRepository();

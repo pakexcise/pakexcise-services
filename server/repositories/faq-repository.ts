@@ -24,13 +24,32 @@ const publicFaqSelect = {
   },
 } as const;
 
-const globalPublicWhere = {
+const publicFaqWhere = {
   isActive: true,
-  serviceId: null,
   faqCategory: { isActive: true },
 } as const;
 
+const globalPublicWhere = {
+  ...publicFaqWhere,
+  serviceId: null,
+} as const;
+
 export class FaqRepository extends Repository {
+  async listAllPublic() {
+    return this.query(
+      () =>
+        this.db.fAQ.findMany({
+          where: publicFaqWhere,
+          orderBy: [
+            { faqCategory: { displayOrder: "asc" } },
+            { displayOrder: "asc" },
+          ],
+          select: publicFaqSelect,
+        }),
+      [],
+    );
+  }
+
   async listGlobalPublic() {
     return this.query(
       () =>
@@ -65,19 +84,20 @@ export class FaqRepository extends Repository {
     );
   }
 
-  async listByServiceId(serviceId: string) {
+  async listByServiceId(serviceId: string, regionId?: string | null) {
     return this.query(
       () =>
         this.db.fAQ.findMany({
           where: {
-            isActive: true,
+            ...publicFaqWhere,
             serviceId,
-            faqCategory: { isActive: true },
+            ...(regionId
+              ? {
+                  OR: [{ regionId: null }, { regionId }],
+                }
+              : {}),
           },
-          orderBy: [
-            { faqCategory: { displayOrder: "asc" } },
-            { displayOrder: "asc" },
-          ],
+          orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
           select: publicFaqSelect,
         }),
       [],
@@ -85,7 +105,7 @@ export class FaqRepository extends Repository {
   }
 
   async listPublic() {
-    return this.listGlobalPublic();
+    return this.listAllPublic();
   }
 
   async listPublicPaginated(page = 1, pageSize = 20) {
@@ -94,7 +114,7 @@ export class FaqRepository extends Repository {
         paginate(
           ({ skip, take }) =>
             this.db.fAQ.findMany({
-              where: globalPublicWhere,
+              where: publicFaqWhere,
               orderBy: [
                 { faqCategory: { displayOrder: "asc" } },
                 { displayOrder: "asc" },
@@ -103,7 +123,7 @@ export class FaqRepository extends Repository {
               take,
               select: publicFaqSelect,
             }),
-          () => this.db.fAQ.count({ where: globalPublicWhere }),
+          () => this.db.fAQ.count({ where: publicFaqWhere }),
           { page, pageSize },
         ),
       {

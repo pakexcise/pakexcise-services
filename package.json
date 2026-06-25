@@ -18,6 +18,7 @@
     "db:migrate": "node scripts/sync-env.mjs && prisma migrate dev",
     "db:migrate-faq-categories": "node scripts/sync-env.mjs && tsx prisma/migrate-faq-categories.ts && prisma db push --accept-data-loss --skip-generate",
     "db:seed-faqs": "node scripts/sync-env.mjs && tsx prisma/seed-faqs-runner.ts",
+    "db:seed-service-faqs": "node scripts/sync-env.mjs && tsx prisma/seed-service-faqs-runner.ts",
     "db:seed": "node scripts/sync-env.mjs && tsx prisma/seed.ts",
     "db:sync-footer": "node scripts/sync-footer-navigation.mjs",
     "db:seed-legal": "node scripts/sync-env.mjs && tsx prisma/seed-legal-pages-runner.ts",

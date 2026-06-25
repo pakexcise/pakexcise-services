@@ -25,11 +25,20 @@ export const adminFaqListSelect = {
   displayOrder: true,
   featuredDisplayOrder: true,
   serviceId: true,
+  regionId: true,
   updatedAt: true,
   faqCategory: {
     select: faqCategorySelect,
   },
   service: {
+    select: {
+      id: true,
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
+  region: {
     select: {
       id: true,
       slug: true,
@@ -46,17 +55,28 @@ export const adminFaqDetailSelect = {
   questionUr: true,
   answerEn: true,
   answerUr: true,
+  seoKeywordsEn: true,
+  seoKeywordsUr: true,
   isActive: true,
   isFeatured: true,
   displayOrder: true,
   featuredDisplayOrder: true,
   serviceId: true,
+  regionId: true,
   createdAt: true,
   updatedAt: true,
   faqCategory: {
     select: faqCategorySelect,
   },
   service: {
+    select: {
+      id: true,
+      slug: true,
+      nameEn: true,
+      nameUr: true,
+    },
+  },
+  region: {
     select: {
       id: true,
       slug: true,
@@ -80,6 +100,7 @@ export type AdminFaqListFilters = {
   q?: string;
   categoryId?: string;
   serviceId?: string;
+  regionId?: string;
   active?: "true" | "false" | "all";
   featured?: "true" | "false" | "all";
 };
@@ -102,6 +123,10 @@ export class AdminFaqRepository extends Repository {
       where.serviceId = filters.serviceId;
     }
 
+    if (filters.regionId) {
+      where.regionId = filters.regionId;
+    }
+
     if (filters.featured === "true") {
       where.isFeatured = true;
     } else if (filters.featured === "false") {
@@ -115,6 +140,8 @@ export class AdminFaqRepository extends Repository {
         { questionUr: { contains: query, mode: "insensitive" } },
         { answerEn: { contains: query, mode: "insensitive" } },
         { answerUr: { contains: query, mode: "insensitive" } },
+        { seoKeywordsEn: { contains: query, mode: "insensitive" } },
+        { seoKeywordsUr: { contains: query, mode: "insensitive" } },
         { faqCategory: { nameEn: { contains: query, mode: "insensitive" } } },
         { faqCategory: { nameUr: { contains: query, mode: "insensitive" } } },
         { faqCategory: { slug: { contains: query, mode: "insensitive" } } },

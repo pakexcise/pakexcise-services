@@ -38,17 +38,22 @@ function revalidateFaqPaths(serviceSlug?: string | null) {
 function normalizeFaqInput(
   data: Awaited<ReturnType<typeof createFaqSchema.parse>>,
 ) {
+  const serviceId = data.serviceId || null;
+
   return {
     questionEn: data.questionEn,
     questionUr: data.questionUr,
     answerEn: sanitizeFaqAnswer(data.answerEn),
     answerUr: sanitizeFaqAnswer(data.answerUr),
     categoryId: data.categoryId,
-    serviceId: data.serviceId || null,
+    serviceId,
+    regionId: data.regionId || null,
+    seoKeywordsEn: data.seoKeywordsEn?.trim() || null,
+    seoKeywordsUr: data.seoKeywordsUr?.trim() || null,
     isActive: data.isActive,
-    isFeatured: data.isFeatured,
+    isFeatured: serviceId ? false : data.isFeatured,
     displayOrder: data.displayOrder,
-    featuredDisplayOrder: data.featuredDisplayOrder,
+    featuredDisplayOrder: serviceId ? 0 : data.featuredDisplayOrder,
   };
 }
 
@@ -90,6 +95,19 @@ export async function createFaqAction(
     if (!service) {
       return errorResult("Service not found", {
         serviceId: ["Invalid service"],
+      });
+    }
+  }
+
+  if (data.regionId) {
+    const region = await prisma.region.findFirst({
+      where: { id: data.regionId, deletedAt: null },
+      select: { id: true },
+    });
+
+    if (!region) {
+      return errorResult("Region not found", {
+        regionId: ["Invalid region"],
       });
     }
   }
@@ -153,6 +171,19 @@ export async function updateFaqAction(
     if (!service) {
       return errorResult("Service not found", {
         serviceId: ["Invalid service"],
+      });
+    }
+  }
+
+  if (data.regionId) {
+    const region = await prisma.region.findFirst({
+      where: { id: data.regionId, deletedAt: null },
+      select: { id: true },
+    });
+
+    if (!region) {
+      return errorResult("Region not found", {
+        regionId: ["Invalid region"],
       });
     }
   }

@@ -51,7 +51,7 @@ export default async function FaqsPage() {
   const t = await getTranslations("marketing");
   const tNav = await getTranslations("nav");
   const seo = await seoMetaRepository.findByPageKey("faqs");
-  const faqs = await faqRepository.listGlobalPublic();
+  const faqs = await faqRepository.listAllPublic();
   const faqItems = mapFaqsForLocale(faqs, locale);
   const groupedFaqs = groupFaqsByCategory(faqs, locale);
 

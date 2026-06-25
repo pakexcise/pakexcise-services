@@ -28,12 +28,19 @@ type CategoryOption = {
   isActive: boolean;
 };
 
+type RegionOption = {
+  id: string;
+  nameEn: string;
+  nameUr: string;
+};
+
 type FaqEditorFormProps = {
   mode: "create" | "edit";
   faqId?: string;
   initialValues: FaqEditorValues;
   services: ServiceOption[];
   categories: CategoryOption[];
+  regions: RegionOption[];
   locale: string;
   labels: FaqEditorLabels;
 };
@@ -44,6 +51,7 @@ export function FaqEditorForm({
   initialValues,
   services,
   categories,
+  regions,
   locale,
   labels,
 }: FaqEditorFormProps) {
@@ -67,6 +75,9 @@ export function FaqEditorForm({
     const payload = {
       ...values,
       serviceId: values.serviceId || null,
+      regionId: values.regionId || null,
+      seoKeywordsEn: values.seoKeywordsEn.trim() || null,
+      seoKeywordsUr: values.seoKeywordsUr.trim() || null,
     };
 
     startTransition(async () => {
@@ -164,7 +175,14 @@ export function FaqEditorForm({
           <select
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
             value={values.serviceId}
-            onChange={(event) => updateField("serviceId", event.target.value)}
+            onChange={(event) => {
+              const serviceId = event.target.value;
+              updateField("serviceId", serviceId);
+              if (serviceId) {
+                updateField("isFeatured", false);
+                updateField("featuredDisplayOrder", 0);
+              }
+            }}
           >
             <option value="">{labels.noService}</option>
             {services.map((service) => (
@@ -173,6 +191,37 @@ export function FaqEditorForm({
               </option>
             ))}
           </select>
+          <p className="mt-1 text-xs text-muted-foreground">{labels.serviceHint}</p>
+        </Field>
+        <Field label={labels.region} error={fieldErrors.regionId?.[0]}>
+          <select
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            value={values.regionId}
+            onChange={(event) => updateField("regionId", event.target.value)}
+          >
+            <option value="">{labels.noRegion}</option>
+            {regions.map((region) => (
+              <option key={region.id} value={region.id}>
+                {locale === "ur" ? region.nameUr : region.nameEn}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-muted-foreground">{labels.regionHint}</p>
+        </Field>
+        <Field label={labels.seoKeywordsEn} error={fieldErrors.seoKeywordsEn?.[0]}>
+          <Input
+            value={values.seoKeywordsEn}
+            onChange={(event) => updateField("seoKeywordsEn", event.target.value)}
+            placeholder={labels.seoKeywordsPlaceholder}
+          />
+        </Field>
+        <Field label={labels.seoKeywordsUr} error={fieldErrors.seoKeywordsUr?.[0]}>
+          <Input
+            value={values.seoKeywordsUr}
+            onChange={(event) => updateField("seoKeywordsUr", event.target.value)}
+            placeholder={labels.seoKeywordsPlaceholder}
+            dir="rtl"
+          />
         </Field>
         <Field label={labels.displayOrder}>
           <Input
@@ -207,12 +256,18 @@ export function FaqEditorForm({
           <input
             type="checkbox"
             checked={values.isFeatured}
+            disabled={Boolean(values.serviceId)}
             onChange={(event) =>
               updateField("isFeatured", event.target.checked)
             }
           />
           {labels.isFeatured}
         </label>
+        {!values.serviceId ? (
+          <p className="text-xs text-muted-foreground lg:col-span-2">
+            {labels.featuredHint}
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-wrap gap-3 border-t pt-4">

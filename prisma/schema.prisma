@@ -393,6 +393,7 @@ model Region {
   seoMeta             SeoMeta?
   plateFormatSection  RegionPlateFormatSection?
   numberPlateFormats  RegionNumberPlateFormat[]
+  faqs                FAQ[]
 
   @@index([isActive, displayOrder])
   @@index([showInFooter, footerDisplayOrder])
@@ -994,27 +995,32 @@ model FaqCategory {
 }
 
 model FAQ {
-  id           String   @id @default(cuid())
-  serviceId    String?
-  categoryId   String
-  questionEn   String
-  questionUr   String
-  answerEn     String   @db.Text
-  answerUr     String   @db.Text
-  isActive     Boolean  @default(true)
-  isFeatured   Boolean  @default(false)
-  displayOrder Int      @default(0)
-  featuredDisplayOrder Int @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                   String   @id @default(cuid())
+  serviceId            String?
+  regionId             String?
+  categoryId           String
+  questionEn           String
+  questionUr           String
+  answerEn             String   @db.Text
+  answerUr             String   @db.Text
+  seoKeywordsEn        String?  @db.Text
+  seoKeywordsUr        String?  @db.Text
+  isActive             Boolean  @default(true)
+  isFeatured           Boolean  @default(false)
+  displayOrder         Int      @default(0)
+  featuredDisplayOrder Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   service     Service?    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  region      Region?     @relation(fields: [regionId], references: [id], onDelete: SetNull)
   faqCategory FaqCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@index([isActive, displayOrder])
   @@index([isFeatured, featuredDisplayOrder])
   @@index([categoryId, isActive, displayOrder])
   @@index([serviceId, isActive, displayOrder])
+  @@index([regionId, isActive, displayOrder])
   @@map("faqs")
 }
 

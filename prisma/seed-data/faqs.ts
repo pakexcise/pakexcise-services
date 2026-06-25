@@ -239,8 +239,6 @@ export const FAQ_ITEM_SEEDS: FaqItemSeed[] = [
     answerUr:
       "اکاؤنٹ سے آپ درخواست کا اسٹیٹس ٹریک کر سکتے ہیں، دستاویزات اپ لوڈ کر سکتے ہیں، انوائس دیکھ سکتے ہیں، ادائیگی کی حالت چیک کر سکتے ہیں، تاریخ دیکھ سکتے ہیں اور ڈیش بورڈ سے اپڈیٹس حاصل کر سکتے ہیں۔",
     displayOrder: 2,
-    isFeatured: true,
-    featuredDisplayOrder: 5,
   },
   {
     categorySlug: "account",
@@ -272,7 +270,7 @@ export const FAQ_ITEM_SEEDS: FaqItemSeed[] = [
       "جی ہاں۔ پاک ایکسائز منتخب سروس اور صوبے کے مطابق ضروری دستاویزات دکھاتا ہے جہاں دستیاب ہوں۔ ضروریات پنجاب، ICT، سندھ، بلوچستان، KP، AJK وغیرہ میں مختلف ہو سکتی ہیں۔",
     displayOrder: 1,
     isFeatured: true,
-    featuredDisplayOrder: 6,
+    featuredDisplayOrder: 5,
   },
   {
     categorySlug: "documents",
@@ -380,7 +378,7 @@ export const FAQ_ITEM_SEEDS: FaqItemSeed[] = [
       "نہیں۔ پاک ایکسائز عوامی صفحات پر مقررہ سروس فیس نہیں دکھاتا۔ سہولت چارجز سروس، صوبے، دستاویزات، کیس اسٹیٹس اور سپورٹ کی ضرورت پر منحصر ہو سکتے ہیں۔",
     displayOrder: 1,
     isFeatured: true,
-    featuredDisplayOrder: 7,
+    featuredDisplayOrder: 6,
   },
   {
     categorySlug: "billing-payment",
@@ -432,7 +430,7 @@ export const FAQ_ITEM_SEEDS: FaqItemSeed[] = [
       "آپ ٹریک صفحے پر ٹریکنگ آئی ڈی سے درخواست ٹریک کر سکتے ہیں۔ اکاؤنٹ صارفین ڈیش بورڈ سے اسٹیٹس، انوائس، دستاویزات، تاریخ اور اپڈیٹس بھی دیکھ سکتے ہیں۔",
     displayOrder: 1,
     isFeatured: true,
-    featuredDisplayOrder: 8,
+    featuredDisplayOrder: 7,
   },
   {
     categorySlug: "tracking",

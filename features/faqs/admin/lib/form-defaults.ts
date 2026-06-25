@@ -7,6 +7,9 @@ export type FaqEditorValues = {
   answerUr: string;
   categoryId: string;
   serviceId: string;
+  regionId: string;
+  seoKeywordsEn: string;
+  seoKeywordsUr: string;
   isActive: boolean;
   isFeatured: boolean;
   displayOrder: number;
@@ -25,6 +28,9 @@ export function emptyFaqEditorValues(
     answerUr: "",
     categoryId,
     serviceId,
+    regionId: "",
+    seoKeywordsEn: "",
+    seoKeywordsUr: "",
     isActive: true,
     isFeatured: false,
     displayOrder,
@@ -40,6 +46,9 @@ export function faqDetailToEditorValues(faq: AdminFaqDetail): FaqEditorValues {
     answerUr: faq.answerUr,
     categoryId: faq.categoryId,
     serviceId: faq.serviceId ?? "",
+    regionId: faq.regionId ?? "",
+    seoKeywordsEn: faq.seoKeywordsEn ?? "",
+    seoKeywordsUr: faq.seoKeywordsUr ?? "",
     isActive: faq.isActive,
     isFeatured: faq.isFeatured,
     displayOrder: faq.displayOrder,

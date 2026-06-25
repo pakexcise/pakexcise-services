@@ -8,6 +8,7 @@ import { emptyFaqEditorValues } from "@/features/faqs/admin/lib/form-defaults";
 import { getFaqEditorLabels } from "@/features/faqs/admin/lib/labels";
 import { adminFaqCategoryRepository } from "@/server/repositories/admin-faq-category-repository";
 import { adminFaqRepository } from "@/server/repositories/admin-faq-repository";
+import { adminRegionRepository } from "@/server/repositories/admin-region-repository";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { enforcePermissionAccess } from "@/server/permissions/permission-access";
@@ -24,9 +25,10 @@ export default async function NewFaqPage() {
   setRequestLocale(locale);
   const t = await getTranslations("admin.faqs");
 
-  const [services, categories, nextOrder, labels] = await Promise.all([
+  const [services, categories, regions, nextOrder, labels] = await Promise.all([
     adminServiceRepository.listForSelect(),
     adminFaqCategoryRepository.listActiveForSelect(),
+    adminRegionRepository.listForSelect(),
     adminFaqRepository.getNextDisplayOrder(),
     getFaqEditorLabels(),
   ]);
@@ -47,6 +49,7 @@ export default async function NewFaqPage() {
         initialValues={emptyFaqEditorValues(nextOrder, defaultCategoryId)}
         services={services}
         categories={categories}
+        regions={regions}
         locale={locale}
         labels={labels}
       />
