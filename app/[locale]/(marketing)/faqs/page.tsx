@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { FaqAccordion } from "@/components/marketing/faq-accordion";
+import { FaqExplorer } from "@/components/marketing/faq-explorer";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
+import { groupFaqsByCategory } from "@/features/marketing/lib/group-faqs-by-category";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
   buildBreadcrumbJsonLd,
@@ -48,9 +49,11 @@ export default async function FaqsPage() {
   setRequestLocale(locale);
 
   const t = await getTranslations("marketing");
+  const tNav = await getTranslations("nav");
   const seo = await seoMetaRepository.findByPageKey("faqs");
   const faqs = await faqRepository.listGlobalPublic();
   const faqItems = mapFaqsForLocale(faqs, locale);
+  const groupedFaqs = groupFaqsByCategory(faqs, locale);
 
   const title = pickLocalized(locale, {
     en: seo?.h1En ?? t("faqs.title"),
@@ -77,15 +80,23 @@ export default async function FaqsPage() {
         title={title}
         description={description}
         breadcrumbs={[
-          { label: "Home", href: "/" },
+          { label: tNav("home"), href: "/" },
           { label: title },
         ]}
       />
       <div className="container-site py-10 md:py-12">
-        <FaqAccordion
-          items={faqItems}
-          emptyMessage={t("faqs.empty")}
-        />
+        {groupedFaqs.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t("faqs.empty")}</p>
+        ) : (
+          <FaqExplorer
+            groups={groupedFaqs}
+            labels={{
+              searchPlaceholder: t("faqs.searchPlaceholder"),
+              allCategories: t("faqs.allCategories"),
+              noResults: t("faqs.noResults"),
+            }}
+          />
+        )}
       </div>
     </>
   );

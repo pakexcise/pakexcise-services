@@ -163,6 +163,8 @@
   html[dir="rtl"] [data-slot="card-title"] {
     font-weight: 700;
     color: var(--foreground);
+    line-height: 1.65;
+    letter-spacing: 0;
   }
 
   html[dir="rtl"] .text-sm {
@@ -180,9 +182,9 @@
   .container-site {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
-}
 
-html[data-locale-switching="true"] #main-content {
-  opacity: 0.72;
-  transition: opacity 180ms ease-in-out;
+  .text-bidi-auto {
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
 }

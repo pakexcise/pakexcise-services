@@ -24,6 +24,19 @@ export type {
   PublicServiceDetail,
 } from "./service-repository";
 
+export {
+  adminFaqCategoryRepository,
+  AdminFaqCategoryRepository,
+} from "./admin-faq-category-repository";
+export type {
+  AdminFaqCategoryDetail,
+  AdminFaqCategoryListItem,
+} from "./admin-faq-category-repository";
+export {
+  faqCategoryRepository,
+  FaqCategoryRepository,
+} from "./faq-category-repository";
+export type { PublicFaqCategory } from "./faq-category-repository";
 export { faqRepository, FaqRepository } from "./faq-repository";
 export {
   documentRequirementRepository,

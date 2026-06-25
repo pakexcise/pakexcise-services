@@ -138,6 +138,13 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "faq:manage",
   },
   {
+    href: "/admin/faq-categories",
+    labelKey: "faqCategories",
+    icon: "tags",
+    section: "content",
+    permission: "faq:manage",
+  },
+  {
     href: "/admin/social",
     labelKey: "social",
     icon: "share-2",

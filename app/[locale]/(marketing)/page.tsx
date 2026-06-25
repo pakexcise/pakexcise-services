@@ -136,10 +136,9 @@ export default async function HomePage() {
       getFeaturedServices(homeSettings.limits.popularCount),
     ),
     regionRepository.listPublicWithServiceCounts(),
-    getHomePageSettings().then(async (homeSettings) => {
-      const items = await faqRepository.listGlobalPublic();
-      return items.slice(0, homeSettings.limits.faqCount);
-    }),
+    getHomePageSettings().then(async (homeSettings) =>
+      faqRepository.listFeaturedGlobalPublic(homeSettings.limits.faqCount),
+    ),
     getHomePageSettings().then(async (homeSettings) =>
       documentRequirementRepository.listPublicPreview(homeSettings.limits.documentCount),
     ),

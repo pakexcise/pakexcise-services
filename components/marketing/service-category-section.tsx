@@ -45,13 +45,13 @@ export function ServiceCategorySection({
       >
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
           <div className="space-y-1">
-            <HeadingTag className="text-lg font-semibold tracking-tight sm:text-xl">
+            <HeadingTag className="text-bidi-auto text-lg font-semibold leading-relaxed tracking-normal sm:text-xl">
               {title}
             </HeadingTag>
             {description ? (
               <ProseContent
                 content={description}
-                className="max-w-3xl text-sm text-muted-foreground line-clamp-2"
+                className="text-bidi-auto max-w-3xl text-sm leading-relaxed text-muted-foreground line-clamp-2"
               />
             ) : null}
           </div>
@@ -83,7 +83,7 @@ export function ServiceCategorySection({
         <div className="flex flex-wrap items-center gap-3">
           <HeadingTag
             className={cn(
-              "font-bold tracking-tight",
+              "text-bidi-auto font-bold leading-relaxed tracking-normal",
               heading === "h2" ? "text-2xl" : "text-xl",
             )}
           >

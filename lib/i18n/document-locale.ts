@@ -11,6 +11,7 @@ export function applyDocumentLocale(locale: Locale): void {
   root.lang = locale;
   root.dir = direction;
   root.dataset.locale = locale;
+  delete root.dataset.localeSwitching;
 
   const body = document.body;
 

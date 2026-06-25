@@ -1265,7 +1265,11 @@
       "title": "Frequently asked questions",
       "metaTitle": "FAQs | PakExcise.com",
       "metaDescription": "Answers to common questions about PakExcise private excise facilitation.",
-      "empty": "No FAQs are available right now."
+      "empty": "No FAQs are available right now.",
+      "searchPlaceholder": "Search questions or answers",
+      "allCategories": "All categories",
+      "resultsCount": "{count} questions shown",
+      "noResults": "No questions match your search. Try another keyword or category."
     },
     "guides": {
       "title": "Guides",
@@ -1362,6 +1366,7 @@
       "checklistItems": "Checklist items",
       "serviceAvailability": "Service availability",
       "faqs": "FAQs",
+      "faqCategories": "FAQ categories",
       "social": "Social links",
       "paymentMethods": "Payment methods",
       "agents": "Agents",
@@ -3195,6 +3200,7 @@
       "title": "FAQ management",
       "description": "Manage global and service-specific FAQs for public pages and schema.",
       "create": "Add FAQ",
+      "manageCategories": "Manage categories",
       "createTitle": "Create FAQ",
       "createDescription": "Add a new FAQ entry. Answers are sanitized before display on the frontend.",
       "editTitle": "Edit FAQ",
@@ -3204,6 +3210,7 @@
       "allCategories": "All categories",
       "allServices": "All services",
       "allStatuses": "All statuses",
+      "allFeatured": "All featured",
       "globalFaq": "Global",
       "filter": "Filter",
       "emptyTitle": "No FAQs found",
@@ -3213,12 +3220,17 @@
         "question": "Question",
         "category": "Category",
         "service": "Service",
+        "featured": "Homepage",
         "status": "Status",
         "actions": "Actions"
       },
       "status": {
         "active": "Active",
         "inactive": "Inactive"
+      },
+      "featured": {
+        "yes": "Featured",
+        "no": "Not featured"
       },
       "actions": {
         "edit": "Edit",
@@ -3233,13 +3245,66 @@
         "answerEn": "Answer (English)",
         "answerUr": "Answer (Urdu)",
         "category": "Category",
+        "selectCategory": "Select a category",
+        "unknownCategory": "Unknown category",
+        "inactiveCategory": "inactive",
         "service": "Linked service (optional)",
         "noService": "Global FAQ",
         "isActive": "Active",
+        "isFeatured": "Show on homepage",
+        "featuredDisplayOrder": "Homepage order",
         "displayOrder": "Display order",
         "save": "Save FAQ",
         "saving": "Saving...",
         "saveFailed": "Could not save FAQ",
+        "cancel": "Cancel"
+      }
+    },
+    "faqCategories": {
+      "title": "FAQ categories",
+      "description": "Manage FAQ groups shown on the public FAQs page and in admin filters.",
+      "create": "Add category",
+      "createTitle": "Create FAQ category",
+      "createDescription": "Add a new category such as General, Documents, or Billing.",
+      "editTitle": "Edit FAQ category",
+      "editDescription": "Update labels and visibility for {name}.",
+      "backToList": "Back to categories",
+      "searchPlaceholder": "Search by name or slug",
+      "emptyTitle": "No categories found",
+      "emptyDescription": "Create your first FAQ category.",
+      "columns": {
+        "order": "Order",
+        "name": "Category",
+        "slug": "Slug",
+        "faqs": "FAQs",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "filters": {
+        "all": "All statuses",
+        "apply": "Apply filters"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Delete this FAQ category?",
+        "deleteBlocked": "Reassign or delete FAQs in this category before deleting it."
+      },
+      "form": {
+        "slug": "Slug",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "descriptionEn": "Description (English)",
+        "descriptionUr": "Description (Urdu)",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "save": "Save category",
+        "saving": "Saving...",
+        "saveFailed": "Failed to save category",
         "cancel": "Cancel"
       }
     },

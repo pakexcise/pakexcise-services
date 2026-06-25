@@ -975,23 +975,45 @@ model AnalyticsAttribution {
   @@map("analytics_attribution")
 }
 
+model FaqCategory {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  nameEn        String
+  nameUr        String
+  descriptionEn String?  @db.Text
+  descriptionUr String?  @db.Text
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  faqs FAQ[]
+
+  @@index([isActive, displayOrder])
+  @@map("faq_categories")
+}
+
 model FAQ {
   id           String   @id @default(cuid())
   serviceId    String?
-  category     String   @default("general")
+  categoryId   String
   questionEn   String
   questionUr   String
   answerEn     String   @db.Text
   answerUr     String   @db.Text
   isActive     Boolean  @default(true)
+  isFeatured   Boolean  @default(false)
   displayOrder Int      @default(0)
+  featuredDisplayOrder Int @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  service Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service     Service?    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  faqCategory FaqCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@index([isActive, displayOrder])
-  @@index([category, isActive, displayOrder])
+  @@index([isFeatured, featuredDisplayOrder])
+  @@index([categoryId, isActive, displayOrder])
   @@index([serviceId, isActive, displayOrder])
   @@map("faqs")
 }

@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { adminDefaultPageSize } from "@/config/admin";
 import { Link } from "@/i18n/navigation";
+import { adminFaqCategoryRepository } from "@/server/repositories/admin-faq-category-repository";
 import { adminFaqRepository } from "@/server/repositories/admin-faq-repository";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
@@ -32,9 +33,10 @@ type FaqsAdminPageProps = {
   searchParams: Promise<{
     page?: string;
     q?: string;
-    category?: string;
+    categoryId?: string;
     serviceId?: string;
     active?: string;
+    featured?: string;
   }>;
 };
 
@@ -55,11 +57,15 @@ export default async function AdminFaqsPage({
 
   const page = Math.max(1, Number(params.page ?? "1") || 1);
   const q = params.q?.trim() || undefined;
-  const category = params.category?.trim() || undefined;
+  const categoryId = params.categoryId || undefined;
   const serviceId = params.serviceId || undefined;
   const active =
     params.active === "true" || params.active === "false"
       ? params.active
+      : "all";
+  const featured =
+    params.featured === "true" || params.featured === "false"
+      ? params.featured
       : "all";
 
   const [result, services, categories, listLabels] = await Promise.all([
@@ -67,12 +73,13 @@ export default async function AdminFaqsPage({
       page,
       pageSize: adminDefaultPageSize,
       q,
-      category,
+      categoryId,
       serviceId,
       active,
+      featured,
     }),
     adminServiceRepository.listForSelect(),
-    adminFaqRepository.listCategories(),
+    adminFaqCategoryRepository.listForSelect(),
     getFaqListLabels(),
   ]);
 
@@ -82,19 +89,24 @@ export default async function AdminFaqsPage({
         title={t("title")}
         description={t("description")}
         actions={
-          <Button asChild>
-            <Link href="/admin/faqs/new">
-              <Plus className="size-4" aria-hidden="true" />
-              {t("create")}
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link href="/admin/faq-categories">{t("manageCategories")}</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/admin/faqs/new">
+                <Plus className="size-4" aria-hidden="true" />
+                {t("create")}
+              </Link>
+            </Button>
+          </div>
         }
       />
 
       <form
         action="/admin/faqs"
         method="get"
-        className="grid gap-3 rounded-xl border p-4 md:grid-cols-[minmax(0,1fr)_160px_200px_160px_auto]"
+        className="grid gap-3 rounded-xl border p-4 md:grid-cols-[minmax(0,1fr)_160px_180px_140px_140px_auto]"
       >
         <Input
           name="q"
@@ -102,14 +114,14 @@ export default async function AdminFaqsPage({
           placeholder={t("searchPlaceholder")}
         />
         <select
-          name="category"
-          defaultValue={category ?? ""}
+          name="categoryId"
+          defaultValue={categoryId ?? ""}
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
         >
           <option value="">{t("allCategories")}</option>
           {categories.map((item) => (
-            <option key={item} value={item}>
-              {item}
+            <option key={item.id} value={item.id}>
+              {locale === "ur" ? item.nameUr : item.nameEn}
             </option>
           ))}
         </select>
@@ -134,6 +146,15 @@ export default async function AdminFaqsPage({
           <option value="true">{t("status.active")}</option>
           <option value="false">{t("status.inactive")}</option>
         </select>
+        <select
+          name="featured"
+          defaultValue={featured}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+        >
+          <option value="all">{t("allFeatured")}</option>
+          <option value="true">{t("featured.yes")}</option>
+          <option value="false">{t("featured.no")}</option>
+        </select>
         <Button type="submit" variant="secondary">
           {t("filter")}
         </Button>
@@ -153,6 +174,7 @@ export default async function AdminFaqsPage({
                 <TableHead>{t("columns.question")}</TableHead>
                 <TableHead>{t("columns.category")}</TableHead>
                 <TableHead>{t("columns.service")}</TableHead>
+                <TableHead>{t("columns.featured")}</TableHead>
                 <TableHead>{t("columns.status")}</TableHead>
                 <TableHead className="text-right">{t("columns.actions")}</TableHead>
               </TableRow>
@@ -164,13 +186,22 @@ export default async function AdminFaqsPage({
                   <TableCell className="max-w-xs truncate">
                     {locale === "ur" ? faq.questionUr : faq.questionEn}
                   </TableCell>
-                  <TableCell className="font-mono text-xs">{faq.category}</TableCell>
+                  <TableCell>
+                    {faq.faqCategory
+                      ? locale === "ur"
+                        ? faq.faqCategory.nameUr
+                        : faq.faqCategory.nameEn
+                      : "—"}
+                  </TableCell>
                   <TableCell>
                     {faq.service
                       ? locale === "ur"
                         ? faq.service.nameUr
                         : faq.service.nameEn
                       : t("globalFaq")}
+                  </TableCell>
+                  <TableCell>
+                    {faq.isFeatured ? t("featured.yes") : t("featured.no")}
                   </TableCell>
                   <TableCell>
                     <FaqActiveToggle faq={faq} labels={listLabels} />
@@ -194,9 +225,10 @@ export default async function AdminFaqsPage({
               basePath="/admin/faqs"
               searchParams={{
                 q,
-                category,
+                categoryId,
                 serviceId,
                 active: active === "all" ? undefined : active,
+                featured: featured === "all" ? undefined : featured,
               }}
             />
           </div>

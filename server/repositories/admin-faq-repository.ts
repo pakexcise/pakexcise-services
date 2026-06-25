@@ -8,15 +8,27 @@ import {
   type PaginatedResult,
 } from "@/server/repositories/base/repository";
 
+const faqCategorySelect = {
+  id: true,
+  slug: true,
+  nameEn: true,
+  nameUr: true,
+} as const;
+
 export const adminFaqListSelect = {
   id: true,
-  category: true,
+  categoryId: true,
   questionEn: true,
   questionUr: true,
   isActive: true,
+  isFeatured: true,
   displayOrder: true,
+  featuredDisplayOrder: true,
   serviceId: true,
   updatedAt: true,
+  faqCategory: {
+    select: faqCategorySelect,
+  },
   service: {
     select: {
       id: true,
@@ -29,16 +41,21 @@ export const adminFaqListSelect = {
 
 export const adminFaqDetailSelect = {
   id: true,
-  category: true,
+  categoryId: true,
   questionEn: true,
   questionUr: true,
   answerEn: true,
   answerUr: true,
   isActive: true,
+  isFeatured: true,
   displayOrder: true,
+  featuredDisplayOrder: true,
   serviceId: true,
   createdAt: true,
   updatedAt: true,
+  faqCategory: {
+    select: faqCategorySelect,
+  },
   service: {
     select: {
       id: true,
@@ -61,9 +78,10 @@ export type AdminFaqListFilters = {
   page?: number;
   pageSize?: number;
   q?: string;
-  category?: string;
+  categoryId?: string;
   serviceId?: string;
   active?: "true" | "false" | "all";
+  featured?: "true" | "false" | "all";
 };
 
 export class AdminFaqRepository extends Repository {
@@ -76,12 +94,18 @@ export class AdminFaqRepository extends Repository {
       where.isActive = false;
     }
 
-    if (filters.category?.trim()) {
-      where.category = filters.category.trim();
+    if (filters.categoryId) {
+      where.categoryId = filters.categoryId;
     }
 
     if (filters.serviceId) {
       where.serviceId = filters.serviceId;
+    }
+
+    if (filters.featured === "true") {
+      where.isFeatured = true;
+    } else if (filters.featured === "false") {
+      where.isFeatured = false;
     }
 
     if (filters.q?.trim()) {
@@ -91,7 +115,9 @@ export class AdminFaqRepository extends Repository {
         { questionUr: { contains: query, mode: "insensitive" } },
         { answerEn: { contains: query, mode: "insensitive" } },
         { answerUr: { contains: query, mode: "insensitive" } },
-        { category: { contains: query, mode: "insensitive" } },
+        { faqCategory: { nameEn: { contains: query, mode: "insensitive" } } },
+        { faqCategory: { nameUr: { contains: query, mode: "insensitive" } } },
+        { faqCategory: { slug: { contains: query, mode: "insensitive" } } },
       ];
     }
 
@@ -123,16 +149,6 @@ export class AdminFaqRepository extends Repository {
       where: { id },
       select: adminFaqDetailSelect,
     });
-  }
-
-  async listCategories(): Promise<string[]> {
-    const rows = await this.db.fAQ.findMany({
-      distinct: ["category"],
-      select: { category: true },
-      orderBy: { category: "asc" },
-    });
-
-    return rows.map((row) => row.category);
   }
 
   async getNextDisplayOrder(serviceId?: string | null): Promise<number> {

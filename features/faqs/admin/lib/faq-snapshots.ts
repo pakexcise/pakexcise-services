@@ -7,13 +7,16 @@ export function faqAuditSnapshot(faq: AdminFaqDetail | null) {
 
   return {
     id: faq.id,
-    category: faq.category,
+    categoryId: faq.categoryId,
+    categorySlug: faq.faqCategory?.slug,
     questionEn: faq.questionEn,
     questionUr: faq.questionUr,
     answerEn: faq.answerEn.slice(0, 200),
     answerUr: faq.answerUr.slice(0, 200),
     serviceId: faq.serviceId,
     isActive: faq.isActive,
+    isFeatured: faq.isFeatured,
     displayOrder: faq.displayOrder,
+    featuredDisplayOrder: faq.featuredDisplayOrder,
   };
 }

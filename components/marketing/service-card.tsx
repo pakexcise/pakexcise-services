@@ -64,23 +64,23 @@ export function ServiceCard({
         )}
       >
         {availabilityLine ? (
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-primary/80">
+          <p className="mb-2 text-bidi-auto text-xs font-medium uppercase leading-relaxed tracking-wide text-primary/80">
             {availabilityLine}
           </p>
         ) : null}
         {service.category ? (
-          <p className="mb-1 text-xs text-muted-foreground">
+          <p className="mb-2 text-bidi-auto text-xs leading-relaxed text-muted-foreground">
             {pickLocalized(locale, {
               en: service.category.nameEn,
               ur: service.category.nameUr,
             })}
           </p>
         ) : null}
-        <h3 className="text-lg font-semibold leading-snug tracking-tight transition-colors group-hover:text-primary">
+        <h3 className="text-bidi-auto text-lg font-semibold leading-relaxed tracking-normal transition-colors group-hover:text-primary">
           {name}
         </h3>
         {summary ? (
-          <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+          <p className="mt-3 flex-1 text-bidi-auto text-sm leading-relaxed text-muted-foreground line-clamp-3">
             {summary}
           </p>
         ) : (

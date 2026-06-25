@@ -18,6 +18,7 @@ import {
 } from "../features/home-page/lib/defaults";
 import { seedUpsertStaticPageSeo } from "./seed-helpers/upsert-static-page-seo";
 import { seedMarketingData } from "./seed-marketing-data";
+import { seedFaqs } from "./seed-faqs";
 
 const prisma = new PrismaClient();
 
@@ -189,106 +190,7 @@ async function main() {
     });
   }
 
-  const globalFaqs = [
-    {
-      category: "general",
-      questionEn: "What is PakExcise?",
-      questionUr: "PakExcise کیا ہے؟",
-      answerEn:
-        "PakExcise is a private facilitation platform that helps users with vehicle services, license services, token tax, route permit, data correction, vehicle fitness, and e-challan support in Pakistan.",
-      answerUr:
-        "PakExcise ایک نجی سہولت پلیٹ فارم ہے جو پاکستان میں گاڑی، لائسنس، ٹوکن ٹیکس، راؤٹ پرمٹ، ڈیٹا تصحیح، گاڑی فٹنس اور ای چالان میں مدد کرتا ہے۔",
-      displayOrder: 1,
-    },
-    {
-      category: "general",
-      questionEn: "Is PakExcise a government website?",
-      questionUr: "کیا PakExcise سرکاری ویب سائٹ ہے؟",
-      answerEn:
-        "No. PakExcise is a private facilitation service and is not affiliated with any government department.",
-      answerUr:
-        "نہیں۔ PakExcise ایک نجی سہولت سروس ہے اور کسی بھی سرکاری محکمے سے وابستہ نہیں ہے۔",
-      displayOrder: 2,
-    },
-    {
-      category: "support",
-      questionEn: "Can I get help on WhatsApp?",
-      questionUr: "کیا میں واٹس ایپ پر مدد حاصل کر سکتا ہوں؟",
-      answerEn:
-        "Yes. You can use Quick WhatsApp Service to contact PakExcise support directly for fast guidance.",
-      answerUr:
-        "جی ہاں۔ فوری واٹس ایپ سروس کے ذریعے آپ براہِ راست PakExcise سپورٹ سے رابطہ کر سکتے ہیں۔",
-      displayOrder: 3,
-    },
-    {
-      category: "account",
-      questionEn: "Do I need to create an account?",
-      questionUr: "کیا مجھے اکاؤنٹ بنانا ضروری ہے؟",
-      answerEn:
-        "No. You can use WhatsApp support or Submit Request without creating an account. If you want full tracking, you can apply with an account.",
-      answerUr:
-        "نہیں۔ آپ واٹس ایپ سپورٹ یا درخواست بھیجیں بغیر اکاؤنٹ کے استعمال کر سکتے ہیں۔ مکمل ٹریکنگ کے لیے اکاؤنٹ کے ساتھ درخواست دیں۔",
-      displayOrder: 4,
-    },
-    {
-      category: "account",
-      questionEn: "What is the benefit of applying with an account?",
-      questionUr: "اکاؤنٹ کے ساتھ درخواست کا فائدہ کیا ہے؟",
-      answerEn:
-        "Account-based applications allow you to track status, history, invoices, documents, and updates from your dashboard.",
-      answerUr:
-        "اکاؤنٹ درخواستوں میں آپ ڈیش بورڈ سے اسٹیٹس، تاریخ، انوائس، دستاویزات اور اپڈیٹس ٹریک کر سکتے ہیں۔",
-      displayOrder: 5,
-    },
-    {
-      category: "billing",
-      questionEn: "Are service fees shown on the website?",
-      questionUr: "کیا ویب سائٹ پر سروس فیس دکھائی جاتی ہے؟",
-      answerEn:
-        "No. Pricing is not shown on the frontend. Any service charges are shared after application or document review.",
-      answerUr:
-        "نہیں۔ فرنٹ اینڈ پر قیمت نہیں دکھائی جاتی۔ سروس چارجز درخواست یا دستاویز جائزے کے بعد بتائے جاتے ہیں۔",
-      displayOrder: 6,
-    },
-    {
-      category: "regions",
-      questionEn: "Which provinces does PakExcise support?",
-      questionUr: "PakExcise کون سے صوبوں میں سپورٹ کرتا ہے؟",
-      answerEn:
-        "Service availability depends on the selected service. Provinces and supported services are managed dynamically by Super Admin.",
-      answerUr:
-        "خدمت کی دستیابی منتخب سروس پر منحصر ہے۔ صوبے اور خدمات سپر ایڈمن کے ذریعے ڈائنامک طور پر منظم ہوتے ہیں۔",
-      displayOrder: 7,
-    },
-    {
-      category: "documents",
-      questionEn: "Can I see required documents before applying?",
-      questionUr: "کیا میں درخواست سے پہلے ضروری دستاویزات دیکھ سکتا ہوں؟",
-      answerEn:
-        "Yes. PakExcise shows document requirements where available, based on service and province.",
-      answerUr:
-        "جی ہاں۔ PakExcise دستیاب ہونے پر سروس اور صوبے کے مطابق دستاویزات کی ضروریات دکھاتا ہے۔",
-      displayOrder: 8,
-    },
-  ] as const;
-
-  for (const faq of globalFaqs) {
-    const existing = await prisma.fAQ.findFirst({
-      where: {
-        questionEn: faq.questionEn,
-        serviceId: null,
-      },
-    });
-
-    if (!existing) {
-      await prisma.fAQ.create({
-        data: {
-          ...faq,
-          serviceId: null,
-        },
-      });
-    }
-  }
+  await seedFaqs(prisma);
 
   const vehicleTransferPunjab = await prisma.service.findUnique({
     where: { slug: "vehicle-transfer-punjab" },
@@ -303,10 +205,19 @@ async function main() {
     });
 
     if (!serviceFaqExists) {
+      const documentsCategory = await prisma.faqCategory.findUnique({
+        where: { slug: "documents" },
+        select: { id: true },
+      });
+
+      if (!documentsCategory) {
+        throw new Error('Missing FAQ category for slug "documents"');
+      }
+
       await prisma.fAQ.create({
         data: {
           serviceId: vehicleTransferPunjab.id,
-          category: "documents",
+          categoryId: documentsCategory.id,
           questionEn: "What documents are needed for vehicle transfer in Punjab?",
           questionUr: "پنجاب میں گاڑی منتقلی کے لیے کون سی دستاویزات درکار ہیں؟",
           answerEn:

@@ -9,9 +9,11 @@ import { faqDetailToEditorValues } from "@/features/faqs/admin/lib/form-defaults
 import { getFaqEditorLabels } from "@/features/faqs/admin/lib/labels";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { adminFaqCategoryRepository } from "@/server/repositories/admin-faq-category-repository";
 import { adminFaqRepository } from "@/server/repositories/admin-faq-repository";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
+import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 
 type EditFaqPageProps = {
   params: Promise<{ id: string }>;
@@ -23,6 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function EditFaqPage({ params }: EditFaqPageProps) {
+  await enforcePermissionAccess("faq:manage")();
+
   const { id } = await params;
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
@@ -31,7 +35,7 @@ export default async function EditFaqPage({ params }: EditFaqPageProps) {
   const [faq, services, categories, labels] = await Promise.all([
     adminFaqRepository.findById(id),
     adminServiceRepository.listForSelect(),
-    adminFaqRepository.listCategories(),
+    adminFaqCategoryRepository.listForSelect(),
     getFaqEditorLabels(),
   ]);
 
@@ -56,6 +60,7 @@ export default async function EditFaqPage({ params }: EditFaqPageProps) {
         initialValues={faqDetailToEditorValues(faq)}
         services={services}
         categories={categories}
+        locale={locale}
         labels={labels}
       />
     </div>

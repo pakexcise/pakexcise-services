@@ -26,7 +26,9 @@ const ADMIN_FAQS_PATH = "/admin/faqs";
 
 function revalidateFaqPaths(serviceSlug?: string | null) {
   revalidatePath(ADMIN_FAQS_PATH);
+  revalidatePath("/admin/faq-categories");
   revalidatePath("/faqs");
+  revalidatePath("/");
 
   if (serviceSlug) {
     revalidatePath(`/services/${serviceSlug}`);
@@ -41,11 +43,22 @@ function normalizeFaqInput(
     questionUr: data.questionUr,
     answerEn: sanitizeFaqAnswer(data.answerEn),
     answerUr: sanitizeFaqAnswer(data.answerUr),
-    category: data.category,
+    categoryId: data.categoryId,
     serviceId: data.serviceId || null,
     isActive: data.isActive,
+    isFeatured: data.isFeatured,
     displayOrder: data.displayOrder,
+    featuredDisplayOrder: data.featuredDisplayOrder,
   };
+}
+
+async function validateFaqCategoryId(categoryId: string) {
+  const category = await prisma.faqCategory.findUnique({
+    where: { id: categoryId },
+    select: { id: true },
+  });
+
+  return category;
 }
 
 export async function createFaqAction(
@@ -59,6 +72,14 @@ export async function createFaqAction(
   }
 
   const data = parsed.data;
+
+  const category = await validateFaqCategoryId(data.categoryId);
+
+  if (!category) {
+    return errorResult("Category not found", {
+      categoryId: ["Invalid category"],
+    });
+  }
 
   if (data.serviceId) {
     const service = await prisma.service.findFirst({
@@ -113,6 +134,14 @@ export async function updateFaqAction(
 
   if (!existing) {
     return errorResult("FAQ not found");
+  }
+
+  const category = await validateFaqCategoryId(data.categoryId);
+
+  if (!category) {
+    return errorResult("Category not found", {
+      categoryId: ["Invalid category"],
+    });
   }
 
   if (data.serviceId) {

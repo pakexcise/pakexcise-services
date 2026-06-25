@@ -178,7 +178,7 @@ export const CATEGORY_SEED = [
     descriptionEn:
       "Private facilitation for driving license renewal and learner license applications.",
     descriptionUr:
-      "ڈرائیving لائسنس تجدید اور لرنر لائسنس درخواستوں کے لیے نجی سہولت۔",
+      "ڈرائیونگ لائسنس تجدید اور لرنر لائسنس درخواستوں کے لیے نجی سہولت۔",
     displayOrder: 2,
   },
   {
@@ -333,10 +333,10 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab"],
     categorySlug: "license-services",
     nameEn: "Driving License Renewal",
-    nameUr: "ڈرائیving لائسنس تجدید",
+    nameUr: "ڈرائیونگ لائسنس تجدید",
     shortDescriptionEn:
       "Private facilitation for driving license renewal in Punjab.",
-    shortDescriptionUr: "پنجاب میں ڈرائیving لائسنس تجدید کے لیے نجی سہولت۔",
+    shortDescriptionUr: "پنجاب میں ڈرائیونگ لائسنس تجدید کے لیے نجی سہولت۔",
     displayOrder: 1,
   },
   {
@@ -397,9 +397,9 @@ export const BLOG_SEED = [
   {
     slug: "driving-license-renewal-punjab-ict",
     titleEn: "Driving License Renewal in Punjab & ICT",
-    titleUr: "پنجاب اور ICT میں ڈرائیving لائسنس تجدید",
+    titleUr: "پنجاب اور ICT میں ڈرائیونگ لائسنس تجدید",
     excerptEn: "What to prepare before starting a driving license renewal facilitation request.",
-    excerptUr: "ڈرائیving لائسنس تجدید کی سہولت درخواست شروع کرنے سے پہلے کیا تیار کریں۔",
+    excerptUr: "ڈرائیونگ لائسنس تجدید کی سہولت درخواست شروع کرنے سے پہلے کیا تیار کریں۔",
   },
   {
     slug: "learner-license-requirements-pakistan",

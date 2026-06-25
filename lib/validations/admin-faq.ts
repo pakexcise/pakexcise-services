@@ -12,22 +12,17 @@ const faqAnswerSchema = z
     "Answer contains unsafe content",
   );
 
-export const faqCategorySchema = z
-  .string()
-  .trim()
-  .min(1, "Category is required")
-  .max(80, "Category is too long")
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and hyphens");
-
 export const faqCoreSchema = z.object({
   questionEn: z.string().trim().min(2).max(500),
   questionUr: z.string().trim().min(2).max(500),
   answerEn: faqAnswerSchema,
   answerUr: faqAnswerSchema,
-  category: faqCategorySchema,
+  categoryId: z.string().cuid("Select a valid category"),
   serviceId: z.string().cuid().optional().nullable(),
   isActive: z.boolean().default(true),
+  isFeatured: z.boolean().default(false),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
+  featuredDisplayOrder: z.coerce.number().int().min(0).max(9999).default(0),
 });
 
 export const createFaqSchema = faqCoreSchema;
@@ -59,7 +54,8 @@ export const reorderFaqsSchema = z.object({
 
 export const faqListFiltersSchema = paginationSchema.extend({
   q: z.string().trim().optional(),
-  category: z.string().trim().optional(),
+  categoryId: z.string().cuid().optional(),
   serviceId: z.string().cuid().optional(),
   active: z.enum(["true", "false", "all"]).optional().default("all"),
+  featured: z.enum(["true", "false", "all"]).optional().default("all"),
 });

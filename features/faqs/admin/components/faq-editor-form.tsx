@@ -20,12 +20,21 @@ type ServiceOption = {
   nameUr: string;
 };
 
+type CategoryOption = {
+  id: string;
+  slug: string;
+  nameEn: string;
+  nameUr: string;
+  isActive: boolean;
+};
+
 type FaqEditorFormProps = {
   mode: "create" | "edit";
   faqId?: string;
   initialValues: FaqEditorValues;
   services: ServiceOption[];
-  categories: string[];
+  categories: CategoryOption[];
+  locale: string;
   labels: FaqEditorLabels;
 };
 
@@ -35,6 +44,7 @@ export function FaqEditorForm({
   initialValues,
   services,
   categories,
+  locale,
   labels,
 }: FaqEditorFormProps) {
   const router = useRouter();
@@ -84,9 +94,19 @@ export function FaqEditorForm({
     });
   }
 
-  const categoryOptions = Array.from(
-    new Set([...categories, values.category].filter(Boolean)),
-  ).sort();
+  const categoryOptions = categories.length
+    ? categories
+    : initialValues.categoryId
+      ? [
+          {
+            id: initialValues.categoryId,
+            slug: "unknown",
+            nameEn: labels.unknownCategory,
+            nameUr: labels.unknownCategory,
+            isActive: false,
+          },
+        ]
+      : [];
 
   return (
     <div className="space-y-6 rounded-xl border p-4 md:p-6">
@@ -125,17 +145,20 @@ export function FaqEditorForm({
             dir="rtl"
           />
         </Field>
-        <Field label={labels.category} error={fieldErrors.category?.[0]}>
-          <Input
-            list="faq-categories"
-            value={values.category}
-            onChange={(event) => updateField("category", event.target.value)}
-          />
-          <datalist id="faq-categories">
+        <Field label={labels.category} error={fieldErrors.categoryId?.[0]}>
+          <select
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            value={values.categoryId}
+            onChange={(event) => updateField("categoryId", event.target.value)}
+          >
+            <option value="">{labels.selectCategory}</option>
             {categoryOptions.map((category) => (
-              <option key={category} value={category} />
+              <option key={category.id} value={category.id}>
+                {locale === "ur" ? category.nameUr : category.nameEn}
+                {!category.isActive ? ` (${labels.inactiveCategory})` : ""}
+              </option>
             ))}
-          </datalist>
+          </select>
         </Field>
         <Field label={labels.service} error={fieldErrors.serviceId?.[0]}>
           <select
@@ -146,7 +169,7 @@ export function FaqEditorForm({
             <option value="">{labels.noService}</option>
             {services.map((service) => (
               <option key={service.id} value={service.id}>
-                {service.nameEn}
+                {locale === "ur" ? service.nameUr : service.nameEn}
               </option>
             ))}
           </select>
@@ -161,6 +184,17 @@ export function FaqEditorForm({
             }
           />
         </Field>
+        <Field label={labels.featuredDisplayOrder}>
+          <Input
+            type="number"
+            min={0}
+            value={values.featuredDisplayOrder}
+            onChange={(event) =>
+              updateField("featuredDisplayOrder", Number(event.target.value))
+            }
+            disabled={!values.isFeatured}
+          />
+        </Field>
         <label className="flex items-center gap-2 self-end text-sm">
           <input
             type="checkbox"
@@ -168,6 +202,16 @@ export function FaqEditorForm({
             onChange={(event) => updateField("isActive", event.target.checked)}
           />
           {labels.isActive}
+        </label>
+        <label className="flex items-center gap-2 self-end text-sm">
+          <input
+            type="checkbox"
+            checked={values.isFeatured}
+            onChange={(event) =>
+              updateField("isFeatured", event.target.checked)
+            }
+          />
+          {labels.isFeatured}
         </label>
       </div>
 

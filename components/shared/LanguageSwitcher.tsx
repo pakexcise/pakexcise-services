@@ -15,12 +15,6 @@ const localeLabels: Record<Locale, string> = {
   ur: "اردو",
 };
 
-function setLocaleSwitchingState(isSwitching: boolean): void {
-  document.documentElement.dataset.localeSwitching = isSwitching
-    ? "true"
-    : "false";
-}
-
 export function LanguageSwitcher() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -36,7 +30,6 @@ export function LanguageSwitcher() {
     }
 
     setTargetLocale(null);
-    setLocaleSwitchingState(false);
   }, [locale, targetLocale]);
 
   useEffect(() => {
@@ -46,7 +39,6 @@ export function LanguageSwitcher() {
 
     const timeout = window.setTimeout(() => {
       setTargetLocale(null);
-      setLocaleSwitchingState(false);
     }, 12_000);
 
     return () => window.clearTimeout(timeout);
@@ -58,14 +50,12 @@ export function LanguageSwitcher() {
     }
 
     setTargetLocale(nextLocale);
-    setLocaleSwitchingState(true);
 
     try {
       await setLocaleCookie(nextLocale);
       router.replace(pathname, { locale: nextLocale });
     } catch {
       setTargetLocale(null);
-      setLocaleSwitchingState(false);
     }
   }
 

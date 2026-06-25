@@ -1265,8 +1265,12 @@
     "faqs": {
       "title": "اکثر پوچھے گئے سوالات",
       "metaTitle": "سوالات | PakExcise.com",
-      "metaDescription": "PakExcise نجی ایکسائز سہولت کے بارے میں عام سوالات کے جوابات۔",
-      "empty": "فی الحال کوئی سوالات دستیاب نہیں ہیں۔"
+      "metaDescription": "پاک ایکسائز نجی سہولت کے بارے میں عام سوالات کے جوابات۔",
+      "empty": "فی الحال کوئی سوالات دستیاب نہیں ہیں۔",
+      "searchPlaceholder": "سوالات یا جوابات تلاش کریں",
+      "allCategories": "تمام زمرے",
+      "resultsCount": "{count} سوالات دکھائے جا رہے ہیں",
+      "noResults": "آپ کی تلاش سے کوئی سوال نہیں ملا۔ کوئی اور لفظ یا زمرہ آزمائیں۔"
     },
     "guides": {
       "title": "رہنما",
@@ -1363,6 +1367,7 @@
       "checklistItems": "چیک لسٹ آئٹمز",
       "serviceAvailability": "سروس دستیابی",
       "faqs": "سوالات",
+      "faqCategories": "FAQ زمرے",
       "social": "سوشل لنکس",
       "paymentMethods": "ادائیگی کے طریقے",
       "agents": "ایجنٹس",
@@ -3196,6 +3201,7 @@
       "title": "FAQ کا انتظام",
       "description": "عوامی صفحات اور schema کے لیے عمومی اور سروس مخصوص FAQs منظم کریں۔",
       "create": "FAQ شامل کریں",
+      "manageCategories": "زمرے منظم کریں",
       "createTitle": "FAQ بنائیں",
       "createDescription": "نیا FAQ شامل کریں۔ جوابات عوامی سائٹ پر دکھانے سے پہلے صاف کیے جاتے ہیں۔",
       "editTitle": "FAQ میں ترمیم",
@@ -3205,6 +3211,7 @@
       "allCategories": "تمام زمرے",
       "allServices": "تمام خدمات",
       "allStatuses": "تمام اسٹیٹس",
+      "allFeatured": "تمام فیچرڈ",
       "globalFaq": "عمومی",
       "filter": "فلٹر",
       "emptyTitle": "کوئی FAQ نہیں ملا",
@@ -3214,12 +3221,17 @@
         "question": "سوال",
         "category": "زمرہ",
         "service": "خدمت",
+        "featured": "ہوم پیج",
         "status": "اسٹیٹس",
         "actions": "اقدامات"
       },
       "status": {
         "active": "فعال",
         "inactive": "غیر فعال"
+      },
+      "featured": {
+        "yes": "فیچرڈ",
+        "no": "غیر فیچرڈ"
       },
       "actions": {
         "edit": "ترمیم",
@@ -3234,13 +3246,66 @@
         "answerEn": "جواب (انگریزی)",
         "answerUr": "جواب (اردو)",
         "category": "زمرہ",
+        "selectCategory": "زمرہ منتخب کریں",
+        "unknownCategory": "نامعلوم زمرہ",
+        "inactiveCategory": "غیر فعال",
         "service": "منسلک خدمت (اختیاری)",
         "noService": "عمومی FAQ",
         "isActive": "فعال",
+        "isFeatured": "ہوم پیج پر دکھائیں",
+        "featuredDisplayOrder": "ہوم پیج ترتیب",
         "displayOrder": "ڈسپلے ترتیب",
         "save": "FAQ محفوظ کریں",
         "saving": "محفوظ ہو رہا ہے...",
         "saveFailed": "FAQ محفوظ نہیں ہو سکا",
+        "cancel": "منسوخ"
+      }
+    },
+    "faqCategories": {
+      "title": "FAQ زمرے",
+      "description": "عوامی FAQ صفحے اور ایڈمن فلٹرز میں دکھائے جانے والے FAQ گروپس منظم کریں۔",
+      "create": "زمرہ شامل کریں",
+      "createTitle": "FAQ زمرہ بنائیں",
+      "createDescription": "عام، دستاویزات، یا بلنگ جیسا نیا زمرہ شامل کریں۔",
+      "editTitle": "FAQ زمرہ میں ترمیم",
+      "editDescription": "{name} کے لیبلز اور نمائش اپ ڈیٹ کریں۔",
+      "backToList": "زمروں پر واپس",
+      "searchPlaceholder": "نام یا slug سے تلاش کریں",
+      "emptyTitle": "کوئی زمرہ نہیں ملا",
+      "emptyDescription": "اپنا پہلا FAQ زمرہ بنائیں۔",
+      "columns": {
+        "order": "ترتیب",
+        "name": "زمرہ",
+        "slug": "Slug",
+        "faqs": "FAQs",
+        "status": "اسٹیٹس",
+        "actions": "اقدامات"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "filters": {
+        "all": "تمام اسٹیٹس",
+        "apply": "فلٹرز لگائیں"
+      },
+      "actions": {
+        "edit": "ترمیم",
+        "delete": "حذف",
+        "confirmDelete": "یہ FAQ زمرہ حذف کریں؟",
+        "deleteBlocked": "حذف کرنے سے پہلے اس زمرے کے FAQs دوبارہ تفویض یا حذف کریں۔"
+      },
+      "form": {
+        "slug": "Slug",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "descriptionEn": "تفصیل (انگریزی)",
+        "descriptionUr": "تفصیل (اردو)",
+        "isActive": "فعال",
+        "displayOrder": "ڈسپلے ترتیب",
+        "save": "زمرہ محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے...",
+        "saveFailed": "زمرہ محفوظ نہیں ہو سکا",
         "cancel": "منسوخ"
       }
     },

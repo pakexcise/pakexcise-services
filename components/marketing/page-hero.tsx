@@ -21,14 +21,14 @@ export function PageHero({
         className,
       )}
     >
-      <div className="container-site space-y-4 py-10 md:py-12">
+      <div className="container-site space-y-5 py-10 md:space-y-6 md:py-12">
         {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
-        <div className="space-y-3">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+        <div className="space-y-3 md:space-y-4">
+          <h1 className="text-bidi-auto text-3xl font-bold tracking-tight sm:text-4xl">
             {title}
           </h1>
           {description ? (
-            <p className="max-w-3xl text-base text-muted-foreground sm:text-lg">
+            <p className="text-bidi-auto max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               {description}
             </p>
           ) : null}

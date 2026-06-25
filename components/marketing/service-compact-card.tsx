@@ -50,7 +50,7 @@ export function ServiceCompactCard({
           aria-hidden="true"
         />
         <div className="min-w-0 flex-1 space-y-1">
-          <h4 className="font-medium leading-snug text-foreground transition-colors group-hover:text-primary">
+          <h4 className="text-bidi-auto font-medium leading-relaxed text-foreground transition-colors group-hover:text-primary">
             {name}
           </h4>
           {availabilityLine ? (

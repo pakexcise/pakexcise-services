@@ -5,14 +5,17 @@ export type FaqEditorValues = {
   questionUr: string;
   answerEn: string;
   answerUr: string;
-  category: string;
+  categoryId: string;
   serviceId: string;
   isActive: boolean;
+  isFeatured: boolean;
   displayOrder: number;
+  featuredDisplayOrder: number;
 };
 
 export function emptyFaqEditorValues(
   displayOrder = 0,
+  categoryId = "",
   serviceId = "",
 ): FaqEditorValues {
   return {
@@ -20,10 +23,12 @@ export function emptyFaqEditorValues(
     questionUr: "",
     answerEn: "",
     answerUr: "",
-    category: "general",
+    categoryId,
     serviceId,
     isActive: true,
+    isFeatured: false,
     displayOrder,
+    featuredDisplayOrder: 0,
   };
 }
 
@@ -33,9 +38,11 @@ export function faqDetailToEditorValues(faq: AdminFaqDetail): FaqEditorValues {
     questionUr: faq.questionUr,
     answerEn: faq.answerEn,
     answerUr: faq.answerUr,
-    category: faq.category,
+    categoryId: faq.categoryId,
     serviceId: faq.serviceId ?? "",
     isActive: faq.isActive,
+    isFeatured: faq.isFeatured,
     displayOrder: faq.displayOrder,
+    featuredDisplayOrder: faq.featuredDisplayOrder,
   };
 }
