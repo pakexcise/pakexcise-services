@@ -710,11 +710,12 @@ export const SERVICE_FAQ_SEEDS: ServiceFaqSeed[] = [
     questionEn: "What information is required for driving license renewal?",
     questionUr: "ڈرائیونگ لائسنس تجدید کے لیے کون سی معلومات درکار ہیں؟",
     answerEn:
-      "You may need to provide applicant name, phone number, applicant CNIC front picture, applicant CNIC back picture, and medical certificate where required.",
+      "You may need to provide applicant name, phone number, applicant CNIC front picture, applicant CNIC back picture, recent passport-size photo, and medical certificate where required.",
     answerUr:
-      "آپ کو درخواست دہندہ کا نام، فون نمبر، درخواست دہندہ CNIC سامنے، درخواست دہندہ CNIC پیچھے اور ضرورت پڑنے پر میڈیکل سرٹیفکیٹ فراہم کرنا پڑ سکتا ہے۔",
-    seoKeywordsEn: "license renewal information, CNIC, medical certificate",
-    seoKeywordsUr: "لائسنس تجدید معلومات, CNIC, میڈیکل سرٹیفکیٹ",
+      "آپ کو درخواست دہندہ کا نام، فون نمبر، درخواست دہندہ CNIC سامنے، درخواست دہندہ CNIC پیچھے، حالیہ پاسپورٹ سائز تصویر اور ضرورت پڑنے پر میڈیکل سرٹیفکیٹ فراہم کرنا پڑ سکتا ہے۔",
+    seoKeywordsEn:
+      "license renewal information, CNIC, passport photo, medical certificate",
+    seoKeywordsUr: "لائسنس تجدید معلومات, CNIC, پاسپورٹ تصویر, میڈیکل سرٹیفکیٹ",
   },
   {
     serviceSlug: "driving-license-renewal",
@@ -871,9 +872,9 @@ export const SERVICE_FAQ_SEEDS: ServiceFaqSeed[] = [
     questionEn: "What is E-Challan support?",
     questionUr: "ای-چالان سپورٹ کیا ہے؟",
     answerEn:
-      "PakExcise provides private facilitation guidance for e-challan and Safe City-related support across Pakistan provinces. Users can get help understanding required details, vehicle number formats, and support steps.",
+      "PakExcise provides private facilitation guidance for e-challan and Safe City-related support across Pakistan provinces. Users can get help understanding required documents and support steps.",
     answerUr:
-      "پاک ایکسائز پاکستان کے صوبوں میں ای-چالان اور Safe City سے متعلق سپورٹ کے لیے نجی سہولت رہنمائی فراہم کرتا ہے۔ صارفین ضروری تفصیلات، گاڑی نمبر فارمیٹس اور سپورٹ مراحل سمجھنے میں مدد حاصل کر سکتے ہیں۔",
+      "پاک ایکسائز پاکستان کے صوبوں میں ای-چالان اور Safe City سے متعلق سپورٹ کے لیے نجی سہولت رہنمائی فراہم کرتا ہے۔ صارفین ضروری دستاویزات اور سپورٹ مراحل سمجھنے میں مدد حاصل کر سکتے ہیں۔",
     seoKeywordsEn: "e-challan, Safe City, Pakistan, facilitation",
     seoKeywordsUr: "ای-چالان, Safe City, پاکستان, سہولت",
   },
@@ -911,50 +912,50 @@ export const SERVICE_FAQ_SEEDS: ServiceFaqSeed[] = [
     questionEn: "What information is required for e-challan support?",
     questionUr: "ای-چالان سپورٹ کے لیے کون سی معلومات درکار ہیں؟",
     answerEn:
-      "You may need applicant CNIC front picture, applicant CNIC back picture, and vehicle registration number.",
+      "You need to upload a clear picture or scan of the vehicle smart card or registration book.",
     answerUr:
-      "آپ کو درخواست دہندہ CNIC سامنے، درخواست دہندہ CNIC پیچھے اور گاڑی رجسٹریشن نمبر درکار ہو سکتا ہے۔",
-    seoKeywordsEn: "e-challan information, CNIC, vehicle number",
-    seoKeywordsUr: "ای-چالان معلومات, CNIC, گاڑی نمبر",
+      "آپ کو گاڑی کے سمارٹ کارڈ یا رجسٹریشن بک کی واضح تصویر یا اسکین اپ لوڈ کرنی ہوگی۔",
+    seoKeywordsEn: "e-challan documents, smart card, registration book",
+    seoKeywordsUr: "ای-چالان دستاویزات, سمارٹ کارڈ, رجسٹریشن بک",
   },
   {
     serviceSlug: "e-challan",
     categorySlug: "services",
     displayOrder: 5,
-    questionEn: "Why do I need to enter the correct vehicle number format?",
-    questionUr: "درست گاڑی نمبر فارمیٹ درج کرنا کیوں ضروری ہے؟",
+    questionEn: "Why should I upload a clear smart card or registration book photo?",
+    questionUr: "سمارٹ کارڈ یا رجسٹریشن بک کی واضح تصویر اپ لوڈ کرنا کیوں ضروری ہے؟",
     answerEn:
-      "Different provinces use different vehicle number formats. Correct format helps avoid wrong search results, delays, or incorrect vehicle record matching.",
+      "A clear upload helps support read vehicle details correctly and avoid delays caused by blurry, cropped, or incomplete documents.",
     answerUr:
-      "مختلف صوبے مختلف گاڑی نمبر فارمیٹس استعمال کرتے ہیں۔ درست فارمیٹ غلط تلاش نتائج، تاخیر یا غلط گاڑی ریکارڈ ملانے سے بچنے میں مدد کرتا ہے۔",
-    seoKeywordsEn: "e-challan vehicle format, province number plate",
-    seoKeywordsUr: "ای-چالان گاڑی فارمیٹ, صوبائی نمبر پلیٹ",
+      "واضح اپ لوڈ سپورٹ کو گاڑی کی تفصیلات درست پڑھنے میں مدد دیتی ہے اور دھندلی، کٹی ہوئی یا نامکمل دستاویزات کی وجہ سے تاخیر سے بچاتی ہے۔",
+    seoKeywordsEn: "e-challan upload, clear document photo",
+    seoKeywordsUr: "ای-چالان اپ لوڈ, واضح دستاویز",
   },
   {
     serviceSlug: "e-challan",
     categorySlug: "services",
     displayOrder: 6,
-    questionEn: "What is the Punjab number format for e-challan?",
-    questionUr: "ای-چالان کے لیے پنجاب نمبر فارمیٹ کیا ہے؟",
+    questionEn: "Can I upload a registration book instead of a smart card?",
+    questionUr: "کیا میں سمارٹ کارڈ کی بجائے رجسٹریشن بک اپ لوڈ کر سکتا ہوں؟",
     answerEn:
-      "Punjab vehicle numbers may use formats such as ABC 123, ABC 0123, ABC 1111, or ABC-07-1111.",
+      "Yes. You may upload either the vehicle smart card or the registration book, as long as the document is clear and readable.",
     answerUr:
-      "پنجاب میں گاڑی نمبر ABC 123، ABC 0123، ABC 1111 یا ABC-07-1111 جیسے فارمیٹس میں ہو سکتے ہیں۔",
-    regionSlug: "punjab",
-    seoKeywordsEn: "Punjab e-challan number format, ABC 123",
-    seoKeywordsUr: "پنجاب ای-چالان نمبر, ABC 123",
+      "جی ہاں۔ آپ گاڑی کا سمارٹ کارڈ یا رجسٹریشن بک اپ لوڈ کر سکتے ہیں، بشرطیکہ دستاویز واضح اور پڑھنے کے قابل ہو۔",
+    seoKeywordsEn: "e-challan registration book, smart card upload",
+    seoKeywordsUr: "ای-چالان رجسٹریشن بک, سمارٹ کارڈ اپ لوڈ",
   },
   {
     serviceSlug: "e-challan",
     categorySlug: "services",
     displayOrder: 7,
-    questionEn: "What is the Islamabad ICT number format for e-challan?",
-    questionUr: "ای-چالان کے لیے اسلام آباد ICT نمبر فارمیٹ کیا ہے؟",
-    answerEn: "Islamabad ICT vehicle numbers commonly use the format ABC-123.",
-    answerUr: "اسلام آباد ICT میں گاڑی نمبر عام طور پر ABC-123 فارمیٹ میں ہوتے ہیں۔",
-    regionSlug: "islamabad",
-    seoKeywordsEn: "Islamabad e-challan number format, ABC-123",
-    seoKeywordsUr: "اسلام آباد ای-چالان نمبر, ABC-123",
+    questionEn: "Which file types are accepted for the smart card or registration book upload?",
+    questionUr: "سمارٹ کارڈ یا رجسٹریشن بک اپ لوڈ کے لیے کون سے فائل فارمیٹس قبول ہیں؟",
+    answerEn:
+      "Accepted formats are JPG, PNG, WebP, and PDF, subject to the upload size limit shown in the application form.",
+    answerUr:
+      "قبول شدہ فارمیٹس JPG، PNG، WebP اور PDF ہیں، درخواست فارم میں دکھائی گئی اپ لوڈ سائز حد کے مطابق۔",
+    seoKeywordsEn: "e-challan file types, JPG, PNG, PDF",
+    seoKeywordsUr: "ای-چالان فائل فارمیٹ, JPG, PNG, PDF",
   },
   {
     serviceSlug: "e-challan",

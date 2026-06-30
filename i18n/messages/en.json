@@ -3421,6 +3421,8 @@
     "agentNotApprovedTitle": "Agent account not approved",
     "agentNotApprovedDescription": "Your agent account must be approved before you can submit applications for customers.",
     "goToDashboard": "Go to dashboard",
+    "viewService": "Back to service page",
+    "staffAccountHint": "You are signed in with a staff account. Sign out and sign in with a customer account to apply, or use WhatsApp / Submit Request on the service page.",
     "steps": {
       "basic": "Your details",
       "fields": "Service details",

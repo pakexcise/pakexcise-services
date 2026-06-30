@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { PageHero } from "@/components/marketing/page-hero";
 import { ApplicationWizard } from "@/features/applications/components/application-wizard";
+import { ApplyAccessDenied } from "@/features/applications/components/apply-access-denied";
 import { ApplyPageShell } from "@/features/applications/components/apply-page-shell";
 import {
   loadDraftDocuments,
@@ -12,9 +13,9 @@ import {
 import { mapServiceApplyConfig } from "@/features/applications/lib/map-service-config";
 import { mapServiceApplyOption } from "@/features/applications/lib/map-service-option";
 import {
-  getApplyUser,
   resolveApplyRedirectHref,
 } from "@/features/applications/lib/resolve-apply-redirect";
+import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
 import { redirect } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { applicationWizardRepository } from "@/server/repositories/application-wizard-repository";
@@ -69,15 +70,53 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   const access = await getApplyAccess();
   const callbackPath = `/apply/${serviceSlug}`;
 
-  const user = getApplyUser(access);
+  if (!access.allowed) {
+    const service = mapServiceApplyConfig(serviceRecord, locale);
+    const t = await getTranslations("apply");
+    const tNav = await getTranslations("nav");
 
-  if (!user) {
-    redirect({
-      href: resolveApplyRedirectHref(access, callbackPath),
-      locale,
-    });
-    notFound();
+    if (access.reason === "UNAUTHORIZED") {
+      redirect({
+        href: resolveApplyRedirectHref(access, callbackPath),
+        locale,
+      });
+      notFound();
+    }
+
+    return (
+      <>
+        <PageHero
+          title={t("pageTitle", { service: service.name })}
+          description={t("pageDescription", { region: service.region })}
+          breadcrumbs={[
+            { label: tNav("home"), href: "/" },
+            { label: tNav("services"), href: "/services" },
+            { label: service.name, href: `/services/${service.slug}` },
+            { label: t("breadcrumbApply") },
+          ]}
+        />
+
+        <ApplyPageShell serviceName={service.name} regionLabel={service.region}>
+          <ApplyAccessDenied
+            access={access}
+            serviceHref={`/services/${service.slug}`}
+            dashboardHref={resolvePostLoginPath(access.user.role)}
+            labels={{
+              forbiddenTitle: t("forbiddenTitle"),
+              forbiddenDescription: t("forbiddenDescription"),
+              agentNotApprovedTitle: t("agentNotApprovedTitle"),
+              agentNotApprovedDescription: t("agentNotApprovedDescription"),
+              goToDashboard: t("goToDashboard"),
+              viewService: t("viewService"),
+              staffAccountHint: t("staffAccountHint"),
+            }}
+          />
+        </ApplyPageShell>
+      </>
+    );
   }
+
+  const user = access.user;
   const t = await getTranslations("apply");
   const tNav = await getTranslations("nav");
   const tMarketing = await getTranslations("marketing");

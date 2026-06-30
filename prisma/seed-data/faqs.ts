@@ -131,9 +131,9 @@ export const FAQ_ITEM_SEEDS: FaqItemSeed[] = [
     questionEn: "Does PakExcise support e-challan services?",
     questionUr: "کیا پاک ایکسائز ای-چالان سروسز سپورٹ کرتا ہے؟",
     answerEn:
-      "Yes. PakExcise provides private guidance and support for e-challan/Safe City-related queries. Users may need to provide their vehicle number and required CNIC details depending on the request.",
+      "Yes. PakExcise provides private guidance and support for e-challan/Safe City-related queries. Users may need to upload a clear smart card or registration book depending on the request.",
     answerUr:
-      "جی ہاں۔ پاک ایکسائز ای-چالان/Safe City سے متعلق نجی رہنمائی اور سپورٹ فراہم کرتا ہے۔ درخواست کے مطابق گاڑی نمبر اور CNIC کی تفصیلات درکار ہو سکتی ہیں۔",
+      "جی ہاں۔ پاک ایکسائز ای-چالان/Safe City سے متعلق نجی رہنمائی اور سپورٹ فراہم کرتا ہے۔ درخواست کے مطابق واضح سمارٹ کارڈ یا رجسٹریشن بک اپ لوڈ کرنا درکار ہو سکتا ہے۔",
     displayOrder: 3,
   },
   {

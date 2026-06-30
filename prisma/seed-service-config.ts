@@ -88,12 +88,13 @@ export const CHECKLIST_ITEM_SEED: SeedChecklistItem[] = [
   { slug: "medical-certificate", nameEn: "Medical certificate", nameUr: "میڈیکل سرٹیفکیٹ", itemType: "DOCUMENT", displayOrder: 25 },
   { slug: "medical-fitness-certificate", nameEn: "Medical fitness certificate", nameUr: "میڈیکل فٹنس سرٹیفکیٹ", itemType: "DOCUMENT", displayOrder: 26 },
   { slug: "passport-size-photo", nameEn: "Recent passport-size photo", nameUr: "حالیہ پاسپورٹ سائز تصویر", itemType: "DOCUMENT", displayOrder: 27 },
-  { slug: "original-smart-card", nameEn: "Original vehicle smart card", nameUr: "اصل گاڑی سمارٹ کارڈ", itemType: "DOCUMENT", displayOrder: 28 },
-  { slug: "original-number-plates", nameEn: "Original number plates", nameUr: "اصل نمبر پلیٹس", itemType: "DOCUMENT", displayOrder: 29 },
-  { slug: "seller-biometric", nameEn: "Seller biometric", nameUr: "فروخت کنندہ بایومیٹرک", itemType: "BIOMETRIC", displayOrder: 30 },
-  { slug: "purchaser-biometric", nameEn: "Purchaser biometric", nameUr: "خریدار بایومیٹرک", itemType: "BIOMETRIC", displayOrder: 31 },
-  { slug: "private-vehicle-inspection", nameEn: "Private vehicle inspection", nameUr: "نجی گاڑی معائنہ", itemType: "INSPECTION", displayOrder: 32 },
-  { slug: "vehicle-inspection", nameEn: "Vehicle inspection", nameUr: "گاڑی معائنہ", itemType: "INSPECTION", displayOrder: 33 },
+  { slug: "smart-card-or-registration-book", nameEn: "Smart Card or Registration Book", nameUr: "سمارٹ کارڈ یا رجسٹریشن بک", itemType: "DOCUMENT", displayOrder: 28 },
+  { slug: "original-smart-card", nameEn: "Original vehicle smart card", nameUr: "اصل گاڑی سمارٹ کارڈ", itemType: "DOCUMENT", displayOrder: 29 },
+  { slug: "original-number-plates", nameEn: "Original number plates", nameUr: "اصل نمبر پلیٹس", itemType: "DOCUMENT", displayOrder: 30 },
+  { slug: "seller-biometric", nameEn: "Seller biometric", nameUr: "فروخت کنندہ بایومیٹرک", itemType: "BIOMETRIC", displayOrder: 31 },
+  { slug: "purchaser-biometric", nameEn: "Purchaser biometric", nameUr: "خریدار بایومیٹرک", itemType: "BIOMETRIC", displayOrder: 32 },
+  { slug: "private-vehicle-inspection", nameEn: "Private vehicle inspection", nameUr: "نجی گاڑی معائنہ", itemType: "INSPECTION", displayOrder: 33 },
+  { slug: "vehicle-inspection", nameEn: "Vehicle inspection", nameUr: "گاڑی معائنہ", itemType: "INSPECTION", displayOrder: 34 },
 ];
 
 const DATA_CORRECTION_OPTIONS = [
@@ -450,13 +451,31 @@ export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
       }),
     ],
     documents: [
-      doc("applicant_cnic_front", "Applicant original CNIC front picture", "درخواست دہندہ کا اصل شناختی کارڈ سامنے", { regionSlug: "punjab", displayOrder: 1 }),
-      doc("applicant_cnic_back", "Applicant original CNIC back picture", "درخواست دہندہ کا اصل شناختی کارڈ پیچھے", { regionSlug: "punjab", displayOrder: 2 }),
-      doc("medical_certificate", "Medical certificate issued by authorized medical practitioner", "مجاز میڈیکل پریکٹیشنر کا میڈیکل سرٹیفکیٹ", { regionSlug: "punjab", displayOrder: 3 }),
+      doc("applicant_cnic_front", "Applicant original CNIC front picture", "درخواست دہندہ کا اصل شناختی کارڈ سامنے", {
+        regionSlug: "punjab",
+        displayOrder: 1,
+        checklistSlug: "applicant-cnic-front",
+      }),
+      doc("applicant_cnic_back", "Applicant original CNIC back picture", "درخواست دہندہ کا اصل شناختی کارڈ پیچھے", {
+        regionSlug: "punjab",
+        displayOrder: 2,
+        checklistSlug: "applicant-cnic-back",
+      }),
+      doc("passport_size_photo", "Recent passport-size photo", "حالیہ پاسپورٹ سائز تصویر", {
+        regionSlug: "punjab",
+        displayOrder: 3,
+        checklistSlug: "passport-size-photo",
+      }),
+      doc("medical_certificate", "Medical certificate issued by authorized medical practitioner", "مجاز میڈیکل پریکٹیشنر کا میڈیکل سرٹیفکیٹ", {
+        regionSlug: "punjab",
+        displayOrder: 4,
+        checklistSlug: "medical-certificate",
+      }),
       doc("medical_fitness_certificate", "Medical fitness certificate", "میڈیکل فٹنس سرٹیفکیٹ", {
         regionSlug: "punjab",
         isRequired: false,
-        displayOrder: 4,
+        displayOrder: 5,
+        checklistSlug: "medical-fitness-certificate",
         instructionsEn: "Required only for applicants aged 50 years or above.",
         instructionsUr: "صرف 50 سال یا اس سے زیادہ عمر کے درخواست دہندگان کے لیے درکار۔",
       }),
@@ -494,17 +513,15 @@ export const SERVICE_CONFIG_SEED: Record<string, ServiceConfig> = {
   },
   "e-challan": {
     documents: [
-      doc("applicant_cnic_front", "Applicant original CNIC front picture", "درخواست دہندہ کا اصل شناختی کارڈ سامنے", { regionSlug: null, displayOrder: 1 }),
-      doc("applicant_cnic_back", "Applicant original CNIC back picture", "درخواست دہندہ کا اصل شناختی کارڈ پیچھے", { regionSlug: null, displayOrder: 2 }),
-    ],
-    fields: [
-      vehicleRegistrationNumberField("punjab"),
-      vehicleRegistrationNumberField("islamabad"),
-      vehicleRegistrationNumberField("sindh"),
-      vehicleRegistrationNumberField("balochistan"),
-      vehicleRegistrationNumberField("kpk"),
-      vehicleRegistrationNumberField("ajk"),
-      vehicleRegistrationNumberField("gilgit-baltistan"),
+      doc("smart_card_or_registration_book", "Smart Card or Registration Book", "سمارٹ کارڈ یا رجسٹریشن بک", {
+        regionSlug: null,
+        displayOrder: 1,
+        checklistSlug: "smart-card-or-registration-book",
+        instructionsEn:
+          "Upload a clear picture or scan of the vehicle smart card or registration book.",
+        instructionsUr:
+          "گاڑی کے سمارٹ کارڈ یا رجسٹریشن بک کی واضح تصویر یا اسکین اپ لوڈ کریں۔",
+      }),
     ],
   },
 };
@@ -530,6 +547,7 @@ export async function seedServiceConfig(
   prisma: PrismaClient,
   regionMap: Record<string, string>,
   serviceMap: Record<string, string>,
+  options?: { serviceSlugs?: string[] },
 ): Promise<void> {
   const checklistMap: Record<string, string> = {};
 
@@ -560,7 +578,12 @@ export async function seedServiceConfig(
     checklistMap[item.slug] = created.id;
   }
 
-  for (const [serviceSlug, config] of Object.entries(SERVICE_CONFIG_SEED)) {
+  const serviceEntries = Object.entries(SERVICE_CONFIG_SEED).filter(
+    ([serviceSlug]) =>
+      !options?.serviceSlugs || options.serviceSlugs.includes(serviceSlug),
+  );
+
+  for (const [serviceSlug, config] of serviceEntries) {
     const serviceId = serviceMap[serviceSlug];
     if (!serviceId) continue;
 
