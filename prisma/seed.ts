@@ -16,6 +16,7 @@ import {
   HOME_PAGE_SETTINGS_KEY,
   defaultHomePageSettings,
 } from "../features/home-page/lib/defaults";
+import { ABOUT_PAGE_CONTENT } from "../features/about-page/lib/defaults";
 import { seedUpsertStaticPageSeo } from "./seed-helpers/upsert-static-page-seo";
 import { seedMarketingData } from "./seed-marketing-data";
 import { seedFaqs } from "./seed-faqs";
@@ -272,14 +273,12 @@ async function main() {
   const pageContents = [
     {
       key: "about",
-      titleEn: "About PakExcise.com",
-      titleUr: "PakExcise.com کے بارے میں",
-      excerptEn: "Learn about our private excise facilitation service.",
-      excerptUr: "ہماری نجی ایکسائز سہولت سروس کے بارے میں جانیں۔",
-      contentEn:
-        "PakExcise.com is a private facilitation service that helps customers navigate excise-related processes in Pakistan.\n\nWe are not affiliated with any government department. Our role is to guide you through application preparation, document collection, status tracking, and communication — through a secure online platform.",
-      contentUr:
-        "PakExcise.com ایک نجی سہولت سروس ہے جو پاکستان میں ایکسائز سے متعلق عملوں میں صارفین کی مدد کرتی ہے۔\n\nہم کسی سرکاری محکمے سے وابستہ نہیں ہیں۔ ہمارا کردار درخواست کی تیاری، دستاویزات، اسٹیٹس ٹریکنگ اور رابطے میں رہنمائی کرنا ہے۔",
+      titleEn: ABOUT_PAGE_CONTENT.titleEn,
+      titleUr: ABOUT_PAGE_CONTENT.titleUr,
+      excerptEn: ABOUT_PAGE_CONTENT.excerptEn,
+      excerptUr: ABOUT_PAGE_CONTENT.excerptUr,
+      contentEn: ABOUT_PAGE_CONTENT.contentEn,
+      contentUr: ABOUT_PAGE_CONTENT.contentUr,
     },
     {
       key: "contact",

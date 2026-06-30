@@ -1184,6 +1184,57 @@
         "emailInvalid": "Enter a valid email address."
       }
     },
+    "about": {
+      "disclaimer": {
+        "title": "Private facilitation disclaimer",
+        "body": "PakExcise.com is a private facilitation service. We are not affiliated with any government department, Excise & Taxation, MTMIS, NADRA, ICT Excise, Safe City, or the Government of Pakistan. We do not represent any official authority."
+      },
+      "whoWeAre": {
+        "title": "Who we are"
+      },
+      "services": {
+        "title": "What we help with",
+        "description": "Browse active facilitation services managed by admin — including vehicle transfer, token tax payment, new vehicle registration, driving license renewal, learner's license, vehicle passing/fitness, route permit, data correction, and e-challan support.",
+        "empty": "Services will appear here once configured by admin.",
+        "browseAll": "Browse all services"
+      },
+      "howItWorks": {
+        "title": "How PakExcise works",
+        "description": "A clear private facilitation journey from first contact to completion.",
+        "step1Title": "Choose how to start",
+        "step1Description": "Use Quick WhatsApp, Submit Request, or Apply with Account depending on how much tracking you need.",
+        "step2Title": "Share your details",
+        "step2Description": "Tell us your service, province, and required information. Upload documents securely when needed.",
+        "step3Title": "We review and guide",
+        "step3Description": "Our team reviews your request, confirms documents, and shares next steps on WhatsApp or your dashboard.",
+        "step4Title": "Track and complete",
+        "step4Description": "Follow status updates, receive invoices when ready, and download proof on completion."
+      },
+      "whyChoose": {
+        "title": "Why choose PakExcise",
+        "description": "Built for trust, clarity, and convenience across Pakistan.",
+        "item1Title": "Private & transparent",
+        "item1Description": "We are a private facilitation service — not a government website — with clear communication at every step.",
+        "item2Title": "Service coverage you can browse",
+        "item2Description": "Vehicle, license, token tax, route permit, data correction, and e-challan support — updated dynamically by admin.",
+        "item3Title": "Human support",
+        "item3Description": "Real support on WhatsApp and through your dashboard when you apply with an account.",
+        "item4Title": "Secure handling",
+        "item4Description": "Encrypted sensitive fields, private document storage, and server-side security controls."
+      },
+      "connect": {
+        "title": "Connect with PakExcise",
+        "description": "Follow PakExcise on social media for updates, tips, and support announcements.",
+        "empty": "Social links will appear here once configured by admin."
+      },
+      "cta": {
+        "title": "Ready to get started?",
+        "description": "Choose your required service and submit your details online. Our support team will review your request and guide you through the next steps.",
+        "browseServices": "Browse Services",
+        "submitRequest": "Submit Request",
+        "whatsapp": "Chat on WhatsApp"
+      }
+    },
     "contact": {
       "breadcrumb": "Contact",
       "options": {
