@@ -1,6 +1,6 @@
 import type { UserRole } from "@prisma/client";
 
-import { getDashboardPathByRole } from "@/features/auth/lib/get-dashboard-path-by-role";
+import { getDashboardPathByRole } from "@/features/auth/lib/dashboard-path";
 
 export const AUTH_REDIRECT_PATH = "/auth/redirect";
 

@@ -6,7 +6,7 @@ import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { HeaderAuthActions } from "@/components/shared/header-auth-actions";
+import { AuthHeaderActions } from "@/components/shared/auth-header-actions";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -54,6 +54,7 @@ export function Header({
   embedded = false,
 }: HeaderProps) {
   const t = useTranslations("nav");
+  const tAuthHeader = useTranslations("authHeader");
   const tCommon = useTranslations("common");
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -65,15 +66,16 @@ export function Header({
       : null;
   const desktopWhatsappLabel = whatsappLabel?.trim() || tCommon("whatsapp");
   const mobileWhatsappLabel = whatsappLabel?.trim() || tCommon("whatsappHelp");
-
-  const authLabels = {
-    login: t("login"),
-    myAccount: t("myAccount"),
-    myDashboard: t("myDashboard"),
-    myApplications: t("myApplications"),
-    trackApplication: t("trackApplication"),
-    profile: t("profile"),
-    logout: t("logout"),
+  const authHeaderLabels = {
+    login: tAuthHeader("login"),
+    myAccount: tAuthHeader("myAccount"),
+    myDashboard: tAuthHeader("myDashboard"),
+    dashboard: tAuthHeader("dashboard"),
+    myApplications: tAuthHeader("myApplications"),
+    trackApplication: tAuthHeader("trackApplication"),
+    profileSettings: tAuthHeader("profileSettings"),
+    logout: tAuthHeader("logout"),
+    accountMenu: tAuthHeader("accountMenu"),
   };
 
   return (
@@ -153,10 +155,10 @@ export function Header({
           <LanguageSwitcher />
           <ThemeToggle />
 
-          <HeaderAuthActions
-            labels={authLabels}
+          <AuthHeaderActions
+            labels={authHeaderLabels}
             variant="desktop"
-            className="inline-flex"
+            className="hidden sm:flex"
           />
 
           <Button
@@ -196,8 +198,8 @@ export function Header({
               </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2 border-t pt-3">
-              <HeaderAuthActions
-                labels={authLabels}
+              <AuthHeaderActions
+                labels={authHeaderLabels}
                 variant="mobile"
                 onNavigate={() => setMobileOpen(false)}
               />

@@ -1,5 +1,3 @@
-"use client";
-
 import { LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -7,14 +5,14 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type AuthHeaderButtonProps = {
-  label: string;
+  loginLabel: string;
   className?: string;
   fullWidth?: boolean;
   onNavigate?: () => void;
 };
 
 export function AuthHeaderButton({
-  label,
+  loginLabel,
   className,
   fullWidth = false,
   onNavigate,
@@ -24,11 +22,12 @@ export function AuthHeaderButton({
       variant="outline"
       size="sm"
       asChild
-      className={cn(fullWidth && "w-full justify-start", className)}
+      className={cn(fullWidth && "w-full justify-center", className)}
+      onClick={onNavigate}
     >
-      <Link href="/login" onClick={onNavigate}>
+      <Link href="/login">
         <LogIn className="size-4" aria-hidden="true" />
-        <span>{label}</span>
+        {loginLabel}
       </Link>
     </Button>
   );

@@ -54,13 +54,19 @@
     "about": "About",
     "contact": "Contact",
     "login": "Login",
-    "logout": "Logout",
-    "dashboard": "Dashboard",
+    "logout": "Sign out",
+    "dashboard": "Dashboard"
+  },
+  "authHeader": {
+    "login": "Login",
     "myAccount": "My Account",
     "myDashboard": "My Dashboard",
+    "dashboard": "Dashboard",
     "myApplications": "My Applications",
     "trackApplication": "Track Application",
-    "profile": "Account Settings"
+    "profileSettings": "Profile & settings",
+    "logout": "Logout",
+    "accountMenu": "Account menu"
   },
   "auth": {
     "login": {
