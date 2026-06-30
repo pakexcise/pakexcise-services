@@ -1,7 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { Button } from "@/components/ui/button";
 import { DocumentUploadItem } from "@/features/applications/components/document-upload-item";
+import {
+  formatSummaryMaxSize,
+  summarizeUploadConstraints,
+} from "@/features/applications/lib/summarize-upload-constraints";
 import type {
   ApplyDocumentRequirement,
   SavedDocumentMeta,
@@ -34,6 +40,7 @@ type DocumentsStepProps = {
     previewLoading: string;
     previewError: string;
     previewOpen: string;
+    uploadConstraintsSummary: string;
   };
   isSaving: boolean;
   validationError: string | null;
@@ -55,6 +62,19 @@ export function DocumentsStep({
   onDocumentRemoved,
   onSubmit,
 }: DocumentsStepProps) {
+  const uploadConstraintsLine = useMemo(() => {
+    if (requirements.length === 0) {
+      return null;
+    }
+
+    const { acceptedTypeLabels, maxSizeBytes } =
+      summarizeUploadConstraints(requirements);
+
+    return labels.uploadConstraintsSummary
+      .replace("__TYPES__", acceptedTypeLabels)
+      .replace("__SIZE__", formatSummaryMaxSize(maxSizeBytes));
+  }, [labels.uploadConstraintsSummary, requirements]);
+
   if (requirements.length === 0) {
     return (
       <div className="space-y-6">
@@ -82,6 +102,11 @@ export function DocumentsStep({
       <div className="space-y-1">
         <h2 className="text-xl font-semibold">{labels.title}</h2>
         <p className="text-sm text-muted-foreground">{labels.description}</p>
+        {uploadConstraintsLine ? (
+          <p className="text-bidi-auto text-sm text-muted-foreground">
+            {uploadConstraintsLine}
+          </p>
+        ) : null}
       </div>
 
       <div className="space-y-4">
@@ -91,6 +116,7 @@ export function DocumentsStep({
             applicationId={applicationId}
             requirement={requirement}
             uploaded={documents[requirement.id]}
+            showFileConstraints={false}
             labels={{
               required: labels.required,
               optional: labels.optional,

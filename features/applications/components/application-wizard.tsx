@@ -104,6 +104,7 @@ type ApplicationWizardLabels = {
     previewLoading: string;
     previewError: string;
     previewOpen: string;
+    uploadConstraintsSummary: string;
   };
   review: {
     title: string;

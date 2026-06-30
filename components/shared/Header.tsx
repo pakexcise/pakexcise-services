@@ -6,7 +6,7 @@ import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { AuthNav } from "@/components/shared/auth-nav";
+import { HeaderAuthActions } from "@/components/shared/header-auth-actions";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -65,6 +65,16 @@ export function Header({
       : null;
   const desktopWhatsappLabel = whatsappLabel?.trim() || tCommon("whatsapp");
   const mobileWhatsappLabel = whatsappLabel?.trim() || tCommon("whatsappHelp");
+
+  const authLabels = {
+    login: t("login"),
+    myAccount: t("myAccount"),
+    myDashboard: t("myDashboard"),
+    myApplications: t("myApplications"),
+    trackApplication: t("trackApplication"),
+    profile: t("profile"),
+    logout: t("logout"),
+  };
 
   return (
     <header
@@ -143,12 +153,10 @@ export function Header({
           <LanguageSwitcher />
           <ThemeToggle />
 
-          <AuthNav
-            loginLabel={t("login")}
-            dashboardLabel={t("dashboard")}
-            logoutLabel={t("logout")}
-            compact
-            className="hidden sm:inline-flex"
+          <HeaderAuthActions
+            labels={authLabels}
+            variant="desktop"
+            className="inline-flex"
           />
 
           <Button
@@ -188,10 +196,9 @@ export function Header({
               </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2 border-t pt-3">
-              <AuthNav
-                loginLabel={t("login")}
-                dashboardLabel={t("dashboard")}
-                logoutLabel={t("logout")}
+              <HeaderAuthActions
+                labels={authLabels}
+                variant="mobile"
                 onNavigate={() => setMobileOpen(false)}
               />
               {showWhatsapp && whatsappHref ? (

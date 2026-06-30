@@ -54,8 +54,13 @@
     "about": "ہمارے بارے میں",
     "contact": "رابطہ",
     "login": "لاگ ان",
-    "logout": "سائن آؤٹ",
-    "dashboard": "ڈیش بورڈ"
+    "logout": "لاگ آؤٹ",
+    "dashboard": "ڈیش بورڈ",
+    "myAccount": "میرا اکاؤنٹ",
+    "myDashboard": "میرا ڈیش بورڈ",
+    "myApplications": "میری درخواستیں",
+    "trackApplication": "درخواست ٹریک کریں",
+    "profile": "اکاؤنٹ سیٹنگز"
   },
   "auth": {
     "login": {
@@ -3478,6 +3483,7 @@
       "remove": "ہٹائیں",
       "maxSize": "زیادہ سے زیادہ سائز: __SIZE__",
       "allowedTypes": "اجازت یافتہ: JPG, PNG, WebP, PDF",
+      "uploadConstraintsSummary": "قبول شدہ فائلیں: __TYPES__ · زیادہ سے زیادہ سائز: __SIZE__ فی فائل",
       "uploadFailed": "اپ لوڈ ناکام۔ دوبارہ کوشش کریں۔",
       "invalidType": "یہ فائل قسم مجاز نہیں۔",
       "tooLarge": "فائل بہت بڑی ہے۔",

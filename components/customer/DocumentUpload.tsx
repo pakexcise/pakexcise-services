@@ -39,6 +39,7 @@ type DocumentUploadProps = {
   isRequired?: boolean;
   maxSizeBytes: number;
   acceptedMimeTypes: string[];
+  showFileConstraints?: boolean;
   uploaded?: UploadedDocumentMeta | null;
   labels: {
     required: string;
@@ -200,6 +201,7 @@ export function DocumentUpload({
   isRequired = true,
   maxSizeBytes,
   acceptedMimeTypes,
+  showFileConstraints = true,
   uploaded,
   labels,
   onUploaded,
@@ -334,10 +336,14 @@ export function DocumentUpload({
           {instructions ? (
             <p className="text-sm text-muted-foreground">{instructions}</p>
           ) : null}
-          <p className="text-xs text-muted-foreground">
-            {labels.maxSize.replace("__SIZE__", formatFileSize(maxSizeBytes))}
-          </p>
-          <p className="text-xs text-muted-foreground">{labels.allowedTypes}</p>
+          {showFileConstraints ? (
+            <>
+              <p className="text-xs text-muted-foreground">
+                {labels.maxSize.replace("__SIZE__", formatFileSize(maxSizeBytes))}
+              </p>
+              <p className="text-xs text-muted-foreground">{labels.allowedTypes}</p>
+            </>
+          ) : null}
         </div>
 
         <input

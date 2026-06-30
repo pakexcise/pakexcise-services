@@ -54,8 +54,13 @@
     "about": "About",
     "contact": "Contact",
     "login": "Login",
-    "logout": "Sign out",
-    "dashboard": "Dashboard"
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "myAccount": "My Account",
+    "myDashboard": "My Dashboard",
+    "myApplications": "My Applications",
+    "trackApplication": "Track Application",
+    "profile": "Account Settings"
   },
   "auth": {
     "login": {
@@ -3477,6 +3482,7 @@
       "remove": "Remove",
       "maxSize": "Max file size: __SIZE__",
       "allowedTypes": "Allowed: JPG, PNG, WebP, PDF",
+      "uploadConstraintsSummary": "Accepted files: __TYPES__ · Maximum size: __SIZE__ per file",
       "uploadFailed": "Upload failed. Please try again.",
       "invalidType": "This file type is not allowed.",
       "tooLarge": "File is too large.",

@@ -256,6 +256,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
       previewLoading: t("documents.previewLoading"),
       previewError: t("documents.previewError"),
       previewOpen: t("documents.previewOpen"),
+      uploadConstraintsSummary: t("documents.uploadConstraintsSummary"),
     },
     review: {
       title: t("review.title"),

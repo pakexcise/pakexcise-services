@@ -11,6 +11,7 @@ type DocumentUploadItemProps = {
   applicationId: string;
   requirement: ApplyDocumentRequirement;
   uploaded?: SavedDocumentMeta;
+  showFileConstraints?: boolean;
   labels: {
     required: string;
     optional: string;
@@ -36,6 +37,7 @@ export function DocumentUploadItem({
   applicationId,
   requirement,
   uploaded,
+  showFileConstraints = true,
   labels,
   onUploaded,
   onRemoved,
@@ -55,6 +57,7 @@ export function DocumentUploadItem({
       isRequired={requirement.isRequired}
       maxSizeBytes={requirement.maxSizeBytes}
       acceptedMimeTypes={acceptedTypes}
+      showFileConstraints={showFileConstraints}
       uploaded={uploaded}
       labels={labels}
       onUploaded={(document) => {
