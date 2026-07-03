@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentUser } from "@/server/auth/current-user";
+import { canAccessInAppNotifications } from "@/server/permissions/in-app-notification-access";
 import { inAppNotificationRepository } from "@/server/repositories/in-app-notification-repository";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ export async function PATCH(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (user.role !== "CUSTOMER" && user.role !== "AGENT") {
+  if (!canAccessInAppNotifications(user.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

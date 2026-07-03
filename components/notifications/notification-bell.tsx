@@ -18,7 +18,10 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type NotificationBellProps = {
-  applicationBasePath: "/customer/applications" | "/agent/applications";
+  applicationBasePath:
+    | "/customer/applications"
+    | "/agent/applications"
+    | "/admin/applications";
   className?: string;
 };
 

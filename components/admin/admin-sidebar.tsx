@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { AdminNavIcon } from "@/components/admin/admin-nav-icons";
+import { useAdminNavBadges } from "@/components/admin/admin-nav-badges-provider";
 import {
   adminNavSectionOrder,
   type AdminNavItem,
@@ -30,6 +31,21 @@ function groupNavItems(items: AdminNavItem[]): Map<AdminNavSection, AdminNavItem
   return groups;
 }
 
+function resolveBadgeCount(
+  href: string,
+  counts: ReturnType<typeof useAdminNavBadges>,
+): number {
+  if (href === "/admin/notifications") {
+    return counts.unreadNotifications;
+  }
+
+  if (href === "/admin/applications") {
+    return counts.pendingApplications;
+  }
+
+  return 0;
+}
+
 export function AdminSidebar({
   items,
   onNavigate,
@@ -39,6 +55,7 @@ export function AdminSidebar({
   const tSections = useTranslations("admin.navSections");
   const pathname = usePathname();
   const groupedItems = groupNavItems(items);
+  const badgeCounts = useAdminNavBadges();
 
   return (
     <nav className={cn("flex flex-col gap-1 p-3", className)} aria-label="Admin">
@@ -59,6 +76,7 @@ export function AdminSidebar({
                 const isActive =
                   pathname === item.href ||
                   pathname.startsWith(`${item.href}/`);
+                const badgeCount = resolveBadgeCount(item.href, badgeCounts);
 
                 return (
                   <Link
@@ -74,6 +92,11 @@ export function AdminSidebar({
                   >
                     <AdminNavIcon name={item.icon} className="size-4 shrink-0" />
                     <span className="truncate">{t(item.labelKey)}</span>
+                    {badgeCount > 0 ? (
+                      <span className="ms-auto inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
+                        {badgeCount > 99 ? "99+" : badgeCount}
+                      </span>
+                    ) : null}
                   </Link>
                 );
               })}

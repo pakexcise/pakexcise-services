@@ -46,7 +46,9 @@ export const notificationRepository = {
     const pageSize = filters.pageSize ?? adminDefaultPageSize;
     const skip = (page - 1) * pageSize;
 
-    const where: Prisma.NotificationWhereInput = {};
+    const where: Prisma.NotificationWhereInput = {
+      channel: { not: "IN_APP" },
+    };
     const andFilters: Prisma.NotificationWhereInput[] = [];
 
     if (filters.viewerRole === "ADMIN") {

@@ -5,8 +5,10 @@ import type { ApplicationStatus, UserRole } from "@prisma/client";
 import { getRedisClient } from "@/server/cache/redis-client";
 import { prisma } from "@/server/db/client";
 import { deliverInAppApplicationUpdate } from "@/features/notifications/in-app/deliver-application-update";
+import { deliverAdminPlatformNotification } from "@/features/notifications/in-app/deliver-admin-platform-notification";
 import { revalidateApplicationPages } from "@/server/realtime/revalidate-application-pages";
 import {
+  mapChangeTypeToNotificationEventType,
   publishApplicationUpdatedEvent,
 } from "@/server/realtime/stream-events";
 
@@ -153,6 +155,20 @@ export async function emitApplicationChange(input: {
           invoiceNumber: input.notificationPayload?.invoiceNumber,
         },
       });
+
+      await deliverAdminPlatformNotification({
+        applicationId: input.applicationId,
+        trackingId,
+        serviceName:
+          input.notificationPayload?.serviceName ?? application.service.nameEn,
+        status: input.status,
+        changeType: input.changeType,
+        eventType: mapChangeTypeToNotificationEventType(
+          input.changeType,
+          input.status,
+        ),
+        locale,
+      });
     } else {
       publishApplicationUpdatedEvent({
         recipientUserIds: [userId, agentId],
@@ -181,6 +197,19 @@ export async function emitApplicationChange(input: {
         reason: input.notificationPayload?.reason,
         invoiceNumber: input.notificationPayload?.invoiceNumber,
       },
+    });
+
+    await deliverAdminPlatformNotification({
+      applicationId: input.applicationId,
+      trackingId: trackingId ?? input.applicationId,
+      serviceName: input.notificationPayload?.serviceName ?? "Application",
+      status: input.status,
+      changeType: input.changeType,
+      eventType: mapChangeTypeToNotificationEventType(
+        input.changeType,
+        input.status,
+      ),
+      locale,
     });
   } else {
     publishApplicationUpdatedEvent({

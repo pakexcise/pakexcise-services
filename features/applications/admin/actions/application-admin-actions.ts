@@ -9,6 +9,7 @@ import {
   successResult,
   type ActionResult,
 } from "@/lib/validations/common";
+import { formatFirstFieldError } from "@/lib/validations/format-field-errors";
 import {
   adminCreateApplicationSchema,
   adminUpdateApplicationSchema,
@@ -17,6 +18,8 @@ import {
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { prisma } from "@/server/db/client";
+import { queueApplicationStatusNotifications } from "@/server/notifications/queue-application-status-notification";
+import { emitApplicationChange } from "@/server/realtime/application-events";
 import { requireSuperAdmin } from "@/server/permissions/guards";
 
 function revalidateApplicationPaths(id?: string) {
@@ -83,7 +86,10 @@ export async function createApplicationAdminAction(
   const parsed = parseInput(adminCreateApplicationSchema, input);
 
   if (!parsed.success) {
-    return errorResult(parsed.error, parsed.fieldErrors);
+    return errorResult(
+      formatFirstFieldError(parsed.fieldErrors),
+      parsed.fieldErrors,
+    );
   }
 
   const data = parsed.data;
@@ -125,7 +131,10 @@ export async function updateApplicationAdminAction(
   const parsed = parseInput(adminUpdateApplicationSchema, input);
 
   if (!parsed.success) {
-    return errorResult(parsed.error, parsed.fieldErrors);
+    return errorResult(
+      formatFirstFieldError(parsed.fieldErrors),
+      parsed.fieldErrors,
+    );
   }
 
   const existing = await applicationRepository.findAdminById(parsed.data.id);
@@ -141,8 +150,13 @@ export async function updateApplicationAdminAction(
     return errorResult(relationError);
   }
 
-  if (existing.status !== data.status && !data.statusChangeNote.trim()) {
-    return errorResult("A status change note is required when changing status.");
+  const statusChanged = existing.status !== data.status;
+  const statusChangeNote = data.statusChangeNote?.trim() ?? "";
+
+  if (statusChanged && statusChangeNote.length < 3) {
+    return errorResult("A status change note is required when changing status.", {
+      statusChangeNote: ["A status change note is required when changing status."],
+    });
   }
 
   const updated = await applicationRepository.updateAdmin({
@@ -153,7 +167,7 @@ export async function updateApplicationAdminAction(
     locale: data.locale,
     status: data.status,
     adminNotes: data.adminNotes?.trim() || null,
-    statusChangeNote: data.statusChangeNote.trim(),
+    statusChangeNote: statusChanged ? statusChangeNote : undefined,
     actorId: actor.id,
   });
 
@@ -180,6 +194,43 @@ export async function updateApplicationAdminAction(
     },
   });
 
+  if (statusChanged) {
+    const customer = await prisma.user.findUnique({
+      where: { id: data.userId },
+      select: { email: true, phone: true },
+    });
+
+    await queueApplicationStatusNotifications({
+      applicationId: updated.id,
+      userId: data.userId,
+      trackingId: updated.trackingId,
+      serviceName: existing.service.nameEn,
+      serviceNameUr: existing.service.nameUr,
+      locale: data.locale,
+      toStatus: updated.status,
+      note: statusChangeNote,
+      userEmail: customer?.email ?? "",
+      userPhone: customer?.phone,
+    });
+
+    await emitApplicationChange({
+      applicationId: updated.id,
+      userId: data.userId,
+      agentId: data.agentId ?? null,
+      trackingId: updated.trackingId,
+      locale: data.locale,
+      status: updated.status,
+      changeType: "status",
+      notificationPayload: {
+        serviceName: existing.service.nameEn,
+        serviceNameUr: existing.service.nameUr,
+        note: statusChangeNote,
+        fromStatus: existing.status,
+        toStatus: updated.status,
+      },
+    });
+  }
+
   revalidateApplicationPaths(updated.id);
 
   return successResult({ id: updated.id });
@@ -192,7 +243,10 @@ export async function deleteApplicationAdminAction(
   const parsed = parseInput(deleteApplicationSchema, input);
 
   if (!parsed.success) {
-    return errorResult(parsed.error, parsed.fieldErrors);
+    return errorResult(
+      formatFirstFieldError(parsed.fieldErrors),
+      parsed.fieldErrors,
+    );
   }
 
   const existing = await applicationRepository.findAdminById(parsed.data.id);

@@ -2354,7 +2354,9 @@
     },
     "notifications": {
       "title": "اطلاعات",
-      "description": "ای میل، واٹس ایپ اور SMS اطلاعات کی ترسیل مانیٹر کریں۔",
+      "description": "غیر پڑھی پلیٹ فارم الرٹس اور ای میل، واٹس ایپ اور SMS کی ترسیل لاگز۔",
+      "deliveryLogsTitle": "ترسیل لاگز",
+      "deliveryLogsDescription": "ای میل، واٹس ایپ اور SMS کی ترسیل کی صورتحال۔ In-app الرٹس اوپر دکھائے گئے ہیں۔",
       "scopeNotice": "کسٹمر، ایجنٹ اور ایڈمن اطلاعات دکھائی جا رہی ہیں۔ سپر ایڈمن کی نجی اطلاعات چھپائی گئی ہیں۔",
       "emptyTitle": "کوئی اطلاع نہیں ملی",
       "emptyDescription": "کسٹمر واقعات کے بعد اطلاعات کی لاگز یہاں ظاہر ہوں گی۔",
@@ -2387,7 +2389,8 @@
       "channel": {
         "EMAIL": "ای میل",
         "WHATSAPP": "واٹس ایپ",
-        "SMS": "SMS"
+        "SMS": "SMS",
+        "IN_APP": "In-app"
       },
       "eventType": {
         "APPLICATION_SUBMITTED": "درخواست جمع",
@@ -2401,6 +2404,11 @@
         "APPLICATION_CANCELLED": "منسوخ",
         "PAYMENT_REJECTED": "ادائیگی مسترد"
       }
+    },
+    "inAppNotifications": {
+      "title": "In-app notifications",
+      "description": "نئی درخواستوں، اپ لوڈز اور کسٹمر کارروائیوں کے لیے غیر پڑھی الرٹس۔",
+      "hint": "غیر پڑھی الرٹس دیکھنے، پڑھا ہوا نشان لگانے اور متعلقہ درخواست کھولنے کے لیے گھنٹی استعمال کریں۔"
     },
     "payments": {
       "verification": {

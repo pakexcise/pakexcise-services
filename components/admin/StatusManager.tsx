@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { transitionApplicationStatusAction } from "@/features/applications/actions";
+import { formatFirstFieldError } from "@/lib/validations/format-field-errors";
 import { broadcastApplicationUpdate } from "@/features/realtime/broadcast-application-update";
 
 type StatusManagerProps = {
@@ -47,6 +48,7 @@ export function StatusManager({
   const [note, setNote] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [isPending, startTransition] = useTransition();
 
   const options = useMemo(
@@ -62,6 +64,7 @@ export function StatusManager({
     event.preventDefault();
     setMessage(null);
     setError(null);
+    setFieldErrors({});
 
     if (!toStatus) {
       setError(labels.error);
@@ -81,7 +84,12 @@ export function StatusManager({
       });
 
       if (!result.success) {
-        setError(result.error ?? labels.error);
+        setError(
+          result.fieldErrors
+            ? formatFirstFieldError(result.fieldErrors, result.error)
+            : (result.error ?? labels.error),
+        );
+        setFieldErrors(result.fieldErrors ?? {});
         return;
       }
 
@@ -149,6 +157,11 @@ export function StatusManager({
           required
           minLength={3}
         />
+        {fieldErrors.note?.[0] ? (
+          <p className="text-xs text-destructive" role="alert">
+            {fieldErrors.note[0]}
+          </p>
+        ) : null}
       </div>
 
       {toStatus === "COMPLETED" && requiresProof && !hasProof ? (

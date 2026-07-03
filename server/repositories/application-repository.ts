@@ -318,6 +318,18 @@ export class ApplicationRepository extends Repository {
     return result;
   }
 
+  async countByStatuses(statuses: ApplicationStatus[]): Promise<number> {
+    if (statuses.length === 0) {
+      return 0;
+    }
+
+    return this.db.application.count({
+      where: {
+        status: { in: statuses },
+      },
+    });
+  }
+
   async listRecent(limit = 10): Promise<AdminApplicationListItem[]> {
     return this.db.application.findMany({
       where: { status: { not: "DRAFT" } },

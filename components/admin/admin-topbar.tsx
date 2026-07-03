@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { AdminSearch } from "@/components/admin/admin-search";
 import { AdminUserMenu, type AdminUserSummary } from "@/components/admin/admin-user-menu";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -44,6 +45,7 @@ export function AdminTopbar({ user, onMenuClick }: AdminTopbarProps) {
       </div>
 
       <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-2">
+        <NotificationBell applicationBasePath="/admin/applications" />
         <LanguageSwitcher />
         <ThemeToggle />
         <AdminUserMenu user={user} />

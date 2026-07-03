@@ -13,6 +13,7 @@ import {
   createApplicationAdminAction,
   updateApplicationAdminAction,
 } from "@/features/applications/admin/actions/application-admin-actions";
+import { formatFirstFieldError } from "@/lib/validations/format-field-errors";
 
 type CustomerOption = {
   id: string;
@@ -103,6 +104,7 @@ export function ApplicationEditorForm({
   const router = useRouter();
   const [values, setValues] = useState(initialValues);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [isPending, startTransition] = useTransition();
 
   const statusChanged =
@@ -119,19 +121,26 @@ export function ApplicationEditorForm({
 
   function handleSubmit() {
     setError(null);
+    setFieldErrors({});
 
     if (!values.userId || !values.serviceId) {
       setError(labels.saveFailed);
       return;
     }
 
-    if (!values.statusChangeNote.trim()) {
+    if (statusChanged && !values.statusChangeNote.trim()) {
       setError(labels.statusChangeNoteRequired);
+      setFieldErrors({
+        statusChangeNote: [labels.statusChangeNoteRequired],
+      });
       return;
     }
 
-    if (statusChanged && !values.statusChangeNote.trim()) {
+    if (statusChanged && values.statusChangeNote.trim().length < 3) {
       setError(labels.statusChangeNoteRequired);
+      setFieldErrors({
+        statusChangeNote: [labels.statusChangeNoteRequired],
+      });
       return;
     }
 
@@ -153,7 +162,12 @@ export function ApplicationEditorForm({
           : await updateApplicationAdminAction(payload);
 
       if (!result.success) {
-        setError(result.error);
+        setError(
+          result.fieldErrors
+            ? formatFirstFieldError(result.fieldErrors, result.error)
+            : result.error,
+        );
+        setFieldErrors(result.fieldErrors ?? {});
         return;
       }
 
@@ -277,9 +291,13 @@ export function ApplicationEditorForm({
               }
               placeholder={labels.statusChangeNoteHelp}
               rows={3}
-              required
+              required={statusChanged}
             />
-            {statusChanged ? (
+            {fieldErrors.statusChangeNote?.[0] ? (
+              <p className="text-xs text-destructive" role="alert">
+                {fieldErrors.statusChangeNote[0]}
+              </p>
+            ) : statusChanged ? (
               <p className="text-xs text-muted-foreground">
                 {labels.statusChangeNoteRequired}
               </p>

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { getAdminNavBadgeCounts } from "@/server/repositories/admin-badge-repository";
 import { getCurrentUser } from "@/server/auth/current-user";
 import { canAccessInAppNotifications } from "@/server/permissions/in-app-notification-access";
-import { inAppNotificationRepository } from "@/server/repositories/in-app-notification-repository";
 
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+export async function GET() {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -17,11 +17,11 @@ export async function POST() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const markedCount = await inAppNotificationRepository.markAllRead(user.id);
+  if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
-  return NextResponse.json({
-    ok: true,
-    markedCount,
-    unreadCount: 0,
-  });
+  const counts = await getAdminNavBadgeCounts(user.id);
+
+  return NextResponse.json(counts);
 }

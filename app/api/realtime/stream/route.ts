@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/server/auth/current-user";
+import { canAccessInAppNotifications } from "@/server/permissions/in-app-notification-access";
 import { subscribeRealtimeUser, type RealtimeServerEvent } from "@/server/realtime/publisher";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  if (user.role !== "CUSTOMER" && user.role !== "AGENT") {
+  if (!canAccessInAppNotifications(user.role)) {
     return new Response("Forbidden", { status: 403 });
   }
 

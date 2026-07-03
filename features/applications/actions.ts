@@ -24,6 +24,7 @@ import {
   successResult,
   type ActionResult,
 } from "@/lib/validations/common";
+import { formatFirstFieldError } from "@/lib/validations/format-field-errors";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { emitApplicationChange } from "@/server/realtime/application-events";
 import { prisma } from "@/server/db/client";
@@ -79,7 +80,10 @@ export async function transitionApplicationStatusAction(
   const parsed = parseInput(transitionApplicationStatusSchema, input);
 
   if (!parsed.success) {
-    return errorResult(parsed.error, parsed.fieldErrors);
+    return errorResult(
+      formatFirstFieldError(parsed.fieldErrors),
+      parsed.fieldErrors,
+    );
   }
 
   const application = await prisma.application.findUnique({
