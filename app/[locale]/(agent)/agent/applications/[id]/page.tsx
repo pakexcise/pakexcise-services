@@ -190,7 +190,6 @@ export default async function AgentApplicationDetailPage({
           empty: t("timeline.empty"),
           current: t("timeline.current"),
         }}
-        statusLabel={statusLabel}
       />
 
       <SubmittedDataSummary

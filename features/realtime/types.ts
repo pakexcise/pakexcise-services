@@ -47,6 +47,9 @@ export type ApplicationStatusSnapshot = {
   status: ApplicationStatus | string;
   updatedAt: string;
   nextAction: string | null;
+  statusLabelText?: string;
+  nextActionLabelText?: string | null;
+  formattedUpdatedAt?: string;
   statusHistory: Array<{
     id: string;
     fromStatus: ApplicationStatus | null;

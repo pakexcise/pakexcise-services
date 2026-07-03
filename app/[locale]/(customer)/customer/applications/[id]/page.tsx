@@ -147,9 +147,6 @@ export default async function CustomerApplicationPage({
           nextAction: t("nextAction"),
           updated: t("updated"),
         }}
-        statusLabel={statusLabel}
-        nextActionLabel={(action) => tNextAction(action)}
-        formatUpdatedAt={(iso) => formatDateTime(iso, locale)}
       />
 
       <div className="rounded-xl border p-5">
@@ -175,7 +172,6 @@ export default async function CustomerApplicationPage({
           empty: t("timeline.empty"),
           current: t("timeline.current"),
         }}
-        statusLabel={statusLabel}
       />
 
       <ApplicantDetailsSummary

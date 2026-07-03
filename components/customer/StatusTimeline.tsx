@@ -1,4 +1,7 @@
+"use client";
+
 import type { ApplicationStatus } from "@prisma/client";
+import { useTranslations } from "next-intl";
 
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
@@ -20,7 +23,6 @@ type StatusTimelineProps = {
     empty: string;
     current: string;
   };
-  statusLabel: (status: ApplicationStatus) => string;
 };
 
 type TimelineStep = {
@@ -79,8 +81,10 @@ export function StatusTimeline({
   currentStatus,
   locale,
   labels,
-  statusLabel,
 }: StatusTimelineProps) {
+  const tStatus = useTranslations("admin.statuses");
+  const statusLabel = (status: ApplicationStatus) =>
+    getStatusLabelFromTranslations(tStatus, status);
   const steps = buildTimelineSteps(entries, currentStatus);
 
   if (steps.length === 0) {

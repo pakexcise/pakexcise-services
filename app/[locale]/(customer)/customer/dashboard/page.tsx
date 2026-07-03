@@ -129,9 +129,6 @@ export default async function CustomerDashboardPage() {
 
       <CustomerApplicationsLivePanel
         initialApplications={applicationRows}
-        statusLabel={(status) => tStatus(getApplicationStatusLabelKey(status))}
-        nextActionLabel={(action) => tNextAction(action)}
-        formatUpdatedAt={(iso) => formatDateTime(iso, locale)}
         title={t("applicationsTitle")}
         countLabel={t("applicationsCount", { count: applications.length })}
         emptyTitle={t("emptyTitle")}

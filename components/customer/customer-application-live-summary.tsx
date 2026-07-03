@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { NextActionBadge } from "@/components/customer/NextActionBadge";
 import type { CustomerNextAction } from "@/features/customer/lib/next-action";
+import { useCustomerApplicationLabels } from "@/features/customer/hooks/use-customer-application-labels";
 import { useApplicationRealtime } from "@/features/realtime/hooks/use-application-realtime";
 import type { ApplicationStatusSnapshot } from "@/features/realtime/types";
 
@@ -21,9 +22,6 @@ type CustomerApplicationLiveSummaryProps = {
     nextAction: string;
     updated: string;
   };
-  statusLabel: (status: ApplicationStatus) => string;
-  nextActionLabel: (action: CustomerNextAction) => string;
-  formatUpdatedAt: (iso: string) => string;
 };
 
 export function CustomerApplicationLiveSummary({
@@ -34,10 +32,9 @@ export function CustomerApplicationLiveSummary({
   initialNextActionLabel,
   initialUpdatedAt,
   labels,
-  statusLabel,
-  nextActionLabel,
-  formatUpdatedAt,
 }: CustomerApplicationLiveSummaryProps) {
+  const { resolveStatusLabel, resolveNextActionLabel, formatUpdatedAt } =
+    useCustomerApplicationLabels();
   const [status, setStatus] = useState(initialStatus);
   const [statusText, setStatusText] = useState(initialStatusLabel);
   const [nextAction, setNextAction] = useState(initialNextAction);
@@ -47,16 +44,23 @@ export function CustomerApplicationLiveSummary({
   const handleSnapshot = useCallback(
     (snapshot: ApplicationStatusSnapshot) => {
       setStatus(snapshot.status as ApplicationStatus);
-      setStatusText(statusLabel(snapshot.status as ApplicationStatus));
-      setUpdatedAt(formatUpdatedAt(snapshot.updatedAt));
+      setStatusText(
+        snapshot.statusLabelText ??
+          resolveStatusLabel(snapshot.status as ApplicationStatus),
+      );
+      setUpdatedAt(
+        snapshot.formattedUpdatedAt ?? formatUpdatedAt(snapshot.updatedAt),
+      );
 
       if (snapshot.nextAction) {
         const action = snapshot.nextAction as CustomerNextAction;
         setNextAction(action);
-        setNextActionText(nextActionLabel(action));
+        setNextActionText(
+          snapshot.nextActionLabelText ?? resolveNextActionLabel(action),
+        );
       }
     },
-    [formatUpdatedAt, nextActionLabel, statusLabel],
+    [formatUpdatedAt, resolveNextActionLabel, resolveStatusLabel],
   );
 
   useApplicationRealtime({

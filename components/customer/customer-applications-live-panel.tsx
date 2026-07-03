@@ -8,14 +8,12 @@ import {
   type CustomerApplicationRow,
 } from "@/components/customer/customer-applications-panel";
 import type { CustomerNextAction } from "@/features/customer/lib/next-action";
+import { useCustomerApplicationLabels } from "@/features/customer/hooks/use-customer-application-labels";
 import { useRealtimeContext } from "@/features/realtime/context/realtime-provider";
 import type { ApplicationStatusSnapshot } from "@/features/realtime/types";
 
 type CustomerApplicationsLivePanelProps = {
   initialApplications: CustomerApplicationRow[];
-  statusLabel: (status: ApplicationStatus) => string;
-  nextActionLabel: (action: CustomerNextAction) => string;
-  formatUpdatedAt: (iso: string) => string;
   title: string;
   countLabel: string;
   emptyTitle: string;
@@ -36,12 +34,11 @@ type CustomerApplicationsLivePanelProps = {
 
 export function CustomerApplicationsLivePanel({
   initialApplications,
-  statusLabel,
-  nextActionLabel,
-  formatUpdatedAt,
   ...panelProps
 }: CustomerApplicationsLivePanelProps) {
   const { subscribeApplicationUpdates } = useRealtimeContext();
+  const { resolveStatusLabel, resolveNextActionLabel, formatUpdatedAt } =
+    useCustomerApplicationLabels();
   const [applications, setApplications] =
     useState<CustomerApplicationRow[]>(initialApplications);
   const fetchTimestampsRef = useRef<Map<string, number>>(new Map());
@@ -65,15 +62,20 @@ export function CustomerApplicationsLivePanel({
           return {
             ...row,
             status: snapshot.status as ApplicationStatus,
-            statusLabel: statusLabel(snapshot.status as ApplicationStatus),
+            statusLabel:
+              snapshot.statusLabelText ??
+              resolveStatusLabel(snapshot.status),
             nextAction,
-            nextActionLabel: nextActionLabel(nextAction),
-            updatedAt: formatUpdatedAt(snapshot.updatedAt),
+            nextActionLabel:
+              snapshot.nextActionLabelText ??
+              resolveNextActionLabel(nextAction),
+            updatedAt:
+              snapshot.formattedUpdatedAt ?? formatUpdatedAt(snapshot.updatedAt),
           };
         }),
       );
     },
-    [formatUpdatedAt, nextActionLabel, statusLabel],
+    [formatUpdatedAt, resolveNextActionLabel, resolveStatusLabel],
   );
 
   useEffect(() => {

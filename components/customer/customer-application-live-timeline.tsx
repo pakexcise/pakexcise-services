@@ -24,7 +24,6 @@ type CustomerApplicationLiveTimelineProps = {
     empty: string;
     current: string;
   };
-  statusLabel: (status: ApplicationStatus) => string;
 };
 
 export function CustomerApplicationLiveTimeline({
@@ -33,7 +32,6 @@ export function CustomerApplicationLiveTimeline({
   initialCurrentStatus,
   locale,
   labels,
-  statusLabel,
 }: CustomerApplicationLiveTimelineProps) {
   const [entries, setEntries] = useState(initialEntries);
   const [currentStatus, setCurrentStatus] = useState(initialCurrentStatus);
@@ -61,7 +59,6 @@ export function CustomerApplicationLiveTimeline({
       currentStatus={currentStatus}
       locale={locale}
       labels={labels}
-      statusLabel={statusLabel}
     />
   );
 }

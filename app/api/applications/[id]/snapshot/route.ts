@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 
 import { COMPLETION_PROOF_DOC_TYPE } from "@/config/uploads";
+import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { resolveCustomerNextAction } from "@/features/customer/lib/next-action";
+import { formatDateTime } from "@/lib/utils";
 import { applicationIdParamSchema } from "@/lib/validations/route-params";
 import { getCurrentUser } from "@/server/auth/current-user";
+import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { agentApplicationRepository } from "@/server/repositories/agent-application-repository";
 import { customerApplicationRepository } from "@/server/repositories/customer-application-repository";
 import { invoiceRepository } from "@/server/repositories/invoice-repository";
@@ -29,6 +33,9 @@ export async function GET(_request: Request, context: RouteContext) {
   }
 
   const applicationId = parsedId.data;
+  const locale = await getCurrentLocale();
+  const tStatus = await getTranslations("admin.statuses");
+  const tNextAction = await getTranslations("customer.nextAction");
 
   if (user.role === "CUSTOMER") {
     const application = await customerApplicationRepository.findOwnedById({
@@ -62,6 +69,9 @@ export async function GET(_request: Request, context: RouteContext) {
       status: application.status,
       updatedAt: application.updatedAt.toISOString(),
       nextAction,
+      statusLabelText: tStatus(getApplicationStatusLabelKey(application.status)),
+      nextActionLabelText: tNextAction(nextAction),
+      formattedUpdatedAt: formatDateTime(application.updatedAt, locale),
       statusHistory: application.statusHistory.map((entry) => ({
         id: entry.id,
         fromStatus: entry.fromStatus,
@@ -87,6 +97,9 @@ export async function GET(_request: Request, context: RouteContext) {
       status: application.status,
       updatedAt: application.updatedAt.toISOString(),
       nextAction: null,
+      statusLabelText: tStatus(getApplicationStatusLabelKey(application.status)),
+      nextActionLabelText: null,
+      formattedUpdatedAt: formatDateTime(application.updatedAt, locale),
       statusHistory: application.statusHistory.map((entry) => ({
         id: entry.id,
         fromStatus: entry.fromStatus,

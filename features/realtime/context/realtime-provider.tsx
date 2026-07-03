@@ -68,22 +68,26 @@ export function RealtimeProvider({
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const refreshNotifications = useCallback(async () => {
-    const response = await fetch("/api/notifications/in-app?limit=20", {
-      cache: "no-store",
-      credentials: "include",
-    });
+    try {
+      const response = await fetch("/api/notifications/in-app?limit=20", {
+        cache: "no-store",
+        credentials: "include",
+      });
 
-    if (!response.ok) {
-      return;
+      if (!response.ok) {
+        return;
+      }
+
+      const payload = (await response.json()) as {
+        items: InAppNotificationListItem[];
+        unreadCount: number;
+      };
+
+      setNotifications(payload.items ?? []);
+      setUnreadCount(payload.unreadCount ?? 0);
+    } catch {
+      // Realtime notifications are optional; dashboard must still load.
     }
-
-    const payload = (await response.json()) as {
-      items: InAppNotificationListItem[];
-      unreadCount: number;
-    };
-
-    setNotifications(payload.items);
-    setUnreadCount(payload.unreadCount);
   }, []);
 
   const markNotificationRead = useCallback(async (notificationId: string) => {
