@@ -22,7 +22,7 @@ import {
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
 import { routing, type Locale } from "@/i18n/config";
-import { absoluteUrl } from "@/lib/utils";
+import { seoAbsoluteUrl } from "@/lib/seo-url";
 import { getCurrentLocale, isValidLocale } from "@/server/i18n/get-locale";
 
 type LocaleLayoutProps = {
@@ -59,7 +59,7 @@ export default async function LocaleLayout({
   const trackingRuntime = buildTrackingRuntimeConfig(tracking);
   const localized = localizeGlobalSiteContent(business, locale, publicUi);
 
-  const baseUrl = absoluteUrl("/");
+  const baseUrl = seoAbsoluteUrl("/");
   const siteJsonLd = [
     buildOrganizationJsonLd(baseUrl, seo),
     buildWebSiteJsonLd(baseUrl, seo.organizationName),

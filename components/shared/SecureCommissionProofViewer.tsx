@@ -71,7 +71,11 @@ export function SecureCommissionProofViewer({
   }, [commissionId, labels.error, effectiveRefreshKey]);
 
   useEffect(() => {
-    void loadProof();
+    const timer = window.setTimeout(() => {
+      void loadProof();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [loadProof]);
 
   if (isLoading) {

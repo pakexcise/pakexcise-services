@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import { cookies } from "next/headers";
 
 import "@/app/globals.css";
 import { BrandThemeStyles } from "@/components/theme/BrandThemeStyles";
+import { shouldAllowSearchIndexing } from "@/config/env.server";
 import { defaultLocale, LOCALE_COOKIE_NAME } from "@/i18n/config";
 import { isValidLocale } from "@/i18n/locale";
 
@@ -21,6 +23,23 @@ const notoNastaliq = Noto_Nastaliq_Urdu({
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
 });
+
+export function generateMetadata(): Metadata {
+  if (!shouldAllowSearchIndexing()) {
+    return {
+      robots: {
+        index: false,
+        follow: false,
+        googleBot: {
+          index: false,
+          follow: false,
+        },
+      },
+    };
+  }
+
+  return {};
+}
 
 export default async function RootLayout({
   children,

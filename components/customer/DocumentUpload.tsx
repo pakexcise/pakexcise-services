@@ -216,12 +216,7 @@ export function DocumentUpload({
     previewError: labels.previewError ?? defaultPreviewLabels.previewError,
     previewOpen: labels.previewOpen ?? defaultPreviewLabels.previewOpen,
   };
-
-  useEffect(() => {
-    if (uploaded) {
-      setError(null);
-    }
-  }, [uploaded]);
+  const visibleError = uploaded ? null : error;
 
   function handlePickFile() {
     inputRef.current?.click();
@@ -419,9 +414,9 @@ export function DocumentUpload({
         />
       ) : null}
 
-      {error ? (
+      {visibleError ? (
         <p className="mt-3 text-sm text-destructive" role="alert">
-          {error}
+          {visibleError}
         </p>
       ) : null}
     </div>

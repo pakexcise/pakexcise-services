@@ -2,6 +2,8 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 
+import { getPublicAppUrl } from "@/config/env.shared";
+
 import {
   buildApplicationDocumentKey,
   COMPLETION_PROOF_DOC_TYPE,
@@ -446,7 +448,7 @@ export async function handleSignedUrl(
   }
 
   if (usesLocalDevStorage()) {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const appUrl = getPublicAppUrl();
 
     return {
       signedUrl: `${appUrl.replace(/\/$/, "")}/api/documents/${document.id}/content`,

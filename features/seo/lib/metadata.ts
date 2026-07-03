@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 
 import { brandingAssets, getDefaultOgImagePath } from "@/config/branding";
+import { shouldAllowSearchIndexing } from "@/config/env.server";
 import type { SeoSettings } from "@/features/settings/types";
-import { absoluteUrl, publicPath } from "@/lib/utils";
+import {
+  resolveSeoCanonicalUrl,
+  resolveSeoImageUrl,
+  seoAbsoluteUrl,
+} from "@/lib/seo-url";
+import { publicPath } from "@/lib/utils";
 
 export type SeoInput = {
   title: string;
@@ -21,15 +27,48 @@ export type SeoInput = {
   alternates?: Record<string, string>;
 };
 
+function buildNonProductionMetadata(input: SeoInput): Metadata {
+  return {
+    title: input.title,
+    description: input.description,
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false,
+      },
+    },
+    openGraph: {
+      title: input.ogTitle ?? input.title,
+      description: input.ogDescription ?? input.description,
+      siteName: "PakExcise.com",
+      locale: input.locale === "ur" ? "ur_PK" : "en_PK",
+      type: "website",
+    },
+    twitter: {
+      card: input.twitterCard ?? "summary_large_image",
+      title: input.ogTitle ?? input.title,
+      description: input.ogDescription ?? input.description,
+    },
+  };
+}
+
 export function buildMetadata(input: SeoInput): Metadata {
-  const canonical = input.canonical ?? absoluteUrl(publicPath(input.path));
+  if (!shouldAllowSearchIndexing()) {
+    return buildNonProductionMetadata(input);
+  }
+
+  const canonical =
+    resolveSeoCanonicalUrl({
+      path: input.path,
+      canonical: input.canonical,
+    }) ?? seoAbsoluteUrl(publicPath(input.path));
   const ogTitle = input.ogTitle ?? input.title;
   const ogDescription = input.ogDescription ?? input.description;
-  const ogImage = input.ogImage
-    ? input.ogImage.startsWith("http")
-      ? input.ogImage
-      : absoluteUrl(input.ogImage)
-    : absoluteUrl(getDefaultOgImagePath(input.locale));
+  const ogImage =
+    resolveSeoImageUrl(input.ogImage) ??
+    resolveSeoImageUrl(getDefaultOgImagePath(input.locale));
 
   return {
     title: input.title,
@@ -197,4 +236,3 @@ export function buildServiceJsonLd(input: {
     areaServed: input.areaServed ?? "Pakistan",
   };
 }
-

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { FileUp, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -84,22 +84,13 @@ export function PaymentUpload({
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(screenshotFileName ?? null);
-  const [previewRevision, setPreviewRevision] = useState(0);
+  const [localFileNameOverride, setLocalFileNameOverride] = useState<string | null>(
+    null,
+  );
+  const [uploadPreviewRevision, setUploadPreviewRevision] = useState(0);
   const [isPending, startTransition] = useTransition();
-  const previousScreenshotFileNameRef = useRef(screenshotFileName);
-
-  useEffect(() => {
-    setFileName(screenshotFileName ?? null);
-
-    if (previousScreenshotFileNameRef.current !== screenshotFileName) {
-      previousScreenshotFileNameRef.current = screenshotFileName;
-
-      if (screenshotFileName) {
-        setPreviewRevision((current) => current + 1);
-      }
-    }
-  }, [screenshotFileName]);
+  const fileName = localFileNameOverride ?? screenshotFileName ?? null;
+  const previewRefreshKey = `${screenshotFileName ?? ""}:${uploadPreviewRevision}`;
 
   const uiStatus = resolvePaymentProofUiStatus(paymentStatus, applicationStatus);
   const canUpload = canReplacePaymentProof(applicationStatus, paymentStatus);
@@ -195,8 +186,8 @@ export function PaymentUpload({
           payment_id: paymentId,
         });
 
-        setFileName(file.name);
-        setPreviewRevision((current) => current + 1);
+        setLocalFileNameOverride(file.name);
+        setUploadPreviewRevision((current) => current + 1);
         onUploaded?.();
         broadcastApplicationUpdate();
         router.refresh();
@@ -242,7 +233,7 @@ export function PaymentUpload({
         <SecurePaymentViewer
           paymentId={paymentId}
           fileName={fileName}
-          refreshKey={previewRevision}
+          refreshKey={previewRefreshKey}
           labels={labels.viewer}
         />
       ) : null}

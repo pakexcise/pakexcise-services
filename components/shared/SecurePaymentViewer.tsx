@@ -12,6 +12,7 @@ import {
   FilePreviewFrame,
 } from "@/components/shared/file-preview-frame";
 import { subscribeToApplicationUpdates } from "@/features/realtime/broadcast-application-update";
+import { getPublicAppUrl } from "@/config/env.shared";
 
 type SecurePaymentViewerProps = {
   paymentId: string;
@@ -50,7 +51,7 @@ function withPreviewCacheBuster(
   try {
     const url = new URL(
       signedUrl,
-      typeof window !== "undefined" ? window.location.origin : "http://localhost",
+      typeof window !== "undefined" ? window.location.origin : getPublicAppUrl(),
     );
 
     if (url.pathname.endsWith("/content")) {

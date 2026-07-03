@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { FaqCollapsibleList } from "@/components/marketing/faq-collapsible-item";
 import { Input } from "@/components/ui/input";
@@ -62,17 +62,13 @@ export function FaqExplorer({ groups, labels }: FaqExplorerProps) {
     [filteredGroups],
   );
 
-  const [openId, setOpenId] = useState<string | null>(
+  const [selectedOpenId, setSelectedOpenId] = useState<string | null>(
     () => groups[0]?.items[0]?.id ?? null,
   );
-
-  useEffect(() => {
-    if (!openId || visibleItems.some((item) => item.id === openId)) {
-      return;
-    }
-
-    setOpenId(visibleItems[0]?.id ?? null);
-  }, [openId, visibleItems]);
+  const openId =
+    selectedOpenId && visibleItems.some((item) => item.id === selectedOpenId)
+      ? selectedOpenId
+      : (visibleItems[0]?.id ?? null);
 
   return (
     <div className="space-y-6">
@@ -135,7 +131,7 @@ export function FaqExplorer({ groups, labels }: FaqExplorerProps) {
               <FaqCollapsibleList
                 items={group.items}
                 openId={openId}
-                onOpenChange={setOpenId}
+                onOpenChange={setSelectedOpenId}
                 defaultOpenFirst={false}
               />
             </section>

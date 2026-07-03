@@ -8,5 +8,5 @@ Sentry.init({
   tracesSampleRate: 0.1,
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0,
-  environment: process.env.NODE_ENV,
+  environment: process.env.APP_ENV ?? process.env.NODE_ENV,
 });

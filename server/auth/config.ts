@@ -5,6 +5,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP } from "better-auth/plugins";
 
 import { authConfig } from "@/config/auth";
+import { getPublicAppUrl } from "@/config/env.shared";
 import { prisma } from "@/server/db/client";
 import { sendEmailOtp } from "@/server/notifications/send-email-otp";
 import { sendTransactionalEmail } from "@/server/notifications/send-email";
@@ -109,16 +110,16 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
-    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+    process.env.BETTER_AUTH_URL?.replace(/\/$/, "") ?? getPublicAppUrl(),
+    getPublicAppUrl(),
   ],
   advanced: {
     cookiePrefix: "better-auth",
-    useSecureCookies: process.env.NODE_ENV === "production",
+    useSecureCookies: process.env.APP_ENV !== "development",
     defaultCookieAttributes: {
       sameSite: "strict",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.APP_ENV !== "development",
     },
   },
 });

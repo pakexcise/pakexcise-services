@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import * as LucideIcons from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -59,8 +60,11 @@ function SocialIcon({
     );
   }
 
-  const Icon = resolveSocialIcon(iconName);
-  return <Icon className={className ?? "size-5 shrink-0 text-primary"} aria-hidden="true" />;
+  const IconComponent = resolveSocialIcon(iconName);
+  return createElement(IconComponent, {
+    className: className ?? "size-5 shrink-0 text-primary",
+    "aria-hidden": "true",
+  });
 }
 
 const FOOTER_PLATFORM_STYLES: Record<string, string> = {

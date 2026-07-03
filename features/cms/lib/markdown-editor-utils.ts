@@ -61,7 +61,7 @@ export function prefixSelectedLines(
 ): { value: string; start: number; end: number } {
   const { start, end, value } = selection;
 
-  let lineStart = value.lastIndexOf("\n", start - 1) + 1;
+  const lineStart = value.lastIndexOf("\n", start - 1) + 1;
   let lineEnd = value.indexOf("\n", end);
   if (lineEnd === -1) {
     lineEnd = value.length;
@@ -105,7 +105,7 @@ export function applyHeadingPrefix(
 ): { value: string; start: number; end: number } {
   const { start, end, value } = selection;
 
-  let lineStart = value.lastIndexOf("\n", start - 1) + 1;
+  const lineStart = value.lastIndexOf("\n", start - 1) + 1;
   let lineEnd = value.indexOf("\n", end);
   if (lineEnd === -1) {
     lineEnd = value.length;

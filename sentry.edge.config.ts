@@ -6,5 +6,5 @@ Sentry.init({
   dsn,
   enabled: Boolean(dsn),
   tracesSampleRate: 0.1,
-  environment: process.env.NODE_ENV,
+  environment: process.env.APP_ENV ?? process.env.NODE_ENV,
 });

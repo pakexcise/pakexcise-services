@@ -1,9 +1,11 @@
+import { getPublicAppUrl } from "@/config/env.shared";
+
 export const siteConfig = {
   name: "PakExcise.com",
   legalName: "PakExcise Private Facilitation Services",
   description:
     "Private excise facilitation service for Pakistan. Not affiliated with any government body.",
-  url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  url: getPublicAppUrl(),
   defaultLocale: "en" as const,
   locales: ["en", "ur"] as const,
   defaultTheme: "system" as const,

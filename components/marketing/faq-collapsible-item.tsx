@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -83,7 +83,11 @@ export function FaqCollapsibleList({
   );
 
   const isControlled = controlledOpenId !== undefined;
-  const openId = isControlled ? controlledOpenId : internalOpenId;
+  const openId = isControlled
+    ? controlledOpenId
+    : internalOpenId && items.some((item) => item.id === internalOpenId)
+      ? internalOpenId
+      : resolveDefaultOpenId(items, defaultOpenFirst);
 
   const setOpenId = (id: string | null) => {
     if (onOpenChange) {
@@ -93,18 +97,6 @@ export function FaqCollapsibleList({
 
     setInternalOpenId(id);
   };
-
-  useEffect(() => {
-    if (isControlled) {
-      return;
-    }
-
-    if (!openId || items.some((item) => item.id === openId)) {
-      return;
-    }
-
-    setInternalOpenId(resolveDefaultOpenId(items, defaultOpenFirst));
-  }, [defaultOpenFirst, isControlled, items, openId]);
 
   function handleToggle(itemId: string) {
     setOpenId(openId === itemId ? null : itemId);

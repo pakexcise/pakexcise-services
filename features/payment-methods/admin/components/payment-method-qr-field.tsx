@@ -2,7 +2,7 @@
 
 import { ImageIcon, Loader2, Trash2, Upload } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -45,11 +45,14 @@ export function PaymentMethodQrField({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [previewVersion, setPreviewVersion] = useState(0);
-  const [qrPresent, setQrPresent] = useState(hasQr);
-
-  useEffect(() => {
-    setQrPresent(hasQr);
-  }, [hasQr, paymentMethodId]);
+  const [optimisticQrState, setOptimisticQrState] = useState<{
+    methodId: string;
+    present: boolean;
+  } | null>(null);
+  const qrPresent =
+    optimisticQrState?.methodId === paymentMethodId
+      ? optimisticQrState.present
+      : hasQr;
 
   const previewUrl = qrPresent
     ? `/api/admin/payment-methods/${paymentMethodId}/qr-content?v=${previewVersion}`
@@ -113,7 +116,7 @@ export function PaymentMethodQrField({
           return;
         }
 
-        setQrPresent(true);
+        setOptimisticQrState({ methodId: paymentMethodId, present: true });
         setPreviewVersion((current) => current + 1);
         router.refresh();
       } catch {
@@ -142,7 +145,7 @@ export function PaymentMethodQrField({
           return;
         }
 
-        setQrPresent(false);
+        setOptimisticQrState({ methodId: paymentMethodId, present: false });
         setPreviewVersion((current) => current + 1);
         router.refresh();
       } catch {

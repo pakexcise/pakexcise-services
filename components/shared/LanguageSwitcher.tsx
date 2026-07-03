@@ -22,18 +22,10 @@ export function LanguageSwitcher() {
   const t = useTranslations("common");
   const [targetLocale, setTargetLocale] = useState<Locale | null>(null);
 
-  const isSwitching = targetLocale !== null;
+  const isSwitching = targetLocale !== null && locale !== targetLocale;
 
   useEffect(() => {
-    if (!targetLocale || locale !== targetLocale) {
-      return;
-    }
-
-    setTargetLocale(null);
-  }, [locale, targetLocale]);
-
-  useEffect(() => {
-    if (!targetLocale) {
+    if (!isSwitching) {
       return;
     }
 
@@ -42,7 +34,7 @@ export function LanguageSwitcher() {
     }, 12_000);
 
     return () => window.clearTimeout(timeout);
-  }, [targetLocale]);
+  }, [isSwitching, targetLocale]);
 
   async function handleSelect(nextLocale: Locale) {
     if (nextLocale === locale || isSwitching) {
@@ -69,7 +61,7 @@ export function LanguageSwitcher() {
       <div className="inline-flex rounded-lg border bg-muted/40 p-0.5">
         {siteConfig.locales.map((option) => {
           const isActive = locale === option;
-          const isTarget = targetLocale === option;
+          const isTarget = targetLocale === option && locale !== targetLocale;
 
           return (
             <button
@@ -86,7 +78,7 @@ export function LanguageSwitcher() {
                 isActive
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
-                isTarget && !isActive && "text-foreground/80",
+              isTarget && !isActive && "text-foreground/80",
                 option === "ur" && "font-[family-name:var(--font-urdu)]",
               )}
             >

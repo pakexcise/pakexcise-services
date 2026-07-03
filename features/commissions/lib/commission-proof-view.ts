@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getPublicAppUrl } from "@/config/env.shared";
 import type { CurrentUser } from "@/server/auth/current-user";
 import { prisma } from "@/server/db/client";
 import { createPresignedDownloadUrl } from "@/server/r2/presign-download";
@@ -87,7 +88,7 @@ export async function handleCommissionProofUrl(
   }
 
   if (usesLocalDevStorage()) {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const appUrl = getPublicAppUrl();
 
     return {
       signedUrl: `${appUrl.replace(/\/$/, "")}/api/commissions/${commission.id}/content`,

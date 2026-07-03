@@ -1,8 +1,18 @@
 import type { MetadataRoute } from "next";
 
-import { absoluteUrl } from "@/lib/utils";
+import { shouldAllowSearchIndexing } from "@/config/env.server";
+import { seoAbsoluteUrl } from "@/lib/seo-url";
 
 export default function robots(): MetadataRoute.Robots {
+  if (!shouldAllowSearchIndexing()) {
+    return {
+      rules: {
+        userAgent: "*",
+        disallow: "/",
+      },
+    };
+  }
+
   return {
     rules: [
       {
@@ -11,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin/", "/customer/", "/agent/", "/api/"],
       },
     ],
-    sitemap: absoluteUrl("/sitemap.xml"),
+    sitemap: seoAbsoluteUrl("/sitemap.xml"),
   };
 }

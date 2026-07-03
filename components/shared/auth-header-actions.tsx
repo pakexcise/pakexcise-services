@@ -1,7 +1,7 @@
 "use client";
 
 import { LogIn } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import { AuthHeaderButton } from "@/components/shared/auth-header-button";
 import {
@@ -55,12 +55,12 @@ export function AuthHeaderActions({
   variant = "desktop",
   onNavigate,
 }: AuthHeaderActionsProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const { data: session, isPending: sessionPending } = useSession();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted || sessionPending) {
     return (

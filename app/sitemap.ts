@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 
+import { shouldAllowSearchIndexing } from "@/config/env.server";
 import { getFeatureFlagSettings, getSeoSettings } from "@/features/settings/lib/public-settings-cache";
-import { absoluteUrl } from "@/lib/utils";
+import { seoAbsoluteUrl } from "@/lib/seo-url";
 import {
   blogPostRepository,
   cityRepository,
@@ -38,6 +39,10 @@ const staticPaths: Array<{
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (!shouldAllowSearchIndexing()) {
+    return [];
+  }
+
   const [featureFlags, seoSettings] = await Promise.all([
     getFeatureFlagSettings(),
     getSeoSettings(),
@@ -76,42 +81,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const staticEntries: MetadataRoute.Sitemap = activeStaticPaths.map((entry) => ({
-    url: absoluteUrl(entry.path),
+    url: seoAbsoluteUrl(entry.path),
     lastModified: new Date(),
     changeFrequency: entry.changeFrequency,
     priority: entry.priority,
   }));
 
   const serviceEntries: MetadataRoute.Sitemap = services.map((service) => ({
-    url: absoluteUrl(`/services/${service.slug}`),
+    url: seoAbsoluteUrl(`/services/${service.slug}`),
     lastModified: service.updatedAt,
     changeFrequency: "weekly",
     priority: 0.8,
   }));
 
   const regionEntries: MetadataRoute.Sitemap = regions.map((region) => ({
-    url: absoluteUrl(`/regions/${region.slug}`),
+    url: seoAbsoluteUrl(`/regions/${region.slug}`),
     lastModified: region.updatedAt,
     changeFrequency: "weekly",
     priority: 0.7,
   }));
 
   const cityEntries: MetadataRoute.Sitemap = cities.map((city) => ({
-    url: absoluteUrl(`/regions/${city.regionSlug}/${city.citySlug}`),
+    url: seoAbsoluteUrl(`/regions/${city.regionSlug}/${city.citySlug}`),
     lastModified: city.updatedAt,
     changeFrequency: "weekly",
     priority: 0.65,
   }));
 
   const guideEntries: MetadataRoute.Sitemap = guides.map((guide) => ({
-    url: absoluteUrl(`/guides/${guide.slug}`),
+    url: seoAbsoluteUrl(`/guides/${guide.slug}`),
     lastModified: guide.updatedAt,
     changeFrequency: "monthly",
     priority: 0.6,
   }));
 
   const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: absoluteUrl(`/blog/${post.slug}`),
+    url: seoAbsoluteUrl(`/blog/${post.slug}`),
     lastModified: post.updatedAt,
     changeFrequency: "monthly",
     priority: 0.6,

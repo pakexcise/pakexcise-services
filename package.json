@@ -32,6 +32,7 @@
     "db:setup": "docker compose up -d && node scripts/sync-env.mjs && prisma db push && tsx prisma/seed.ts",
     "db:studio": "node scripts/sync-env.mjs && prisma studio",
     "env:sync": "node scripts/sync-env.mjs",
+    "env:validate": "node scripts/sync-env.mjs && tsx --env-file=.env scripts/validate-env.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

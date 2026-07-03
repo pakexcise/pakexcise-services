@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getPublicAppUrl } from "@/config/env.shared";
 import { canViewPaymentScreenshot } from "@/features/payments/lib/payment-access";
 import type { CurrentUser } from "@/server/auth/current-user";
 import { prisma } from "@/server/db/client";
@@ -59,7 +60,7 @@ export async function handlePaymentScreenshotUrl(
   }
 
   if (usesLocalDevStorage()) {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const appUrl = getPublicAppUrl();
 
     return {
       signedUrl: `${appUrl.replace(/\/$/, "")}/api/payments/${payment.id}/content`,

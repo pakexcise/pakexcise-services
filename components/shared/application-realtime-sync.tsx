@@ -49,11 +49,13 @@ export function ApplicationRealtimeSync({
   const pathname = usePathname();
   const applicationId = extractApplicationIdFromPath(pathname);
   const routerRef = useRef(router);
-  const sinceRef = useRef(Date.now());
+  const sinceRef = useRef(0);
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pollInFlightRef = useRef(false);
 
-  routerRef.current = router;
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
 
   useEffect(() => {
     sinceRef.current = Date.now();

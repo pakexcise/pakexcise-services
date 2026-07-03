@@ -3,6 +3,7 @@ import "server-only";
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 
 import { authConfig } from "@/config/auth";
+import { getPublicAppUrl } from "@/config/env.shared";
 import { AuthError } from "@/lib/errors/auth-errors";
 
 function hashToken(token: string): string {
@@ -44,18 +45,10 @@ export function verifyCsrfToken(
 }
 
 export function getAllowedOrigins(): string[] {
-  const origins = new Set<string>();
-
-  if (process.env.NEXT_PUBLIC_APP_URL) {
-    origins.add(process.env.NEXT_PUBLIC_APP_URL);
-  }
+  const origins = new Set<string>([getPublicAppUrl()]);
 
   if (process.env.BETTER_AUTH_URL) {
-    origins.add(process.env.BETTER_AUTH_URL);
-  }
-
-  if (process.env.NODE_ENV !== "production") {
-    origins.add("http://localhost:3000");
+    origins.add(process.env.BETTER_AUTH_URL.replace(/\/$/, ""));
   }
 
   return [...origins];
