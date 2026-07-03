@@ -27,6 +27,10 @@ function parsePayload(notification: Notification): NotificationPayload | null {
 export async function processNotificationRecord(
   notification: Notification,
 ): Promise<ProcessNotificationResult> {
+  if (notification.channel === "IN_APP") {
+    return { ok: true };
+  }
+
   if (!notification.applicationId) {
     return { ok: false, error: "missing_application_id", retryable: false };
   }

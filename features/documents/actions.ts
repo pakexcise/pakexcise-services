@@ -20,6 +20,11 @@ import {
   handleRejectDocument,
   handleSignedUrl,
 } from "@/features/documents/lib/handlers";
+import {
+  rejectDocumentSchema,
+} from "@/lib/validations/documents";
+import { prisma } from "@/server/db/client";
+import { emitApplicationChange } from "@/server/realtime/application-events";
 import { requireUser } from "@/server/permissions/guards";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
 
@@ -101,6 +106,37 @@ export async function approveDocumentAction(
 ): Promise<ActionResult<{ documentId: string; status: "APPROVED" }>> {
   const user = await requireUser();
   const result = await handleApproveDocument(user, input);
+
+  if (!("error" in result)) {
+    const document = await prisma.document.findUnique({
+      where: { id: result.documentId },
+      select: {
+        applicationId: true,
+        application: {
+          select: {
+            status: true,
+            userId: true,
+            agentId: true,
+            trackingId: true,
+            locale: true,
+          },
+        },
+      },
+    });
+
+    if (document?.application) {
+      await emitApplicationChange({
+        applicationId: document.applicationId,
+        userId: document.application.userId,
+        agentId: document.application.agentId,
+        trackingId: document.application.trackingId,
+        locale: document.application.locale,
+        status: document.application.status,
+        changeType: "document",
+      });
+    }
+  }
+
   return mapHandlerError(result);
 }
 
@@ -108,7 +144,55 @@ export async function rejectDocumentAction(
   input: unknown,
 ): Promise<ActionResult<{ documentId: string; status: "REJECTED" }>> {
   const user = await requireUser();
-  const result = await handleRejectDocument(user, input);
+  const parsed = parseInput(rejectDocumentSchema, input);
+
+  if (!parsed.success) {
+    return parsed;
+  }
+
+  const result = await handleRejectDocument(user, parsed.data);
+
+  if (!("error" in result)) {
+    const document = await prisma.document.findUnique({
+      where: { id: result.documentId },
+      select: {
+        applicationId: true,
+        application: {
+          select: {
+            status: true,
+            userId: true,
+            agentId: true,
+            trackingId: true,
+            locale: true,
+            service: {
+              select: {
+                nameEn: true,
+                nameUr: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (document?.application) {
+      await emitApplicationChange({
+        applicationId: document.applicationId,
+        userId: document.application.userId,
+        agentId: document.application.agentId,
+        trackingId: document.application.trackingId,
+        locale: document.application.locale,
+        status: document.application.status,
+        changeType: "document",
+        notificationPayload: {
+          serviceName: document.application.service.nameEn,
+          serviceNameUr: document.application.service.nameUr,
+          reason: parsed.data.reason,
+        },
+      });
+    }
+  }
+
   return mapHandlerError(result);
 }
 

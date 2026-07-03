@@ -43,6 +43,16 @@
     "banner": "PakExcise.com ایک نجی سہولت سروس ہے اور کسی بھی سرکاری محکمے سے وابستہ نہیں ہے۔",
     "short": "نجی سروس — سرکاری ویب سائٹ نہیں۔"
   },
+  "realtime": {
+    "notifications": {
+      "title": "اطلاعات",
+      "empty": "ابھی کوئی اطلاع نہیں۔",
+      "markRead": "پڑھا ہوا",
+      "markAllRead": "سب پڑھے ہوئے",
+      "viewApplication": "درخواست دیکھیں",
+      "bellAria": "{count, plural, =0 {اطلاعات} other {اطلاعات، {count} غیر پڑھی}}"
+    }
+  },
   "nav": {
     "home": "ہوم",
     "services": "خدمات",

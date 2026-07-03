@@ -72,10 +72,27 @@ Public measurement IDs can be set in **Admin → Settings → Social & tracking*
 ## 11. App host (Vercel / similar)
 
 - [ ] Set `NEXT_PUBLIC_APP_URL=https://your-domain.com`
+- [ ] Set `REALTIME_DRIVER=memory` on a single PM2 instance (use `valkey` when running multiple app instances with Redis pub/sub)
 - [ ] Node 20 runtime
 - [ ] Build: `pnpm build`
 - [ ] Start: `pnpm start`
 - [ ] Schedule cron/QStash to `POST /api/notifications/process` with `NOTIFICATION_DISPATCH_SECRET`
+
+### Nginx SSE (real-time stream)
+
+Customer/agent dashboards use Server-Sent Events at `/api/realtime/stream`. Disable buffering for that route or connections may stall:
+
+```nginx
+location /api/realtime/ {
+  proxy_pass http://127.0.0.1:3000;
+  proxy_http_version 1.1;
+  proxy_set_header Connection "";
+  proxy_buffering off;
+  proxy_cache off;
+  proxy_read_timeout 3600s;
+  add_header Cache-Control "no-cache, no-transform";
+}
+```
 
 ## 12. Security verification
 

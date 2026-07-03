@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { CustomerApplicationsPanel } from "@/components/customer/customer-applications-panel";
+import { CustomerApplicationsLivePanel } from "@/components/customer/customer-applications-live-panel";
 import { CustomerDashboardHero } from "@/components/customer/customer-dashboard-hero";
 import { CustomerDashboardStats } from "@/components/customer/customer-dashboard-stats";
 import { CustomerQuickActions } from "@/components/customer/customer-quick-actions";
@@ -127,8 +127,11 @@ export default async function CustomerDashboardPage() {
         }))}
       />
 
-      <CustomerApplicationsPanel
-        applications={applicationRows}
+      <CustomerApplicationsLivePanel
+        initialApplications={applicationRows}
+        statusLabel={(status) => tStatus(getApplicationStatusLabelKey(status))}
+        nextActionLabel={(action) => tNextAction(action)}
+        formatUpdatedAt={(iso) => formatDateTime(iso, locale)}
         title={t("applicationsTitle")}
         countLabel={t("applicationsCount", { count: applications.length })}
         emptyTitle={t("emptyTitle")}

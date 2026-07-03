@@ -4,7 +4,11 @@ import type { ApplicationStatus, UserRole } from "@prisma/client";
 
 import { getRedisClient } from "@/server/cache/redis-client";
 import { prisma } from "@/server/db/client";
+import { deliverInAppApplicationUpdate } from "@/features/notifications/in-app/deliver-application-update";
 import { revalidateApplicationPages } from "@/server/realtime/revalidate-application-pages";
+import {
+  publishApplicationUpdatedEvent,
+} from "@/server/realtime/stream-events";
 
 export type ApplicationChangeType =
   | "status"
@@ -83,14 +87,39 @@ export async function emitApplicationChange(input: {
   changeType: ApplicationChangeType;
   userId?: string;
   agentId?: string | null;
+  trackingId?: string;
+  locale?: string;
+  notifyInApp?: boolean;
+  notificationPayload?: {
+    serviceName?: string;
+    serviceNameUr?: string;
+    note?: string;
+    toStatus?: string;
+    fromStatus?: string;
+    reason?: string;
+    invoiceNumber?: string;
+  };
 }): Promise<void> {
   let userId = input.userId;
   let agentId = input.agentId ?? null;
+  let trackingId = input.trackingId;
+  let locale = input.locale ?? "en";
 
-  if (!userId) {
+  if (!userId || !trackingId) {
     const application = await prisma.application.findUnique({
       where: { id: input.applicationId },
-      select: { userId: true, agentId: true },
+      select: {
+        userId: true,
+        agentId: true,
+        trackingId: true,
+        locale: true,
+        service: {
+          select: {
+            nameEn: true,
+            nameUr: true,
+          },
+        },
+      },
     });
 
     if (!application) {
@@ -99,6 +128,68 @@ export async function emitApplicationChange(input: {
 
     userId = application.userId;
     agentId = application.agentId;
+    trackingId = application.trackingId;
+    locale = application.locale ?? locale;
+
+    if (input.notifyInApp !== false) {
+      await deliverInAppApplicationUpdate({
+        applicationId: input.applicationId,
+        customerUserId: userId,
+        agentId,
+        trackingId,
+        locale,
+        status: input.status,
+        changeType: input.changeType,
+        payload: {
+          serviceName:
+            input.notificationPayload?.serviceName ?? application.service.nameEn,
+          serviceNameUr:
+            input.notificationPayload?.serviceNameUr ?? application.service.nameUr,
+          note: input.notificationPayload?.note,
+          toStatus:
+            (input.notificationPayload?.toStatus as ApplicationStatus | undefined) ??
+            (input.status as ApplicationStatus),
+          reason: input.notificationPayload?.reason,
+          invoiceNumber: input.notificationPayload?.invoiceNumber,
+        },
+      });
+    } else {
+      publishApplicationUpdatedEvent({
+        recipientUserIds: [userId, agentId],
+        applicationId: input.applicationId,
+        trackingId,
+        status: input.status,
+        changeType: input.changeType,
+      });
+    }
+  } else if (input.notifyInApp !== false) {
+    await deliverInAppApplicationUpdate({
+      applicationId: input.applicationId,
+      customerUserId: userId,
+      agentId,
+      trackingId: trackingId ?? input.applicationId,
+      locale,
+      status: input.status,
+      changeType: input.changeType,
+      payload: {
+        serviceName: input.notificationPayload?.serviceName,
+        serviceNameUr: input.notificationPayload?.serviceNameUr,
+        note: input.notificationPayload?.note,
+        toStatus:
+          (input.notificationPayload?.toStatus as ApplicationStatus | undefined) ??
+          (input.status as ApplicationStatus),
+        reason: input.notificationPayload?.reason,
+        invoiceNumber: input.notificationPayload?.invoiceNumber,
+      },
+    });
+  } else {
+    publishApplicationUpdatedEvent({
+      recipientUserIds: [userId, agentId],
+      applicationId: input.applicationId,
+      trackingId: trackingId ?? input.applicationId,
+      status: input.status,
+      changeType: input.changeType,
+    });
   }
 
   const event: ApplicationRealtimeEvent = {

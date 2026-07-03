@@ -43,6 +43,16 @@
     "banner": "PakExcise.com is a private facilitation service and is not affiliated with any government department.",
     "short": "Private service — not a government website."
   },
+  "realtime": {
+    "notifications": {
+      "title": "Notifications",
+      "empty": "No notifications yet.",
+      "markRead": "Mark read",
+      "markAllRead": "Mark all read",
+      "viewApplication": "View application",
+      "bellAria": "{count, plural, =0 {Notifications} other {Notifications, {count} unread}}"
+    }
+  },
   "nav": {
     "home": "Home",
     "services": "Services",

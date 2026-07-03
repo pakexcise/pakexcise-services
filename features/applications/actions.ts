@@ -160,8 +160,17 @@ export async function transitionApplicationStatusAction(
     applicationId: application.id,
     userId: application.userId,
     agentId: application.agentId,
+    trackingId: application.trackingId,
+    locale: application.locale,
     status: parsed.data.toStatus,
     changeType: "status",
+    notificationPayload: {
+      serviceName: application.service.nameEn,
+      serviceNameUr: application.service.nameUr,
+      note: parsed.data.note,
+      fromStatus,
+      toStatus: parsed.data.toStatus,
+    },
   });
 
   if (parsed.data.toStatus === "COMPLETED" && application.agentId) {

@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-import { ApplicationRealtimeSync } from "@/components/shared/application-realtime-sync";
 import { AgentSidebar } from "@/components/agent/agent-sidebar";
 import { AgentTopbar } from "@/components/agent/agent-topbar";
 import type { AgentNavItem } from "@/config/agent-nav";
+import { RealtimeProvider } from "@/features/realtime/context/realtime-provider";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 type AgentShellProps = {
@@ -19,15 +19,15 @@ type AgentShellProps = {
 export function AgentShell({
   children,
   navItems,
-  userId,
+  userId: _userId,
   userName,
   userContactLine,
 }: AgentShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background">
-      <ApplicationRealtimeSync userId={userId} role="AGENT" />
+    <RealtimeProvider>
+      <div className="flex h-dvh overflow-hidden bg-background">
       <aside className="hidden w-64 shrink-0 flex-col border-r bg-card lg:flex">
         <AgentSidebar
           navItems={navItems}
@@ -61,6 +61,7 @@ export function AgentShell({
           {children}
         </main>
       </div>
-    </div>
+      </div>
+    </RealtimeProvider>
   );
 }

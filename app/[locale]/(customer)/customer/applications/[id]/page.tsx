@@ -4,14 +4,13 @@ import { notFound } from "next/navigation";
 
 import { ApplicationCompletedTracker } from "@/components/analytics/ApplicationCompletedTracker";
 import { ApplicationDocumentsPanel } from "@/components/customer/ApplicationDocumentsPanel";
+import { CustomerApplicationLiveSummary } from "@/components/customer/customer-application-live-summary";
+import { CustomerApplicationLiveTimeline } from "@/components/customer/customer-application-live-timeline";
 import { InvoiceView } from "@/components/customer/InvoiceView";
-import { NextActionBadge } from "@/components/customer/NextActionBadge";
 import { PaymentUpload } from "@/components/customer/PaymentUpload";
 import { ProofDownload } from "@/components/customer/ProofDownload";
-import { StatusTimeline } from "@/components/customer/StatusTimeline";
 import { ApplicantDetailsSummary } from "@/components/shared/ApplicantDetailsSummary";
 import { SubmittedDataSummary } from "@/components/customer/SubmittedDataSummary";
-import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { buildDocumentStatusLabels } from "@/features/documents/lib/build-document-status-labels";
 import {
@@ -136,26 +135,25 @@ export default async function CustomerApplicationPage({
         </Button>
       </div>
 
+      <CustomerApplicationLiveSummary
+        applicationId={application.id}
+        initialStatus={application.status}
+        initialStatusLabel={statusLabel(application.status)}
+        initialNextAction={nextAction}
+        initialNextActionLabel={tNextAction(nextAction)}
+        initialUpdatedAt={formatDateTime(application.updatedAt, locale)}
+        labels={{
+          status: t("status"),
+          nextAction: t("nextAction"),
+          updated: t("updated"),
+        }}
+        statusLabel={statusLabel}
+        nextActionLabel={(action) => tNextAction(action)}
+        formatUpdatedAt={(iso) => formatDateTime(iso, locale)}
+      />
+
       <div className="rounded-xl border p-5">
         <dl className="grid gap-3 text-sm sm:grid-cols-2">
-          <div className="flex items-center justify-between gap-3 sm:col-span-2">
-            <dt className="text-muted-foreground">{t("status")}</dt>
-            <dd>
-              <ApplicationStatusBadge
-                status={application.status}
-                label={statusLabel(application.status)}
-              />
-            </dd>
-          </div>
-          <div className="flex justify-between gap-3">
-            <dt className="text-muted-foreground">{t("nextAction")}</dt>
-            <dd>
-              <NextActionBadge
-                action={nextAction}
-                label={tNextAction(nextAction)}
-              />
-            </dd>
-          </div>
           <div className="flex justify-between gap-3">
             <dt className="text-muted-foreground">{t("service")}</dt>
             <dd>{serviceName}</dd>
@@ -164,16 +162,13 @@ export default async function CustomerApplicationPage({
             <dt className="text-muted-foreground">{t("submitted")}</dt>
             <dd>{formatDateTime(application.createdAt, locale)}</dd>
           </div>
-          <div className="flex justify-between gap-3">
-            <dt className="text-muted-foreground">{t("updated")}</dt>
-            <dd>{formatDateTime(application.updatedAt, locale)}</dd>
-          </div>
         </dl>
       </div>
 
-      <StatusTimeline
-        entries={application.statusHistory}
-        currentStatus={application.status}
+      <CustomerApplicationLiveTimeline
+        applicationId={application.id}
+        initialEntries={application.statusHistory}
+        initialCurrentStatus={application.status}
         locale={locale}
         labels={{
           title: t("timeline.title"),

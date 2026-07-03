@@ -11,7 +11,7 @@ import { AgentNextActionBadge } from "@/components/agent/AgentNextActionBadge";
 import { InvoiceView } from "@/components/customer/InvoiceView";
 import { PaymentUpload } from "@/components/customer/PaymentUpload";
 import { ProofDownload } from "@/components/customer/ProofDownload";
-import { StatusTimeline } from "@/components/customer/StatusTimeline";
+import { CustomerApplicationLiveTimeline } from "@/components/customer/customer-application-live-timeline";
 import { SubmittedDataSummary } from "@/components/customer/SubmittedDataSummary";
 import { ApplicationSummaryCard } from "@/components/shared/ApplicationSummaryCard";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
@@ -180,9 +180,10 @@ export default async function AgentApplicationDetailPage({
         />
       ) : null}
 
-      <StatusTimeline
-        entries={application.statusHistory}
-        currentStatus={application.status}
+      <CustomerApplicationLiveTimeline
+        applicationId={application.id}
+        initialEntries={application.statusHistory}
+        initialCurrentStatus={application.status}
         locale={locale}
         labels={{
           title: t("timeline.title"),

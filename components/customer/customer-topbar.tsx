@@ -5,6 +5,7 @@ import { useTransition } from "react";
 
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
 import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -67,6 +68,7 @@ export function CustomerTopbar({
           </div>
         </div>
         <LanguageSwitcher />
+        <NotificationBell applicationBasePath="/customer/applications" />
         <ThemeToggle />
         <Button
           type="button"

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -65,6 +66,7 @@ export function AgentTopbar({
           </div>
         </div>
         <LanguageSwitcher />
+        <NotificationBell applicationBasePath="/agent/applications" />
         <ThemeToggle />
         <Button
           type="button"
