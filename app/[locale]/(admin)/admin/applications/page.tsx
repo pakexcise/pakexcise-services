@@ -18,6 +18,10 @@ import { applicationRepository } from "@/server/repositories/application-reposit
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { requireAdminPortal } from "@/server/permissions/guards";
 import { isSuperAdminRole } from "@/server/permissions/admin-scope";
+import {
+  getApplicationSubmissionSourceLabelKey,
+  resolveApplicationSubmissionSource,
+} from "@/features/applications/lib/resolve-submission-source";
 
 const validStatuses = new Set<string>([
   "SUBMITTED",
@@ -109,19 +113,27 @@ export default async function AdminApplicationsPage({
     applicationRepository.listServicesForFilter(),
   ]);
 
-  const rows = result.items.map((application) => ({
-    id: application.id,
-    trackingId: application.trackingId,
-    status: application.status,
-    createdAt: application.createdAt,
-    serviceName:
-      locale === "ur"
-        ? application.service.nameUr
-        : application.service.nameEn,
-    customerName: application.user.name ?? "—",
-    customerEmail: application.user.email,
-    statusLabel: t(getAdminApplicationStatusLabelKey(application.status)),
-  }));
+  const rows = result.items.map((application) => {
+    const submissionSource = resolveApplicationSubmissionSource({
+      agentId: application.agent?.id,
+      draftJson: application.draftJson,
+    });
+
+    return {
+      id: application.id,
+      trackingId: application.trackingId,
+      status: application.status,
+      createdAt: application.createdAt,
+      serviceName:
+        locale === "ur"
+          ? application.service.nameUr
+          : application.service.nameEn,
+      customerName: application.user.name ?? "—",
+      customerEmail: application.user.email,
+      statusLabel: t(getAdminApplicationStatusLabelKey(application.status)),
+      sourceLabel: t(getApplicationSubmissionSourceLabelKey(submissionSource)),
+    };
+  });
 
   return (
     <div className="space-y-6">
@@ -170,6 +182,7 @@ export default async function AdminApplicationsPage({
               trackingId: t("applications.columns.trackingId"),
               service: t("applications.columns.service"),
               customer: t("applications.columns.customer"),
+              source: t("applications.columns.source"),
               status: t("applications.columns.status"),
               created: t("applications.columns.created"),
               actions: t("applications.columns.actions"),

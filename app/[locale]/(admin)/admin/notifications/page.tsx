@@ -8,6 +8,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { AdminInAppNotificationsPanel } from "@/components/admin/admin-in-app-notifications-panel";
+import { AdminNotificationsPageClientEffects } from "@/components/admin/admin-notifications-page-client-effects";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { NotificationFilters } from "@/features/admin/components/notification-filters";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
@@ -126,6 +127,7 @@ export default async function AdminNotificationsPage({
 
   return (
     <div className="space-y-6">
+      <AdminNotificationsPageClientEffects />
       <AdminPageHeader
         title={t("notifications.title")}
         description={t("notifications.description")}

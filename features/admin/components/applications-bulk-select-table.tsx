@@ -26,6 +26,7 @@ type ApplicationRow = {
   customerName: string;
   customerEmail: string;
   statusLabel: string;
+  sourceLabel: string;
 };
 
 type ApplicationsBulkSelectTableProps = {
@@ -36,6 +37,7 @@ type ApplicationsBulkSelectTableProps = {
     trackingId: string;
     service: string;
     customer: string;
+    source: string;
     status: string;
     created: string;
     actions: string;
@@ -105,6 +107,7 @@ export function ApplicationsBulkSelectTable({
             <TableHead>{labels.trackingId}</TableHead>
             <TableHead>{labels.service}</TableHead>
             <TableHead>{labels.customer}</TableHead>
+            <TableHead>{labels.source}</TableHead>
             <TableHead>{labels.status}</TableHead>
             <TableHead>{labels.created}</TableHead>
             <TableHead className="text-right">{labels.actions}</TableHead>
@@ -133,6 +136,7 @@ export function ApplicationsBulkSelectTable({
                   </span>
                 </div>
               </TableCell>
+              <TableCell>{application.sourceLabel}</TableCell>
               <TableCell>
                 <ApplicationStatusBadge
                   status={application.status}

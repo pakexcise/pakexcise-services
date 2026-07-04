@@ -123,8 +123,12 @@ export function ApplicationEditorForm({
     setError(null);
     setFieldErrors({});
 
-    if (!values.userId || !values.serviceId) {
+    if (mode === "create" && (!values.userId.trim() || !values.serviceId.trim())) {
       setError(labels.saveFailed);
+      setFieldErrors({
+        ...(!values.userId.trim() ? { userId: [labels.saveFailed] } : {}),
+        ...(!values.serviceId.trim() ? { serviceId: [labels.saveFailed] } : {}),
+      });
       return;
     }
 
@@ -145,16 +149,23 @@ export function ApplicationEditorForm({
     }
 
     startTransition(async () => {
-      const payload = {
-        ...(mode === "edit" ? { id: applicationId! } : {}),
-        userId: values.userId,
-        serviceId: values.serviceId,
-        agentId: values.agentId || null,
-        locale: values.locale,
-        status: values.status,
-        adminNotes: values.adminNotes || null,
-        statusChangeNote: values.statusChangeNote.trim(),
-      };
+      const payload =
+        mode === "edit"
+          ? {
+              id: applicationId!,
+              status: values.status,
+              adminNotes: values.adminNotes.trim() || null,
+              statusChangeNote: values.statusChangeNote.trim(),
+            }
+          : {
+              userId: values.userId.trim(),
+              serviceId: values.serviceId.trim(),
+              agentId: values.agentId.trim() || null,
+              locale: values.locale,
+              status: values.status,
+              adminNotes: values.adminNotes.trim() || null,
+              statusChangeNote: values.statusChangeNote.trim(),
+            };
 
       const result =
         mode === "create"
@@ -176,6 +187,14 @@ export function ApplicationEditorForm({
     });
   }
 
+  const selectedCustomer = customers.find(
+    (customer) => customer.id === initialValues.userId,
+  );
+  const selectedService = services.find(
+    (service) => service.id === initialValues.serviceId,
+  );
+  const selectedAgent = agents.find((agent) => agent.id === initialValues.agentId);
+
   return (
     <div className="space-y-6">
       {error ? (
@@ -193,72 +212,116 @@ export function ApplicationEditorForm({
 
       <section className="space-y-4 rounded-xl border bg-card p-5">
         <h2 className="text-base font-semibold">{labels.sectionAssignment}</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="app-customer">{labels.customer}</Label>
-            <select
-              id="app-customer"
-              value={values.userId}
-              onChange={(event) => updateField("userId", event.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              required
-            >
-              <option value="">{labels.selectCustomer}</option>
-              {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {formatCustomerLabel(customer)}
-                </option>
-              ))}
-            </select>
+        {mode === "edit" ? (
+          <dl className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1 md:col-span-2">
+              <dt className="text-sm text-muted-foreground">{labels.customer}</dt>
+              <dd className="text-sm font-medium">
+                {selectedCustomer
+                  ? formatCustomerLabel(selectedCustomer)
+                  : initialValues.userId}
+              </dd>
+            </div>
+            <div className="space-y-1 md:col-span-2">
+              <dt className="text-sm text-muted-foreground">{labels.service}</dt>
+              <dd className="text-sm font-medium">
+                {selectedService
+                  ? locale === "ur"
+                    ? selectedService.nameUr
+                    : selectedService.nameEn
+                  : initialValues.serviceId}
+              </dd>
+            </div>
+            <div className="space-y-1 md:col-span-2">
+              <dt className="text-sm text-muted-foreground">{labels.agent}</dt>
+              <dd className="text-sm font-medium">
+                {selectedAgent
+                  ? formatAgentLabel(selectedAgent)
+                  : labels.noAgent}
+              </dd>
+            </div>
+            <div className="space-y-1">
+              <dt className="text-sm text-muted-foreground">
+                {labels.preferredLocale}
+              </dt>
+              <dd className="text-sm font-medium">
+                {initialValues.locale === "ur" ? "Urdu" : "English"}
+              </dd>
+            </div>
+          </dl>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="app-customer">{labels.customer}</Label>
+              <select
+                id="app-customer"
+                value={values.userId}
+                onChange={(event) => updateField("userId", event.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                required
+              >
+                <option value="">{labels.selectCustomer}</option>
+                {customers.map((customer) => (
+                  <option key={customer.id} value={customer.id}>
+                    {formatCustomerLabel(customer)}
+                  </option>
+                ))}
+              </select>
+              {fieldErrors.userId?.[0] ? (
+                <p className="text-xs text-destructive" role="alert">
+                  {fieldErrors.userId[0]}
+                </p>
+              ) : null}
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="app-service">{labels.service}</Label>
+              <select
+                id="app-service"
+                value={values.serviceId}
+                onChange={(event) => updateField("serviceId", event.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                required
+              >
+                <option value="">{labels.selectService}</option>
+                {services.map((service) => (
+                  <option key={service.id} value={service.id}>
+                    {locale === "ur" ? service.nameUr : service.nameEn}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="app-agent">{labels.agent}</Label>
+              <select
+                id="app-agent"
+                value={values.agentId}
+                onChange={(event) => updateField("agentId", event.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">{labels.noAgent}</option>
+                {agents.map((agent) => (
+                  <option key={agent.id} value={agent.id}>
+                    {formatAgentLabel(agent)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="app-locale">{labels.preferredLocale}</Label>
+              <select
+                id="app-locale"
+                value={values.locale}
+                onChange={(event) =>
+                  updateField("locale", event.target.value as "en" | "ur")
+                }
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="en">English</option>
+                <option value="ur">Urdu</option>
+              </select>
+            </div>
           </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="app-service">{labels.service}</Label>
-            <select
-              id="app-service"
-              value={values.serviceId}
-              onChange={(event) => updateField("serviceId", event.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              required
-            >
-              <option value="">{labels.selectService}</option>
-              {services.map((service) => (
-                <option key={service.id} value={service.id}>
-                  {locale === "ur" ? service.nameUr : service.nameEn}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="app-agent">{labels.agent}</Label>
-            <select
-              id="app-agent"
-              value={values.agentId}
-              onChange={(event) => updateField("agentId", event.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="">{labels.noAgent}</option>
-              {agents.map((agent) => (
-                <option key={agent.id} value={agent.id}>
-                  {formatAgentLabel(agent)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="app-locale">{labels.preferredLocale}</Label>
-            <select
-              id="app-locale"
-              value={values.locale}
-              onChange={(event) =>
-                updateField("locale", event.target.value as "en" | "ur")
-              }
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="en">English</option>
-              <option value="ur">Urdu</option>
-            </select>
-          </div>
-        </div>
+        )}
       </section>
 
       <section className="space-y-4 rounded-xl border bg-card p-5">

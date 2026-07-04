@@ -218,8 +218,11 @@ export async function submitApplicationAction(
         currentStep: 4,
         locale: parsed.data.locale,
         draftJson: {
+          ...draftJson,
           basic: parsed.data.basic,
           submittedAt: new Date().toISOString(),
+          submissionSource:
+            user.role === "AGENT" || draft.agentId ? "AGENT" : "WEB_FORM",
         },
         firstTouchSource: attribution?.firstTouchSource,
         firstTouchMedium: attribution?.firstTouchMedium,

@@ -96,7 +96,17 @@ export async function createApplicationAdminAction(
   const relationError = await validateApplicationRelations(data);
 
   if (relationError) {
-    return errorResult(relationError);
+    let fieldErrors: Record<string, string[]> | undefined;
+
+    if (relationError === "Customer not found.") {
+      fieldErrors = { userId: ["Selected customer was not found."] };
+    } else if (relationError === "Service not found.") {
+      fieldErrors = { serviceId: ["Selected service was not found."] };
+    } else if (relationError === "Agent not found.") {
+      fieldErrors = { agentId: ["Selected agent was not found."] };
+    }
+
+    return errorResult(relationError, fieldErrors);
   }
 
   const application = await applicationRepository.createAdmin({
@@ -144,10 +154,41 @@ export async function updateApplicationAdminAction(
   }
 
   const data = parsed.data;
-  const relationError = await validateApplicationRelations(data);
+  const resolvedUserId = data.userId ?? existing.user.id;
+  const resolvedServiceId = data.serviceId ?? existing.service.id;
+  const resolvedAgentId =
+    data.agentId !== undefined
+      ? data.agentId
+      : (existing.agent?.id ?? null);
+  const resolvedLocale =
+    data.locale ?? (existing.locale === "ur" ? "ur" : "en");
 
-  if (relationError) {
-    return errorResult(relationError);
+  const assignmentChanged =
+    (data.userId !== undefined && data.userId !== existing.user.id) ||
+    (data.serviceId !== undefined && data.serviceId !== existing.service.id) ||
+    (data.agentId !== undefined &&
+      (data.agentId ?? null) !== (existing.agent?.id ?? null));
+
+  if (assignmentChanged) {
+    const relationError = await validateApplicationRelations({
+      userId: resolvedUserId,
+      serviceId: resolvedServiceId,
+      agentId: resolvedAgentId,
+    });
+
+    if (relationError) {
+      let fieldErrors: Record<string, string[]> | undefined;
+
+      if (relationError === "Customer not found.") {
+        fieldErrors = { userId: ["Selected customer was not found."] };
+      } else if (relationError === "Service not found.") {
+        fieldErrors = { serviceId: ["Selected service was not found."] };
+      } else if (relationError === "Agent not found.") {
+        fieldErrors = { agentId: ["Selected agent was not found."] };
+      }
+
+      return errorResult(relationError, fieldErrors);
+    }
   }
 
   const statusChanged = existing.status !== data.status;
@@ -161,10 +202,10 @@ export async function updateApplicationAdminAction(
 
   const updated = await applicationRepository.updateAdmin({
     id: data.id,
-    userId: data.userId,
-    serviceId: data.serviceId,
-    agentId: data.agentId ?? null,
-    locale: data.locale,
+    userId: resolvedUserId,
+    serviceId: resolvedServiceId,
+    agentId: resolvedAgentId,
+    locale: resolvedLocale,
     status: data.status,
     adminNotes: data.adminNotes?.trim() || null,
     statusChangeNote: statusChanged ? statusChangeNote : undefined,
@@ -189,24 +230,24 @@ export async function updateApplicationAdminAction(
     after: {
       trackingId: updated.trackingId,
       status: updated.status,
-      userId: data.userId,
-      serviceId: data.serviceId,
+      userId: resolvedUserId,
+      serviceId: resolvedServiceId,
     },
   });
 
   if (statusChanged) {
     const customer = await prisma.user.findUnique({
-      where: { id: data.userId },
+      where: { id: resolvedUserId },
       select: { email: true, phone: true },
     });
 
     await queueApplicationStatusNotifications({
       applicationId: updated.id,
-      userId: data.userId,
+      userId: resolvedUserId,
       trackingId: updated.trackingId,
       serviceName: existing.service.nameEn,
       serviceNameUr: existing.service.nameUr,
-      locale: data.locale,
+      locale: resolvedLocale,
       toStatus: updated.status,
       note: statusChangeNote,
       userEmail: customer?.email ?? "",
@@ -215,10 +256,10 @@ export async function updateApplicationAdminAction(
 
     await emitApplicationChange({
       applicationId: updated.id,
-      userId: data.userId,
-      agentId: data.agentId ?? null,
+      userId: resolvedUserId,
+      agentId: resolvedAgentId,
       trackingId: updated.trackingId,
-      locale: data.locale,
+      locale: resolvedLocale,
       status: updated.status,
       changeType: "status",
       notificationPayload: {

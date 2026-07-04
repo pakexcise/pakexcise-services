@@ -117,6 +117,42 @@ export const inAppNotificationRepository = {
     });
   },
 
+  async countUnseenApplications(userId: string): Promise<number> {
+    const rows = await prisma.notification.findMany({
+      where: {
+        userId,
+        channel: "IN_APP",
+        isRead: false,
+        applicationId: { not: null },
+      },
+      distinct: ["applicationId"],
+      select: {
+        applicationId: true,
+      },
+    });
+
+    return rows.length;
+  },
+
+  async markApplicationNotificationsRead(input: {
+    userId: string;
+    applicationId: string;
+  }) {
+    const result = await prisma.notification.updateMany({
+      where: {
+        userId: input.userId,
+        channel: "IN_APP",
+        applicationId: input.applicationId,
+        isRead: false,
+      },
+      data: {
+        isRead: true,
+      },
+    });
+
+    return result.count;
+  },
+
   async markRead(input: { userId: string; notificationId: string }) {
     const result = await prisma.notification.updateMany({
       where: {

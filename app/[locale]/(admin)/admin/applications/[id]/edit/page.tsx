@@ -8,6 +8,8 @@ import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/applicat
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { ApplicationEditorForm } from "@/features/applications/admin/components/application-editor-form";
 import { applicationToEditorValues } from "@/features/applications/admin/lib/form-defaults";
+import { mergeSelectOption } from "@/features/applications/admin/lib/merge-select-options";
+import { AdminApplicationSeenMarker } from "@/components/admin/admin-application-seen-marker";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
@@ -58,6 +60,29 @@ export default async function EditApplicationPage({
     notFound();
   }
 
+  const customerOptions = mergeSelectOption(customers, {
+    id: application.user.id,
+    name: application.user.name,
+    email: application.user.email,
+    phone: application.user.phone,
+  });
+  const serviceOptions = mergeSelectOption(services, {
+    id: application.service.id,
+    slug: application.service.slug,
+    nameEn: application.service.nameEn,
+    nameUr: application.service.nameUr,
+  });
+  const agentOptions = mergeSelectOption(
+    agents,
+    application.agent
+      ? {
+          id: application.agent.id,
+          name: application.agent.name,
+          email: application.agent.email,
+        }
+      : null,
+  );
+
   const statusLabels = Object.fromEntries(
     (
       [
@@ -82,6 +107,7 @@ export default async function EditApplicationPage({
 
   return (
     <div className="space-y-6">
+      <AdminApplicationSeenMarker applicationId={application.id} />
       <AdminPageHeader
         title={t("editTitle")}
         description={t("editDescription", {
@@ -101,9 +127,9 @@ export default async function EditApplicationPage({
         trackingId={application.trackingId}
         initialValues={applicationToEditorValues(application)}
         initialStatus={application.status}
-        customers={customers}
-        services={services}
-        agents={agents}
+        customers={customerOptions}
+        services={serviceOptions}
+        agents={agentOptions}
         locale={locale}
         labels={{
           sectionAssignment: t("form.sectionAssignment"),

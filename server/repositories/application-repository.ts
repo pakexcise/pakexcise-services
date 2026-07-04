@@ -32,6 +32,7 @@ const adminApplicationListSelect = {
   status: true,
   createdAt: true,
   updatedAt: true,
+  draftJson: true,
   user: {
     select: {
       id: true,
@@ -451,6 +452,9 @@ export class ApplicationRepository extends Repository {
           status: input.status,
           adminNotes: input.adminNotes ?? null,
           currentStep: input.status === "DRAFT" ? 1 : 4,
+          draftJson: {
+            submissionSource: "ADMIN",
+          },
         },
         select: {
           id: true,

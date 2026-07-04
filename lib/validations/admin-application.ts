@@ -2,18 +2,14 @@ import { z } from "zod";
 
 import { applicationStatuses } from "@/config/app";
 import { localeSchema } from "@/lib/validations/common";
+import { entityIdSchema, nullableEntityIdSchema } from "@/lib/validations/entity-id";
 
 const applicationStatusSchema = z.enum(applicationStatuses);
 
-const nullableAgentIdSchema = z
-  .union([z.string().cuid(), z.literal(""), z.null()])
-  .optional()
-  .transform((value) => (value === "" || value === undefined ? null : value));
-
 const adminApplicationBaseSchema = z.object({
-  userId: z.string().cuid(),
-  serviceId: z.string().cuid(),
-  agentId: nullableAgentIdSchema,
+  userId: entityIdSchema,
+  serviceId: entityIdSchema,
+  agentId: nullableEntityIdSchema,
   locale: localeSchema,
   status: applicationStatusSchema,
   adminNotes: z.string().trim().max(5000).optional().nullable(),
@@ -27,16 +23,22 @@ export const adminCreateApplicationSchema = adminApplicationBaseSchema.extend({
     .max(500, "Status note is too long"),
 });
 
-export const adminUpdateApplicationSchema = adminApplicationBaseSchema.extend({
-  id: z.string().cuid(),
+export const adminUpdateApplicationSchema = z.object({
+  id: entityIdSchema,
+  status: applicationStatusSchema,
   statusChangeNote: z
     .string()
     .trim()
     .max(500, "Status note is too long")
     .optional()
     .default(""),
+  adminNotes: z.string().trim().max(5000).optional().nullable(),
+  locale: localeSchema.optional(),
+  userId: entityIdSchema.optional(),
+  serviceId: entityIdSchema.optional(),
+  agentId: nullableEntityIdSchema.optional(),
 });
 
 export const deleteApplicationSchema = z.object({
-  id: z.string().cuid(),
+  id: entityIdSchema,
 });

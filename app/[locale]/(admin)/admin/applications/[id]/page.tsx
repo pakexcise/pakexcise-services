@@ -51,6 +51,11 @@ import {
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import { DeleteApplicationButton } from "@/features/applications/admin/components/delete-application-button";
+import {
+  getApplicationSubmissionSourceLabelKey,
+  resolveApplicationSubmissionSource,
+} from "@/features/applications/lib/resolve-submission-source";
+import { AdminApplicationSeenMarker } from "@/components/admin/admin-application-seen-marker";
 import { adminPaymentMethodRepository } from "@/server/repositories/admin-payment-method-repository";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
@@ -156,6 +161,12 @@ export default async function AdminApplicationDetailPage({
       : application.service.region.nameEn
     : "—";
 
+  const submissionSource = resolveApplicationSubmissionSource({
+    agentId: application.agent?.id,
+    draftJson: application.draftJson,
+    initialStatusNote: application.statusHistory.at(-1)?.note,
+  });
+
   const completionProof = application.documents.find(
     (doc) => doc.type === COMPLETION_PROOF_DOC_TYPE,
   );
@@ -175,6 +186,7 @@ export default async function AdminApplicationDetailPage({
 
   return (
     <div className="space-y-6">
+      <AdminApplicationSeenMarker applicationId={application.id} />
       <AdminPageHeader
         title={t("applications.detailTitle")}
         description={application.trackingId}
@@ -235,6 +247,14 @@ export default async function AdminApplicationDetailPage({
                 {t("applications.detail.locale")}
               </span>
               <span>{application.locale}</span>
+            </div>
+            <div className="flex justify-between gap-3">
+              <span className="text-muted-foreground">
+                {t("applications.detail.submissionSource")}
+              </span>
+              <span>
+                {t(getApplicationSubmissionSourceLabelKey(submissionSource))}
+              </span>
             </div>
           </CardContent>
         </Card>

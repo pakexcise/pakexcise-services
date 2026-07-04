@@ -12,6 +12,7 @@ import {
 
 import type { AdminNavBadgeCounts } from "@/features/admin/types/nav-badges";
 import { useRealtimeContext } from "@/features/realtime/context/realtime-provider";
+import { ADMIN_BADGES_REFRESH_EVENT } from "@/lib/admin/admin-badges-refresh";
 
 const AdminNavBadgesContext = createContext<AdminNavBadgeCounts | null>(null);
 
@@ -24,7 +25,8 @@ export function AdminNavBadgesProvider({
   initialCounts,
   children,
 }: AdminNavBadgesProviderProps) {
-  const { unreadCount, subscribeApplicationUpdates } = useRealtimeContext();
+  const { unreadCount, subscribeApplicationUpdates, refreshNotifications } =
+    useRealtimeContext();
   const [pendingApplications, setPendingApplications] = useState(
     initialCounts.pendingApplications,
   );
@@ -52,6 +54,19 @@ export function AdminNavBadgesProvider({
       void refreshCounts();
     });
   }, [refreshCounts, subscribeApplicationUpdates]);
+
+  useEffect(() => {
+    function handleRefresh() {
+      void refreshCounts();
+      void refreshNotifications();
+    }
+
+    window.addEventListener(ADMIN_BADGES_REFRESH_EVENT, handleRefresh);
+
+    return () => {
+      window.removeEventListener(ADMIN_BADGES_REFRESH_EVENT, handleRefresh);
+    };
+  }, [refreshCounts, refreshNotifications]);
 
   const counts = useMemo<AdminNavBadgeCounts>(
     () => ({

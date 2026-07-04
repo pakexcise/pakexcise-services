@@ -1624,9 +1624,15 @@
         "trackingId": "Tracking ID",
         "service": "Service",
         "customer": "Customer",
+        "source": "Submission source",
         "status": "Status",
         "created": "Created",
         "actions": "Actions"
+      },
+      "submissionSource": {
+        "WEB_FORM": "Website form",
+        "AGENT": "Agent portal",
+        "ADMIN": "Admin created"
       },
       "history": {
         "note": "Note",
@@ -1636,6 +1642,7 @@
         "overview": "Application overview",
         "region": "Region",
         "locale": "Locale",
+        "submissionSource": "Submission source",
         "customer": "Customer details",
         "customerName": "Name",
         "customerEmail": "Email",
@@ -2353,9 +2360,9 @@
     },
     "notifications": {
       "title": "Notifications",
-      "description": "Unread platform alerts and delivery logs for outbound email, WhatsApp, and SMS.",
+      "description": "Unread in-app platform alerts and outbound delivery logs.",
       "deliveryLogsTitle": "Delivery logs",
-      "deliveryLogsDescription": "Outbound email, WhatsApp, and SMS delivery status. In-app alerts are shown above.",
+      "deliveryLogsDescription": "Outbound notification delivery status for email, WhatsApp, and SMS. These channels show how alerts were sent—not how the application was submitted. In-app alerts are shown above.",
       "scopeNotice": "Showing customer, agent, and admin notifications. Super admin private notifications are hidden.",
       "emptyTitle": "No notifications found",
       "emptyDescription": "Notification delivery logs will appear here after customer events.",
@@ -2371,7 +2378,7 @@
       "table": {
         "createdAt": "Created",
         "event": "Event",
-        "channel": "Channel",
+        "channel": "Delivery channel",
         "status": "Status",
         "tracking": "Tracking ID",
         "locale": "Locale",
