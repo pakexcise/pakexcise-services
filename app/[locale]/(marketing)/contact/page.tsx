@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     seoMetaRepository.findByPageKey("contact"),
   ]);
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: "/contact",
     seo,

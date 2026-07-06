@@ -12,6 +12,16 @@ export const brandingAssets = {
   ogUr: "/branding/og-ur.png",
 } as const;
 
+/** @deprecated Use resolveDefaultOgImagePath from branding-resolvers with DB settings */
 export function getDefaultOgImagePath(locale: string): string {
   return locale === "ur" ? brandingAssets.ogUr : brandingAssets.ogEn;
+}
+
+export function getBrandDisplayName(siteName?: string | null): string {
+  const trimmed = siteName?.trim();
+  if (trimmed) {
+    return trimmed.replace(/\.com$/i, "");
+  }
+
+  return brandDisplayName;
 }

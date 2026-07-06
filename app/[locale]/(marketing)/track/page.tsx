@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const content = await getPageContent("track");
   const seo = await seoMetaRepository.findByPageKey("track");
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: "/track",
     seo,

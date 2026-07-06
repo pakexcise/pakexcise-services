@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "marketing" });
   const seo = await seoMetaRepository.findByPageKey("regions");
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: "/regions",
     seo,

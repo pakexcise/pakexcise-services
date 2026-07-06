@@ -3,7 +3,14 @@ import "server-only";
 import React from "react";
 import { renderToBuffer } from "@react-pdf/renderer";
 
-import { getBrandingAssetDataUri } from "@/features/invoices/lib/branding-asset-path";
+import {
+  getBrandingAssetDataUri,
+  getBrandingAssetDataUriFromPath,
+} from "@/features/invoices/lib/branding-asset-path";
+import {
+  resolveLogoIconPath,
+} from "@/features/settings/lib/branding-resolvers";
+import { getBrandingSettings } from "@/features/settings/lib/public-settings-cache";
 import {
   InvoicePdfDocument,
   type InvoicePdfData,
@@ -50,12 +57,17 @@ export async function renderInvoicePdfBuffer(
   data: RenderInvoicePdfInput,
 ): Promise<Buffer> {
   const paymentMethods = await enrichPaymentMethodsForPdf(data.paymentMethods);
+  const branding = await getBrandingSettings();
+  const logoIconPath = resolveLogoIconPath(branding);
+  const brandMarkSrc =
+    getBrandingAssetDataUriFromPath(logoIconPath) ??
+    getBrandingAssetDataUri("logoIcon");
 
   const element = React.createElement(InvoicePdfDocument, {
     data: {
       ...data,
       paymentMethods,
-      brandMarkSrc: getBrandingAssetDataUri("logoIcon"),
+      brandMarkSrc,
     },
   });
   const buffer = await renderToBuffer(

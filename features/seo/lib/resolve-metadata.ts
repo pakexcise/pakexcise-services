@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import type { SeoMeta } from "@prisma/client";
 
-import { getDefaultOgImagePath } from "@/config/branding";
-import { buildMetadata } from "@/features/seo/lib/metadata";
+import { buildMetadata, resolveBrandingMetadataDefaults } from "@/features/seo/lib/metadata";
 import { buildHreflangAlternates } from "@/features/seo/lib/hreflang";
+import {
+  getBrandingSettings,
+  getBusinessSettings,
+} from "@/features/settings/lib/public-settings-cache";
 import type { Locale } from "@/i18n/config";
 import { pickLocalized } from "@/lib/i18n/content";
 
@@ -40,13 +43,22 @@ export function resolvePageSeo(
   };
 }
 
-export function resolveMetadataFromSeo(input: {
+export async function resolveMetadataFromSeo(input: {
   locale: Locale | string;
   path: string;
   seo: SeoMeta | null;
   fallbacks: SeoFallbacks;
-}): Metadata {
+}): Promise<Metadata> {
+  const [branding, business] = await Promise.all([
+    getBrandingSettings(),
+    getBusinessSettings(),
+  ]);
   const resolved = resolvePageSeo(input.locale, input.seo, input.fallbacks);
+  const brandingDefaults = resolveBrandingMetadataDefaults(
+    branding,
+    input.locale,
+    business.siteName,
+  );
 
   return buildMetadata({
     title: resolved.title,
@@ -62,7 +74,9 @@ export function resolveMetadataFromSeo(input: {
       en: input.seo?.ogDescriptionEn ?? resolved.description,
       ur: input.seo?.ogDescriptionUr ?? resolved.description,
     }),
-    ogImage: input.seo?.ogImage ?? getDefaultOgImagePath(input.locale),
+    ogImage: input.seo?.ogImage ?? brandingDefaults.ogImage,
+    twitterImage: brandingDefaults.twitterImage,
+    siteName: brandingDefaults.siteName,
     twitterCard:
       input.seo?.twitterCard === "summary" ? "summary" : "summary_large_image",
     robots: {

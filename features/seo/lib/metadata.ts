@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 
-import { brandingAssets, getDefaultOgImagePath } from "@/config/branding";
+import { brandingAssets } from "@/config/branding";
 import { shouldAllowSearchIndexing } from "@/config/env.server";
+import {
+  resolveDefaultOgImagePath,
+  resolveDefaultTwitterImagePath,
+} from "@/features/settings/lib/branding-resolvers";
+import type { BrandingSettings } from "@/features/settings/types";
 import type { SeoSettings } from "@/features/settings/types";
 import {
   resolveSeoCanonicalUrl,
@@ -19,7 +24,9 @@ export type SeoInput = {
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string | null;
+  twitterImage?: string | null;
   twitterCard?: "summary" | "summary_large_image";
+  siteName?: string;
   robots?: {
     index?: boolean;
     follow?: boolean;
@@ -42,7 +49,7 @@ function buildNonProductionMetadata(input: SeoInput): Metadata {
     openGraph: {
       title: input.ogTitle ?? input.title,
       description: input.ogDescription ?? input.description,
-      siteName: "PakExcise.com",
+      siteName: input.siteName ?? "PakExcise.com",
       locale: input.locale === "ur" ? "ur_PK" : "en_PK",
       type: "website",
     },
@@ -66,9 +73,9 @@ export function buildMetadata(input: SeoInput): Metadata {
     }) ?? seoAbsoluteUrl(publicPath(input.path));
   const ogTitle = input.ogTitle ?? input.title;
   const ogDescription = input.ogDescription ?? input.description;
-  const ogImage =
-    resolveSeoImageUrl(input.ogImage) ??
-    resolveSeoImageUrl(getDefaultOgImagePath(input.locale));
+  const ogImage = resolveSeoImageUrl(input.ogImage);
+  const twitterImage = resolveSeoImageUrl(input.twitterImage) ?? ogImage;
+  const siteName = input.siteName ?? "PakExcise.com";
 
   return {
     title: input.title,
@@ -85,7 +92,7 @@ export function buildMetadata(input: SeoInput): Metadata {
       title: ogTitle,
       description: ogDescription,
       url: canonical,
-      siteName: "PakExcise.com",
+      siteName,
       locale: input.locale === "ur" ? "ur_PK" : "en_PK",
       type: "website",
       images: ogImage
@@ -96,7 +103,7 @@ export function buildMetadata(input: SeoInput): Metadata {
       card: input.twitterCard ?? "summary_large_image",
       title: ogTitle,
       description: ogDescription,
-      images: ogImage ? [ogImage] : undefined,
+      images: twitterImage ? [twitterImage] : undefined,
     },
   };
 }
@@ -118,6 +125,7 @@ export function buildOrganizationJsonLd(
     | "organizationLogoPath"
     | "organizationAreaServed"
   >,
+  branding?: Pick<BrandingSettings, "logoPath">,
 ) {
   return {
     "@context": "https://schema.org",
@@ -126,7 +134,7 @@ export function buildOrganizationJsonLd(
     url: baseUrl,
     logo: resolveLogoUrl(
       baseUrl,
-      seo?.organizationLogoPath ?? brandingAssets.logo,
+      seo?.organizationLogoPath ?? branding?.logoPath ?? brandingAssets.logo,
     ),
     description:
       seo?.organizationDescriptionEn ??
@@ -222,6 +230,7 @@ export function buildServiceJsonLd(input: {
   description: string;
   url: string;
   areaServed?: string;
+  providerName?: string;
 }) {
   return {
     "@context": "https://schema.org",
@@ -231,8 +240,20 @@ export function buildServiceJsonLd(input: {
     url: input.url,
     provider: {
       "@type": "Organization",
-      name: "PakExcise.com",
+      name: input.providerName ?? "PakExcise.com",
     },
     areaServed: input.areaServed ?? "Pakistan",
+  };
+}
+
+export function resolveBrandingMetadataDefaults(
+  branding: BrandingSettings,
+  locale: string,
+  siteName?: string,
+): Pick<SeoInput, "ogImage" | "twitterImage" | "siteName"> {
+  return {
+    ogImage: resolveDefaultOgImagePath(branding, locale),
+    twitterImage: resolveDefaultTwitterImagePath(branding),
+    siteName: siteName?.trim() || "PakExcise.com",
   };
 }

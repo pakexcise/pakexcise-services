@@ -5,6 +5,11 @@ import { cookies } from "next/headers";
 import "@/app/globals.css";
 import { BrandThemeStyles } from "@/components/theme/BrandThemeStyles";
 import { shouldAllowSearchIndexing } from "@/config/env.server";
+import {
+  resolveAppleIconPath,
+  resolveFaviconPath,
+} from "@/features/settings/lib/branding-resolvers";
+import { getBrandingSettings } from "@/features/settings/lib/public-settings-cache";
 import { defaultLocale, LOCALE_COOKIE_NAME } from "@/i18n/config";
 import { isValidLocale } from "@/i18n/locale";
 
@@ -24,9 +29,20 @@ const notoNastaliq = Noto_Nastaliq_Urdu({
   weight: ["400", "500", "600", "700"],
 });
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  const branding = await getBrandingSettings();
+  const favicon = resolveFaviconPath(branding);
+  const appleIcon = resolveAppleIconPath(branding);
+
+  const icons: Metadata["icons"] = {
+    icon: favicon,
+    shortcut: favicon,
+    apple: appleIcon,
+  };
+
   if (!shouldAllowSearchIndexing()) {
     return {
+      icons,
       robots: {
         index: false,
         follow: false,
@@ -38,7 +54,7 @@ export function generateMetadata(): Metadata {
     };
   }
 
-  return {};
+  return { icons };
 }
 
 export default async function RootLayout({

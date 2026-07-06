@@ -88,8 +88,11 @@ export type SiteSettingsPanelLabels = {
     logoPath: string;
     logoDarkPath: string;
     footerLogoPath: string;
+    logoIconPath: string;
     faviconPath: string;
+    appleIconPath: string;
     defaultOgImagePath: string;
+    defaultOgImagePathUr: string;
     defaultTwitterImagePath: string;
     defaultBlogFallbackImagePath: string;
     defaultGuideFallbackImagePath: string;
@@ -836,8 +839,11 @@ export function SiteSettingsPanel({
               ["logoPath", labels.branding.logoPath],
               ["logoDarkPath", labels.branding.logoDarkPath],
               ["footerLogoPath", labels.branding.footerLogoPath],
+              ["logoIconPath", labels.branding.logoIconPath],
               ["faviconPath", labels.branding.faviconPath],
+              ["appleIconPath", labels.branding.appleIconPath],
               ["defaultOgImagePath", labels.branding.defaultOgImagePath],
+              ["defaultOgImagePathUr", labels.branding.defaultOgImagePathUr],
               ["defaultTwitterImagePath", labels.branding.defaultTwitterImagePath],
               ["defaultBlogFallbackImagePath", labels.branding.defaultBlogFallbackImagePath],
               ["defaultGuideFallbackImagePath", labels.branding.defaultGuideFallbackImagePath],

@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     getPageContent("reviews"),
   ]);
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: "/reviews",
     seo,

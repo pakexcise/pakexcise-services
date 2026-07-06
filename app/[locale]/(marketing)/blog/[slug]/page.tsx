@@ -40,7 +40,7 @@ export async function generateMetadata({
     return {};
   }
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: `/blog/${post.slug}`,
     seo: post.seoMeta,

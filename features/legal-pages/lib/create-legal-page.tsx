@@ -40,7 +40,7 @@ export function createLegalPage(config: LegalPageConfig) {
       ur: content?.excerptUr || content?.contentUr?.slice(0, 160) || title.ur,
     };
 
-    const metadata = resolveMetadataFromSeo({
+    const metadata = await resolveMetadataFromSeo({
       locale,
       path,
       seo: content?.seo ?? null,

@@ -44,7 +44,7 @@ export function createContentPage(config: ContentPageConfig) {
       ur: content?.titleUr ?? config.breadcrumbLabel.ur,
     };
 
-    return resolveMetadataFromSeo({
+    return await resolveMetadataFromSeo({
       locale,
       path: config.path,
       seo,

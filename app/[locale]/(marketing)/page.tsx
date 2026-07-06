@@ -83,7 +83,7 @@ export async function generateMetadata(): Promise<Metadata> {
     seoMetaRepository.findByPageKey("home"),
   ]);
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: "/",
     seo,

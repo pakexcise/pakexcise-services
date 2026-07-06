@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 import { JsonLd } from "@/components/marketing/json-ld";
+import { BrandingProvider } from "@/components/shared/branding-context";
 import { ChunkLoadRecovery } from "@/components/shared/chunk-load-recovery";
 import { DocumentLocaleSync } from "@/components/shared/DocumentLocaleSync";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
@@ -14,6 +15,9 @@ import {
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
 } from "@/features/seo/lib/metadata";
+import {
+  resolveLogoIconPath,
+} from "@/features/settings/lib/branding-resolvers";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
 import { buildTrackingRuntimeConfig } from "@/features/settings/lib/tracking-runtime";
 import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
@@ -55,44 +59,54 @@ export default async function LocaleLayout({
   ]);
 
   const publicSettings = await getPublicSettings();
-  const { business, seo, tracking, features, publicUi } = publicSettings;
+  const { business, seo, tracking, features, publicUi, branding } = publicSettings;
   const trackingRuntime = buildTrackingRuntimeConfig(tracking);
   const localized = localizeGlobalSiteContent(business, locale, publicUi);
 
   const baseUrl = seoAbsoluteUrl("/");
   const siteJsonLd = [
-    buildOrganizationJsonLd(baseUrl, seo),
-    buildWebSiteJsonLd(baseUrl, seo.organizationName),
+    buildOrganizationJsonLd(baseUrl, seo, branding),
+    buildWebSiteJsonLd(baseUrl, business.siteName || seo.organizationName),
     buildLocalBusinessJsonLd(baseUrl, seo),
   ];
+
+  const brandingContextValue = {
+    logoPath: branding.logoPath,
+    logoDarkPath: branding.logoDarkPath,
+    footerLogoPath: branding.footerLogoPath,
+    logoIconPath: resolveLogoIconPath(branding),
+    siteName: business.siteName,
+  };
 
   return (
     <>
       <JsonLd data={siteJsonLd} />
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <ChunkLoadRecovery />
-        <DocumentLocaleSync />
-        <ThemeProvider>
-          <Suspense fallback={null}>
-            <AnalyticsProvider tracking={trackingRuntime}>
-              {children}
-            </AnalyticsProvider>
-          </Suspense>
-          <WhatsAppFAB
-            phoneNumber={
-              features.floatingWhatsappEnabled
-                ? resolveWhatsappLinkNumber(business)
-                : null
-            }
-            message={
-              features.floatingWhatsappEnabled
-                ? localized.floatingWhatsappMessage
-                : null
-            }
-            position={publicUi.floatingWhatsappPosition}
-            ariaLabel={tCommon("whatsappHelp")}
-          />
-        </ThemeProvider>
+        <BrandingProvider value={brandingContextValue}>
+          <ChunkLoadRecovery />
+          <DocumentLocaleSync />
+          <ThemeProvider>
+            <Suspense fallback={null}>
+              <AnalyticsProvider tracking={trackingRuntime}>
+                {children}
+              </AnalyticsProvider>
+            </Suspense>
+            <WhatsAppFAB
+              phoneNumber={
+                features.floatingWhatsappEnabled
+                  ? resolveWhatsappLinkNumber(business)
+                  : null
+              }
+              message={
+                features.floatingWhatsappEnabled
+                  ? localized.floatingWhatsappMessage
+                  : null
+              }
+              position={publicUi.floatingWhatsappPosition}
+              ariaLabel={tCommon("whatsappHelp")}
+            />
+          </ThemeProvider>
+        </BrandingProvider>
       </NextIntlClientProvider>
     </>
   );

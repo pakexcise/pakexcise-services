@@ -5,13 +5,6 @@ import path from "node:path";
 
 import { brandingAssets } from "@/config/branding";
 
-export function getBrandingAssetFilePath(
-  asset: keyof typeof brandingAssets,
-): string {
-  const relativePath = brandingAssets[asset].replace(/^\//, "");
-  return path.join(process.cwd(), "public", relativePath);
-}
-
 function detectImageMimeType(buffer: Buffer, filePath: string): string {
   if (buffer.length >= 4) {
     const signature = buffer.subarray(0, 4).toString("hex");
@@ -44,6 +37,41 @@ function detectImageMimeType(buffer: Buffer, filePath: string): string {
   }
 
   return "image/jpeg";
+}
+
+function resolvePublicAssetFilePath(assetPath: string): string | null {
+  const trimmed = assetPath.trim();
+  if (!trimmed || trimmed.startsWith("http")) {
+    return null;
+  }
+
+  const relativePath = trimmed.replace(/^\//, "");
+  const filePath = path.join(process.cwd(), "public", relativePath);
+
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  return filePath;
+}
+
+export function getBrandingAssetFilePath(
+  asset: keyof typeof brandingAssets,
+): string {
+  const relativePath = brandingAssets[asset].replace(/^\//, "");
+  return path.join(process.cwd(), "public", relativePath);
+}
+
+export function getBrandingAssetDataUriFromPath(assetPath: string): string | null {
+  const filePath = resolvePublicAssetFilePath(assetPath);
+  if (!filePath) {
+    return null;
+  }
+
+  const buffer = fs.readFileSync(filePath);
+  const mimeType = detectImageMimeType(buffer, filePath);
+
+  return `data:${mimeType};base64,${buffer.toString("base64")}`;
 }
 
 export function getBrandingAssetDataUri(

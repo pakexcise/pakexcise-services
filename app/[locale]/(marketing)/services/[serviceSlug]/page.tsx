@@ -66,7 +66,7 @@ export async function generateMetadata({
     return {};
   }
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: `/services/${service.slug}`,
     seo: service.seoMeta,

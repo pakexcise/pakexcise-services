@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 
-import { brandingAssets } from "@/config/branding";
+import { useBranding } from "@/components/shared/branding-context";
+import { brandingAssets, getBrandDisplayName } from "@/config/branding";
 import { cn } from "@/lib/utils";
 
 type SiteLogoProps = {
@@ -11,6 +14,8 @@ type SiteLogoProps = {
   logoPath?: string | null;
   logoDarkPath?: string | null;
   footerLogoPath?: string | null;
+  logoIconPath?: string | null;
+  siteName?: string | null;
 };
 
 export function SiteLogo({
@@ -21,16 +26,24 @@ export function SiteLogo({
   logoPath,
   logoDarkPath,
   footerLogoPath,
+  logoIconPath,
+  siteName,
 }: SiteLogoProps) {
-  const lightLogo = logoPath?.trim() || brandingAssets.logo;
-  const darkLogo = logoDarkPath?.trim() || brandingAssets.logoDark;
-  const footerLogo = footerLogoPath?.trim() || lightLogo;
+  const branding = useBranding();
+
+  const lightLogo = logoPath?.trim() || branding.logoPath || brandingAssets.logo;
+  const darkLogo =
+    logoDarkPath?.trim() || branding.logoDarkPath || brandingAssets.logoDark;
+  const footerLogo = footerLogoPath?.trim() || branding.footerLogoPath || lightLogo;
+  const iconLogo =
+    logoIconPath?.trim() || branding.logoIconPath || brandingAssets.logoIcon;
+  const altName = getBrandDisplayName(siteName ?? branding.siteName);
 
   if (variant === "icon") {
     return (
       <Image
-        src={brandingAssets.logoIcon}
-        alt="PakExcise"
+        src={iconLogo}
+        alt={altName}
         width={48}
         height={48}
         unoptimized
@@ -44,11 +57,15 @@ export function SiteLogo({
     return (
       <Image
         src={darkLogo}
-        alt="PakExcise"
+        alt={altName}
         width={220}
         height={52}
         unoptimized
-        className={cn("h-8 w-auto max-w-full object-contain object-left", imageClassName, className)}
+        className={cn(
+          "h-8 w-auto max-w-full object-contain object-left",
+          imageClassName,
+          className,
+        )}
         priority={priority}
       />
     );
@@ -58,7 +75,7 @@ export function SiteLogo({
     <span className={cn("relative inline-flex max-w-full items-center", className)}>
       <Image
         src={footerLogoPath ? footerLogo : lightLogo}
-        alt="PakExcise"
+        alt={altName}
         width={220}
         height={52}
         unoptimized
@@ -70,7 +87,7 @@ export function SiteLogo({
       />
       <Image
         src={darkLogo}
-        alt="PakExcise"
+        alt={altName}
         width={220}
         height={52}
         unoptimized

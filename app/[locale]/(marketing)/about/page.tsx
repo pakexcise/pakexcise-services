@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
     getPageContent("about"),
   ]);
 
-  return resolveMetadataFromSeo({
+  return await resolveMetadataFromSeo({
     locale,
     path: "/about",
     seo,

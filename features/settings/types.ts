@@ -62,8 +62,11 @@ export type BrandingSettings = {
   logoPath: string;
   logoDarkPath: string;
   footerLogoPath: string;
+  logoIconPath: string;
   faviconPath: string;
+  appleIconPath: string;
   defaultOgImagePath: string;
+  defaultOgImagePathUr: string;
   defaultTwitterImagePath: string;
   defaultBlogFallbackImagePath: string;
   defaultGuideFallbackImagePath: string;
