@@ -1,10 +1,14 @@
 import "server-only";
 
 import { Repository } from "@/server/repositories/base/repository";
+import { activityEventRepository } from "@/server/repositories/activity-event-repository";
 
 export type AdminDashboardInsights = {
   todayApplications: number;
   todayContactInquiries: number;
+  todayNewUsers: number;
+  todayWhatsappClicks: number;
+  todaySignups: number;
   pendingSupportRequests: number;
   paymentUploadedQueue: number;
   mostRequestedService: {
@@ -33,6 +37,9 @@ export class AdminDashboardRepository extends Repository {
     const [
       todayApplications,
       todayContactInquiries,
+      todayNewUsers,
+      todayWhatsappClicks,
+      todaySignups,
       pendingSupportRequests,
       paymentUploadedQueue,
       applicationsByService,
@@ -46,6 +53,11 @@ export class AdminDashboardRepository extends Repository {
       this.db.contactInquiry.count({
         where: { createdAt: { gte: todayStart } },
       }),
+      this.db.user.count({
+        where: { createdAt: { gte: todayStart } },
+      }),
+      activityEventRepository.countByEventSince("whatsapp_click", todayStart),
+      activityEventRepository.countByEventSince("signup_completed", todayStart),
       this.db.guestLead.count({
         where: { status: "NEW" },
       }),
@@ -141,6 +153,9 @@ export class AdminDashboardRepository extends Repository {
     return {
       todayApplications,
       todayContactInquiries,
+      todayNewUsers,
+      todayWhatsappClicks,
+      todaySignups,
       pendingSupportRequests,
       paymentUploadedQueue,
       mostRequestedService,

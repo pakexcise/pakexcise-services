@@ -24,6 +24,7 @@ import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-
 import { sendServerAnalyticsEvent } from "@/features/analytics/server-events";
 import { canTransitionStatus } from "@/features/applications/lib/status-transitions";
 import { queueApplicationSubmittedNotifications } from "@/server/notifications/queue-application-notification";
+import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 import { absoluteUrl } from "@/lib/utils";
 import { emitApplicationChange } from "@/server/realtime/application-events";
 
@@ -312,6 +313,15 @@ export async function submitApplicationAction(
     agentId: draft.agentId,
     status: "SUBMITTED",
     changeType: "submit",
+  });
+
+  await trackActivityFromRequest({
+    event: "application_submitted",
+    userId: user.id,
+    metadata: {
+      service_slug: serviceRecord.slug,
+      application_id: draft.id,
+    },
   });
 
   return successResult({

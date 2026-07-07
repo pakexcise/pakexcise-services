@@ -7,6 +7,7 @@ import {
   type AuditPayload,
   writeAuditLog,
 } from "@/server/security/audit";
+import { trackActivity } from "@/server/tracking/track-activity";
 
 export type AuditAdminActionInput = {
   actorId: string;
@@ -31,5 +32,17 @@ export async function auditAdminAction(
     after: input.after ?? null,
     ipAddress: meta.ipAddress,
     userAgent: meta.userAgent,
+  });
+
+  trackActivity({
+    event: "admin_action",
+    userId: input.actorId,
+    ipAddress: meta.ipAddress,
+    userAgent: meta.userAgent,
+    metadata: {
+      action: input.action,
+      entity_type: input.entityType,
+      entity_id: input.entityId ?? "",
+    },
   });
 }

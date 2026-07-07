@@ -15,6 +15,7 @@ import { formatPhoneForDisplay } from "@/lib/validations/phone";
 import { getRequestMetaFromHeaders } from "@/server/auth/session";
 import { contactInquiryRepository } from "@/server/repositories/contact-inquiry-repository";
 import { hashIpAddress } from "@/server/security/hash";
+import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 import {
   enforceRateLimit,
   publicFormRateLimit,
@@ -60,6 +61,14 @@ export async function submitContactInquiryAction(
     message: parsed.data.message?.trim() || null,
     locale: parsed.data.locale,
     ipHash: ipAddress ? hashIpAddress(ipAddress) : null,
+  });
+
+  await trackActivityFromRequest({
+    event: "contact_form_submit",
+    metadata: {
+      locale: parsed.data.locale,
+      has_email: Boolean(parsed.data.email?.trim()),
+    },
   });
 
   return successResult({

@@ -44,6 +44,20 @@ export async function DashboardInsightCards({
           href="/admin/contact-inquiries"
         />
         <InsightStatCard
+          title={t("todayNewUsers")}
+          value={insights.todayNewUsers.toLocaleString()}
+          href="/admin/customers"
+        />
+        <InsightStatCard
+          title={t("todayWhatsappClicks")}
+          value={insights.todayWhatsappClicks.toLocaleString()}
+        />
+        <InsightStatCard
+          title={t("todaySignups")}
+          value={insights.todaySignups.toLocaleString()}
+          href="/admin/customers"
+        />
+        <InsightStatCard
           title={t("pendingSupportRequests")}
           value={insights.pendingSupportRequests.toLocaleString()}
           href="/admin/guest-leads?status=NEW"

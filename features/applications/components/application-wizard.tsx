@@ -13,6 +13,7 @@ import { ServiceDetailsStep } from "@/features/applications/components/service-d
 import { WizardStepIndicator } from "@/features/applications/components/wizard-step-indicator";
 import { generateEventId } from "@/features/analytics/data-layer";
 import { trackApplicationEvent } from "@/features/applications/lib/analytics";
+import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
 import {
   captureAttributionFromUrl,
   getStoredAttribution,
@@ -288,6 +289,14 @@ export function ApplicationWizard({
       service_slug: service.slug,
       service_id: service.id,
       step: 1,
+    });
+    recordClientActivity({
+      event: "application_started",
+      metadata: {
+        service_slug: service.slug,
+        service_id: service.id,
+        step: 1,
+      },
     });
     markStartTracked();
   }, [hasTrackedStart, markStartTracked, service.id, service.slug]);

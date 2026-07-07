@@ -26,6 +26,7 @@ import {
 } from "@/lib/validations/common";
 import { formatFirstFieldError } from "@/lib/validations/format-field-errors";
 import { auditAdminAction } from "@/server/admin/audit-action";
+import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 import { emitApplicationChange } from "@/server/realtime/application-events";
 import { prisma } from "@/server/db/client";
 import { queueApplicationStatusNotifications } from "@/server/notifications/queue-application-status-notification";
@@ -142,6 +143,16 @@ export async function transitionApplicationStatusAction(
     after: {
       status: parsed.data.toStatus,
       note: parsed.data.note,
+    },
+  });
+
+  await trackActivityFromRequest({
+    event: "application_status_changed",
+    userId: user.id,
+    metadata: {
+      application_id: application.id,
+      from_status: fromStatus,
+      to_status: parsed.data.toStatus,
     },
   });
 

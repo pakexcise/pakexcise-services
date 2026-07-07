@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { pushAnalyticsEvent } from "@/features/analytics/data-layer";
+import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
 
 type ViewServiceTrackerProps = {
   serviceSlug: string;
@@ -24,6 +25,13 @@ export function ViewServiceTracker({
     pushAnalyticsEvent("view_service", {
       service_slug: serviceSlug,
       service_id: serviceId,
+    });
+    recordClientActivity({
+      event: "service_view",
+      metadata: {
+        service_slug: serviceSlug,
+        service_id: serviceId,
+      },
     });
   }, [serviceId, serviceSlug]);
 

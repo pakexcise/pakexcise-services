@@ -18,6 +18,7 @@ import {
 } from "@/features/auth/lib/auth-url";
 import { buildAuthRedirectUrl } from "@/features/auth/lib/redirect";
 import { resolveAuthSubmitError } from "@/features/auth/lib/server-action-error";
+import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -124,6 +125,10 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
 
     startTransition(async () => {
       try {
+        if (mode === "signup") {
+          recordClientActivity({ event: "signup_started" });
+        }
+
         const eligibility = await checkEmailAuthEligibility(trimmedEmail, mode);
 
         if (!eligibility.ok) {
@@ -175,10 +180,12 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
               return;
             }
 
+            recordClientActivity({ event: "login_failed" });
             setError(result.error.message ?? labels.signInFailed ?? labels.verifyFailed);
             return;
           }
 
+          recordClientActivity({ event: "login_success" });
           router.push(buildAuthRedirectUrl(callbackUrl));
           router.refresh();
           return;
@@ -317,6 +324,12 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
         if (result.error) {
           setError(result.error.message ?? labels.verifyFailed);
           return;
+        }
+
+        recordClientActivity({ event: "otp_verified" });
+
+        if (mode === "signup") {
+          recordClientActivity({ event: "signup_completed" });
         }
 
         const redirectTarget =

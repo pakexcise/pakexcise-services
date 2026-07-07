@@ -9,6 +9,7 @@ import { getRememberedOtpDelivery } from "@/server/notifications/otp-delivery-ca
 import type { SendEmailResult } from "@/server/notifications/send-email";
 import { enforceRateLimit, otpRateLimit } from "@/server/security/rate-limit";
 import { isAuthError } from "@/lib/errors/auth-errors";
+import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 
 const OTP_LENGTH = 6;
 const OTP_EXPIRES_SECONDS = 300;
@@ -77,6 +78,14 @@ export async function issueEmailVerificationOtp(
 
     return { ok: false, code: "EMAIL_FAILED" };
   }
+
+  await trackActivityFromRequest({
+    event: "otp_requested",
+    metadata: {
+      channel: "email",
+      purpose: "email_verification",
+    },
+  });
 
   return {
     ok: true,

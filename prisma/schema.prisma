@@ -237,6 +237,7 @@ model User {
   grantedAdminPermissions AdminPermissionGrant[] @relation("AdminPermissionGranter")
   guestLeadContacts    GuestLead[]           @relation("GuestLeadContactedBy")
   contactInquiryContacts ContactInquiry[]    @relation("ContactInquiryContactedBy")
+  activityEvents       ActivityEvent[]
 
   @@index([role, status])
   @@map("users")
@@ -975,6 +976,28 @@ model AnalyticsAttribution {
 
   @@index([source, campaign])
   @@map("analytics_attribution")
+}
+
+model ActivityEvent {
+  id          String   @id @default(cuid())
+  event       String
+  environment String
+  userId      String?
+  sessionId   String?
+  path        String?
+  referrer    String?
+  userAgent   String?  @db.VarChar(512)
+  ipHash      String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([event, createdAt])
+  @@index([userId, createdAt])
+  @@index([environment, createdAt])
+  @@index([createdAt])
+  @@map("activity_events")
 }
 
 model FaqCategory {

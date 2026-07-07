@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { pushAnalyticsEvent } from "@/features/analytics/data-layer";
+import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
 import { AlertTriangle, Download, FileText, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,13 @@ export function InvoiceView({
     pushAnalyticsEvent("invoice_viewed", {
       application_id: applicationId,
       invoice_id: invoice.id,
+    });
+    recordClientActivity({
+      event: "payment_started",
+      metadata: {
+        application_id: applicationId,
+        invoice_id: invoice.id,
+      },
     });
   }, [applicationId, invoice.id]);
 

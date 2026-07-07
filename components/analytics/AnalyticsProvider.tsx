@@ -9,6 +9,8 @@ import {
 } from "@/features/analytics/data-layer";
 import type { AnalyticsEventName } from "@/features/analytics/events";
 import type { TrackingRuntimeConfig } from "@/features/settings/lib/tracking-runtime";
+import { mapAnalyticsEventToActivity } from "@/features/tracking/lib/map-analytics-event";
+import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
 import { captureAttributionFromUrl } from "@/lib/attribution";
 
 const CONSENT_STORAGE_KEY = "pakexcise.analytics.consent";
@@ -171,6 +173,11 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     window.gtag("config", ga4Id, {
       page_path: pagePath,
     });
+
+    recordClientActivity({
+      event: "page_view",
+      path: pagePath,
+    });
   }, [pathname, searchParams, tracking]);
 
   useEffect(() => {
@@ -218,6 +225,15 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
 
       const payload = parseElementAnalyticsPayload(element);
       pushAnalyticsEvent(eventName, payload as never);
+
+      const activityEvent = mapAnalyticsEventToActivity(eventName);
+
+      if (activityEvent) {
+        recordClientActivity({
+          event: activityEvent,
+          metadata: payload as Record<string, string | number | boolean>,
+        });
+      }
     }
 
     document.addEventListener("click", handleClick, { capture: true });

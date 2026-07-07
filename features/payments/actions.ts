@@ -33,6 +33,7 @@ import {
   isObjectStorageConfigured,
 } from "@/server/storage/object-storage";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
+import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 import {
   canConfirmPaymentProofUpload,
   canReplacePaymentProof,
@@ -299,6 +300,15 @@ export async function verifyPaymentAction(
     agentId: payment.application.agentId,
     status: "PAYMENT_VERIFIED",
     changeType: "payment",
+  });
+
+  await trackActivityFromRequest({
+    event: "payment_completed",
+    userId: user.id,
+    metadata: {
+      application_id: payment.applicationId,
+      payment_id: payment.id,
+    },
   });
 
   return successResult({ paymentId: payment.id, status: "VERIFIED" });

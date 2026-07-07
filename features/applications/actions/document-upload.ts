@@ -17,6 +17,7 @@ import {
 import { requireApplyAccess } from "@/server/permissions/guards";
 import { enforceRateLimit, serverActionRateLimit } from "@/server/security/rate-limit";
 import { prisma } from "@/server/db/client";
+import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 
 export async function requestDocumentUploadAction(
   input: unknown,
@@ -86,6 +87,17 @@ export async function confirmDocumentUploadAction(
   if ("error" in result) {
     return errorResult(result.error);
   }
+
+  await trackActivityFromRequest({
+    event: "document_uploaded",
+    userId: user.id,
+    metadata: {
+      application_id: parsed.data.applicationId,
+      doc_type: result.docType,
+      mime_type: result.mimeType,
+      file_size_kb: Math.round(result.fileSize / 1024),
+    },
+  });
 
   return successResult({
     documentId: result.documentId,
