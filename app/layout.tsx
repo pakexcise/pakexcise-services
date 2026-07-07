@@ -13,6 +13,26 @@ import { getBrandingSettings } from "@/features/settings/lib/public-settings-cac
 import { defaultLocale, LOCALE_COOKIE_NAME } from "@/i18n/config";
 import { isValidLocale } from "@/i18n/locale";
 
+function getGoogleSiteVerification(): string | undefined {
+  const token = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+  return token || undefined;
+}
+
+function buildSearchMetadata(icons: Metadata["icons"]): Metadata {
+  const googleVerification = getGoogleSiteVerification();
+
+  return {
+    icons,
+    ...(googleVerification
+      ? {
+          verification: {
+            google: googleVerification,
+          },
+        }
+      : {}),
+  };
+}
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -54,7 +74,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   }
 
-  return { icons };
+  return buildSearchMetadata(icons);
 }
 
 export default async function RootLayout({
