@@ -199,7 +199,7 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
               "signup",
             );
 
-            if (!afterSignup.resumeVerification) {
+            if (!(afterSignup.ok && afterSignup.resumeVerification)) {
               if (
                 signupResult.error.message?.toLowerCase().includes("already") ||
                 signupResult.error.message?.toLowerCase().includes("exists")
