@@ -84,7 +84,7 @@ function loadThirdPartyScripts(tracking?: TrackingRuntimeConfig): void {
     };
 
     window.gtag("js", new Date());
-    window.gtag("config", ga4Id, { send_page_view: false });
+    window.gtag("config", ga4Id, { send_page_view: true });
   }
 
   if (metaPixelId) {
@@ -153,6 +153,25 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
   useEffect(() => {
     captureAttributionFromUrl();
   }, [pathname, searchParams]);
+
+  useEffect(() => {
+    const ga4Id = tracking?.ga4MeasurementId;
+
+    if (!ga4Id || !hasAnalyticsConsent(tracking)) {
+      return;
+    }
+
+    if (typeof window.gtag !== "function") {
+      return;
+    }
+
+    const query = searchParams.toString();
+    const pagePath = query ? `${pathname}?${query}` : pathname;
+
+    window.gtag("config", ga4Id, {
+      page_path: pagePath,
+    });
+  }, [pathname, searchParams, tracking]);
 
   useEffect(() => {
     if (scriptsLoadedRef.current) {
