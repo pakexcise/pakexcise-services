@@ -27,7 +27,7 @@ export async function sendEmailOtp(
   try {
     await enforceRateLimit(otpRateLimit, `email:${email.toLowerCase()}`);
   } catch (rateLimitError) {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.APP_ENV === "development") {
       console.warn("[email-otp:dev] rate limit skipped", rateLimitError);
     } else {
       throw rateLimitError;

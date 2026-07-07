@@ -12,16 +12,30 @@ const DEFAULT_REGION = "us-east-1";
 const DEFAULT_FROM_EMAIL = "noreply@pakexcise.com";
 const DEFAULT_REPLY_TO_EMAIL = "info@pakexcise.com";
 
+function resolveSesAccessKeyId(): string | undefined {
+  return (
+    process.env.AWS_SES_ACCESS_KEY_ID?.trim() ||
+    process.env.AWS_ACCESS_KEY_ID?.trim()
+  );
+}
+
+function resolveSesSecretAccessKey(): string | undefined {
+  return (
+    process.env.AWS_SES_SECRET_ACCESS_KEY?.trim() ||
+    process.env.AWS_SECRET_ACCESS_KEY?.trim()
+  );
+}
+
 export function isSesConfigured(): boolean {
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
+  const accessKeyId = resolveSesAccessKeyId();
+  const secretAccessKey = resolveSesSecretAccessKey();
 
   return Boolean(accessKeyId && secretAccessKey);
 }
 
 export function getSesEmailConfig(): SesEmailConfig | null {
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
+  const accessKeyId = resolveSesAccessKeyId();
+  const secretAccessKey = resolveSesSecretAccessKey();
 
   if (!accessKeyId || !secretAccessKey) {
     return null;
@@ -43,5 +57,5 @@ export function getSesEmailConfig(): SesEmailConfig | null {
 }
 
 export function formatSesFromAddress(email: string): string {
-  return `PakExcise.com <${email}>`;
+  return email;
 }

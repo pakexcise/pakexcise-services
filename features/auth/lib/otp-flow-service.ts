@@ -24,6 +24,7 @@ import { getRememberedOtpDelivery } from "@/server/notifications/otp-delivery-ca
 import type { SendEmailResult } from "@/server/notifications/send-email";
 import { encryptCnic } from "@/server/security/encryption";
 import { hashCnic } from "@/server/security/cnic-hash";
+import { isAuthError } from "@/lib/errors/auth-errors";
 
 const emailSchema = z.string().trim().email();
 
@@ -161,7 +162,15 @@ export async function sendEmailVerificationOtp(
       },
       headers: requestHeaders,
     });
-  } catch {
+  } catch (error) {
+    if (isAuthError(error) && error.code === "RATE_LIMITED") {
+      return { ok: false, code: "RATE_LIMITED" };
+    }
+
+    console.error("[email-otp] sendVerificationOTP failed", {
+      reason: error instanceof Error ? error.message : "unknown",
+    });
+
     return { ok: false, code: "SIGNUP_FAILED" };
   }
 

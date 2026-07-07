@@ -27,7 +27,7 @@ function createPrismaClient(): PrismaClient {
           },
         }
       : undefined,
-    log: process.env.NODE_ENV === "development" ? ["warn"] : ["error"],
+    log: process.env.APP_ENV === "development" ? ["warn"] : [],
   });
 }
 

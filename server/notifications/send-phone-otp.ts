@@ -17,7 +17,7 @@ export async function sendPhoneOtp(
   try {
     await enforceRateLimit(otpRateLimit, `phone:${phoneNumber}`);
   } catch (rateLimitError) {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.APP_ENV === "development") {
       console.warn("[phone-otp:dev] rate limit skipped", rateLimitError);
     } else {
       throw rateLimitError;

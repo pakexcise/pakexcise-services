@@ -81,6 +81,42 @@ export const serverEnvSchema = z
         });
       }
     }
+
+    if (env.APP_ENV === "production" || env.APP_ENV === "staging") {
+      const sesAccessKeyId =
+        process.env.AWS_SES_ACCESS_KEY_ID?.trim() ||
+        process.env.AWS_ACCESS_KEY_ID?.trim();
+      const sesSecretAccessKey =
+        process.env.AWS_SES_SECRET_ACCESS_KEY?.trim() ||
+        process.env.AWS_SECRET_ACCESS_KEY?.trim();
+
+      if (!sesAccessKeyId) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["AWS_ACCESS_KEY_ID"],
+          message:
+            "AWS_ACCESS_KEY_ID (or AWS_SES_ACCESS_KEY_ID) is required for transactional email (AWS SES).",
+        });
+      }
+
+      if (!sesSecretAccessKey) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["AWS_SECRET_ACCESS_KEY"],
+          message:
+            "AWS_SECRET_ACCESS_KEY (or AWS_SES_SECRET_ACCESS_KEY) is required for transactional email (AWS SES).",
+        });
+      }
+
+      if (process.env.RESEND_API_KEY?.trim()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["RESEND_API_KEY"],
+          message:
+            "Remove RESEND_API_KEY. PakExcise uses AWS SES only (see .env.example).",
+        });
+      }
+    }
   });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

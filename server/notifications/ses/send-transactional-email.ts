@@ -9,8 +9,13 @@ import {
   getSesEmailConfig,
   isSesConfigured,
 } from "@/server/notifications/ses/config";
+import { logSesDeliveryFailure } from "@/server/notifications/ses/log-ses-error";
 
 const recipientSchema = z.string().trim().email();
+
+function isLocalAppDevelopment(): boolean {
+  return process.env.APP_ENV === "development";
+}
 
 export type SendEmailInput = {
   to: string;
@@ -49,7 +54,7 @@ function buildHtmlBody(input: SendEmailInput): string {
 }
 
 function logDevEmail(input: SendEmailInput, reason: string): SendEmailResult {
-  if (process.env.NODE_ENV === "development") {
+  if (isLocalAppDevelopment()) {
     console.info(`[email:dev] ${reason}`, {
       to: input.to,
       subject: input.subject,
@@ -121,10 +126,12 @@ export async function sendTransactionalEmail(
 
     return { channel: "direct" };
   } catch (error) {
+    logSesDeliveryFailure(error);
+
     const message =
       error instanceof Error ? error.message : "Email delivery failed";
 
-    if (process.env.NODE_ENV === "development") {
+    if (isLocalAppDevelopment()) {
       console.info("[email:dev:fallback]", {
         to,
         subject,

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { execSync } from "node:child_process";
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -15,6 +16,21 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: true,
+  generateBuildId: async () => {
+    const fromEnv = process.env.BUILD_ID?.trim();
+    if (fromEnv) {
+      return fromEnv;
+    }
+
+    try {
+      return execSync("git rev-parse --short HEAD", {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim();
+    } catch {
+      return `build-${Date.now()}`;
+    }
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

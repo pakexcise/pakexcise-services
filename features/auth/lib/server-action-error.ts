@@ -5,7 +5,10 @@ export function isStaleServerActionError(error: unknown): boolean {
 
   const message = error.message.toLowerCase();
   return (
-    message.includes("server action") && message.includes("was not found")
+    (message.includes("server action") &&
+      (message.includes("was not found") ||
+        message.includes("failed to find"))) ||
+    message.includes("older or newer deployment")
   );
 }
 

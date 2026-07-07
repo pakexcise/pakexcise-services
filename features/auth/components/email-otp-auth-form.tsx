@@ -48,6 +48,7 @@ type EmailOtpAuthFormLabels = {
   otpSentEmailSandbox: string;
   otpSentEmailDevConsole: string;
   sendFailed: string;
+  rateLimitedOtp?: string;
   verifyFailed: string;
   invalidEmail: string;
   signInFailed?: string;
@@ -201,19 +202,25 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
             setError(signupResult.error.message ?? labels.sendFailed);
             return;
           }
+        } else {
+          const otpResult = await sendEmailVerificationOtp(trimmedEmail);
+
+          if (!otpResult.ok) {
+            if (otpResult.code === "RATE_LIMITED") {
+              setError(labels.rateLimitedOtp ?? labels.sendFailed);
+              return;
+            }
+
+            setError(labels.sendFailed);
+            return;
+          }
         }
 
-        const otpResult = await sendEmailVerificationOtp(trimmedEmail);
-
-        if (!otpResult.ok) {
-          setError(labels.sendFailed);
-          return;
-        }
-
+        const delivery = await getEmailOtpDeliveryMeta(trimmedEmail);
         setEmail(trimmedEmail);
         setStep("otp");
         setInfo(
-          resolveEmailOtpSentMessage(trimmedEmail, labels, otpResult.delivery),
+          resolveEmailOtpSentMessage(trimmedEmail, labels, delivery),
         );
       } catch (submitError) {
         setError(
@@ -237,6 +244,11 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
         const otpResult = await sendEmailVerificationOtp(email);
 
         if (!otpResult.ok) {
+          if (otpResult.code === "RATE_LIMITED") {
+            setError(labels.rateLimitedOtp ?? labels.sendFailed);
+            return;
+          }
+
           setError(labels.sendFailed);
           return;
         }

@@ -16,7 +16,10 @@ export type AuthEligibilityResult =
 
 export type EmailSignupInitResult =
   | { ok: true; delivery: SendEmailResult | null }
-  | { ok: false; code: "ACCOUNT_EXISTS" | "INVALID_INPUT" | "SIGNUP_FAILED" };
+  | {
+      ok: false;
+      code: "ACCOUNT_EXISTS" | "INVALID_INPUT" | "RATE_LIMITED" | "SIGNUP_FAILED";
+    };
 
 export type PhoneLoginIdentityResult =
   | { ok: true; email: string }

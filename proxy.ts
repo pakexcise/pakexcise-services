@@ -149,6 +149,26 @@ function ensureLocaleRewrite(
   return rewriteResponse;
 }
 
+function preventAuthPageCaching(
+  request: NextRequest,
+  response: NextResponse,
+): NextResponse {
+  const { pathname } = request.nextUrl;
+
+  if (
+    pathname.includes("/signup") ||
+    pathname.includes("/login") ||
+    pathname.includes("/auth")
+  ) {
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate",
+    );
+  }
+
+  return response;
+}
+
 export default function proxy(request: NextRequest) {
   const legacyRedirect = redirectLegacyLocalePrefix(request);
 
@@ -167,7 +187,9 @@ export default function proxy(request: NextRequest) {
     handleI18nRouting(withoutAcceptLanguage(request)),
   );
 
-  return applySecurityHeaders(syncLocaleCookie(response, request));
+  return applySecurityHeaders(
+    preventAuthPageCaching(request, syncLocaleCookie(response, request)),
+  );
 }
 
 export const config = {

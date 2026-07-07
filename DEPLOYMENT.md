@@ -116,6 +116,66 @@ location /api/realtime/ {
 - [ ] Track page (rate limited)
 - [ ] Urdu RTL layout + dark mode
 - [ ] `pnpm typecheck && pnpm lint && pnpm build` pass in CI
+- [ ] `GET /api/health` shows `email.configured: true` and expected `buildId`
+- [ ] Signup sends OTP to the user's inbox (not Resend sandbox / dev console)
+
+## VPS deploy (Hostinger / PM2)
+
+Run from the app directory on the server (`/var/www/pakexcise-live` or `/var/www/pakexcise-staging`).
+
+### Environment file location
+
+Next.js loads `.env.production` and `.env` from the **app root**, not your home directory.
+
+Required for email (remove all `RESEND_*` variables):
+
+```env
+APP_ENV=production
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_SES_REGION=us-east-1
+SES_FROM_EMAIL=noreply@pakexcise.com
+SES_REPLY_TO_EMAIL=info@pakexcise.com
+```
+
+Optional dedicated SES IAM keys (if R2 uses different credentials):
+
+```env
+AWS_SES_ACCESS_KEY_ID=...
+AWS_SES_SECRET_ACCESS_KEY=...
+```
+
+### Clean deploy script
+
+```bash
+bash scripts/deploy-app.sh /var/www/pakexcise-live pakexcise-live staging
+bash scripts/deploy-app.sh /var/www/pakexcise-staging pakexcise-staging staging
+```
+
+Manual equivalent:
+
+```bash
+cd /var/www/pakexcise-live
+git pull origin staging
+export BUILD_ID="$(git rev-parse --short HEAD)"
+pnpm install
+rm -rf .next
+pnpm build
+pm2 restart pakexcise-live --update-env
+curl -s http://127.0.0.1:3000/api/health
+```
+
+### After deploy
+
+- Hard refresh the browser (`Ctrl+Shift+R`) if you see **Failed to find Server Action** — that means stale client JS from a previous build.
+- PM2 logs should **not** contain `[email:sandbox-forward]` or `onboarding@resend.dev` after SES migration.
+- If OTP still fails, check PM2 logs for `[email:ses] delivery failed` and verify SES production access (sandbox only sends to verified addresses).
+- Test SES directly on the server:
+
+```bash
+cd /var/www/pakexcise-live
+node scripts/verify-ses.mjs your@email.com
+```
 
 ## 14. Manual QA areas (no automated tests yet)
 
