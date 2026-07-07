@@ -56,6 +56,13 @@ for env_file in .env .env.production; do
   upsert_env "$env_file" "AWS_SES_REGION" "us-east-1"
   upsert_env "$env_file" "SES_FROM_EMAIL" "noreply@pakexcise.com"
   upsert_env "$env_file" "SES_REPLY_TO_EMAIL" "info@pakexcise.com"
+  if [[ "$APP_ENV_VALUE" == "staging" ]]; then
+    upsert_env "$env_file" "SES_SANDBOX_FORWARD_TO" "pakexcise@gmail.com"
+  else
+    if grep -q "^SES_SANDBOX_FORWARD_TO=" "$env_file" 2>/dev/null; then
+      sed -i '/^SES_SANDBOX_FORWARD_TO=/d' "$env_file"
+    fi
+  fi
 done
 
 if [[ -z "${AWS_ACCESS_KEY_ID:-}" || -z "${AWS_SECRET_ACCESS_KEY:-}" ]]; then

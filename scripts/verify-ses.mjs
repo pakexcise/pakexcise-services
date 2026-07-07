@@ -51,5 +51,27 @@ try {
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);
   console.error("SES test failed:", message);
+
+  const forwardTo = process.env.SES_SANDBOX_FORWARD_TO?.trim();
+  const isSandbox =
+    message.toLowerCase().includes("not verified") ||
+    message.toLowerCase().includes("sandbox");
+
+  if (isSandbox) {
+    console.error("");
+    console.error("AWS SES is in sandbox mode.");
+    console.error("Option A: Verify this email in SES (us-east-1) → Identities → Create identity.");
+    console.error("Option B: Request SES production access in the AWS console.");
+    if (forwardTo) {
+      console.error(
+        `Option C (staging): OTPs forward to ${forwardTo} when SES_SANDBOX_FORWARD_TO is set.`,
+      );
+    } else if (process.env.APP_ENV === "staging") {
+      console.error(
+        "Option C (staging): set SES_SANDBOX_FORWARD_TO=pakexcise@gmail.com in .env",
+      );
+    }
+  }
+
   process.exit(1);
 }

@@ -15,5 +15,11 @@ export function resolveEmailOtpSentMessage(
     return labels.otpSentEmailDevConsole;
   }
 
+  if (delivery?.channel === "sandbox_forward") {
+    return labels.otpSentEmailSandbox
+      .replace("__REQUESTED_EMAIL__", email)
+      .replace("__OWNER_EMAIL__", delivery.forwardedTo);
+  }
+
   return labels.otpSentEmail.replace("__EMAIL__", email);
 }

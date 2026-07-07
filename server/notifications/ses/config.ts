@@ -59,3 +59,12 @@ export function getSesEmailConfig(): SesEmailConfig | null {
 export function formatSesFromAddress(email: string): string {
   return email;
 }
+
+export function getSesSandboxForwardTo(): string | null {
+  if (process.env.APP_ENV !== "staging") {
+    return null;
+  }
+
+  const forwardTo = process.env.SES_SANDBOX_FORWARD_TO?.trim();
+  return forwardTo || null;
+}
