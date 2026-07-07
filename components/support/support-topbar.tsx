@@ -48,7 +48,7 @@ export function SupportTopbar({
       </Button>
 
       <Link href="/support/dashboard" className="hidden min-w-0 lg:block">
-        <SiteLogo imageClassName="max-h-7" />
+        <SiteLogo size="portal" />
         <span className="mt-0.5 block text-xs text-muted-foreground">
           {t("portalLabel")}
         </span>

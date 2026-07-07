@@ -47,7 +47,7 @@ export function AgentSidebar({
     <div className={cn("flex h-full flex-col", className)}>
       <div className="border-b px-4 py-4">
         <Link href="/agent/dashboard" onClick={onNavigate} className="block">
-          <SiteLogo imageClassName="max-h-7" />
+          <SiteLogo size="portal" />
           <span className="mt-1 block text-xs text-muted-foreground">
             {tShell("portalLabel")}
           </span>

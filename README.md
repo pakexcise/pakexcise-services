@@ -8,7 +8,7 @@ Private Pakistan excise facilitation web application (not a government website).
 - Tailwind CSS v4, shadcn/ui, Radix UI
 - Prisma + Neon PostgreSQL
 - Better Auth, Zod, React Hook Form
-- Cloudflare R2, Upstash Redis, Resend, WhatsApp Cloud API
+- Cloudflare R2, Upstash Redis, AWS SES, WhatsApp Cloud API
 - next-intl (English + Urdu RTL)
 
 ## Prerequisites

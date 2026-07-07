@@ -23,7 +23,7 @@ export function AdminSidebarBrand({ isSuperAdmin }: AdminSidebarBrandProps) {
       )}
     >
       <Link href="/admin/dashboard" className="block">
-        <SiteLogo imageClassName="max-h-8" />
+        <SiteLogo size="admin" />
       </Link>
 
       <div

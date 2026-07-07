@@ -183,7 +183,7 @@ export async function Footer() {
       <div className="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
         <div className="space-y-5 sm:col-span-2 lg:col-span-4">
           <SiteLogo
-            imageClassName="max-h-9"
+            size="footer"
             footerLogoPath={footerLogoPath}
             logoDarkPath={logoDarkPath}
           />

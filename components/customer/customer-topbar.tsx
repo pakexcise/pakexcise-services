@@ -52,7 +52,7 @@ export function CustomerTopbar({
       </Button>
 
       <Link href="/customer/dashboard" className="min-w-0 lg:hidden">
-        <SiteLogo imageClassName="max-h-7" />
+        <SiteLogo size="portal" />
       </Link>
 
       <div className="ms-auto flex min-w-0 items-center gap-1 sm:gap-2">

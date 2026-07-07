@@ -5,9 +5,18 @@ import Image from "next/image";
 import { useBranding } from "@/components/shared/branding-context";
 import { brandingAssets, getBrandDisplayName } from "@/config/branding";
 import { cn } from "@/lib/utils";
+import {
+  FULL_LOGO_INTRINSIC_HEIGHT,
+  FULL_LOGO_INTRINSIC_WIDTH,
+  LOGO_ICON_INTRINSIC_SIZE,
+  siteLogoDefaultSize,
+  siteLogoSizeClasses,
+  type SiteLogoSize,
+} from "@/lib/styles/logo-sizes";
 
 type SiteLogoProps = {
   variant?: "full" | "icon" | "onPrimary";
+  size?: SiteLogoSize;
   className?: string;
   imageClassName?: string;
   priority?: boolean;
@@ -20,6 +29,7 @@ type SiteLogoProps = {
 
 export function SiteLogo({
   variant = "full",
+  size,
   className,
   imageClassName,
   priority = false,
@@ -38,16 +48,18 @@ export function SiteLogo({
   const iconLogo =
     logoIconPath?.trim() || branding.logoIconPath || brandingAssets.logoIcon;
   const altName = getBrandDisplayName(siteName ?? branding.siteName);
+  const resolvedSize = size ?? siteLogoDefaultSize[variant];
+  const sizeClassName = siteLogoSizeClasses[resolvedSize];
 
   if (variant === "icon") {
     return (
       <Image
         src={iconLogo}
         alt={altName}
-        width={48}
-        height={48}
+        width={LOGO_ICON_INTRINSIC_SIZE}
+        height={LOGO_ICON_INTRINSIC_SIZE}
         unoptimized
-        className={cn("h-10 w-10", imageClassName, className)}
+        className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
       />
     );
@@ -58,14 +70,10 @@ export function SiteLogo({
       <Image
         src={darkLogo}
         alt={altName}
-        width={220}
-        height={52}
+        width={FULL_LOGO_INTRINSIC_WIDTH}
+        height={FULL_LOGO_INTRINSIC_HEIGHT}
         unoptimized
-        className={cn(
-          "h-8 w-auto max-w-full object-contain object-left",
-          imageClassName,
-          className,
-        )}
+        className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
       />
     );
@@ -76,25 +84,19 @@ export function SiteLogo({
       <Image
         src={footerLogoPath ? footerLogo : lightLogo}
         alt={altName}
-        width={220}
-        height={52}
+        width={FULL_LOGO_INTRINSIC_WIDTH}
+        height={FULL_LOGO_INTRINSIC_HEIGHT}
         unoptimized
-        className={cn(
-          "h-8 w-auto max-w-full object-contain object-left sm:h-10 dark:hidden",
-          imageClassName,
-        )}
+        className={cn(sizeClassName, "dark:hidden", imageClassName)}
         priority={priority}
       />
       <Image
         src={darkLogo}
         alt={altName}
-        width={220}
-        height={52}
+        width={FULL_LOGO_INTRINSIC_WIDTH}
+        height={FULL_LOGO_INTRINSIC_HEIGHT}
         unoptimized
-        className={cn(
-          "hidden h-8 w-auto max-w-full object-contain object-left sm:h-10 dark:block",
-          imageClassName,
-        )}
+        className={cn(sizeClassName, "hidden dark:block", imageClassName)}
         priority={priority}
       />
     </span>

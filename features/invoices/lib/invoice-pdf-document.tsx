@@ -81,12 +81,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   brandIconImage: {
-    width: 38,
-    height: 38,
-    marginRight: 10,
+    width: 48,
+    height: 48,
+    marginRight: 12,
+    objectFit: "contain",
   },
   brandName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     color: "#FFFFFF",
   },

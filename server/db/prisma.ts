@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 
 import { isFooterNavigationSchemaReady } from "@/server/db/is-footer-navigation-schema-ready";
 import { isPlateFormatSchemaReady } from "@/server/db/is-plate-format-schema-ready";
+import { resolvePrismaDatabaseUrl } from "@/server/db/database-url";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -16,7 +17,16 @@ function isPrismaClientSchemaCurrent(client: PrismaClient): boolean {
 }
 
 function createPrismaClient(): PrismaClient {
+  const databaseUrl = resolvePrismaDatabaseUrl(process.env.DATABASE_URL);
+
   return new PrismaClient({
+    datasources: databaseUrl
+      ? {
+          db: {
+            url: databaseUrl,
+          },
+        }
+      : undefined,
     log: process.env.NODE_ENV === "development" ? ["warn"] : ["error"],
   });
 }

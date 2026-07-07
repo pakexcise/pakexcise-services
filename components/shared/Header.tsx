@@ -97,14 +97,14 @@ export function Header({
         </div>
       ) : null}
 
-      <div className="container-site flex min-h-16 items-center justify-between gap-3 py-2">
+      <div className="container-site flex min-h-[4.25rem] items-center justify-between gap-3 py-2.5 sm:min-h-[4.5rem]">
         <Link
           href="/"
-          className="flex min-w-0 max-w-[55%] shrink-0 items-center text-start sm:max-w-none"
+          className="flex min-w-0 max-w-[62%] shrink-0 items-center text-start sm:max-w-none"
         >
           <SiteLogo
             priority
-            imageClassName="max-h-9 sm:max-h-10"
+            size="header"
             logoPath={logoPath}
             logoDarkPath={logoDarkPath}
           />

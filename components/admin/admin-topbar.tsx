@@ -34,7 +34,7 @@ export function AdminTopbar({ user, onMenuClick }: AdminTopbarProps) {
       </Button>
 
       <Link href="/admin/dashboard" className="hidden min-w-0 lg:block">
-        <SiteLogo imageClassName="max-h-7" />
+        <SiteLogo size="portal" />
         <span className="mt-0.5 block text-xs text-muted-foreground">
           {user.role === "SUPER_ADMIN" ? t("panelSuperAdmin") : t("panelOperations")}
         </span>

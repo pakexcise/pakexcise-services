@@ -109,7 +109,7 @@ export function InvoiceView({
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
       <div className="border-b bg-primary px-5 py-4 text-primary-foreground sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <InvoiceBrandMark iconSize={36} />
+          <InvoiceBrandMark />
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold">{labels.title}</h2>
             <Badge

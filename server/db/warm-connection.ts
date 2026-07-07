@@ -12,6 +12,12 @@ function delay(ms: number): Promise<void> {
   });
 }
 
+/**
+ * Verifies database reachability at startup with a single lightweight query.
+ * Avoid prisma.$connect() — it eagerly opens the full connection pool; on Neon
+ * pooled hosts idle connections are closed and Prisma logs recurring
+ * "Error { kind: Closed, cause: None }" during pool health checks.
+ */
 export async function warmDatabaseConnection(): Promise<void> {
   if (!isDatabaseConfigured()) {
     return;
@@ -19,7 +25,7 @@ export async function warmDatabaseConnection(): Promise<void> {
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     try {
-      await prisma.$connect();
+      await prisma.$queryRaw`SELECT 1`;
       return;
     } catch {
       if (attempt === MAX_ATTEMPTS) {

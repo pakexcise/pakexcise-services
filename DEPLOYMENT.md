@@ -31,11 +31,14 @@ Use this checklist before going live. `.env.example` lists every variable; fill 
 - [ ] Set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
 - [ ] Required for rate limiting (forms, track, auth, uploads) and notification queue
 
-## 5. Email (Resend)
+## 5. Email (AWS SES)
 
-- [ ] Verify sending domain
-- [ ] Set `RESEND_API_KEY`, `RESEND_FROM_EMAIL`
-- [ ] Remove sandbox owner overrides in production
+- [ ] Verify `pakexcise.com` in AWS SES (region: `us-east-1`)
+- [ ] Create IAM user with `ses:SendEmail` (scoped to verified domain/addresses)
+- [ ] Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SES_REGION=us-east-1`
+- [ ] Set `SES_FROM_EMAIL=noreply@pakexcise.com`, `SES_REPLY_TO_EMAIL=info@pakexcise.com`
+- [ ] Request production access in SES if still in sandbox
+- [ ] Mailbox `info@pakexcise.com` remains on Hostinger for inbound mail
 
 ## 6. WhatsApp Cloud API
 

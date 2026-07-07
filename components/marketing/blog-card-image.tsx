@@ -30,11 +30,7 @@ export function BlogCardImage({
     >
       {!imageUrl ? (
         <div className="flex size-full items-center justify-center p-8">
-          <SiteLogo
-            variant="icon"
-            imageClassName="size-16 sm:size-20"
-            priority={false}
-          />
+          <SiteLogo variant="icon" size="iconLarge" priority={false} />
         </div>
       ) : (
         <Image
