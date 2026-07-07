@@ -49,6 +49,6 @@ export function resolveApplicationSubmissionSource(
 
 export function getApplicationSubmissionSourceLabelKey(
   source: ApplicationSubmissionSource,
-): `submissionSource.${ApplicationSubmissionSource}` {
-  return `submissionSource.${source}`;
+): `applications.submissionSource.${ApplicationSubmissionSource}` {
+  return `applications.submissionSource.${source}`;
 }
