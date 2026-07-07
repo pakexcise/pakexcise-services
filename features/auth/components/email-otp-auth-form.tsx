@@ -48,6 +48,7 @@ type EmailOtpAuthFormLabels = {
   otpSentEmailSandbox: string;
   otpSentEmailDevConsole: string;
   sendFailed: string;
+  emailDeliveryFailed?: string;
   rateLimitedOtp?: string;
   verifyFailed: string;
   invalidEmail: string;
@@ -183,7 +184,9 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           return;
         }
 
-        if (!eligibility.resumeVerification) {
+        let signupCreatedAccount = eligibility.resumeVerification;
+
+        if (!signupCreatedAccount) {
           const signupResult = await signUp.email({
             email: trimmedEmail,
             password,
@@ -191,36 +194,58 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           });
 
           if (signupResult.error) {
-            if (
-              signupResult.error.message?.toLowerCase().includes("already") ||
-              signupResult.error.message?.toLowerCase().includes("exists")
-            ) {
-              setError(labels.emailExists ?? labels.accountExists ?? labels.sendFailed);
+            const afterSignup = await checkEmailAuthEligibility(
+              trimmedEmail,
+              "signup",
+            );
+
+            if (!afterSignup.resumeVerification) {
+              if (
+                signupResult.error.message?.toLowerCase().includes("already") ||
+                signupResult.error.message?.toLowerCase().includes("exists")
+              ) {
+                setError(
+                  labels.emailExists ?? labels.accountExists ?? labels.sendFailed,
+                );
+                return;
+              }
+
+              setError(signupResult.error.message ?? labels.sendFailed);
               return;
             }
 
-            setError(signupResult.error.message ?? labels.sendFailed);
-            return;
-          }
-        } else {
-          const otpResult = await sendEmailVerificationOtp(trimmedEmail);
-
-          if (!otpResult.ok) {
-            if (otpResult.code === "RATE_LIMITED") {
-              setError(labels.rateLimitedOtp ?? labels.sendFailed);
-              return;
-            }
-
-            setError(labels.sendFailed);
-            return;
+            signupCreatedAccount = true;
+          } else {
+            signupCreatedAccount = true;
           }
         }
 
-        const delivery = await getEmailOtpDeliveryMeta(trimmedEmail);
+        if (!signupCreatedAccount) {
+          setError(labels.sendFailed);
+          return;
+        }
+
+        const otpResult = await sendEmailVerificationOtp(trimmedEmail);
+
+        if (!otpResult.ok) {
+          if (otpResult.code === "RATE_LIMITED") {
+            setError(labels.rateLimitedOtp ?? labels.sendFailed);
+            return;
+          }
+
+          if (otpResult.code === "EMAIL_FAILED") {
+            setError(labels.emailDeliveryFailed ?? labels.sendFailed);
+            return;
+          }
+
+          setError(labels.sendFailed);
+          return;
+        }
+
         setEmail(trimmedEmail);
         setStep("otp");
         setInfo(
-          resolveEmailOtpSentMessage(trimmedEmail, labels, delivery),
+          resolveEmailOtpSentMessage(trimmedEmail, labels, otpResult.delivery),
         );
       } catch (submitError) {
         setError(
@@ -246,6 +271,11 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
         if (!otpResult.ok) {
           if (otpResult.code === "RATE_LIMITED") {
             setError(labels.rateLimitedOtp ?? labels.sendFailed);
+            return;
+          }
+
+          if (otpResult.code === "EMAIL_FAILED") {
+            setError(labels.emailDeliveryFailed ?? labels.sendFailed);
             return;
           }
 

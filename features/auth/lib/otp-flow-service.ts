@@ -1,6 +1,5 @@
 import "server-only";
 
-import { headers } from "next/headers";
 import { z } from "zod";
 
 import {
@@ -19,12 +18,12 @@ import type {
 import { isValidCnicInput, normalizeCnic, parsePhoneOrCnicInput } from "@/lib/validations/cnic";
 import { normalizePakistanPhone } from "@/lib/validations/phone";
 import { auth } from "@/server/auth/config";
+import { issueEmailVerificationOtp } from "@/server/auth/issue-email-verification-otp";
 import { prisma } from "@/server/db/client";
 import { getRememberedOtpDelivery } from "@/server/notifications/otp-delivery-cache";
 import type { SendEmailResult } from "@/server/notifications/send-email";
 import { encryptCnic } from "@/server/security/encryption";
 import { hashCnic } from "@/server/security/cnic-hash";
-import { isAuthError } from "@/lib/errors/auth-errors";
 
 const emailSchema = z.string().trim().email();
 
@@ -151,32 +150,23 @@ export async function sendEmailVerificationOtp(
     return { ok: false, code: "INVALID_INPUT" };
   }
 
-  const normalizedEmail = parsedEmail.data.toLowerCase();
-  const requestHeaders = await headers();
+  const result = await issueEmailVerificationOtp(parsedEmail.data.toLowerCase());
 
-  try {
-    await auth.api.sendVerificationOTP({
-      body: {
-        email: normalizedEmail,
-        type: "email-verification",
-      },
-      headers: requestHeaders,
-    });
-  } catch (error) {
-    if (isAuthError(error) && error.code === "RATE_LIMITED") {
+  if (!result.ok) {
+    if (result.code === "RATE_LIMITED") {
       return { ok: false, code: "RATE_LIMITED" };
     }
 
-    console.error("[email-otp] sendVerificationOTP failed", {
-      reason: error instanceof Error ? error.message : "unknown",
-    });
+    if (result.code === "USER_NOT_FOUND") {
+      return { ok: false, code: "SIGNUP_FAILED" };
+    }
 
-    return { ok: false, code: "SIGNUP_FAILED" };
+    return { ok: false, code: "EMAIL_FAILED" };
   }
 
   return {
     ok: true,
-    delivery: getRememberedOtpDelivery(normalizedEmail),
+    delivery: result.delivery,
   };
 }
 

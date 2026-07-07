@@ -18,7 +18,12 @@ export type EmailSignupInitResult =
   | { ok: true; delivery: SendEmailResult | null }
   | {
       ok: false;
-      code: "ACCOUNT_EXISTS" | "INVALID_INPUT" | "RATE_LIMITED" | "SIGNUP_FAILED";
+      code:
+        | "ACCOUNT_EXISTS"
+        | "EMAIL_FAILED"
+        | "INVALID_INPUT"
+        | "RATE_LIMITED"
+        | "SIGNUP_FAILED";
     };
 
 export type PhoneLoginIdentityResult =
