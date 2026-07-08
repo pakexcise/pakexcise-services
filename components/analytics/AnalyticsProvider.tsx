@@ -11,6 +11,12 @@ import type { AnalyticsEventName } from "@/features/analytics/events";
 import type { TrackingRuntimeConfig } from "@/features/settings/lib/tracking-runtime";
 import { mapAnalyticsEventToActivity } from "@/features/tracking/lib/map-analytics-event";
 import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
+import {
+  isGoogleAnalyticsLoaded,
+  isGoogleTagManagerLoaded,
+  pushGa4PageView,
+  pushGtmPageView,
+} from "@/lib/analytics/client-tracking";
 import { captureAttributionFromUrl } from "@/lib/attribution";
 
 const CONSENT_STORAGE_KEY = "pakexcise.analytics.consent";
@@ -67,7 +73,7 @@ function loadThirdPartyScripts(tracking?: TrackingRuntimeConfig): void {
   const metaPixelId = tracking?.metaPixelId;
   const tiktokPixelId = tracking?.tiktokPixelId;
 
-  if (gtmId) {
+  if (gtmId && !isGoogleTagManagerLoaded(gtmId)) {
     window.dataLayer.push({
       event: "gtm.js",
       event_id: `gtm_${Date.now()}`,
@@ -75,7 +81,9 @@ function loadThirdPartyScripts(tracking?: TrackingRuntimeConfig): void {
       "gtm.start": Date.now(),
     });
     injectScript("pakexcise-gtm", `https://www.googletagmanager.com/gtm.js?id=${gtmId}`);
-  } else if (ga4Id) {
+  }
+
+  if (ga4Id && !isGoogleAnalyticsLoaded(ga4Id)) {
     injectScript(
       "pakexcise-gtag",
       `https://www.googletagmanager.com/gtag/js?id=${ga4Id}`,
@@ -157,22 +165,27 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
   }, [pathname, searchParams]);
 
   useEffect(() => {
-    const ga4Id = tracking?.ga4MeasurementId;
-
-    if (!ga4Id || !hasAnalyticsConsent(tracking)) {
+    if (!hasAnalyticsConsent(tracking)) {
       return;
     }
 
-    if (typeof window.gtag !== "function") {
+    const ga4Id = tracking?.ga4MeasurementId;
+    const gtmId = tracking?.gtmId;
+
+    if (!ga4Id && !gtmId) {
       return;
     }
 
     const query = searchParams.toString();
     const pagePath = query ? `${pathname}?${query}` : pathname;
 
-    window.gtag("config", ga4Id, {
-      page_path: pagePath,
-    });
+    if (ga4Id) {
+      pushGa4PageView(ga4Id, pagePath);
+    }
+
+    if (gtmId) {
+      pushGtmPageView(pagePath);
+    }
 
     recordClientActivity({
       event: "page_view",

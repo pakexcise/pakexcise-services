@@ -54,12 +54,33 @@ Use this checklist before going live. `.env.example` lists every variable; fill 
 
 ## 8. Analytics & pixels
 
-Public measurement IDs can be set in **Admin → Settings → Social & tracking** (DB) or via env fallback:
+GA4, GTM, and Google Search Console load **only when `APP_ENV=production`** (not on staging).
 
-- [ ] `NEXT_PUBLIC_GA4_MEASUREMENT_ID` or admin GA4 field
-- [ ] `NEXT_PUBLIC_GTM_ID` or admin GTM field
+On the live VPS, run:
+
+```bash
+bash scripts/configure-production-tracking.sh /var/www/pakexcise-live
+cp .env.production .env
+```
+
+Production values:
+
+- [ ] `NEXT_PUBLIC_GA4_MEASUREMENT_ID=G-CSM430BN4H`
+- [ ] `NEXT_PUBLIC_GTM_ID=GTM-TKJW3C6F`
+- [ ] `GOOGLE_SITE_VERIFICATION` (HTML meta tag for Search Console)
+
+Optional overrides in **Admin → Settings → Social & tracking** (DB). Env vars are used when admin fields are empty.
+
+**GTM note:** GA4 is installed directly via `gtag.js` in the site layout. Do **not** add a second GA4 Configuration tag inside GTM for the same measurement ID (avoids double-counting). Use GTM for future tags (Meta, TikTok, etc.).
+
+**Google Search Console:** After deploy, submit `https://pakexcise.com/sitemap.xml` and link the GA4 property in GSC admin.
+
+Other pixels (env or admin):
+
 - [ ] `NEXT_PUBLIC_META_PIXEL_ID` + `META_CAPI_ACCESS_TOKEN` (server, secret)
 - [ ] `NEXT_PUBLIC_TIKTOK_PIXEL_ID` + `TIKTOK_EVENTS_API_ACCESS_TOKEN` (server, secret)
+
+Internal activity events (signup, WhatsApp clicks, applications) are stored in PostgreSQL (`activity_events`) — not sent to GA4.
 
 ## 9. Cloudflare Turnstile
 

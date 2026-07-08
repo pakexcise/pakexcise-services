@@ -3,6 +3,11 @@ import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import { cookies } from "next/headers";
 
 import "@/app/globals.css";
+import {
+  GoogleAnalyticsScripts,
+  GoogleTagManagerHead,
+  GoogleTagManagerNoScript,
+} from "@/components/analytics/google-tags";
 import { BrandThemeStyles } from "@/components/theme/BrandThemeStyles";
 import { shouldAllowSearchIndexing } from "@/config/env.server";
 import {
@@ -99,6 +104,8 @@ export default async function RootLayout({
       <head>
         <meta name="google" content="notranslate" />
         <meta httpEquiv="Content-Language" content={locale} />
+        <GoogleTagManagerHead />
+        <GoogleAnalyticsScripts />
         <BrandThemeStyles />
       </head>
       <body
@@ -106,6 +113,7 @@ export default async function RootLayout({
         data-locale={locale}
         suppressHydrationWarning
       >
+        <GoogleTagManagerNoScript />
         {children}
       </body>
     </html>
