@@ -82,6 +82,18 @@ Other pixels (env or admin):
 
 Internal activity events (signup, WhatsApp clicks, applications) are stored in PostgreSQL (`activity_events`) — not sent to GA4.
 
+**GA4 custom dimensions (register once in Admin → Data display → Custom definitions):**
+
+| Event parameter | Scope | Example values |
+|-----------------|-------|----------------|
+| `traffic_channel` | Event | social, ai, search, paid, direct |
+| `traffic_platform` | Event | facebook, chatgpt, google, tiktok |
+| `placement` | Event | fab, header_desktop, home_hero_whatsapp |
+
+After 24–48 hours, build GA4 Explorations filtered by `traffic_channel = ai` or `traffic_platform = chatgpt` to analyze AI referral traffic.
+
+**UTM links for social posts:** use `?utm_source=facebook&utm_medium=social&utm_campaign=post_name` (or `utm_source=chatgpt&utm_medium=ai` for AI tool listings).
+
 ## 9. Cloudflare Turnstile
 
 - [ ] Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` on public forms

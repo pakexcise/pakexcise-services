@@ -1427,6 +1427,7 @@
     },
     "nav": {
       "dashboard": "Dashboard",
+      "analytics": "Analytics",
       "applications": "Applications",
       "supportRequests": "Support requests",
       "guestLeads": "Support requests",
@@ -1511,6 +1512,32 @@
         "topProvince": "Top province",
         "applicationCount": "{count, plural, one {# application} other {# applications}}"
       }
+    },
+    "analytics": {
+      "title": "User analytics",
+      "description": "Production traffic, WhatsApp clicks, and conversion events from your own database. GA4 is linked for deeper reporting.",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "highlightsTitle": "Conversion highlights",
+      "pageViews": "Page views",
+      "whatsappClicks": "WhatsApp clicks",
+      "signups": "Signups completed",
+      "applicationsSubmitted": "Applications submitted",
+      "contactSubmissions": "Contact submissions",
+      "trafficByChannel": "Traffic by channel",
+      "trafficByPlatform": "Traffic by platform",
+      "whatsappByPlacement": "WhatsApp clicks by placement",
+      "topLandingPages": "Top landing pages",
+      "allEvents": "All tracked events",
+      "channel": "Channel",
+      "platform": "Platform",
+      "placement": "Placement",
+      "path": "Page path",
+      "event": "Event",
+      "count": "Count",
+      "empty": "No production activity recorded for this period yet.",
+      "ga4Hint": "For live visitor charts and acquisition reports, open Google Analytics. Register custom dimensions traffic_channel and traffic_platform to filter social and AI traffic.",
+      "openGa4": "Open GA4"
     },
     "users": {
       "title": "Admin users",

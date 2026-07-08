@@ -51,6 +51,7 @@ export async function DashboardInsightCards({
         <InsightStatCard
           title={t("todayWhatsappClicks")}
           value={insights.todayWhatsappClicks.toLocaleString()}
+          href="/admin/analytics"
         />
         <InsightStatCard
           title={t("todaySignups")}

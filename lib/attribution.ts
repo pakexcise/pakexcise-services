@@ -1,3 +1,8 @@
+import {
+  classifyTraffic,
+  type TrafficClassification,
+} from "@/lib/analytics/traffic-platform";
+
 export type AttributionData = {
   firstTouchSource?: string;
   firstTouchMedium?: string;
@@ -133,6 +138,21 @@ function readUtmAttribution(): AttributionData {
   };
 }
 
+function inferAttributionFromReferrer(referrer: string | undefined): AttributionData {
+  const classified = classifyTraffic({ referrer });
+
+  if (classified.channel === "direct") {
+    return {};
+  }
+
+  return {
+    firstTouchSource: classified.source ?? classified.platform,
+    firstTouchMedium: classified.medium ?? classified.channel,
+    lastTouchSource: classified.source ?? classified.platform,
+    lastTouchCampaign: undefined,
+  };
+}
+
 function mergeFirstTouch(
   existing: AttributionData,
   current: AttributionData,
@@ -210,10 +230,13 @@ export function captureAttributionFromUrl(): AttributionData {
   if (Object.keys(current).length > 0 || Object.keys(existingFirst).length > 0) {
     persistAttribution(firstTouch, lastTouch);
   } else if (Object.keys(existingFirst).length === 0 && !existingLast.landingPage) {
+    const referrer = trimField(document.referrer || undefined, MAX_FIELD_LENGTH);
+    const inferred = inferAttributionFromReferrer(referrer);
     const bootstrap: AttributionData = {
       landingPage: window.location.pathname.slice(0, MAX_FIELD_LENGTH),
-      referrer: trimField(document.referrer || undefined, MAX_FIELD_LENGTH),
+      referrer,
       deviceType: getDeviceType(),
+      ...inferred,
     };
     persistAttribution(bootstrap, bootstrap);
   }
@@ -255,6 +278,19 @@ export function toAttributionAnalyticsContext(
   attribution: AttributionData,
 ): Record<string, string> {
   const context: Record<string, string> = {};
+  const classification: TrafficClassification = classifyTraffic({
+    utmSource: attribution.lastTouchSource ?? attribution.firstTouchSource,
+    utmMedium: attribution.firstTouchMedium,
+    referrer: attribution.referrer,
+    gclid: attribution.gclid,
+    fbclid: attribution.fbclid,
+    ttclid: attribution.ttclid,
+  });
+
+  context.traffic_channel = classification.channel;
+  context.traffic_platform = classification.platform;
+  context.traffic_source = classification.source ?? classification.platform;
+  context.traffic_medium = classification.medium ?? classification.channel;
 
   if (attribution.firstTouchSource) {
     context.first_touch_source = attribution.firstTouchSource;

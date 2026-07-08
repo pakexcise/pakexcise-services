@@ -47,6 +47,13 @@ export const adminNavItems: AdminNavItem[] = [
     section: "overview",
   },
   {
+    href: "/admin/analytics",
+    labelKey: "analytics",
+    icon: "bar-chart-3",
+    section: "overview",
+    permission: "application:read",
+  },
+  {
     href: "/admin/applications",
     labelKey: "applications",
     icon: "file-stack",

@@ -1428,6 +1428,7 @@
     },
     "nav": {
       "dashboard": "ڈیش بورڈ",
+      "analytics": "تجزیات",
       "applications": "درخواستیں",
       "supportRequests": "سپورٹ درخواستیں",
       "guestLeads": "سپورٹ درخواستیں",
@@ -1512,6 +1513,32 @@
         "topProvince": "سب سے زیادہ درخواست والا صوبہ",
         "applicationCount": "{count, plural, one {# درخواست} other {# درخواستیں}}"
       }
+    },
+    "analytics": {
+      "title": "صارف تجزیات",
+      "description": "پروڈکشن ٹریفک، WhatsApp کلکس، اور تبدیلی کے واقعات آپ کے اپنے ڈیٹا بیس سے۔ GA4 گہرے رپورٹس کے لیے منسلک ہے۔",
+      "last7Days": "آخری 7 دن",
+      "last30Days": "آخری 30 دن",
+      "highlightsTitle": "تبدیلی کے خلاصے",
+      "pageViews": "صفحہ دیکھنے",
+      "whatsappClicks": "WhatsApp کلکس",
+      "signups": "مکمل سائن اپ",
+      "applicationsSubmitted": "جمع شدہ درخواستیں",
+      "contactSubmissions": "رابطہ فارم جمع",
+      "trafficByChannel": "چینل کے لحاظ سے ٹریفک",
+      "trafficByPlatform": "پلیٹ فارم کے لحاظ سے ٹریفک",
+      "whatsappByPlacement": "WhatsApp کلکس (جگہ کے لحاظ سے)",
+      "topLandingPages": "سب سے زیادہ لینڈنگ صفحات",
+      "allEvents": "تمام ٹریک شدہ واقعات",
+      "channel": "چینل",
+      "platform": "پلیٹ فارم",
+      "placement": "جگہ",
+      "path": "صفحہ راستہ",
+      "event": "واقعہ",
+      "count": "تعداد",
+      "empty": "اس مدت کے لیے ابھی کوئی پروڈکشن سرگرمی ریکارڈ نہیں ہوئی۔",
+      "ga4Hint": "لائیو وزیٹر چارٹس اور acquisition رپورٹس کے لیے Google Analytics کھولیں۔ social اور AI ٹریفک فلٹر کرنے کے لیے traffic_channel اور traffic_platform custom dimensions رجسٹر کریں۔",
+      "openGa4": "GA4 کھولیں"
     },
     "users": {
       "title": "ایڈمن صارفین",

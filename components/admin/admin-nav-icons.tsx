@@ -1,5 +1,6 @@
 import {
   ArrowRightLeft,
+  BarChart3,
   Bell,
   BookOpen,
   Briefcase,
@@ -31,6 +32,7 @@ import {
 
 const iconMap: Record<string, LucideIcon> = {
   "layout-dashboard": LayoutDashboard,
+  "bar-chart-3": BarChart3,
   "file-stack": FileStack,
   "message-square": MessageSquare,
   mail: Mail,

@@ -20,20 +20,36 @@ export function isGoogleAnalyticsLoaded(ga4Id: string): boolean {
   );
 }
 
-export function pushGa4PageView(ga4Id: string, pagePath: string): void {
+export function pushGa4PageView(
+  ga4Id: string,
+  pagePath: string,
+  extra: Record<string, string | number | boolean> = {},
+): void {
   if (typeof window.gtag !== "function") {
     return;
   }
 
   window.gtag("config", ga4Id, {
     page_path: pagePath,
+    ...extra,
   });
+
+  if (Object.keys(extra).length > 0) {
+    window.gtag("event", "page_view", {
+      page_path: pagePath,
+      ...extra,
+    });
+  }
 }
 
-export function pushGtmPageView(pagePath: string): void {
+export function pushGtmPageView(
+  pagePath: string,
+  extra: Record<string, string | number | boolean> = {},
+): void {
   window.dataLayer = window.dataLayer ?? [];
   window.dataLayer.push({
     event: "page_view",
     page_path: pagePath,
+    ...extra,
   });
 }

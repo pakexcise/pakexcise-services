@@ -1,6 +1,7 @@
 import { recordActivity } from "@/features/tracking/actions/record-activity";
 import type { ClientActivityEventName } from "@/features/tracking/events";
 import { getClientActivitySessionId } from "@/features/tracking/lib/client-session";
+import { getTrafficMetadataForActivity } from "@/lib/analytics/traffic-context";
 
 type RecordClientActivityInput = {
   event: ClientActivityEventName;
@@ -22,6 +23,9 @@ export function recordClientActivity(input: RecordClientActivityInput): void {
     sessionId,
     path,
     referrer,
-    metadata: input.metadata,
+    metadata: {
+      ...getTrafficMetadataForActivity(),
+      ...input.metadata,
+    },
   });
 }

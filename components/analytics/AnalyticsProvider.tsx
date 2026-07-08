@@ -17,6 +17,7 @@ import {
   pushGa4PageView,
   pushGtmPageView,
 } from "@/lib/analytics/client-tracking";
+import { getTrafficAnalyticsContext } from "@/lib/analytics/traffic-context";
 import { captureAttributionFromUrl } from "@/lib/attribution";
 
 const CONSENT_STORAGE_KEY = "pakexcise.analytics.consent";
@@ -180,16 +181,17 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     const pagePath = query ? `${pathname}?${query}` : pathname;
 
     if (ga4Id) {
-      pushGa4PageView(ga4Id, pagePath);
+      pushGa4PageView(ga4Id, pagePath, getTrafficAnalyticsContext());
     }
 
     if (gtmId) {
-      pushGtmPageView(pagePath);
+      pushGtmPageView(pagePath, getTrafficAnalyticsContext());
     }
 
     recordClientActivity({
       event: "page_view",
       path: pagePath,
+      metadata: getTrafficAnalyticsContext(),
     });
   }, [pathname, searchParams, tracking]);
 
