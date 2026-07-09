@@ -26,9 +26,10 @@ import {
   resolveWhatsappDefaultMessage,
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
+import { brandingAssets } from "@/config/branding";
 import { routing, type Locale } from "@/i18n/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
-import { seoAbsoluteUrl } from "@/lib/seo-url";
+import { resolveSeoImageUrl, seoAbsoluteUrl } from "@/lib/seo-url";
 import { getActiveSocialLinks } from "@/server/repositories";
 import { getCurrentLocale, isValidLocale } from "@/server/i18n/get-locale";
 
@@ -83,7 +84,12 @@ export default async function LocaleLayout({
       }),
     }),
     buildWebSiteJsonLd(baseUrl, business.siteName || seo.organizationName),
-    buildLocalBusinessJsonLd(baseUrl, seo),
+    buildLocalBusinessJsonLd(baseUrl, seo, {
+      telephone: business.phoneDisplayNumber,
+      imageUrl: resolveSeoImageUrl(
+        seo.organizationLogoPath ?? branding.logoPath ?? brandingAssets.logo,
+      ),
+    }),
   ];
 
   const brandingContextValue = {

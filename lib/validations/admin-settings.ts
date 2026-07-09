@@ -79,6 +79,11 @@ const seoSettingsSchema = z.object({
   localBusinessDescriptionUr: z.string().trim().min(1).max(500),
   localBusinessPriceRange: z.string().trim().max(20),
   localBusinessAreaServed: z.string().trim().min(1).max(120),
+  localBusinessTelephone: z.string().trim().min(7).max(40),
+  localBusinessStreetAddress: z.string().trim().min(3).max(200),
+  localBusinessAddressLocality: z.string().trim().min(2).max(120),
+  localBusinessPostalCode: z.string().trim().min(3).max(20),
+  localBusinessAddressCountry: z.string().trim().min(2).max(8),
 });
 
 const trackingSettingsSchema = z.object({

@@ -2834,7 +2834,11 @@
         "localBusinessDescriptionUr": "Local business description (Urdu)",
         "localBusinessPriceRange": "Price range (optional)",
         "localBusinessPriceRangeOptional": "Leave empty to omit from JSON-LD",
-        "localBusinessAreaServed": "Local business area served"
+        "localBusinessAreaServed": "Local business area served",
+        "localBusinessTelephone": "Local business telephone (JSON-LD)",
+        "localBusinessStreetAddress": "Street address (JSON-LD)",
+        "localBusinessAddressLocality": "City (JSON-LD)",
+        "localBusinessPostalCode": "Postal code (JSON-LD)"
       },
       "tracking": {
         "ga4MeasurementId": "GA4 measurement ID",

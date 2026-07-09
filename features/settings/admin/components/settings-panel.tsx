@@ -950,6 +950,78 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="localBusinessTelephone">
+              {labels.seo.localBusinessTelephone}
+            </Label>
+            <Input
+              id="localBusinessTelephone"
+              value={values.seo.localBusinessTelephone}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessTelephone: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="localBusinessStreetAddress">
+              {labels.seo.localBusinessStreetAddress}
+            </Label>
+            <Input
+              id="localBusinessStreetAddress"
+              value={values.seo.localBusinessStreetAddress}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessStreetAddress: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="localBusinessAddressLocality">
+              {labels.seo.localBusinessAddressLocality}
+            </Label>
+            <Input
+              id="localBusinessAddressLocality"
+              value={values.seo.localBusinessAddressLocality}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessAddressLocality: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="localBusinessPostalCode">
+              {labels.seo.localBusinessPostalCode}
+            </Label>
+            <Input
+              id="localBusinessPostalCode"
+              value={values.seo.localBusinessPostalCode}
+              onChange={(event) =>
+                setValues((current) => ({
+                  ...current,
+                  seo: {
+                    ...current.seo,
+                    localBusinessPostalCode: event.target.value,
+                  },
+                }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="localBusinessAreaServed">
               {labels.seo.localBusinessAreaServed}
             </Label>

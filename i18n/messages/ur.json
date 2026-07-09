@@ -2835,7 +2835,11 @@
         "localBusinessDescriptionUr": "مقامی کاروبار کی تفصیل (اردو)",
         "localBusinessPriceRange": "قیمت کی حد (اختیاری)",
         "localBusinessPriceRangeOptional": "JSON-LD سے خارج کرنے کے لیے خالی چھوڑیں",
-        "localBusinessAreaServed": "مقامی کاروبار کی کوریج"
+        "localBusinessAreaServed": "مقامی کاروبار کی کوریج",
+        "localBusinessTelephone": "مقامی کاروبار فون (JSON-LD)",
+        "localBusinessStreetAddress": "گلی کا پتہ (JSON-LD)",
+        "localBusinessAddressLocality": "شہر (JSON-LD)",
+        "localBusinessPostalCode": "پوسٹل کوڈ (JSON-LD)"
       },
       "tracking": {
         "ga4MeasurementId": "GA4 measurement ID",

@@ -56,8 +56,8 @@ export function defaultBusinessSettings(): BusinessSettings {
     whatsappChannelUrl: DEFAULT_WHATSAPP_CHANNEL_URL,
     businessHoursEn: `${supportDaysEn} · ${supportHoursEn}`,
     businessHoursUr: `${supportDaysUr} · ${supportHoursUr}`,
-    addressEn: "Pakistan (Punjab & Islamabad ICT coverage)",
-    addressUr: "پاکستان (پنجاب اور اسلام آباد ICT کوریج)",
+    addressEn: "Service Rd E, Near H 9/4 H-9, Islamabad, 44000",
+    addressUr: "سروس روڈ ای، ایچ 9/4 کے قریب، اسلام آباد، 44000",
     disclaimerEn: DEFAULT_DISCLAIMER_EN,
     disclaimerUr: DEFAULT_DISCLAIMER_UR,
     footerDescriptionEn: DEFAULT_FOOTER_DESCRIPTION_EN,
@@ -185,6 +185,11 @@ export function defaultSeoSettings(): SeoSettings {
       "پاکستان کے لیے نجی ایکسائز سہولت سروس۔ کسی بھی سرکاری ادارے سے وابستہ نہیں۔",
     localBusinessPriceRange: "",
     localBusinessAreaServed: "Pakistan",
+    localBusinessTelephone: DEFAULT_PHONE_DISPLAY,
+    localBusinessStreetAddress: "Service Rd E, Near H 9/4 H-9",
+    localBusinessAddressLocality: "Islamabad",
+    localBusinessPostalCode: "44000",
+    localBusinessAddressCountry: "PK",
   };
 }
 

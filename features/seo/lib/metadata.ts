@@ -10,8 +10,10 @@ import type { BrandingSettings } from "@/features/settings/types";
 import type { SeoSettings } from "@/features/settings/types";
 import {
   buildContactPointNodes,
+  buildPostalAddressJsonLd,
   dedupeSameAs,
   normalizeJsonLdText,
+  normalizeTelephoneForJsonLd,
   organizationId,
   type JsonLdContactPointInput,
   websiteId,
@@ -195,13 +197,24 @@ export function buildWebSiteJsonLd(
 
 export function buildLocalBusinessJsonLd(
   baseUrl: string,
-  seo?: Pick<
-    SeoSettings,
-    | "localBusinessName"
-    | "localBusinessDescriptionEn"
-    | "localBusinessAreaServed"
-    | "localBusinessPriceRange"
+  seo?: Partial<
+    Pick<
+      SeoSettings,
+      | "localBusinessName"
+      | "localBusinessDescriptionEn"
+      | "localBusinessAreaServed"
+      | "localBusinessPriceRange"
+      | "localBusinessTelephone"
+      | "localBusinessStreetAddress"
+      | "localBusinessAddressLocality"
+      | "localBusinessPostalCode"
+      | "localBusinessAddressCountry"
+    >
   >,
+  options?: {
+    telephone?: string;
+    imageUrl?: string;
+  },
 ) {
   const normalizedBaseUrl = baseUrl.replace(/\/$/, "");
   const payload: Record<string, unknown> = {
@@ -217,6 +230,27 @@ export function buildLocalBusinessJsonLd(
       "@id": organizationId(normalizedBaseUrl),
     },
   };
+
+  const telephone = normalizeTelephoneForJsonLd(
+    seo?.localBusinessTelephone ?? options?.telephone,
+  );
+  if (telephone) {
+    payload.telephone = telephone;
+  }
+
+  const address = buildPostalAddressJsonLd({
+    streetAddress: seo?.localBusinessStreetAddress ?? "",
+    addressLocality: seo?.localBusinessAddressLocality ?? "",
+    postalCode: seo?.localBusinessPostalCode ?? "",
+    addressCountry: seo?.localBusinessAddressCountry,
+  });
+  if (address) {
+    payload.address = address;
+  }
+
+  if (options?.imageUrl) {
+    payload.image = options.imageUrl;
+  }
 
   const priceRange = seo?.localBusinessPriceRange?.trim();
   if (priceRange) {

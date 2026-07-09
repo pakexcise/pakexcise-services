@@ -66,6 +66,10 @@ export type SettingsPanelLabels = {
     localBusinessPriceRange: string;
     localBusinessPriceRangeOptional: string;
     localBusinessAreaServed: string;
+    localBusinessTelephone: string;
+    localBusinessStreetAddress: string;
+    localBusinessAddressLocality: string;
+    localBusinessPostalCode: string;
     organizationSection: string;
     localBusinessSection: string;
   };

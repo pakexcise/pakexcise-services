@@ -131,6 +131,11 @@ export type SeoSettings = {
   localBusinessDescriptionUr: string;
   localBusinessPriceRange: string;
   localBusinessAreaServed: string;
+  localBusinessTelephone: string;
+  localBusinessStreetAddress: string;
+  localBusinessAddressLocality: string;
+  localBusinessPostalCode: string;
+  localBusinessAddressCountry: string;
 };
 
 export type ConsentMode = "implied" | "explicit" | "disabled";

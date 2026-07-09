@@ -77,6 +77,38 @@ export function websiteId(baseUrl: string): string {
   return `${baseUrl.replace(/\/$/, "")}/#website`;
 }
 
+export type PostalAddressInput = {
+  streetAddress: string;
+  addressLocality: string;
+  postalCode: string;
+  addressCountry?: string;
+};
+
+export function buildPostalAddressJsonLd(
+  input: PostalAddressInput,
+): Record<string, unknown> | null {
+  const streetAddress = input.streetAddress.trim();
+  const addressLocality = input.addressLocality.trim();
+  const postalCode = input.postalCode.trim();
+
+  if (!streetAddress || !addressLocality || !postalCode) {
+    return null;
+  }
+
+  return {
+    "@type": "PostalAddress",
+    streetAddress,
+    addressLocality,
+    postalCode,
+    addressCountry: input.addressCountry?.trim() || "PK",
+  };
+}
+
+export function normalizeTelephoneForJsonLd(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed || undefined;
+}
+
 export function dedupeSameAs(urls: string[]): string[] {
   const seen = new Set<string>();
 
