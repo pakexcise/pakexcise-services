@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { BlogFaqSection } from "@/components/marketing/blog/blog-faq-section";
+import { BlogPostTags } from "@/components/marketing/blog/blog-post-tags";
 import { BlogFeaturedImage } from "@/components/marketing/blog/blog-featured-image";
 import { BlogPostCta } from "@/components/marketing/blog/blog-post-cta";
 import { BlogPostMetaBar } from "@/components/marketing/blog/blog-post-meta-bar";
@@ -56,7 +57,7 @@ export async function generateMetadata({
     return {};
   }
 
-  return await resolveMetadataFromSeo({
+  const metadata = await resolveMetadataFromSeo({
     locale,
     path: `/blog/${post.slug}`,
     seo: post.seoMeta,
@@ -75,6 +76,18 @@ export async function generateMetadata({
       },
     },
   });
+
+  if (post.focusKeywords?.trim()) {
+    return {
+      ...metadata,
+      keywords: post.focusKeywords
+        .split(",")
+        .map((keyword) => keyword.trim())
+        .filter(Boolean),
+    };
+  }
+
+  return metadata;
 }
 
 export default async function BlogDetailPage({ params }: BlogPageProps) {
@@ -227,6 +240,9 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
               <p className="text-bidi-auto max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {excerpt}
               </p>
+            ) : null}
+            {post.tags.length > 0 ? (
+              <BlogPostTags tags={post.tags} title={t("tags")} />
             ) : null}
           </div>
 

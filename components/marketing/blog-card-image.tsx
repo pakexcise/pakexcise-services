@@ -25,12 +25,12 @@ export function BlogCardImage({
   return (
     <div
       className={cn(
-        "relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10",
+        "relative aspect-[16/10] w-full overflow-hidden bg-muted/20",
         className,
       )}
     >
       {!imageUrl ? (
-        <div className="flex size-full items-center justify-center p-8">
+        <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-8">
           <SiteLogo variant="icon" size="iconLarge" priority={false} />
         </div>
       ) : (
@@ -38,8 +38,9 @@ export function BlogCardImage({
           src={imageUrl}
           alt={title}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          quality={90}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+          className="object-contain transition-transform duration-300 group-hover:scale-[1.01]"
         />
       )}
     </div>

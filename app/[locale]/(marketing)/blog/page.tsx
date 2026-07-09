@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { BlogFeaturedHeroCard } from "@/components/marketing/blog/blog-featured-hero-card";
 import { BlogCard } from "@/components/marketing/blog-card";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
-import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
+import { buildBreadcrumbJsonLd, buildItemListJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { requireBlogEnabled } from "@/features/settings/lib/feature-gates";
 import { Button } from "@/components/ui/button";
@@ -98,6 +99,36 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     { name: title, url: absoluteUrl("/blog") },
   ]);
 
+  const listItems = [
+    ...(showFeatured && featuredPost
+      ? [
+          {
+            name: pickLocalized(locale, {
+              en: featuredPost.titleEn,
+              ur: featuredPost.titleUr,
+            }),
+            url: absoluteUrl(`/blog/${featuredPost.slug}`),
+          },
+        ]
+      : []),
+    ...postsResult.items.map((post) => ({
+      name: pickLocalized(locale, { en: post.titleEn, ur: post.titleUr }),
+      url: absoluteUrl(`/blog/${post.slug}`),
+    })),
+  ];
+
+  const itemListJsonLd =
+    listItems.length > 0
+      ? buildItemListJsonLd({
+          name: title,
+          items: listItems,
+        })
+      : null;
+
+  const jsonLd = [breadcrumbJsonLd, itemListJsonLd].filter(
+    (item): item is NonNullable<typeof item> => item !== null,
+  );
+
   const searchParamsForPagination = {
     ...(q ? { q } : {}),
     ...(category ? { category } : {}),
@@ -106,7 +137,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={jsonLd} />
       <PageHero
         title={title}
         description={description}
@@ -148,24 +179,24 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         </form>
 
         {showFeatured && featuredPost ? (
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-foreground">{t("blog.featured")}</h2>
-            <div className="max-w-3xl">
-              <BlogCard
-                post={featuredPost}
-                locale={locale}
-                readMoreLabel={tCommon("learnMore")}
-                readingTimeLabel={t("blog.readingTime")}
-                featured
-              />
-            </div>
+          <section className="space-y-4" aria-labelledby="featured-blog-heading">
+            <h2 id="featured-blog-heading" className="text-2xl font-bold text-foreground">
+              {t("blog.featured")}
+            </h2>
+            <BlogFeaturedHeroCard
+              post={featuredPost}
+              locale={locale}
+              readMoreLabel={tCommon("learnMore")}
+              readingTimeLabel={t("blog.readingTime")}
+            />
           </section>
         ) : null}
 
-        {postsResult.items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("blog.empty")}</p>
-        ) : (
-          <>
+        {postsResult.items.length > 0 ? (
+          <section className="space-y-6" aria-labelledby="latest-blog-heading">
+            <h2 id="latest-blog-heading" className="text-xl font-semibold text-foreground">
+              {t("blog.latest")}
+            </h2>
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {postsResult.items.map((post) => (
                 <BlogCard
@@ -183,8 +214,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               basePath="/blog"
               searchParams={searchParamsForPagination}
             />
-          </>
-        )}
+          </section>
+        ) : !showFeatured ? (
+          <p className="text-sm text-muted-foreground">{t("blog.empty")}</p>
+        ) : null}
       </div>
     </>
   );

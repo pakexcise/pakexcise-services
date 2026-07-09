@@ -9,6 +9,7 @@ import {
   createBlogPostAction,
   updateBlogPostAction,
 } from "@/features/blog/admin/actions/blog-actions";
+import { BLOG_IMAGE_ADMIN_HINT } from "@/features/blog/lib/image-spec";
 import type { BlogContentFaq } from "@/features/blog/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -330,12 +331,13 @@ export function BlogEditorForm({
           <Label htmlFor="featuredImagePath">Image path or URL</Label>
           <Input
             id="featuredImagePath"
-            placeholder="/blog/example.png"
+            placeholder="/blog/example.webp"
             value={values.featuredImagePath}
             onChange={(e) =>
               setValues((c) => ({ ...c, featuredImagePath: e.target.value }))
             }
           />
+          <p className="text-xs text-muted-foreground">{BLOG_IMAGE_ADMIN_HINT}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="featuredImageTitleEn">Image title (EN)</Label>

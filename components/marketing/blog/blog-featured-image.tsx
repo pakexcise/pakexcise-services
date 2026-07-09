@@ -1,5 +1,4 @@
-import Image from "next/image";
-
+import { BlogResponsiveImage } from "@/components/marketing/blog/blog-responsive-image";
 import { resolveBlogFeaturedImageAlt } from "@/features/blog/lib/featured-image";
 import { resolveBlogFeaturedImage } from "@/lib/i18n/blog-featured-image";
 import { pickLocalized } from "@/lib/i18n/content";
@@ -47,20 +46,16 @@ export function BlogFeaturedImage({
   });
 
   return (
-    <figure className={cn("overflow-hidden rounded-2xl border bg-card shadow-sm", className)}>
-      <div className="relative aspect-[16/9] w-full">
-        <Image
-          src={imageUrl}
-          alt={alt}
-          title={title || undefined}
-          fill
-          priority={priority}
-          sizes="(max-width: 1024px) 100vw, 896px"
-          className="object-cover"
-        />
-      </div>
+    <figure className={cn("space-y-3", className)}>
+      <BlogResponsiveImage
+        src={imageUrl}
+        alt={alt}
+        title={title || undefined}
+        variant="hero"
+        priority={priority}
+      />
       {caption ? (
-        <figcaption className="border-t px-4 py-3 text-sm text-muted-foreground">
+        <figcaption className="text-center text-sm text-muted-foreground">
           {caption}
         </figcaption>
       ) : null}

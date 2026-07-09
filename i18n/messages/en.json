@@ -1361,6 +1361,7 @@
       "metaDescription": "Guides and articles about vehicle, token tax, registration, and license facilitation in Pakistan.",
       "empty": "No blog posts are published yet.",
       "featured": "Featured article",
+      "latest": "Latest articles",
       "searchPlaceholder": "Search articles",
       "tagPlaceholder": "Filter by tag",
       "allCategories": "All categories",
@@ -1372,6 +1373,7 @@
       "share": "Share this article",
       "copied": "Link copied",
       "relatedPosts": "Related articles",
+      "tags": "Tags",
       "relatedServices": "Related services",
       "attachedFaqs": "Related FAQs",
       "cta": {
