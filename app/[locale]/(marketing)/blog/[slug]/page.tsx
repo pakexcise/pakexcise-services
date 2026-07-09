@@ -23,6 +23,7 @@ import {
 } from "@/features/blog/lib/blog-defaults";
 import {
   mapBlogContentFaqsForLocale,
+  mergeBlogFaqItems,
   parseBlogContentFaqs,
 } from "@/features/blog/lib/content-faqs";
 import { resolveBlogOgImageUrl } from "@/features/blog/lib/featured-image";
@@ -160,7 +161,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
     locale,
   );
   const attachedFaqItems = mapFaqsForLocale(attachedFaqs, locale);
-  const faqItems = contentFaqs.length > 0 ? contentFaqs : attachedFaqItems;
+  const faqItems = mergeBlogFaqItems(contentFaqs, attachedFaqItems);
 
   const tocItems = post.showTableOfContents
     ? extractBlogTableOfContents(content)
@@ -258,8 +259,8 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
       </article>
 
       <div className="container-site py-10 md:py-12">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12">
-          <div className="space-y-10">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(240px,300px)] lg:items-start lg:gap-12 xl:gap-16">
+          <div className="min-w-0 space-y-10">
             {tocItems.length > 0 ? (
               <div className="lg:hidden">
                 <BlogTableOfContents items={tocItems} title={t("tableOfContents")} />
@@ -268,7 +269,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
 
             <ProseContent
               content={content}
-              className="max-w-none [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:mt-8 [&_h3]:mb-3"
+              className="max-w-none overflow-x-hidden break-words [&_h2]:mt-10 [&_h2]:scroll-mt-28 [&_h2]:mb-4 [&_h3]:mt-8 [&_h3]:scroll-mt-28 [&_h3]:mb-3 [&_img]:h-auto [&_img]:max-w-full"
             />
 
             <BlogFaqSection items={faqItems} title={t("faqs")} />
@@ -286,6 +287,15 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
               title={title}
               shareLabel={t("share")}
               copiedLabel={t("copied")}
+              labels={{
+                facebook: t("shareChannels.facebook"),
+                linkedin: t("shareChannels.linkedin"),
+                whatsapp: t("shareChannels.whatsapp"),
+                x: t("shareChannels.x"),
+                telegram: t("shareChannels.telegram"),
+                email: t("shareChannels.email"),
+                copyLink: t("shareChannels.copyLink"),
+              }}
             />
 
             <BlogRelatedPosts
@@ -297,7 +307,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
             />
           </div>
 
-          <aside className="hidden space-y-6 lg:block">
+          <aside className="hidden min-w-0 lg:block">
             {tocItems.length > 0 ? (
               <div className="sticky top-24 space-y-6">
                 <BlogTableOfContents items={tocItems} title={t("tableOfContents")} />

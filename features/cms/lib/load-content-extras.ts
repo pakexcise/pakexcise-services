@@ -33,7 +33,7 @@ export async function loadAttachedFaqs(faqIds: string[]) {
     return [];
   }
 
-  return prisma.fAQ.findMany({
+  const faqs = await prisma.fAQ.findMany({
     where: {
       id: { in: faqIds },
       isActive: true,
@@ -45,6 +45,11 @@ export async function loadAttachedFaqs(faqIds: string[]) {
       answerEn: true,
       answerUr: true,
     },
-    orderBy: { displayOrder: "asc" },
   });
+
+  const faqById = new Map(faqs.map((faq) => [faq.id, faq]));
+
+  return faqIds
+    .map((id) => faqById.get(id))
+    .filter((faq): faq is NonNullable<typeof faq> => faq !== undefined);
 }

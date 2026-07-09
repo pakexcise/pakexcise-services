@@ -40,3 +40,23 @@ export function mapBlogContentFaqsForLocale(
     answer: locale === "ur" ? faq.answerUr : faq.answerEn,
   }));
 }
+
+export function mergeBlogFaqItems(
+  contentFaqs: Array<{ question: string; answer: string }>,
+  attachedFaqs: Array<{ question: string; answer: string }>,
+): Array<{ question: string; answer: string }> {
+  const seen = new Set<string>();
+  const merged: Array<{ question: string; answer: string }> = [];
+
+  for (const faq of [...contentFaqs, ...attachedFaqs]) {
+    const key = faq.question.trim().toLowerCase();
+    if (!key || seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    merged.push(faq);
+  }
+
+  return merged;
+}
