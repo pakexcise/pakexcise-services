@@ -48,6 +48,8 @@ export async function resolveMetadataFromSeo(input: {
   path: string;
   seo: SeoMeta | null;
   fallbacks: SeoFallbacks;
+  /** When set, overrides stored SEO ogImage (e.g. blog featured image or logo fallback). */
+  ogImage?: string | null;
 }): Promise<Metadata> {
   const [branding, business] = await Promise.all([
     getBrandingSettings(),
@@ -74,7 +76,7 @@ export async function resolveMetadataFromSeo(input: {
       en: input.seo?.ogDescriptionEn ?? resolved.description,
       ur: input.seo?.ogDescriptionUr ?? resolved.description,
     }),
-    ogImage: input.seo?.ogImage ?? brandingDefaults.ogImage,
+    ogImage: input.ogImage ?? input.seo?.ogImage ?? brandingDefaults.ogImage,
     twitterImage: brandingDefaults.twitterImage,
     siteName: brandingDefaults.siteName,
     twitterCard:

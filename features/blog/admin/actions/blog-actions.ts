@@ -6,6 +6,10 @@ import { handleContentSlugRedirect } from "@/features/cms/lib/handle-content-red
 import { normalizeLocalizedContent } from "@/features/cms/lib/normalize-content-input";
 import { upsertBlogSeo } from "@/features/cms/lib/upsert-seo";
 import { normalizeBlogPostInput } from "@/features/blog/lib/normalize-blog-input";
+import { resolveLogoIconPath } from "@/features/settings/lib/branding-resolvers";
+import { getBrandingSettings } from "@/features/settings/lib/public-settings-cache";
+import { seoAbsoluteUrl } from "@/lib/seo-url";
+import type { SeoMetaInput } from "@/lib/validations/admin-seo";
 import {
   blogPostIdSchema,
   createBlogPostSchema,
@@ -70,6 +74,26 @@ async function validateRelations(serviceIds: string[], faqIds: string[]) {
   return null;
 }
 
+async function prepareBlogSeoInput(
+  slug: string,
+  seo: SeoMetaInput | undefined,
+  featuredImagePath?: string | null,
+): Promise<SeoMetaInput | undefined> {
+  if (!seo) {
+    return undefined;
+  }
+
+  const branding = await getBrandingSettings();
+  const canonicalUrl = seo.canonicalUrl?.trim() || seoAbsoluteUrl(`/blog/${slug}`);
+  const ogImage = featuredImagePath?.trim() || resolveLogoIconPath(branding);
+
+  return {
+    ...seo,
+    canonicalUrl,
+    ogImage,
+  };
+}
+
 export async function createBlogPostAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
@@ -106,7 +130,11 @@ export async function createBlogPostAction(
     },
   });
 
-  await upsertBlogSeo(post.id, post.slug, data.seo);
+  await upsertBlogSeo(
+    post.id,
+    post.slug,
+    await prepareBlogSeoInput(post.slug, data.seo, blogFields.featuredImagePath),
+  );
 
   await auditAdminAction({
     actorId: user.id,
@@ -176,7 +204,11 @@ export async function updateBlogPostAction(
     });
   }
 
-  await upsertBlogSeo(post.id, post.slug, data.seo);
+  await upsertBlogSeo(
+    post.id,
+    post.slug,
+    await prepareBlogSeoInput(post.slug, data.seo, blogFields.featuredImagePath),
+  );
 
   await auditAdminAction({
     actorId: user.id,

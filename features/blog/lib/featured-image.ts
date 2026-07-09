@@ -1,20 +1,27 @@
 import type { PublicBlogPostCard } from "@/features/blog/types";
+import type { BrandingSettings } from "@/features/settings/types";
+import { resolveLogoIconPath } from "@/features/settings/lib/branding-resolvers";
 import { resolveSeoImageUrl } from "@/lib/seo-url";
 
-export function resolveBlogFeaturedImage(
-  post: Pick<PublicBlogPostCard, "featuredImagePath" | "seoMeta">,
-): string | null {
+/** OG/social image: featured image when set, otherwise site logo icon. */
+export function resolveBlogOgImagePath(
+  post: Pick<PublicBlogPostCard, "featuredImagePath">,
+  branding: BrandingSettings,
+): string {
   const featured = post.featuredImagePath?.trim();
   if (featured) {
-    return resolveSeoImageUrl(featured) ?? featured;
+    return featured;
   }
 
-  const ogImage = post.seoMeta?.ogImage?.trim();
-  if (ogImage) {
-    return resolveSeoImageUrl(ogImage) ?? ogImage;
-  }
+  return resolveLogoIconPath(branding);
+}
 
-  return null;
+export function resolveBlogOgImageUrl(
+  post: Pick<PublicBlogPostCard, "featuredImagePath">,
+  branding: BrandingSettings,
+): string {
+  const path = resolveBlogOgImagePath(post, branding);
+  return resolveSeoImageUrl(path) ?? path;
 }
 
 export function resolveBlogFeaturedImageAlt(

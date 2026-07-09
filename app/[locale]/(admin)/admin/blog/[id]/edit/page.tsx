@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { BlogEditorForm } from "@/features/blog/admin/components/blog-editor-form";
+import { mergeBlogEditorDefaults } from "@/features/blog/lib/editor-defaults";
 import { parseBlogContentFaqs } from "@/features/blog/lib/content-faqs";
 import { seoFromRecord } from "@/features/cms/lib/default-seo";
 import { loadCmsEditorOptions } from "@/features/cms/lib/load-editor-options";
@@ -39,7 +40,7 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
       <BlogEditorForm
         mode="edit"
         postId={post.id}
-        initialValues={{
+        initialValues={mergeBlogEditorDefaults({
           slug: post.slug,
           titleEn: post.titleEn,
           titleUr: post.titleUr,
@@ -78,7 +79,7 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
           attachedFaqIds: post.attachedFaqIds,
           isPublished: post.isPublished,
           seo: seoFromRecord(post.seoMeta),
-        }}
+        })}
         services={options.services}
         faqs={options.faqs}
       />

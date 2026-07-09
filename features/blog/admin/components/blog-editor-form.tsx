@@ -4,13 +4,17 @@ import { Plus, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import { SeoFieldsSection } from "@/features/cms/components/seo-fields-section";
-import { emptySeoInput } from "@/features/cms/lib/default-seo";
 import {
   createBlogPostAction,
   updateBlogPostAction,
 } from "@/features/blog/admin/actions/blog-actions";
-import { BLOG_IMAGE_ADMIN_HINT } from "@/features/blog/lib/image-spec";
+import { BlogImageUploadField } from "@/features/blog/admin/components/blog-image-upload-field";
+import { BlogMarkdownEditor } from "@/features/blog/admin/components/blog-markdown-editor";
+import {
+  mergeBlogEditorDefaults,
+} from "@/features/blog/lib/editor-defaults";
 import type { BlogContentFaq } from "@/features/blog/types";
+import { computeReadingTimeMinutes } from "@/features/blog/lib/reading-time";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,9 +90,13 @@ export function BlogEditorForm({
   faqs,
 }: BlogEditorFormProps) {
   const router = useRouter();
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState(() => mergeBlogEditorDefaults(initialValues));
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [isPending, startTransition] = useTransition();
+  const estimatedReadingTime = computeReadingTimeMinutes(
+    values.contentEn || values.contentUr,
+  );
 
   function toggleId(list: string[], id: string) {
     return list.includes(id) ? list.filter((item) => item !== id) : [...list, id];
@@ -105,6 +113,7 @@ export function BlogEditorForm({
 
   function handleSubmit() {
     setError(null);
+    setFieldErrors({});
     startTransition(async () => {
       const payload = {
         ...values,
@@ -114,9 +123,7 @@ export function BlogEditorForm({
         categoryUr: values.categoryUr || null,
         authorNameEn: values.authorNameEn || null,
         authorNameUr: values.authorNameUr || null,
-        readingTimeMinutes: values.readingTimeMinutes
-          ? Number(values.readingTimeMinutes)
-          : null,
+        readingTimeMinutes: null,
         featuredImagePath: values.featuredImagePath || null,
         featuredImageTitleEn: values.featuredImageTitleEn || null,
         featuredImageTitleUr: values.featuredImageTitleUr || null,
@@ -146,6 +153,7 @@ export function BlogEditorForm({
 
       if (!result.success) {
         setError(result.error);
+        setFieldErrors(result.fieldErrors ?? {});
         return;
       }
 
@@ -252,38 +260,26 @@ export function BlogEditorForm({
           />
         </div>
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="contentEn">Content (English, markdown supported)</Label>
-          <Textarea
+          <BlogMarkdownEditor
             id="contentEn"
-            rows={16}
+            label="Content (English)"
             value={values.contentEn}
-            onChange={(e) => setValues((c) => ({ ...c, contentEn: e.target.value }))}
+            onChange={(contentEn) => setValues((c) => ({ ...c, contentEn }))}
           />
-          <p className="text-xs text-muted-foreground">
-            Use ## for H2, ### for H3, - for bullets, and ![alt](/path.png) for images.
-          </p>
         </div>
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="contentUr">Content (Urdu, markdown supported)</Label>
-          <Textarea
+          <BlogMarkdownEditor
             id="contentUr"
-            rows={16}
-            dir="rtl"
+            label="Content (Urdu)"
             value={values.contentUr}
-            onChange={(e) => setValues((c) => ({ ...c, contentUr: e.target.value }))}
+            onChange={(contentUr) => setValues((c) => ({ ...c, contentUr }))}
+            dir="rtl"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="readingTimeMinutes">Reading time (minutes)</Label>
-          <Input
-            id="readingTimeMinutes"
-            type="number"
-            min={1}
-            value={values.readingTimeMinutes}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, readingTimeMinutes: e.target.value }))
-            }
-          />
+        <div className="space-y-2 md:col-span-2">
+          <p className="text-sm text-muted-foreground">
+            Estimated reading time: <strong>{estimatedReadingTime} min</strong> (auto-calculated on save)
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="focusKeywords">Focus keywords</Label>
@@ -327,17 +323,18 @@ export function BlogEditorForm({
 
       <section className="grid gap-4 rounded-xl border p-4 md:grid-cols-2">
         <h3 className="text-sm font-semibold md:col-span-2">Featured image</h3>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="featuredImagePath">Image path or URL</Label>
-          <Input
-            id="featuredImagePath"
-            placeholder="/blog/example.webp"
+        <p className="text-xs text-muted-foreground md:col-span-2">
+          This image is shown on the blog page and used automatically for social sharing (OG).
+          If you leave it empty, your site logo icon is used for OG previews.
+        </p>
+        <div className="md:col-span-2">
+          <BlogImageUploadField
+            label="Featured image"
             value={values.featuredImagePath}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, featuredImagePath: e.target.value }))
+            onChange={(featuredImagePath) =>
+              setValues((c) => ({ ...c, featuredImagePath }))
             }
           />
-          <p className="text-xs text-muted-foreground">{BLOG_IMAGE_ADMIN_HINT}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="featuredImageTitleEn">Image title (EN)</Label>
@@ -408,7 +405,12 @@ export function BlogEditorForm({
 
       <section className="space-y-4 rounded-xl border p-4">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold">Inline FAQs</h3>
+          <div>
+            <h3 className="text-sm font-semibold">Inline FAQs</h3>
+            <p className="text-xs text-muted-foreground">
+              Default FAQs are pre-filled. Edit, remove, or add more as needed.
+            </p>
+          </div>
           <Button
             type="button"
             size="sm"
@@ -474,8 +476,11 @@ export function BlogEditorForm({
         )}
       </section>
 
-      <section className="grid gap-4 rounded-xl border p-4 md:grid-cols-2">
-        <h3 className="text-sm font-semibold md:col-span-2">CTA section</h3>
+      <section className="space-y-4 rounded-xl border p-4">
+        <h3 className="text-sm font-semibold">CTA section</h3>
+        <p className="text-xs text-muted-foreground">
+          Default CTA text is pre-filled for all blogs. Edit only if this post needs custom CTA copy.
+        </p>
         <div className="space-y-2">
           <Label htmlFor="ctaTitleEn">CTA heading (EN)</Label>
           <Input
@@ -624,6 +629,7 @@ export function BlogEditorForm({
       </section>
 
       <SeoFieldsSection
+        hideOgImage
         value={values.seo}
         onChange={(seo) => setValues((c) => ({ ...c, seo }))}
         labels={{
@@ -639,7 +645,7 @@ export function BlogEditorForm({
           ogTitleUr: "OG title (UR)",
           ogDescriptionEn: "OG description (EN)",
           ogDescriptionUr: "OG description (UR)",
-          ogImage: "OG image URL",
+          ogImage: "OG image (uses featured image automatically)",
           twitterCard: "Twitter card",
           robotsIndex: "Allow indexing",
           robotsFollow: "Allow following",
@@ -647,6 +653,20 @@ export function BlogEditorForm({
       />
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {Object.keys(fieldErrors).length > 0 ? (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          <p className="font-medium">Please fix the following:</p>
+          <ul className="mt-2 list-disc space-y-1 ps-5">
+            {Object.entries(fieldErrors).map(([field, messages]) =>
+              (messages ?? []).map((message) => (
+                <li key={`${field}-${message}`}>
+                  {field}: {message}
+                </li>
+              )),
+            )}
+          </ul>
+        </div>
+      ) : null}
 
       <div className="flex flex-wrap gap-3">
         <Button type="button" onClick={handleSubmit} disabled={isPending}>
@@ -665,47 +685,4 @@ export function BlogEditorForm({
       </div>
     </div>
   );
-}
-
-export function createEmptyBlogValues(): BlogEditorValues {
-  return {
-    slug: "",
-    titleEn: "",
-    titleUr: "",
-    excerptEn: "",
-    excerptUr: "",
-    contentEn: "",
-    contentUr: "",
-    categoryEn: "",
-    categoryUr: "",
-    tags: [],
-    authorNameEn: "",
-    authorNameUr: "",
-    readingTimeMinutes: "",
-    featuredImagePath: "",
-    featuredImageTitleEn: "",
-    featuredImageTitleUr: "",
-    featuredImageAltEn: "",
-    featuredImageAltUr: "",
-    featuredImageCaptionEn: "",
-    featuredImageCaptionUr: "",
-    focusKeywords: "",
-    isFeatured: false,
-    showTableOfContents: true,
-    contentFaqs: [],
-    ctaTitleEn: "",
-    ctaTitleUr: "",
-    ctaDescriptionEn: "",
-    ctaDescriptionUr: "",
-    ctaWhatsappLabelEn: "",
-    ctaWhatsappLabelUr: "",
-    ctaRequestLabelEn: "",
-    ctaRequestLabelUr: "",
-    ctaAccountLabelEn: "",
-    ctaAccountLabelUr: "",
-    relatedServiceIds: [],
-    attachedFaqIds: [],
-    isPublished: false,
-    seo: { ...emptySeoInput },
-  };
 }

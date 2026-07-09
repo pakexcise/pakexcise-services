@@ -18,10 +18,14 @@ import {
   loadAttachedFaqs,
 } from "@/features/cms/lib/load-content-extras";
 import {
+  resolveBlogContentFaqs,
+  resolveBlogCtaFields,
+} from "@/features/blog/lib/blog-defaults";
+import {
   mapBlogContentFaqsForLocale,
   parseBlogContentFaqs,
 } from "@/features/blog/lib/content-faqs";
-import { resolveBlogFeaturedImage } from "@/features/blog/lib/featured-image";
+import { resolveBlogOgImageUrl } from "@/features/blog/lib/featured-image";
 import { extractBlogTableOfContents } from "@/features/blog/lib/toc";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
@@ -31,7 +35,6 @@ import {
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { getBrandingSettings, getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
-import { resolveDefaultOgImagePath } from "@/features/settings/lib/branding-resolvers";
 import { redirect } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { resolveSeoImageUrl } from "@/lib/seo-url";
@@ -51,7 +54,10 @@ export async function generateMetadata({
 }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params;
   const locale = await getCurrentLocale();
-  const post = await blogPostRepository.findPublishedBySlug(slug);
+  const [post, branding] = await Promise.all([
+    blogPostRepository.findPublishedBySlug(slug),
+    getBrandingSettings(),
+  ]);
 
   if (!post) {
     return {};
@@ -61,6 +67,7 @@ export async function generateMetadata({
     locale,
     path: `/blog/${post.slug}`,
     seo: post.seoMeta,
+    ogImage: resolveBlogOgImageUrl(post, branding),
     fallbacks: {
       title: {
         en: post.seoMeta?.metaTitleEn ?? `${post.titleEn} | PakExcise.com`,
@@ -146,8 +153,10 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
     ur: post.authorNameUr,
   });
 
+  const resolvedPost = resolveBlogCtaFields(post);
+
   const contentFaqs = mapBlogContentFaqsForLocale(
-    parseBlogContentFaqs(post.contentFaqs),
+    resolveBlogContentFaqs(parseBlogContentFaqs(post.contentFaqs)),
     locale,
   );
   const attachedFaqItems = mapFaqsForLocale(attachedFaqs, locale);
@@ -158,30 +167,28 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
     : [];
 
   const ctaTitle = pickLocalized(locale, {
-    en: post.ctaTitleEn,
-    ur: post.ctaTitleUr,
+    en: resolvedPost.ctaTitleEn,
+    ur: resolvedPost.ctaTitleUr,
   }) || t("cta.title");
   const ctaDescription = pickLocalized(locale, {
-    en: post.ctaDescriptionEn,
-    ur: post.ctaDescriptionUr,
+    en: resolvedPost.ctaDescriptionEn,
+    ur: resolvedPost.ctaDescriptionUr,
   }) || t("cta.description");
   const ctaWhatsappLabel = pickLocalized(locale, {
-    en: post.ctaWhatsappLabelEn,
-    ur: post.ctaWhatsappLabelUr,
+    en: resolvedPost.ctaWhatsappLabelEn,
+    ur: resolvedPost.ctaWhatsappLabelUr,
   }) || t("cta.whatsapp");
   const ctaRequestLabel = pickLocalized(locale, {
-    en: post.ctaRequestLabelEn,
-    ur: post.ctaRequestLabelUr,
+    en: resolvedPost.ctaRequestLabelEn,
+    ur: resolvedPost.ctaRequestLabelUr,
   }) || t("cta.request");
   const ctaAccountLabel = pickLocalized(locale, {
-    en: post.ctaAccountLabelEn,
-    ur: post.ctaAccountLabelUr,
+    en: resolvedPost.ctaAccountLabelEn,
+    ur: resolvedPost.ctaAccountLabelUr,
   }) || t("cta.account");
 
   const pageUrl = absoluteUrl(`/blog/${post.slug}`);
-  const featuredImageUrl =
-    resolveBlogFeaturedImage(post) ??
-    resolveDefaultOgImagePath(branding, locale);
+  const ogImageUrl = resolveBlogOgImageUrl(post, branding);
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -199,7 +206,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
     url: pageUrl,
     datePublished: post.publishedAt?.toISOString(),
     dateModified: post.updatedAt.toISOString(),
-    imageUrl: featuredImageUrl,
+    imageUrl: ogImageUrl,
     publisherName: business.siteName,
     publisherLogoUrl: resolveSeoImageUrl(branding.logoPath),
     inLanguage: locale === "ur" ? "ur-PK" : "en-PK",

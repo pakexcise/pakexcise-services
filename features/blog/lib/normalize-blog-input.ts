@@ -62,10 +62,7 @@ export function normalizeBlogPostInput(input: {
 }) {
   const contentEn = sanitizeRichTextContent(input.contentEn);
   const contentUr = sanitizeRichTextContent(input.contentUr);
-  const readingTimeMinutes =
-    input.readingTimeMinutes && input.readingTimeMinutes > 0
-      ? input.readingTimeMinutes
-      : computeReadingTimeMinutes(contentEn);
+  const readingTimeMinutes = computeReadingTimeMinutes(contentEn);
 
   return {
     titleEn: input.titleEn.trim(),

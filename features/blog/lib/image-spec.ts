@@ -30,4 +30,4 @@ export const BLOG_IMAGE_SPEC = {
 } as const;
 
 export const BLOG_IMAGE_ADMIN_HINT =
-  "Recommended featured image: 1600×900 px (16:9), WebP or JPEG, under 500 KB. OG image: 1200×630 px.";
+  "Recommended: 1600×900 px (16:9), WebP or JPEG, under 500 KB. This image is also used for social sharing (OG). If empty, your site logo icon is used.";

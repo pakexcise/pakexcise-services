@@ -8,6 +8,7 @@ import type { SeoMetaInput } from "@/lib/validations/admin-seo";
 type SeoFieldsSectionProps = {
   value: SeoMetaInput;
   onChange: (value: SeoMetaInput) => void;
+  hideOgImage?: boolean;
   labels: {
     title: string;
     metaTitleEn: string;
@@ -31,6 +32,7 @@ type SeoFieldsSectionProps = {
 export function SeoFieldsSection({
   value,
   onChange,
+  hideOgImage = false,
   labels,
 }: SeoFieldsSectionProps) {
   function update<K extends keyof SeoMetaInput>(key: K, next: SeoMetaInput[K]) {
@@ -100,7 +102,11 @@ export function SeoFieldsSection({
             id="canonicalUrl"
             value={value.canonicalUrl ?? ""}
             onChange={(e) => update("canonicalUrl", e.target.value)}
+            placeholder="Leave empty to auto-generate from slug"
           />
+          <p className="text-xs text-muted-foreground">
+            Leave empty to auto-generate: https://pakexcise.com/blog/your-slug
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="ogTitleEn">{labels.ogTitleEn}</Label>
@@ -120,12 +126,16 @@ export function SeoFieldsSection({
           />
         </div>
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="ogImage">{labels.ogImage}</Label>
-          <Input
-            id="ogImage"
-            value={value.ogImage ?? ""}
-            onChange={(e) => update("ogImage", e.target.value)}
-          />
+          {!hideOgImage ? (
+            <>
+              <Label htmlFor="ogImage">{labels.ogImage}</Label>
+              <Input
+                id="ogImage"
+                value={value.ogImage ?? ""}
+                onChange={(e) => update("ogImage", e.target.value)}
+              />
+            </>
+          ) : null}
         </div>
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="ogDescriptionEn">{labels.ogDescriptionEn}</Label>

@@ -1,18 +1,11 @@
-type BlogPostWithSeo = {
+type BlogPostWithFeaturedImage = {
   featuredImagePath?: string | null;
-  seoMeta?: {
-    ogImage?: string | null;
-  } | null;
 };
 
+/** Returns the blog featured image path only (no OG/logo fallback). */
 export function resolveBlogFeaturedImage(
-  post: BlogPostWithSeo,
+  post: BlogPostWithFeaturedImage,
 ): string | null {
   const featured = post.featuredImagePath?.trim();
-  if (featured) {
-    return featured;
-  }
-
-  const customImage = post.seoMeta?.ogImage?.trim();
-  return customImage || null;
+  return featured || null;
 }

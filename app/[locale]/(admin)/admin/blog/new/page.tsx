@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
-import {
-  BlogEditorForm,
-  createEmptyBlogValues,
-} from "@/features/blog/admin/components/blog-editor-form";
+import { BlogEditorForm } from "@/features/blog/admin/components/blog-editor-form";
+import { createEmptyBlogValues } from "@/features/blog/lib/editor-defaults";
 import { loadCmsEditorOptions } from "@/features/cms/lib/load-editor-options";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { getCurrentLocale } from "@/server/i18n/get-locale";

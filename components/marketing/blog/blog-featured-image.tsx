@@ -15,9 +15,6 @@ type BlogFeaturedImageProps = {
     featuredImageAltUr?: string | null;
     featuredImageCaptionEn?: string | null;
     featuredImageCaptionUr?: string | null;
-    seoMeta?: {
-      ogImage?: string | null;
-    } | null;
   };
   locale: string;
   priority?: boolean;
