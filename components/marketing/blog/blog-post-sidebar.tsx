@@ -25,7 +25,7 @@ export function BlogPostSidebar({
   return (
     <aside
       className={cn(
-        "hidden lg:sticky lg:top-24 lg:z-10 lg:col-start-2 lg:row-start-1 lg:self-start",
+        "hidden lg:block lg:sticky lg:top-24 lg:z-10 lg:col-start-2 lg:row-start-1 lg:self-start",
         className,
       )}
     >
