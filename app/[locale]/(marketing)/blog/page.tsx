@@ -4,15 +4,27 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BlogCard } from "@/components/marketing/blog-card";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
+import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { requireBlogEnabled } from "@/features/settings/lib/feature-gates";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import { blogPostRepository, seoMetaRepository } from "@/server/repositories";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 export const revalidate = 3600;
+
+type BlogPageProps = {
+  searchParams: Promise<{
+    page?: string;
+    q?: string;
+    category?: string;
+    tag?: string;
+  }>;
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getCurrentLocale();
@@ -40,15 +52,37 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function BlogPage() {
+export default async function BlogPage({ searchParams }: BlogPageProps) {
   await requireBlogEnabled();
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
+  const params = await searchParams;
+  const page = Math.max(1, Number(params.page ?? "1") || 1);
+  const q = params.q?.trim() || undefined;
+  const category = params.category?.trim() || undefined;
+  const tag = params.tag?.trim() || undefined;
+
   const t = await getTranslations("marketing");
   const tCommon = await getTranslations("common");
   const seo = await seoMetaRepository.findByPageKey("blog");
-  const posts = await blogPostRepository.listPublished();
+
+  const [featuredPost, categories] = await Promise.all([
+    blogPostRepository.findFeaturedPublished(),
+    blogPostRepository.listPublishedCategories(),
+  ]);
+
+  const showFeatured =
+    Boolean(featuredPost) && page === 1 && !q && !category && !tag;
+
+  const postsResult = await blogPostRepository.listPublishedPaginated({
+    page,
+    pageSize: 12,
+    q,
+    category,
+    tag,
+    excludeSlug: showFeatured ? featuredPost?.slug : undefined,
+  });
 
   const title = pickLocalized(locale, {
     en: seo?.h1En ?? t("blog.title"),
@@ -64,6 +98,12 @@ export default async function BlogPage() {
     { name: title, url: absoluteUrl("/blog") },
   ]);
 
+  const searchParamsForPagination = {
+    ...(q ? { q } : {}),
+    ...(category ? { category } : {}),
+    ...(tag ? { tag } : {}),
+  };
+
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />
@@ -75,20 +115,75 @@ export default async function BlogPage() {
           { label: title },
         ]}
       />
-      <div className="container-site space-y-8 py-10 md:py-12">
-        {posts.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("blog.empty")}</p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {posts.map((post) => (
+      <div className="container-site space-y-10 py-10 md:space-y-12 md:py-12">
+        <form action="/blog" method="get" className="flex flex-wrap gap-3 rounded-2xl border bg-card p-4 shadow-sm">
+          <Input
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder={t("blog.searchPlaceholder")}
+            className="max-w-sm"
+          />
+          <select
+            name="category"
+            defaultValue={category ?? ""}
+            className="h-10 rounded-md border bg-background px-3 text-sm"
+          >
+            <option value="">{t("blog.allCategories")}</option>
+            {categories.map((item) => (
+              <option key={item.categoryEn ?? ""} value={item.categoryEn ?? ""}>
+                {pickLocalized(locale, {
+                  en: item.categoryEn,
+                  ur: item.categoryUr,
+                })}
+              </option>
+            ))}
+          </select>
+          <Input
+            name="tag"
+            defaultValue={tag ?? ""}
+            placeholder={t("blog.tagPlaceholder")}
+            className="max-w-xs"
+          />
+          <Button type="submit">{t("blog.filter")}</Button>
+        </form>
+
+        {showFeatured && featuredPost ? (
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-foreground">{t("blog.featured")}</h2>
+            <div className="max-w-3xl">
               <BlogCard
-                key={post.id}
-                post={post}
+                post={featuredPost}
                 locale={locale}
                 readMoreLabel={tCommon("learnMore")}
+                readingTimeLabel={t("blog.readingTime")}
+                featured
               />
-            ))}
-          </div>
+            </div>
+          </section>
+        ) : null}
+
+        {postsResult.items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t("blog.empty")}</p>
+        ) : (
+          <>
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {postsResult.items.map((post) => (
+                <BlogCard
+                  key={post.id}
+                  post={post}
+                  locale={locale}
+                  readMoreLabel={tCommon("learnMore")}
+                  readingTimeLabel={t("blog.readingTime")}
+                />
+              ))}
+            </div>
+            <PaginationControls
+              page={postsResult.page}
+              totalPages={postsResult.totalPages}
+              basePath="/blog"
+              searchParams={searchParamsForPagination}
+            />
+          </>
         )}
       </div>
     </>

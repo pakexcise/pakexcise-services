@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { BlogEditorForm } from "@/features/blog/admin/components/blog-editor-form";
+import { parseBlogContentFaqs } from "@/features/blog/lib/content-faqs";
 import { seoFromRecord } from "@/features/cms/lib/default-seo";
 import { loadCmsEditorOptions } from "@/features/cms/lib/load-editor-options";
 import { adminMetadata } from "@/features/admin/lib/metadata";
@@ -46,6 +47,33 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
           excerptUr: post.excerptUr ?? "",
           contentEn: post.contentEn,
           contentUr: post.contentUr,
+          categoryEn: post.categoryEn ?? "",
+          categoryUr: post.categoryUr ?? "",
+          tags: post.tags ?? [],
+          authorNameEn: post.authorNameEn ?? "",
+          authorNameUr: post.authorNameUr ?? "",
+          readingTimeMinutes: post.readingTimeMinutes?.toString() ?? "",
+          featuredImagePath: post.featuredImagePath ?? "",
+          featuredImageTitleEn: post.featuredImageTitleEn ?? "",
+          featuredImageTitleUr: post.featuredImageTitleUr ?? "",
+          featuredImageAltEn: post.featuredImageAltEn ?? "",
+          featuredImageAltUr: post.featuredImageAltUr ?? "",
+          featuredImageCaptionEn: post.featuredImageCaptionEn ?? "",
+          featuredImageCaptionUr: post.featuredImageCaptionUr ?? "",
+          focusKeywords: post.focusKeywords ?? "",
+          isFeatured: post.isFeatured,
+          showTableOfContents: post.showTableOfContents,
+          contentFaqs: parseBlogContentFaqs(post.contentFaqs),
+          ctaTitleEn: post.ctaTitleEn ?? "",
+          ctaTitleUr: post.ctaTitleUr ?? "",
+          ctaDescriptionEn: post.ctaDescriptionEn ?? "",
+          ctaDescriptionUr: post.ctaDescriptionUr ?? "",
+          ctaWhatsappLabelEn: post.ctaWhatsappLabelEn ?? "",
+          ctaWhatsappLabelUr: post.ctaWhatsappLabelUr ?? "",
+          ctaRequestLabelEn: post.ctaRequestLabelEn ?? "",
+          ctaRequestLabelUr: post.ctaRequestLabelUr ?? "",
+          ctaAccountLabelEn: post.ctaAccountLabelEn ?? "",
+          ctaAccountLabelUr: post.ctaAccountLabelUr ?? "",
           relatedServiceIds: post.relatedServiceIds,
           attachedFaqIds: post.attachedFaqIds,
           isPublished: post.isPublished,

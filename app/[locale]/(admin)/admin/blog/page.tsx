@@ -93,7 +93,9 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Slug</TableHead>
+                <TableHead>Category</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Published</TableHead>
                 <TableHead>Updated</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -103,10 +105,17 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
                 <TableRow key={post.id}>
                   <TableCell>{post.titleEn}</TableCell>
                   <TableCell className="font-mono text-xs">{post.slug}</TableCell>
+                  <TableCell>{post.categoryEn ?? "—"}</TableCell>
                   <TableCell>
-                    <Badge variant={post.isPublished ? "default" : "secondary"}>
-                      {post.isPublished ? "Published" : "Draft"}
-                    </Badge>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant={post.isPublished ? "default" : "secondary"}>
+                        {post.isPublished ? "Published" : "Draft"}
+                      </Badge>
+                      {post.isFeatured ? <Badge variant="outline">Featured</Badge> : null}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {post.publishedAt ? formatDate(post.publishedAt, locale) : "—"}
                   </TableCell>
                   <TableCell>{formatDate(post.updatedAt, locale)}</TableCell>
                   <TableCell className="space-x-2">

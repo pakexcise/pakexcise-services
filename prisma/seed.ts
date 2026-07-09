@@ -404,54 +404,6 @@ async function main() {
     },
   });
 
-  const blogPost = await prisma.blogPost.upsert({
-    where: { slug: "welcome-to-pakexcise" },
-    update: {
-      titleEn: "Welcome to PakExcise.com",
-      titleUr: "PakExcise.com میں خوش آمدید",
-      excerptEn: "A clearer way to manage excise facilitation requests in Pakistan.",
-      excerptUr: "پاکستان میں ایکسائز سہولت درخواستوں کے لیے بہتر طریقہ۔",
-      contentEn:
-        "PakExcise.com launches as a private facilitation platform for excise-related services.\n\nBrowse services, submit applications, upload documents, and track progress — with English and Urdu support.",
-      contentUr:
-        "PakExcise.com ایکسائز سے متعلق خدمات کے لیے نجی سہولت پلیٹ فارم کے طور پر لانچ ہوا ہے۔\n\nخدمات دیکھیں، درخواستیں جمع کرائیں، دستاویزات اپ لوڈ کریں اور پیش رفت ٹریک کریں۔",
-      isPublished: true,
-      publishedAt: new Date(),
-    },
-    create: {
-      slug: "welcome-to-pakexcise",
-      titleEn: "Welcome to PakExcise.com",
-      titleUr: "PakExcise.com میں خوش آمدید",
-      excerptEn: "A clearer way to manage excise facilitation requests in Pakistan.",
-      excerptUr: "پاکستان میں ایکسائز سہولت درخواستوں کے لیے بہتر طریقہ۔",
-      contentEn:
-        "PakExcise.com launches as a private facilitation platform for excise-related services.\n\nBrowse services, submit applications, upload documents, and track progress — with English and Urdu support.",
-      contentUr:
-        "PakExcise.com ایکسائز سے متعلق خدمات کے لیے نجی سہولت پلیٹ فارم کے طور پر لانچ ہوا ہے۔\n\nخدمات دیکھیں، درخواستیں جمع کرائیں، دستاویزات اپ لوڈ کریں اور پیش رفت ٹریک کریں۔",
-      isPublished: true,
-      publishedAt: new Date(),
-    },
-  });
-
-  await prisma.seoMeta.upsert({
-    where: { pageKey: `blog:${blogPost.slug}` },
-    update: {
-      blogPostId: blogPost.id,
-      metaTitleEn: `${blogPost.titleEn} | PakExcise.com`,
-      metaTitleUr: `${blogPost.titleUr} | PakExcise.com`,
-      h1En: blogPost.titleEn,
-      h1Ur: blogPost.titleUr,
-    },
-    create: {
-      pageKey: `blog:${blogPost.slug}`,
-      blogPostId: blogPost.id,
-      metaTitleEn: `${blogPost.titleEn} | PakExcise.com`,
-      metaTitleUr: `${blogPost.titleUr} | PakExcise.com`,
-      h1En: blogPost.titleEn,
-      h1Ur: blogPost.titleUr,
-    },
-  });
-
   await prisma.$executeRaw`
     UPDATE users
     SET "roleChosenAt" = "createdAt"

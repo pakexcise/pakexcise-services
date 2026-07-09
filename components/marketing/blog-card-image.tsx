@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 type BlogCardImageProps = {
   post: {
+    featuredImagePath?: string | null;
     seoMeta?: {
       ogImage?: string | null;
     } | null;

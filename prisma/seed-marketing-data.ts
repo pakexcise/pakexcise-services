@@ -5,6 +5,12 @@ import { CITY_SEED } from "./seed-cities-data";
 import { seedServiceConfig } from "./seed-service-config";
 import { seedRegionPlateFormats } from "./seed-region-plate-formats";
 import { seedLegalPages } from "./seed-legal-pages";
+import {
+  PRIMARY_BLOG_CONTENT_EN,
+  PRIMARY_BLOG_CONTENT_FAQS,
+  PRIMARY_BLOG_SEED,
+  PRIMARY_BLOG_SLUG,
+} from "./primary-blog-seed";
 
 const DEFAULT_MIME_TYPES = [
   "image/jpeg",
@@ -365,71 +371,7 @@ export const SERVICE_SEED = [
   },
 ] as const;
 
-export const BLOG_SEED = [
-  {
-    slug: "vehicle-transfer-documents-punjab",
-    titleEn: "Vehicle Transfer Documents in Punjab",
-    titleUr: "پنجاب میں گاڑی منتقلی کی دستاویزات",
-    excerptEn: "A practical checklist of documents commonly needed for vehicle transfer facilitation in Punjab.",
-    excerptUr: "پنجاب میں گاڑی منتقلی سہولت کے لیے عام طور پر درکار دستاویزات کی فہرست۔",
-  },
-  {
-    slug: "token-tax-payment-guide-pakistan",
-    titleEn: "Token Tax Payment Guide for Pakistan",
-    titleUr: "پاکستان میں ٹوکن ٹیکس ادائیگی گائیڈ",
-    excerptEn: "Understand token tax facilitation steps without confusing private service fees with official charges.",
-    excerptUr: "نجی سہولت فیس کو سرکاری چارجز سے الگ رکھتے ہوئے ٹوکن ٹیکس سہولت کے مراحل۔",
-  },
-  {
-    slug: "new-vehicle-registration-punjab-guide",
-    titleEn: "New Vehicle Registration in Punjab",
-    titleUr: "پنجاب میں نئی گاڑی رجسٹریشن",
-    excerptEn: "How PakExcise helps customers prepare and submit new vehicle registration applications in Punjab.",
-    excerptUr: "PakExcise پنجاب میں نئی گاڑی رجسٹریشن درخواستیں کیسے تیار اور جمع کراتی ہے۔",
-  },
-  {
-    slug: "islamabad-vehicle-transfer-requirements",
-    titleEn: "Islamabad ICT Vehicle Transfer Requirements",
-    titleUr: "اسلام آباد ICT گاڑی منتقلی کی ضروریات",
-    excerptEn: "Key documents and steps for private facilitation of vehicle transfer in Islamabad ICT.",
-    excerptUr: "اسلام آباد ICT میں گاڑی منتقلی کی نجی سہولت کے لیے اہم دستاویزات اور مراحل۔",
-  },
-  {
-    slug: "driving-license-renewal-punjab-ict",
-    titleEn: "Driving License Renewal in Punjab & ICT",
-    titleUr: "پنجاب اور ICT میں ڈرائیونگ لائسنس تجدید",
-    excerptEn: "What to prepare before starting a driving license renewal facilitation request.",
-    excerptUr: "ڈرائیونگ لائسنس تجدید کی سہولت درخواست شروع کرنے سے پہلے کیا تیار کریں۔",
-  },
-  {
-    slug: "learner-license-requirements-pakistan",
-    titleEn: "Learner License Requirements in Pakistan",
-    titleUr: "پاکستان میں لرنر لائسنس کی ضروریات",
-    excerptEn: "Common learner license documents and application preparation tips.",
-    excerptUr: "لرنر لائسنس کی عام دستاویزات اور درخواست کی تیاری کے مشورے۔",
-  },
-  {
-    slug: "vehicle-inspection-punjab-ict",
-    titleEn: "Vehicle Inspection in Punjab & ICT",
-    titleUr: "پنجاب اور ICT میں گاڑی معائنہ",
-    excerptEn: "How private facilitation can help you prepare for vehicle inspection processes.",
-    excerptUr: "نجی سہولت گاڑی معائنہ کے عمل کی تیاری میں کیسے مدد کر سکتی ہے۔",
-  },
-  {
-    slug: "route-permit-requirements-punjab-ict",
-    titleEn: "Route Permit Requirements in Punjab & ICT",
-    titleUr: "پنجاب اور ICT میں راؤٹ پرمٹ کی ضروریات",
-    excerptEn: "Documents and preparation steps for route permit facilitation.",
-    excerptUr: "راؤٹ پرمٹ سہولت کے لیے دستاویزات اور تیاری کے مراحل۔",
-  },
-  {
-    slug: "vehicle-data-correction-punjab-ict",
-    titleEn: "Vehicle Data Correction in Punjab & ICT",
-    titleUr: "پنجاب اور ICT میں گاڑی ڈیٹا تصحیح",
-    excerptEn: "When and how to request facilitation for excise record corrections.",
-    excerptUr: "ایکسائز ریکارڈ تصحیح کی سہولت کب اور کیسے درخواست کریں۔",
-  },
-] as const;
+export const BLOG_SEED = [] as const;
 
 export const PAYMENT_METHOD_SEED = [
   {
@@ -563,11 +505,6 @@ function serviceContent(shortEn: string, shortUr: string) {
   };
 }
 
-function blogContent(titleEn: string, titleUr: string) {
-  const bodyEn = `## ${titleEn}\n\nThis article explains key preparation steps for customers using PakExcise private facilitation.\n\n### What PakExcise does\n- Helps prepare and review documents\n- Submits facilitation requests on your behalf\n- Tracks status with transparent notes\n\n### What PakExcise does not do\n- PakExcise is not a government office\n- PakExcise does not guarantee government timelines\n- Service fees are not shown on the website; invoices are generated after admin review\n\n${PRIVATE_DISCLAIMER_EN}`;
-  const bodyUr = `## ${titleUr}\n\nیہ مضمون PakExcise نجی سہولت استعمال کرنے والے گاہکوں کے لیے اہم تیاری کے مراحل بیان کرتا ہے۔\n\n### PakExcise کیا کرتا ہے\n- دستاویزات تیار اور جائزہ\n- آپ کی طرف سے سہولت درخواستیں جمع\n- شفاف نوٹس کے ساتھ ٹریکنگ\n\n### PakExcise کیا نہیں کرتا\n- PakExcise سرکاری دفتر نہیں\n- حکومت کے ٹائم لائن کی ضمانت نہیں\n- ویب سائٹ پر فیس نہیں؛ انوائس ایڈمن جائزے کے بعد\n\n${PRIVATE_DISCLAIMER_UR}`;
-  return { contentEn: bodyEn, contentUr: bodyUr };
-}
 
 export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   console.log("Seeding marketing content...");
@@ -834,56 +771,86 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     await prisma.service.findMany({ select: { id: true, slug: true } })
   ).map((s) => s.id);
 
-  for (const [index, post] of BLOG_SEED.entries()) {
-    const content = blogContent(post.titleEn, post.titleUr);
-    const created = await prisma.blogPost.upsert({
-      where: { slug: post.slug },
-      update: {
-        titleEn: post.titleEn,
-        titleUr: post.titleUr,
-        excerptEn: post.excerptEn,
-        excerptUr: post.excerptUr,
-        ...content,
-        isPublished: true,
-        publishedAt: new Date(),
-        relatedServiceIds: serviceIds.slice(0, 2),
-      },
-      create: {
-        slug: post.slug,
-        titleEn: post.titleEn,
-        titleUr: post.titleUr,
-        excerptEn: post.excerptEn,
-        excerptUr: post.excerptUr,
-        ...content,
-        isPublished: true,
-        publishedAt: new Date(),
-        relatedServiceIds: serviceIds.slice(0, 2),
-      },
-    });
+  await prisma.seoMeta.deleteMany({
+    where: {
+      pageKey: { startsWith: "blog:" },
+      NOT: { pageKey: `blog:${PRIMARY_BLOG_SLUG}` },
+    },
+  });
 
-    await prisma.seoMeta.upsert({
-      where: { pageKey: `blog:${post.slug}` },
-      update: {
-        blogPostId: created.id,
-        metaTitleEn: `${post.titleEn} | PakExcise.com`,
-        metaTitleUr: `${post.titleUr} | PakExcise.com`,
-        metaDescriptionEn: post.excerptEn,
-        metaDescriptionUr: post.excerptUr,
-        h1En: post.titleEn,
-        h1Ur: post.titleUr,
-      },
-      create: {
-        pageKey: `blog:${post.slug}`,
-        blogPostId: created.id,
-        metaTitleEn: `${post.titleEn} | PakExcise.com`,
-        metaTitleUr: `${post.titleUr} | PakExcise.com`,
-        metaDescriptionEn: post.excerptEn,
-        metaDescriptionUr: post.excerptUr,
-        h1En: post.titleEn,
-        h1Ur: post.titleUr,
-      },
-    });
-  }
+  await prisma.blogPost.deleteMany({
+    where: { slug: { not: PRIMARY_BLOG_SLUG } },
+  });
+
+  const primaryBlog = await prisma.blogPost.upsert({
+    where: { slug: PRIMARY_BLOG_SLUG },
+    update: {
+      titleEn: PRIMARY_BLOG_SEED.titleEn,
+      titleUr: PRIMARY_BLOG_SEED.titleUr,
+      excerptEn: PRIMARY_BLOG_SEED.excerptEn,
+      excerptUr: PRIMARY_BLOG_SEED.excerptUr,
+      contentEn: PRIMARY_BLOG_CONTENT_EN,
+      contentUr: PRIMARY_BLOG_CONTENT_EN,
+      categoryEn: PRIMARY_BLOG_SEED.categoryEn,
+      categoryUr: PRIMARY_BLOG_SEED.categoryUr,
+      tags: [...PRIMARY_BLOG_SEED.tags],
+      authorNameEn: PRIMARY_BLOG_SEED.authorNameEn,
+      authorNameUr: PRIMARY_BLOG_SEED.authorNameUr,
+      readingTimeMinutes: 8,
+      featuredImagePath: PRIMARY_BLOG_SEED.featuredImagePath,
+      featuredImageTitleEn: PRIMARY_BLOG_SEED.featuredImageTitleEn,
+      featuredImageTitleUr: PRIMARY_BLOG_SEED.featuredImageTitleUr,
+      featuredImageAltEn: PRIMARY_BLOG_SEED.featuredImageAltEn,
+      featuredImageAltUr: PRIMARY_BLOG_SEED.featuredImageAltUr,
+      focusKeywords: PRIMARY_BLOG_SEED.focusKeywords,
+      isFeatured: PRIMARY_BLOG_SEED.isFeatured,
+      showTableOfContents: PRIMARY_BLOG_SEED.showTableOfContents,
+      contentFaqs: [...PRIMARY_BLOG_CONTENT_FAQS],
+      isPublished: true,
+      publishedAt: new Date(),
+      relatedServiceIds: serviceIds.slice(0, 3),
+    },
+    create: {
+      slug: PRIMARY_BLOG_SLUG,
+      titleEn: PRIMARY_BLOG_SEED.titleEn,
+      titleUr: PRIMARY_BLOG_SEED.titleUr,
+      excerptEn: PRIMARY_BLOG_SEED.excerptEn,
+      excerptUr: PRIMARY_BLOG_SEED.excerptUr,
+      contentEn: PRIMARY_BLOG_CONTENT_EN,
+      contentUr: PRIMARY_BLOG_CONTENT_EN,
+      categoryEn: PRIMARY_BLOG_SEED.categoryEn,
+      categoryUr: PRIMARY_BLOG_SEED.categoryUr,
+      tags: [...PRIMARY_BLOG_SEED.tags],
+      authorNameEn: PRIMARY_BLOG_SEED.authorNameEn,
+      authorNameUr: PRIMARY_BLOG_SEED.authorNameUr,
+      readingTimeMinutes: 8,
+      featuredImagePath: PRIMARY_BLOG_SEED.featuredImagePath,
+      featuredImageTitleEn: PRIMARY_BLOG_SEED.featuredImageTitleEn,
+      featuredImageTitleUr: PRIMARY_BLOG_SEED.featuredImageTitleUr,
+      featuredImageAltEn: PRIMARY_BLOG_SEED.featuredImageAltEn,
+      featuredImageAltUr: PRIMARY_BLOG_SEED.featuredImageAltUr,
+      focusKeywords: PRIMARY_BLOG_SEED.focusKeywords,
+      isFeatured: PRIMARY_BLOG_SEED.isFeatured,
+      showTableOfContents: PRIMARY_BLOG_SEED.showTableOfContents,
+      contentFaqs: [...PRIMARY_BLOG_CONTENT_FAQS],
+      isPublished: true,
+      publishedAt: new Date(),
+      relatedServiceIds: serviceIds.slice(0, 3),
+    },
+  });
+
+  await prisma.seoMeta.upsert({
+    where: { pageKey: `blog:${PRIMARY_BLOG_SLUG}` },
+    update: {
+      blogPostId: primaryBlog.id,
+      ...PRIMARY_BLOG_SEED.seo,
+    },
+    create: {
+      pageKey: `blog:${PRIMARY_BLOG_SLUG}`,
+      blogPostId: primaryBlog.id,
+      ...PRIMARY_BLOG_SEED.seo,
+    },
+  });
 
   for (const method of PAYMENT_METHOD_SEED) {
     const existing = await prisma.paymentMethod.findFirst({

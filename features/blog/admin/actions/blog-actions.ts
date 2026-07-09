@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { handleContentSlugRedirect } from "@/features/cms/lib/handle-content-redirect";
 import { normalizeLocalizedContent } from "@/features/cms/lib/normalize-content-input";
 import { upsertBlogSeo } from "@/features/cms/lib/upsert-seo";
+import { normalizeBlogPostInput } from "@/features/blog/lib/normalize-blog-input";
 import {
   blogPostIdSchema,
   createBlogPostSchema,
@@ -89,12 +90,15 @@ export async function createBlogPostAction(
   if (relationError) return relationError;
 
   const content = normalizeLocalizedContent(data);
+  const blogFields = normalizeBlogPostInput(data);
   const publishedAt = data.isPublished ? new Date() : null;
 
   const post = await prisma.blogPost.create({
     data: {
       slug: data.slug,
       ...content,
+      ...blogFields,
+      contentFaqs: blogFields.contentFaqs,
       relatedServiceIds: data.relatedServiceIds,
       attachedFaqIds: data.attachedFaqIds,
       isPublished: data.isPublished,
@@ -141,6 +145,7 @@ export async function updateBlogPostAction(
   if (relationError) return relationError;
 
   const content = normalizeLocalizedContent(data);
+  const blogFields = normalizeBlogPostInput(data);
   const publishedAt =
     data.isPublished && !existing.publishedAt
       ? new Date()
@@ -153,6 +158,8 @@ export async function updateBlogPostAction(
     data: {
       slug: data.slug,
       ...content,
+      ...blogFields,
+      contentFaqs: blogFields.contentFaqs,
       relatedServiceIds: data.relatedServiceIds,
       attachedFaqIds: data.attachedFaqIds,
       isPublished: data.isPublished,

@@ -1358,10 +1358,35 @@
     "blog": {
       "title": "Blog",
       "metaTitle": "Blog | PakExcise.com",
-      "metaDescription": "Updates and articles from PakExcise.com.",
+      "metaDescription": "Guides and articles about vehicle, token tax, registration, and license facilitation in Pakistan.",
       "empty": "No blog posts are published yet.",
+      "featured": "Featured article",
+      "searchPlaceholder": "Search articles",
+      "tagPlaceholder": "Filter by tag",
+      "allCategories": "All categories",
+      "filter": "Filter",
+      "readingTime": "min read",
+      "updated": "Updated",
+      "tableOfContents": "On this page",
+      "faqs": "Frequently Asked Questions",
+      "share": "Share this article",
+      "copied": "Link copied",
+      "relatedPosts": "Related articles",
       "relatedServices": "Related services",
-      "attachedFaqs": "Related FAQs"
+      "attachedFaqs": "Related FAQs",
+      "cta": {
+        "title": "Need Help with Vehicle or License Services?",
+        "description": "PakExcise helps you submit service requests, get WhatsApp support, and track your application through a simple digital process.",
+        "whatsapp": "Contact on WhatsApp",
+        "request": "Submit Request",
+        "account": "Apply with Account"
+      },
+      "sidebar": {
+        "title": "Need vehicle or license help?",
+        "description": "Browse services or contact PakExcise on WhatsApp for quick guidance.",
+        "services": "Browse services",
+        "whatsapp": "WhatsApp support"
+      }
     },
     "track": {
       "inputLabel": "Tracking ID",

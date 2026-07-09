@@ -1127,24 +1127,52 @@ model Redirect {
 }
 
 model BlogPost {
-  id                String    @id @default(cuid())
-  slug              String    @unique
-  titleEn           String
-  titleUr           String
-  excerptEn         String?   @db.Text
-  excerptUr         String?   @db.Text
-  contentEn         String    @db.Text
-  contentUr         String    @db.Text
-  relatedServiceIds String[]  @default([])
-  attachedFaqIds    String[]  @default([])
-  isPublished       Boolean   @default(false)
-  publishedAt       DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                     String    @id @default(cuid())
+  slug                   String    @unique
+  titleEn                String
+  titleUr                String
+  excerptEn              String?   @db.Text
+  excerptUr              String?   @db.Text
+  contentEn              String    @db.Text
+  contentUr              String    @db.Text
+  categoryEn             String?
+  categoryUr             String?
+  tags                   String[]  @default([])
+  authorNameEn           String?
+  authorNameUr           String?
+  readingTimeMinutes     Int?
+  featuredImagePath      String?
+  featuredImageTitleEn   String?
+  featuredImageTitleUr   String?
+  featuredImageAltEn     String?
+  featuredImageAltUr     String?
+  featuredImageCaptionEn String?   @db.Text
+  featuredImageCaptionUr String?   @db.Text
+  focusKeywords          String?
+  isFeatured             Boolean   @default(false)
+  showTableOfContents    Boolean   @default(true)
+  contentFaqs            Json?
+  ctaTitleEn             String?
+  ctaTitleUr             String?
+  ctaDescriptionEn       String?   @db.Text
+  ctaDescriptionUr       String?   @db.Text
+  ctaWhatsappLabelEn     String?
+  ctaWhatsappLabelUr     String?
+  ctaRequestLabelEn      String?
+  ctaRequestLabelUr      String?
+  ctaAccountLabelEn      String?
+  ctaAccountLabelUr      String?
+  relatedServiceIds      String[]  @default([])
+  attachedFaqIds         String[]  @default([])
+  isPublished            Boolean   @default(false)
+  publishedAt            DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   seoMeta SeoMeta?
 
   @@index([isPublished, publishedAt])
+  @@index([isPublished, isFeatured])
   @@map("blog_posts")
 }
 
