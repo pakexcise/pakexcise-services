@@ -1,5 +1,6 @@
 import { BlogResponsiveImage } from "@/components/marketing/blog/blog-responsive-image";
 import { resolveBlogFeaturedImageAlt } from "@/features/blog/lib/featured-image";
+import { resolvePublicImageDimensions } from "@/features/blog/lib/resolve-image-dimensions";
 import { resolveBlogFeaturedImage } from "@/lib/i18n/blog-featured-image";
 import { pickLocalized } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,7 @@ type BlogFeaturedImageProps = {
   className?: string;
 };
 
-export function BlogFeaturedImage({
+export async function BlogFeaturedImage({
   post,
   locale,
   priority = true,
@@ -32,6 +33,7 @@ export function BlogFeaturedImage({
     return null;
   }
 
+  const naturalDimensions = await resolvePublicImageDimensions(imageUrl);
   const alt = resolveBlogFeaturedImageAlt(post, locale);
   const title = pickLocalized(locale, {
     en: post.featuredImageTitleEn,
@@ -43,16 +45,17 @@ export function BlogFeaturedImage({
   });
 
   return (
-    <figure className={cn("space-y-3", className)}>
+    <figure className={cn("not-prose space-y-3", className)}>
       <BlogResponsiveImage
         src={imageUrl}
         alt={alt}
         title={title || undefined}
         variant="hero"
         priority={priority}
+        naturalDimensions={naturalDimensions}
       />
       {caption ? (
-        <figcaption className="text-center text-sm text-muted-foreground">
+        <figcaption className="text-center text-sm leading-relaxed text-muted-foreground">
           {caption}
         </figcaption>
       ) : null}

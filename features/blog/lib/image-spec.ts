@@ -27,6 +27,8 @@ export const BLOG_IMAGE_SPEC = {
   },
   /** Maximum width rendered on site (prevents upscaling blur) */
   displayMaxWidth: 1200,
+  /** Retina-friendly source width for featured uploads */
+  featuredSourceWidth: 1600,
 } as const;
 
 export const BLOG_IMAGE_ADMIN_HINT =

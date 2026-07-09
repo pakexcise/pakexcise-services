@@ -1,11 +1,11 @@
 import { CalendarDays, Clock3, UserRound } from "lucide-react";
 
-import Image from "next/image";
-
+import { BlogResponsiveImage } from "@/components/marketing/blog/blog-responsive-image";
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { resolveBlogPostCategoryLabel } from "@/features/blog/lib/resolve-blog-post-category";
+import { resolvePublicImageDimensions } from "@/features/blog/lib/resolve-image-dimensions";
 import { Link } from "@/i18n/navigation";
 import { resolveBlogFeaturedImage } from "@/lib/i18n/blog-featured-image";
 import { pickLocalized } from "@/lib/i18n/content";
@@ -38,7 +38,7 @@ type BlogFeaturedHeroCardProps = {
   readingTimeLabel: string;
 };
 
-export function BlogFeaturedHeroCard({
+export async function BlogFeaturedHeroCard({
   post,
   locale,
   readMoreLabel,
@@ -55,6 +55,9 @@ export function BlogFeaturedHeroCard({
     ur: post.authorNameUr,
   });
   const imageUrl = resolveBlogFeaturedImage(post);
+  const naturalDimensions = imageUrl
+    ? await resolvePublicImageDimensions(imageUrl)
+    : null;
   const imageAlt =
     pickLocalized(locale, {
       en: post.featuredImageAltEn,
@@ -67,18 +70,19 @@ export function BlogFeaturedHeroCard({
         href={`/blog/${post.slug}`}
         className="grid gap-0 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
       >
-        <div className="relative min-h-[220px] bg-muted/20 lg:min-h-[320px]">
+        <div className="bg-muted/10 p-3 sm:p-4">
           {imageUrl ? (
-            <Image
+            <BlogResponsiveImage
               src={imageUrl}
               alt={imageAlt}
-              fill
+              variant="card"
               priority
-              quality={90}
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-contain p-2"
+              naturalDimensions={naturalDimensions}
+              className="rounded-xl"
             />
-          ) : null}
+          ) : (
+            <div className="relative aspect-[16/10] w-full rounded-xl bg-muted/20" />
+          )}
         </div>
         <div className="flex flex-col justify-center gap-4 p-6 md:p-8">
           <div className="flex flex-wrap items-center gap-2">
