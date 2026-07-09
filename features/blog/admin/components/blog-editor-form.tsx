@@ -8,6 +8,7 @@ import {
   createBlogPostAction,
   updateBlogPostAction,
 } from "@/features/blog/admin/actions/blog-actions";
+import { BlogContentFormatGuide } from "@/features/blog/admin/components/blog-content-format-guide";
 import { BlogImageUploadField } from "@/features/blog/admin/components/blog-image-upload-field";
 import { BlogMarkdownEditor } from "@/features/blog/admin/components/blog-markdown-editor";
 import {
@@ -258,6 +259,9 @@ export function BlogEditorForm({
             value={values.excerptUr}
             onChange={(e) => setValues((c) => ({ ...c, excerptUr: e.target.value }))}
           />
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <BlogContentFormatGuide title="Content formatting guide (English & Urdu)" />
         </div>
         <div className="space-y-2 md:col-span-2">
           <BlogMarkdownEditor

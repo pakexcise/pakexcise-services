@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
+import { cn } from "@/lib/utils";
 
 type BlogSidebarCtaProps = {
   title: string;
@@ -11,6 +12,7 @@ type BlogSidebarCtaProps = {
   whatsappLabel: string;
   whatsappPhone?: string | null;
   whatsappMessage?: string | null;
+  className?: string;
 };
 
 export function BlogSidebarCta({
@@ -20,6 +22,7 @@ export function BlogSidebarCta({
   whatsappLabel,
   whatsappPhone,
   whatsappMessage,
+  className,
 }: BlogSidebarCtaProps) {
   const whatsappHref = buildWhatsAppUrl(
     whatsappPhone ?? siteConfig.contact.whatsapp,
@@ -27,7 +30,7 @@ export function BlogSidebarCta({
   );
 
   return (
-    <aside className="rounded-2xl border bg-card p-5 shadow-sm">
+    <aside className={cn("rounded-2xl border bg-card p-5 shadow-sm", className)}>
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {description}

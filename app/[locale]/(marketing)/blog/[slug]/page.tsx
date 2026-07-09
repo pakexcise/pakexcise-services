@@ -8,8 +8,8 @@ import { BlogFeaturedImage } from "@/components/marketing/blog/blog-featured-ima
 import { BlogPostCta } from "@/components/marketing/blog/blog-post-cta";
 import { BlogPostMetaBar } from "@/components/marketing/blog/blog-post-meta-bar";
 import { BlogRelatedPosts } from "@/components/marketing/blog/blog-related-posts";
+import { BlogPostSidebar } from "@/components/marketing/blog/blog-post-sidebar";
 import { BlogShareButtons } from "@/components/marketing/blog/blog-share-buttons";
-import { BlogSidebarCta } from "@/components/marketing/blog/blog-sidebar-cta";
 import { BlogTableOfContents } from "@/components/marketing/blog/blog-table-of-contents";
 import { Breadcrumbs } from "@/components/marketing/breadcrumbs";
 import { JsonLd } from "@/components/marketing/json-ld";
@@ -307,28 +307,14 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
             />
           </div>
 
-          <aside className="hidden min-w-0 lg:block">
-            {tocItems.length > 0 ? (
-              <div className="sticky top-24 space-y-6">
-                <BlogTableOfContents items={tocItems} title={t("tableOfContents")} />
-                <BlogSidebarCta
-                  title={t("sidebar.title")}
-                  description={t("sidebar.description")}
-                  servicesLabel={t("sidebar.services")}
-                  whatsappLabel={t("sidebar.whatsapp")}
-                />
-              </div>
-            ) : (
-              <div className="sticky top-24">
-                <BlogSidebarCta
-                  title={t("sidebar.title")}
-                  description={t("sidebar.description")}
-                  servicesLabel={t("sidebar.services")}
-                  whatsappLabel={t("sidebar.whatsapp")}
-                />
-              </div>
-            )}
-          </aside>
+          <BlogPostSidebar
+            tocItems={tocItems}
+            tableOfContentsTitle={t("tableOfContents")}
+            sidebarTitle={t("sidebar.title")}
+            sidebarDescription={t("sidebar.description")}
+            servicesLabel={t("sidebar.services")}
+            whatsappLabel={t("sidebar.whatsapp")}
+          />
         </div>
       </div>
     </>
