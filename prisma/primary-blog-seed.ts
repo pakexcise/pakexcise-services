@@ -1,3 +1,9 @@
+export const PRIMARY_BLOG_RELATED_SERVICE_SLUGS = [
+  "learner-license",
+  "token-tax-payment",
+  "vehicle-transfer",
+] as const;
+
 export const PRIMARY_BLOG_SLUG =
   "pakexcise-vehicle-token-tax-license-services-pakistan";
 

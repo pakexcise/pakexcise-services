@@ -75,8 +75,12 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
           ctaRequestLabelUr: post.ctaRequestLabelUr ?? "",
           ctaAccountLabelEn: post.ctaAccountLabelEn ?? "",
           ctaAccountLabelUr: post.ctaAccountLabelUr ?? "",
-          relatedServiceIds: post.relatedServiceIds,
-          attachedFaqIds: post.attachedFaqIds,
+          relatedServiceIds: post.relatedServiceIds.filter((id) =>
+            options.services.some((service) => service.id === id),
+          ),
+          attachedFaqIds: post.attachedFaqIds.filter((id) =>
+            options.faqs.some((faq) => faq.id === id),
+          ),
           isPublished: post.isPublished,
           seo: seoFromRecord(post.seoMeta),
         })}

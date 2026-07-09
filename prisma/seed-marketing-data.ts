@@ -8,6 +8,7 @@ import { seedLegalPages } from "./seed-legal-pages";
 import {
   PRIMARY_BLOG_CONTENT_EN,
   PRIMARY_BLOG_CONTENT_FAQS,
+  PRIMARY_BLOG_RELATED_SERVICE_SLUGS,
   PRIMARY_BLOG_SEED,
   PRIMARY_BLOG_SLUG,
 } from "./primary-blog-seed";
@@ -767,9 +768,15 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   await seedServiceConfig(prisma, regionMap, serviceMap);
   await seedRegionPlateFormats(prisma, regionMap);
 
-  const serviceIds = (
-    await prisma.service.findMany({ select: { id: true, slug: true } })
-  ).map((s) => s.id);
+  const primaryBlogRelatedServiceIds = (
+    await prisma.service.findMany({
+      where: {
+        slug: { in: [...PRIMARY_BLOG_RELATED_SERVICE_SLUGS] },
+        deletedAt: null,
+      },
+      select: { id: true },
+    })
+  ).map((service) => service.id);
 
   await prisma.seoMeta.deleteMany({
     where: {
@@ -808,7 +815,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       contentFaqs: [...PRIMARY_BLOG_CONTENT_FAQS],
       isPublished: true,
       publishedAt: new Date(),
-      relatedServiceIds: serviceIds.slice(0, 3),
+      relatedServiceIds: primaryBlogRelatedServiceIds,
     },
     create: {
       slug: PRIMARY_BLOG_SLUG,
@@ -835,7 +842,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       contentFaqs: [...PRIMARY_BLOG_CONTENT_FAQS],
       isPublished: true,
       publishedAt: new Date(),
-      relatedServiceIds: serviceIds.slice(0, 3),
+      relatedServiceIds: primaryBlogRelatedServiceIds,
     },
   });
 

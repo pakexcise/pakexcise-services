@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { handleContentSlugRedirect } from "@/features/cms/lib/handle-content-redirect";
+import { sanitizeContentRelationIds } from "@/features/cms/lib/sanitize-content-relations";
 import { normalizeLocalizedContent } from "@/features/cms/lib/normalize-content-input";
 import { upsertBlogSeo } from "@/features/cms/lib/upsert-seo";
 import { normalizeBlogPostInput } from "@/features/blog/lib/normalize-blog-input";
@@ -52,26 +53,8 @@ function blogSnapshot(post: {
   };
 }
 
-async function validateRelations(serviceIds: string[], faqIds: string[]) {
-  if (serviceIds.length > 0) {
-    const count = await prisma.service.count({
-      where: { id: { in: serviceIds }, deletedAt: null },
-    });
-    if (count !== serviceIds.length) {
-      return errorResult("One or more related services are invalid");
-    }
-  }
-
-  if (faqIds.length > 0) {
-    const count = await prisma.fAQ.count({
-      where: { id: { in: faqIds }, isActive: true },
-    });
-    if (count !== faqIds.length) {
-      return errorResult("One or more attached FAQs are invalid");
-    }
-  }
-
-  return null;
+async function resolveBlogRelations(serviceIds: string[], faqIds: string[]) {
+  return sanitizeContentRelationIds(serviceIds, faqIds);
 }
 
 async function prepareBlogSeoInput(
@@ -107,11 +90,10 @@ export async function createBlogPostAction(
     return errorResult("Slug already exists", { slug: ["Slug is taken"] });
   }
 
-  const relationError = await validateRelations(
+  const relations = await resolveBlogRelations(
     data.relatedServiceIds,
     data.attachedFaqIds,
   );
-  if (relationError) return relationError;
 
   const content = normalizeLocalizedContent(data);
   const blogFields = normalizeBlogPostInput(data);
@@ -123,8 +105,8 @@ export async function createBlogPostAction(
       ...content,
       ...blogFields,
       contentFaqs: blogFields.contentFaqs,
-      relatedServiceIds: data.relatedServiceIds,
-      attachedFaqIds: data.attachedFaqIds,
+      relatedServiceIds: relations.relatedServiceIds,
+      attachedFaqIds: relations.attachedFaqIds,
       isPublished: data.isPublished,
       publishedAt,
     },
@@ -166,11 +148,10 @@ export async function updateBlogPostAction(
     }
   }
 
-  const relationError = await validateRelations(
+  const relations = await resolveBlogRelations(
     data.relatedServiceIds,
     data.attachedFaqIds,
   );
-  if (relationError) return relationError;
 
   const content = normalizeLocalizedContent(data);
   const blogFields = normalizeBlogPostInput(data);
@@ -188,8 +169,8 @@ export async function updateBlogPostAction(
       ...content,
       ...blogFields,
       contentFaqs: blogFields.contentFaqs,
-      relatedServiceIds: data.relatedServiceIds,
-      attachedFaqIds: data.attachedFaqIds,
+      relatedServiceIds: relations.relatedServiceIds,
+      attachedFaqIds: relations.attachedFaqIds,
       isPublished: data.isPublished,
       publishedAt,
     },
