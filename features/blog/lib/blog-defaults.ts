@@ -7,7 +7,7 @@ export const DEFAULT_BLOG_CTA = {
   ctaDescriptionEn:
     "PakExcise helps you submit service requests, get WhatsApp support, and track your application through a simple digital process.",
   ctaDescriptionUr:
-    "PakExcise آپ کو سروس درخواستیں جمع کرانے، واٹس ایپ سپورٹ حاصل کرنے اور آسان ڈیجیٹل عمل کے ذریعے اپنی درخواست ٹریک کرنے میں مدد کرتا ہے۔",
+    "پاک ایکسائز آپ کو سروس درخواستیں جمع کرانے، واٹس ایپ سپورٹ حاصل کرنے اور آسان ڈیجیٹل عمل کے ذریعے اپنی درخواست ٹریک کرنے میں مدد کرتا ہے۔",
   ctaWhatsappLabelEn: "Contact on WhatsApp",
   ctaWhatsappLabelUr: "واٹس ایپ پر رابطہ کریں",
   ctaRequestLabelEn: "Submit Request",

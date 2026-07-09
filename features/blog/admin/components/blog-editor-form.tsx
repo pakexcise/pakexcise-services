@@ -8,6 +8,7 @@ import {
   createBlogPostAction,
   updateBlogPostAction,
 } from "@/features/blog/admin/actions/blog-actions";
+import { BlogCategoryFields } from "@/features/blog/admin/components/blog-category-fields";
 import { BlogContentFormatGuide } from "@/features/blog/admin/components/blog-content-format-guide";
 import { BlogImageUploadField } from "@/features/blog/admin/components/blog-image-upload-field";
 import { BlogMarkdownEditor } from "@/features/blog/admin/components/blog-markdown-editor";
@@ -33,6 +34,8 @@ export type BlogEditorValues = {
   contentUr: string;
   categoryEn: string;
   categoryUr: string;
+  categoryId: string;
+  subCategoryId: string;
   tags: string[];
   authorNameEn: string;
   authorNameUr: string;
@@ -72,6 +75,8 @@ type BlogEditorFormProps = {
   initialValues: BlogEditorValues;
   services: Option[];
   faqs: Option[];
+  categoryParents: Option[];
+  categoryChildrenByParent: Record<string, Option[]>;
 };
 
 function emptyFaq(): BlogContentFaq {
@@ -89,6 +94,8 @@ export function BlogEditorForm({
   initialValues,
   services,
   faqs,
+  categoryParents,
+  categoryChildrenByParent,
 }: BlogEditorFormProps) {
   const router = useRouter();
   const [values, setValues] = useState(() => mergeBlogEditorDefaults(initialValues));
@@ -122,6 +129,8 @@ export function BlogEditorForm({
         excerptUr: values.excerptUr || null,
         categoryEn: values.categoryEn || null,
         categoryUr: values.categoryUr || null,
+        categoryId: values.categoryId || null,
+        subCategoryId: values.subCategoryId || null,
         authorNameEn: values.authorNameEn || null,
         authorNameUr: values.authorNameUr || null,
         readingTimeMinutes: null,
@@ -191,22 +200,22 @@ export function BlogEditorForm({
             onChange={(e) => setValues((c) => ({ ...c, titleUr: e.target.value }))}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="categoryEn">Category (English)</Label>
-          <Input
-            id="categoryEn"
-            value={values.categoryEn}
-            onChange={(e) => setValues((c) => ({ ...c, categoryEn: e.target.value }))}
+        <div className="space-y-2 md:col-span-2">
+          <BlogCategoryFields
+            categoryId={values.categoryId}
+            subCategoryId={values.subCategoryId}
+            parents={categoryParents}
+            childrenByParent={categoryChildrenByParent}
+            onCategoryChange={(categoryId) =>
+              setValues((current) => ({ ...current, categoryId, subCategoryId: "" }))
+            }
+            onSubCategoryChange={(subCategoryId) =>
+              setValues((current) => ({ ...current, subCategoryId }))
+            }
           />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="categoryUr">Category (Urdu)</Label>
-          <Input
-            id="categoryUr"
-            dir="rtl"
-            value={values.categoryUr}
-            onChange={(e) => setValues((c) => ({ ...c, categoryUr: e.target.value }))}
-          />
+          <p className="text-xs text-muted-foreground">
+            Category and sub-category appear on the public blog post.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="authorNameEn">Author (English)</Label>

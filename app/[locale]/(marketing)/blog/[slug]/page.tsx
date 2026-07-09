@@ -27,6 +27,7 @@ import {
   parseBlogContentFaqs,
 } from "@/features/blog/lib/content-faqs";
 import { resolveBlogOgImageUrl } from "@/features/blog/lib/featured-image";
+import { resolveBlogCategoryLabels } from "@/features/blog/lib/resolve-blog-categories";
 import { extractBlogTableOfContents } from "@/features/blog/lib/toc";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
@@ -145,10 +146,11 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
     en: post.contentEn,
     ur: post.contentUr,
   });
-  const category = pickLocalized(locale, {
-    en: post.categoryEn,
-    ur: post.categoryUr,
-  });
+  const categoryLabels = resolveBlogCategoryLabels(
+    locale,
+    post.category,
+    post.subCategory,
+  );
   const author = pickLocalized(locale, {
     en: post.authorNameEn,
     ur: post.authorNameUr,
@@ -233,7 +235,8 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
           <div className="space-y-4">
             <BlogPostMetaBar
               locale={locale}
-              category={category}
+              category={categoryLabels.category}
+              subCategory={categoryLabels.subCategory}
               author={author}
               publishedAt={post.publishedAt}
               updatedAt={post.updatedAt}

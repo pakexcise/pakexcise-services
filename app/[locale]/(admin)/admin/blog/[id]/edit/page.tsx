@@ -7,6 +7,7 @@ import { BlogEditorForm } from "@/features/blog/admin/components/blog-editor-for
 import { mergeBlogEditorDefaults } from "@/features/blog/lib/editor-defaults";
 import { parseBlogContentFaqs } from "@/features/blog/lib/content-faqs";
 import { seoFromRecord } from "@/features/cms/lib/default-seo";
+import { loadBlogCategoryOptions } from "@/features/cms/lib/load-blog-category-options";
 import { loadCmsEditorOptions } from "@/features/cms/lib/load-editor-options";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { adminBlogRepository } from "@/server/repositories/admin-blog-repository";
@@ -27,9 +28,10 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.blog");
 
-  const [post, options] = await Promise.all([
+  const [post, options, categoryOptions] = await Promise.all([
     adminBlogRepository.findById(id),
     loadCmsEditorOptions(),
+    loadBlogCategoryOptions(),
   ]);
 
   if (!post) notFound();
@@ -50,6 +52,8 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
           contentUr: post.contentUr,
           categoryEn: post.categoryEn ?? "",
           categoryUr: post.categoryUr ?? "",
+          categoryId: post.categoryId ?? "",
+          subCategoryId: post.subCategoryId ?? "",
           tags: post.tags ?? [],
           authorNameEn: post.authorNameEn ?? "",
           authorNameUr: post.authorNameUr ?? "",
@@ -86,6 +90,8 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
         })}
         services={options.services}
         faqs={options.faqs}
+        categoryParents={categoryOptions.parents}
+        categoryChildrenByParent={categoryOptions.childrenByParent}
       />
     </div>
   );

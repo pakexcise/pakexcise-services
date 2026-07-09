@@ -5,10 +5,7 @@ import { Plus } from "lucide-react";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
-import {
-  BlogPublishToggle,
-  BlogRowActions,
-} from "@/features/blog/admin/components/blog-list-actions";
+import { BlogRowActions } from "@/features/blog/admin/components/blog-list-actions";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { adminDefaultPageSize } from "@/config/admin";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +32,17 @@ type BlogAdminPageProps = {
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.resources.blog");
   return adminMetadata(t("title"));
+}
+
+function formatCategoryLabel(
+  category: { nameEn: string } | null,
+  subCategory: { nameEn: string } | null,
+): string {
+  if (category && subCategory) {
+    return `${category.nameEn} › ${subCategory.nameEn}`;
+  }
+
+  return category?.nameEn ?? subCategory?.nameEn ?? "—";
 }
 
 export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps) {
@@ -88,44 +96,62 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
         <EmptyState title={t("emptyTitle")} description={t("emptyDescription")} />
       ) : (
         <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Published</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {result.items.map((post) => (
-                <TableRow key={post.id}>
-                  <TableCell>{post.titleEn}</TableCell>
-                  <TableCell className="font-mono text-xs">{post.slug}</TableCell>
-                  <TableCell>{post.categoryEn ?? "—"}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant={post.isPublished ? "default" : "secondary"}>
-                        {post.isPublished ? "Published" : "Draft"}
-                      </Badge>
-                      {post.isFeatured ? <Badge variant="outline">Featured</Badge> : null}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {post.publishedAt ? formatDate(post.publishedAt, locale) : "—"}
-                  </TableCell>
-                  <TableCell>{formatDate(post.updatedAt, locale)}</TableCell>
-                  <TableCell className="space-x-2">
-                    <BlogPublishToggle id={post.id} isPublished={post.isPublished} />
-                    <BlogRowActions id={post.id} />
-                  </TableCell>
+          <div className="overflow-hidden rounded-xl border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Published</TableHead>
+                  <TableHead>Updated</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {result.items.map((post) => (
+                  <TableRow key={post.id}>
+                    <TableCell className="max-w-[320px]">
+                      <div className="space-y-1">
+                        <p className="line-clamp-2 font-medium text-foreground">{post.titleEn}</p>
+                        <p className="truncate font-mono text-xs text-muted-foreground">{post.slug}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-[220px] text-sm">
+                      {formatCategoryLabel(post.category, post.subCategory)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant={post.isPublished ? "default" : "secondary"}>
+                          {post.isPublished ? "Published" : "Draft"}
+                        </Badge>
+                        {post.isFeatured ? <Badge variant="outline">Featured</Badge> : null}
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm">
+                      {post.publishedAt ? formatDate(post.publishedAt, locale) : "—"}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm">
+                      {formatDate(post.updatedAt, locale)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <BlogRowActions
+                        id={post.id}
+                        isPublished={post.isPublished}
+                        labels={{
+                          edit: "Edit blog post",
+                          publish: "Publish blog post",
+                          unpublish: "Move to draft",
+                          delete: "Delete blog post",
+                          deleteConfirm: "Delete this blog post?",
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
           <PaginationControls
             page={result.page}
             totalPages={result.totalPages}

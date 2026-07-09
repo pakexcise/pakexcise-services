@@ -5,6 +5,11 @@ import { CITY_SEED } from "./seed-cities-data";
 import { seedServiceConfig } from "./seed-service-config";
 import { seedRegionPlateFormats } from "./seed-region-plate-formats";
 import { seedLegalPages } from "./seed-legal-pages";
+import { seedBlogCategories } from "./seed-blog-categories";
+import {
+  PRIMARY_BLOG_CATEGORY_SLUG,
+  PRIMARY_BLOG_SUBCATEGORY_SLUG,
+} from "./blog-category-seed";
 import {
   PRIMARY_BLOG_CONTENT_EN,
   PRIMARY_BLOG_CONTENT_FAQS,
@@ -768,6 +773,11 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   await seedServiceConfig(prisma, regionMap, serviceMap);
   await seedRegionPlateFormats(prisma, regionMap);
 
+  const blogCategoryIds = await seedBlogCategories(prisma);
+  const primaryBlogCategoryId = blogCategoryIds.get(PRIMARY_BLOG_CATEGORY_SLUG) ?? null;
+  const primaryBlogSubCategoryId =
+    blogCategoryIds.get(PRIMARY_BLOG_SUBCATEGORY_SLUG) ?? null;
+
   const primaryBlogRelatedServiceIds = (
     await prisma.service.findMany({
       where: {
@@ -800,6 +810,8 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       contentUr: PRIMARY_BLOG_CONTENT_EN,
       categoryEn: PRIMARY_BLOG_SEED.categoryEn,
       categoryUr: PRIMARY_BLOG_SEED.categoryUr,
+      categoryId: primaryBlogCategoryId,
+      subCategoryId: primaryBlogSubCategoryId,
       tags: [...PRIMARY_BLOG_SEED.tags],
       authorNameEn: PRIMARY_BLOG_SEED.authorNameEn,
       authorNameUr: PRIMARY_BLOG_SEED.authorNameUr,
@@ -827,6 +839,8 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       contentUr: PRIMARY_BLOG_CONTENT_EN,
       categoryEn: PRIMARY_BLOG_SEED.categoryEn,
       categoryUr: PRIMARY_BLOG_SEED.categoryUr,
+      categoryId: primaryBlogCategoryId,
+      subCategoryId: primaryBlogSubCategoryId,
       tags: [...PRIMARY_BLOG_SEED.tags],
       authorNameEn: PRIMARY_BLOG_SEED.authorNameEn,
       authorNameUr: PRIMARY_BLOG_SEED.authorNameUr,

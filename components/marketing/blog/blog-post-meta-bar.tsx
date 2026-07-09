@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/utils";
 type BlogPostMetaBarProps = {
   locale: string;
   category?: string | null;
+  subCategory?: string | null;
   author?: string | null;
   publishedAt?: Date | null;
   updatedAt?: Date;
@@ -17,6 +18,7 @@ type BlogPostMetaBarProps = {
 export function BlogPostMetaBar({
   locale,
   category,
+  subCategory,
   author,
   publishedAt,
   updatedAt,
@@ -34,6 +36,12 @@ export function BlogPostMetaBar({
       {category ? (
         <Badge variant="secondary" className="rounded-full px-3 py-1">
           {category}
+        </Badge>
+      ) : null}
+
+      {subCategory ? (
+        <Badge variant="outline" className="rounded-full px-3 py-1">
+          {subCategory}
         </Badge>
       ) : null}
 

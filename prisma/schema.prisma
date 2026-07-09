@@ -1137,6 +1137,8 @@ model BlogPost {
   contentUr              String    @db.Text
   categoryEn             String?
   categoryUr             String?
+  categoryId             String?
+  subCategoryId          String?
   tags                   String[]  @default([])
   authorNameEn           String?
   authorNameUr           String?
@@ -1170,10 +1172,34 @@ model BlogPost {
   updatedAt              DateTime  @updatedAt
 
   seoMeta SeoMeta?
+  category    BlogCategory? @relation("BlogPostCategory", fields: [categoryId], references: [id], onDelete: SetNull)
+  subCategory BlogCategory? @relation("BlogPostSubCategory", fields: [subCategoryId], references: [id], onDelete: SetNull)
 
   @@index([isPublished, publishedAt])
   @@index([isPublished, isFeatured])
+  @@index([categoryId])
+  @@index([subCategoryId])
   @@map("blog_posts")
+}
+
+model BlogCategory {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  nameEn       String
+  nameUr       String
+  parentId     String?
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  parent     BlogCategory?  @relation("BlogCategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children   BlogCategory[] @relation("BlogCategoryHierarchy")
+  posts      BlogPost[]     @relation("BlogPostCategory")
+  subPosts   BlogPost[]     @relation("BlogPostSubCategory")
+
+  @@index([parentId, isActive, displayOrder])
+  @@map("blog_categories")
 }
 
 model Guide {

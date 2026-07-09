@@ -15,6 +15,8 @@ const blogContentFaqSchema = z.object({
 const blogExtendedFieldsSchema = z.object({
   categoryEn: z.string().trim().max(120).optional().nullable(),
   categoryUr: z.string().trim().max(120).optional().nullable(),
+  categoryId: z.string().cuid().optional().nullable(),
+  subCategoryId: z.string().cuid().optional().nullable(),
   tags: z.array(z.string().trim().min(1).max(60)).max(20).default([]),
   authorNameEn: z.string().trim().max(120).optional().nullable(),
   authorNameUr: z.string().trim().max(120).optional().nullable(),

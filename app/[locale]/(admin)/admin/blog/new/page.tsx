@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { BlogEditorForm } from "@/features/blog/admin/components/blog-editor-form";
 import { createEmptyBlogValues } from "@/features/blog/lib/editor-defaults";
+import { loadBlogCategoryOptions } from "@/features/cms/lib/load-blog-category-options";
 import { loadCmsEditorOptions } from "@/features/cms/lib/load-editor-options";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
@@ -17,7 +18,10 @@ export default async function AdminBlogNewPage() {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
   const t = await getTranslations("admin.resources.blog");
-  const options = await loadCmsEditorOptions();
+  const [options, categoryOptions] = await Promise.all([
+    loadCmsEditorOptions(),
+    loadBlogCategoryOptions(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -27,6 +31,8 @@ export default async function AdminBlogNewPage() {
         initialValues={createEmptyBlogValues()}
         services={options.services}
         faqs={options.faqs}
+        categoryParents={categoryOptions.parents}
+        categoryChildrenByParent={categoryOptions.childrenByParent}
       />
     </div>
   );

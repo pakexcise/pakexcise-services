@@ -1,10 +1,26 @@
+import { DEFAULT_BLOG_AUTHOR } from "@/features/blog/lib/blog-authors";
+import { normalizeUrduBrandText } from "@/features/blog/lib/blog-brand";
 import { computeReadingTimeMinutes } from "@/features/blog/lib/reading-time";
 import { parseBlogContentFaqs } from "@/features/blog/lib/content-faqs";
+import type { BlogContentFaq } from "@/features/blog/types";
 import { sanitizeRichTextContent } from "@/lib/security/rich-text";
 
 function trimOptional(value: string | null | undefined): string | undefined {
   const trimmed = value?.trim();
   return trimmed || undefined;
+}
+
+function normalizeUrduOptional(value: string | null | undefined): string | undefined {
+  const trimmed = trimOptional(value);
+  return trimmed ? normalizeUrduBrandText(trimmed) : undefined;
+}
+
+function normalizeContentFaqs(faqs: BlogContentFaq[]): BlogContentFaq[] {
+  return faqs.map((faq) => ({
+    ...faq,
+    questionUr: normalizeUrduBrandText(faq.questionUr || faq.questionEn),
+    answerUr: normalizeUrduBrandText(faq.answerUr || faq.answerEn),
+  }));
 }
 
 function normalizeTags(tags: string[] | undefined): string[] {
@@ -61,42 +77,43 @@ export function normalizeBlogPostInput(input: {
   ctaAccountLabelUr?: string | null;
 }) {
   const contentEn = sanitizeRichTextContent(input.contentEn);
-  const contentUr = sanitizeRichTextContent(input.contentUr);
+  const contentUr = normalizeUrduBrandText(sanitizeRichTextContent(input.contentUr));
   const readingTimeMinutes = computeReadingTimeMinutes(contentEn);
+  const parsedFaqs = normalizeContentFaqs(parseBlogContentFaqs(input.contentFaqs));
 
   return {
     titleEn: input.titleEn.trim(),
-    titleUr: input.titleUr.trim(),
+    titleUr: normalizeUrduBrandText(input.titleUr.trim()),
     excerptEn: trimOptional(input.excerptEn),
-    excerptUr: trimOptional(input.excerptUr),
+    excerptUr: normalizeUrduOptional(input.excerptUr),
     contentEn,
     contentUr,
     categoryEn: trimOptional(input.categoryEn),
-    categoryUr: trimOptional(input.categoryUr),
+    categoryUr: normalizeUrduOptional(input.categoryUr),
     tags: normalizeTags(input.tags),
-    authorNameEn: trimOptional(input.authorNameEn),
-    authorNameUr: trimOptional(input.authorNameUr),
+    authorNameEn: trimOptional(input.authorNameEn) ?? DEFAULT_BLOG_AUTHOR.en,
+    authorNameUr: normalizeUrduOptional(input.authorNameUr) ?? DEFAULT_BLOG_AUTHOR.ur,
     readingTimeMinutes,
     featuredImagePath: trimOptional(input.featuredImagePath),
     featuredImageTitleEn: trimOptional(input.featuredImageTitleEn),
-    featuredImageTitleUr: trimOptional(input.featuredImageTitleUr),
+    featuredImageTitleUr: normalizeUrduOptional(input.featuredImageTitleUr),
     featuredImageAltEn: trimOptional(input.featuredImageAltEn),
-    featuredImageAltUr: trimOptional(input.featuredImageAltUr),
+    featuredImageAltUr: normalizeUrduOptional(input.featuredImageAltUr),
     featuredImageCaptionEn: trimOptional(input.featuredImageCaptionEn),
-    featuredImageCaptionUr: trimOptional(input.featuredImageCaptionUr),
+    featuredImageCaptionUr: normalizeUrduOptional(input.featuredImageCaptionUr),
     focusKeywords: trimOptional(input.focusKeywords),
     isFeatured: input.isFeatured ?? false,
     showTableOfContents: input.showTableOfContents ?? true,
-    contentFaqs: parseBlogContentFaqs(input.contentFaqs),
+    contentFaqs: parsedFaqs,
     ctaTitleEn: trimOptional(input.ctaTitleEn),
-    ctaTitleUr: trimOptional(input.ctaTitleUr),
+    ctaTitleUr: normalizeUrduOptional(input.ctaTitleUr),
     ctaDescriptionEn: trimOptional(input.ctaDescriptionEn),
-    ctaDescriptionUr: trimOptional(input.ctaDescriptionUr),
+    ctaDescriptionUr: normalizeUrduOptional(input.ctaDescriptionUr),
     ctaWhatsappLabelEn: trimOptional(input.ctaWhatsappLabelEn),
-    ctaWhatsappLabelUr: trimOptional(input.ctaWhatsappLabelUr),
+    ctaWhatsappLabelUr: normalizeUrduOptional(input.ctaWhatsappLabelUr),
     ctaRequestLabelEn: trimOptional(input.ctaRequestLabelEn),
-    ctaRequestLabelUr: trimOptional(input.ctaRequestLabelUr),
+    ctaRequestLabelUr: normalizeUrduOptional(input.ctaRequestLabelUr),
     ctaAccountLabelEn: trimOptional(input.ctaAccountLabelEn),
-    ctaAccountLabelUr: trimOptional(input.ctaAccountLabelUr),
+    ctaAccountLabelUr: normalizeUrduOptional(input.ctaAccountLabelUr),
   };
 }

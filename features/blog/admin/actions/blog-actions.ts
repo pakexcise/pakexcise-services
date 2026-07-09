@@ -7,6 +7,7 @@ import { sanitizeContentRelationIds } from "@/features/cms/lib/sanitize-content-
 import { normalizeLocalizedContent } from "@/features/cms/lib/normalize-content-input";
 import { upsertBlogSeo } from "@/features/cms/lib/upsert-seo";
 import { normalizeBlogPostInput } from "@/features/blog/lib/normalize-blog-input";
+import { normalizeUrduBrandText } from "@/features/blog/lib/blog-brand";
 import { resolveLogoIconPath } from "@/features/settings/lib/branding-resolvers";
 import { getBrandingSettings } from "@/features/settings/lib/public-settings-cache";
 import { seoAbsoluteUrl } from "@/lib/seo-url";
@@ -26,6 +27,7 @@ import {
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { adminBlogRepository } from "@/server/repositories/admin-blog-repository";
+import { blogCategoryRepository } from "@/server/repositories/blog-category-repository";
 import { requirePermission } from "@/server/permissions/guards";
 
 const ADMIN_PATH = "/admin/blog";
@@ -55,6 +57,39 @@ function blogSnapshot(post: {
 
 async function resolveBlogRelations(serviceIds: string[], faqIds: string[]) {
   return sanitizeContentRelationIds(serviceIds, faqIds);
+}
+
+async function resolveBlogCategoryFields(
+  categoryId?: string | null,
+  subCategoryId?: string | null,
+): Promise<
+  | {
+      ok: true;
+      categoryId: string | null;
+      subCategoryId: string | null;
+      categoryEn: string | null;
+      categoryUr: string | null;
+    }
+  | { ok: false; error: string }
+> {
+  const validation = await blogCategoryRepository.validateAssignment(
+    categoryId?.trim() || null,
+    subCategoryId?.trim() || null,
+  );
+
+  if (!validation.ok) {
+    return { ok: false, error: validation.error };
+  }
+
+  return {
+    ok: true,
+    categoryId: validation.category?.id ?? null,
+    subCategoryId: validation.subCategory?.id ?? null,
+    categoryEn: validation.category?.nameEn ?? null,
+    categoryUr: validation.category
+      ? normalizeUrduBrandText(validation.category.nameUr)
+      : null,
+  };
 }
 
 async function prepareBlogSeoInput(
@@ -94,9 +129,20 @@ export async function createBlogPostAction(
     data.relatedServiceIds,
     data.attachedFaqIds,
   );
+  const categoryFields = await resolveBlogCategoryFields(
+    data.categoryId,
+    data.subCategoryId,
+  );
+  if (!categoryFields.ok) {
+    return errorResult(categoryFields.error);
+  }
 
   const content = normalizeLocalizedContent(data);
-  const blogFields = normalizeBlogPostInput(data);
+  const blogFields = normalizeBlogPostInput({
+    ...data,
+    categoryEn: categoryFields.categoryEn,
+    categoryUr: categoryFields.categoryUr,
+  });
   const publishedAt = data.isPublished ? new Date() : null;
 
   const post = await prisma.blogPost.create({
@@ -104,6 +150,8 @@ export async function createBlogPostAction(
       slug: data.slug,
       ...content,
       ...blogFields,
+      categoryId: categoryFields.categoryId,
+      subCategoryId: categoryFields.subCategoryId,
       contentFaqs: blogFields.contentFaqs,
       relatedServiceIds: relations.relatedServiceIds,
       attachedFaqIds: relations.attachedFaqIds,
@@ -152,9 +200,20 @@ export async function updateBlogPostAction(
     data.relatedServiceIds,
     data.attachedFaqIds,
   );
+  const categoryFields = await resolveBlogCategoryFields(
+    data.categoryId,
+    data.subCategoryId,
+  );
+  if (!categoryFields.ok) {
+    return errorResult(categoryFields.error);
+  }
 
   const content = normalizeLocalizedContent(data);
-  const blogFields = normalizeBlogPostInput(data);
+  const blogFields = normalizeBlogPostInput({
+    ...data,
+    categoryEn: categoryFields.categoryEn,
+    categoryUr: categoryFields.categoryUr,
+  });
   const publishedAt =
     data.isPublished && !existing.publishedAt
       ? new Date()
@@ -168,6 +227,8 @@ export async function updateBlogPostAction(
       slug: data.slug,
       ...content,
       ...blogFields,
+      categoryId: categoryFields.categoryId,
+      subCategoryId: categoryFields.subCategoryId,
       contentFaqs: blogFields.contentFaqs,
       relatedServiceIds: relations.relatedServiceIds,
       attachedFaqIds: relations.attachedFaqIds,

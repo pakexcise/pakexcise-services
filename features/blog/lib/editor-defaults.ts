@@ -1,3 +1,4 @@
+import { DEFAULT_BLOG_AUTHOR } from "@/features/blog/lib/blog-authors";
 import {
   DEFAULT_BLOG_CONTENT_FAQS,
   DEFAULT_BLOG_CTA,
@@ -23,6 +24,8 @@ export function mergeBlogEditorDefaults(values: BlogEditorValues): BlogEditorVal
     ctaRequestLabelUr: values.ctaRequestLabelUr || DEFAULT_BLOG_CTA.ctaRequestLabelUr,
     ctaAccountLabelEn: values.ctaAccountLabelEn || DEFAULT_BLOG_CTA.ctaAccountLabelEn,
     ctaAccountLabelUr: values.ctaAccountLabelUr || DEFAULT_BLOG_CTA.ctaAccountLabelUr,
+    authorNameEn: values.authorNameEn || DEFAULT_BLOG_AUTHOR.en,
+    authorNameUr: values.authorNameUr || DEFAULT_BLOG_AUTHOR.ur,
   };
 }
 
@@ -37,9 +40,11 @@ export function createEmptyBlogValues(): BlogEditorValues {
     contentUr: "",
     categoryEn: "",
     categoryUr: "",
+    categoryId: "",
+    subCategoryId: "",
     tags: [],
-    authorNameEn: "",
-    authorNameUr: "",
+    authorNameEn: DEFAULT_BLOG_AUTHOR.en,
+    authorNameUr: DEFAULT_BLOG_AUTHOR.ur,
     readingTimeMinutes: "",
     featuredImagePath: "",
     featuredImageTitleEn: "",

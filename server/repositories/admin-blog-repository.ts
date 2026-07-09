@@ -15,6 +15,14 @@ export const adminBlogListSelect = {
   titleUr: true,
   categoryEn: true,
   categoryUr: true,
+  categoryId: true,
+  subCategoryId: true,
+  category: {
+    select: { id: true, nameEn: true, nameUr: true, slug: true },
+  },
+  subCategory: {
+    select: { id: true, nameEn: true, nameUr: true, slug: true },
+  },
   isPublished: true,
   isFeatured: true,
   publishedAt: true,
@@ -32,6 +40,8 @@ export const adminBlogDetailSelect = {
   contentUr: true,
   categoryEn: true,
   categoryUr: true,
+  categoryId: true,
+  subCategoryId: true,
   tags: true,
   authorNameEn: true,
   authorNameUr: true,

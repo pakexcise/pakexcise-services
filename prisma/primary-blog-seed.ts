@@ -153,25 +153,25 @@ PakExcise is designed to save time, reduce confusion, and make vehicle and licen
 export const PRIMARY_BLOG_CONTENT_FAQS = [
   {
     questionEn: "What services are available on PakExcise?",
-    questionUr: "PakExcise پر کون سی خدمات دستیاب ہیں؟",
+    questionUr: "پاک ایکسائز پر کون سی خدمات دستیاب ہیں؟",
     answerEn:
       "PakExcise provides support for vehicle transfer, token tax, vehicle registration, driving license renewal, learner license, route permit, vehicle inspection or fitness support, e-challan guidance, and document correction.",
     answerUr:
-      "PakExcise گاڑی منتقلی، ٹوکن ٹیکس، گاڑی رجسٹریشن، ڈرائیونگ لائسنس تجدید، لرنر لائسنس، راؤٹ پرمٹ، گاڑی معائنہ یا فٹنس سپورٹ، ای چالان رہنمائی اور دستاویز تصحیح کے لیے سپورٹ فراہم کرتا ہے۔",
+      "پاک ایکسائز گاڑی منتقلی، ٹوکن ٹیکس، گاڑی رجسٹریشن، ڈرائیونگ لائسنس تجدید، لرنر لائسنس، راؤٹ پرمٹ، گاڑی معائنہ یا فٹنس سپورٹ، ای چالان رہنمائی اور دستاویز تصحیح کے لیے سپورٹ فراہم کرتا ہے۔",
   },
   {
     questionEn: "Can I submit a service request online?",
     questionUr: "کیا میں آن لائن سروس درخواست جمع کر سکتا ہوں؟",
     answerEn: "Yes. Users can submit a service request through the PakExcise website.",
-    answerUr: "جی ہاں۔ صارفین PakExcise ویب سائٹ کے ذریعے سروس درخواست جمع کر سکتے ہیں۔",
+    answerUr: "جی ہاں۔ صارفین پاک ایکسائز ویب سائٹ کے ذریعے سروس درخواست جمع کر سکتے ہیں۔",
   },
   {
     questionEn: "Does PakExcise provide WhatsApp support?",
-    questionUr: "کیا PakExcise واٹس ایپ سپورٹ فراہم کرتا ہے؟",
+    questionUr: "کیا پاک ایکسائز واٹس ایپ سپورٹ فراہم کرتا ہے؟",
     answerEn:
       "Yes. PakExcise provides a quick WhatsApp service option for users who want fast support and guidance.",
     answerUr:
-      "جی ہاں۔ PakExcise ان صارفین کے لیے فوری واٹس ایپ سروس کا آپشن فراہم کرتا ہے جو تیز رہنمائی چاہتے ہیں۔",
+      "جی ہاں۔ پاک ایکسائز ان صارفین کے لیے فوری واٹس ایپ سروس کا آپشن فراہم کرتا ہے جو تیز رہنمائی چاہتے ہیں۔",
   },
   {
     questionEn: "Can I track my application?",
@@ -197,7 +197,7 @@ export const PRIMARY_BLOG_CONTENT_FAQS = [
     answerEn:
       "Service availability may depend on the province, city, and service type. PakExcise shows services according to available locations and categories.",
     answerUr:
-      "خدمات کی دستیابی صوبے، شہر اور سروس کی قسم پر منحصر ہو سکتی ہے۔ PakExcise دستیاب مقامات اور کیٹیگریز کے مطابق خدمات دکھاتا ہے۔",
+      "خدمات کی دستیابی صوبے، شہر اور سروس کی قسم پر منحصر ہو سکتی ہے۔ پاک ایکسائز دستیاب مقامات اور کیٹیگریز کے مطابق خدمات دکھاتا ہے۔",
   },
 ] as const;
 
@@ -206,11 +206,11 @@ export const PRIMARY_BLOG_SEED = {
   titleEn:
     "PakExcise: Vehicle, Token Tax and License Services Made Easier in Pakistan",
   titleUr:
-    "PakExcise: پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات آسان بنائیں",
+    "پاک ایکسائز: پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات آسان بنائیں",
   excerptEn:
     "PakExcise helps users in Pakistan manage vehicle, token tax, registration, license, route permit, and document correction services through a simple digital facilitation process.",
   excerptUr:
-    "PakExcise پاکستان میں صارفین کو گاڑی، ٹوکن ٹیکس، رجسٹریشن، لائسنس، راؤٹ پرمٹ اور دستاویز تصحیح کی خدمات ایک آسان ڈیجیٹل سہولت عمل کے ذریعے منظم کرنے میں مدد کرتا ہے۔",
+    "پاک ایکسائز پاکستان میں صارفین کو گاڑی، ٹوکن ٹیکس، رجسٹریشن، لائسنس، راؤٹ پرمٹ اور دستاویز تصحیح کی خدمات ایک آسان ڈیجیٹل سہولت عمل کے ذریعے منظم کرنے میں مدد کرتا ہے۔",
   categoryEn: "Vehicle & Excise Guide",
   categoryUr: "گاڑی اور ایکسائز گائیڈ",
   tags: [
@@ -222,32 +222,32 @@ export const PRIMARY_BLOG_SEED = {
     "learner license",
     "excise services",
   ],
-  authorNameEn: "Rashid Shahbaz S.",
-  authorNameUr: "راشد شہباز ایس.",
+  authorNameEn: "Rashid Shahbaz Sharif",
+  authorNameUr: "راشد شہباز شریف",
   featuredImagePath: "/blog/pakexcise-vehicle-token-tax-license-services-pakistan.png",
   featuredImageTitleEn: "PakExcise Vehicle and License Services in Pakistan",
-  featuredImageTitleUr: "پاکستان میں PakExcise گاڑی اور لائسنس خدمات",
+  featuredImageTitleUr: "پاکستان میں پاک ایکسائز گاڑی اور لائسنس خدمات",
   featuredImageAltEn:
     "PakExcise vehicle token tax registration and license services in Pakistan",
   featuredImageAltUr:
-    "پاکستان میں PakExcise گاڑی ٹوکن ٹیکس رجسٹریشن اور لائسنس خدمات",
+    "پاکستان میں پاک ایکسائز گاڑی ٹوکن ٹیکس رجسٹریشن اور لائسنس خدمات",
   focusKeywords:
     "PakExcise, vehicle transfer Pakistan, token tax Pakistan, vehicle registration Pakistan, driving license renewal Pakistan, learner license Pakistan, excise services Pakistan",
   isFeatured: true,
   showTableOfContents: true,
   seo: {
     metaTitleEn: "PakExcise – Vehicle, Token Tax & License Services in Pakistan",
-    metaTitleUr: "PakExcise – پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات",
+    metaTitleUr: "پاک ایکسائز – پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات",
     metaDescriptionEn:
       "PakExcise helps users in Pakistan with vehicle transfer, token tax, vehicle registration, license renewal, learner license, route permit, and document correction services.",
     metaDescriptionUr:
-      "PakExcise پاکستان میں گاڑی منتقلی، ٹوکن ٹیکس، گاڑی رجسٹریشن، لائسنس تجدید، لرنر لائسنس، راؤٹ پرمٹ اور دستاویز تصحیح کی خدمات میں مدد کرتا ہے۔",
+      "پاک ایکسائز پاکستان میں گاڑی منتقلی، ٹوکن ٹیکس، گاڑی رجسٹریشن، لائسنس تجدید، لرنر لائسنس، راؤٹ پرمٹ اور دستاویز تصحیح کی خدمات میں مدد کرتا ہے۔",
     h1En:
       "PakExcise: Vehicle, Token Tax and License Services Made Easier in Pakistan",
     h1Ur:
-      "PakExcise: پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات آسان بنائیں",
+      "پاک ایکسائز: پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات آسان بنائیں",
     ogTitleEn: "PakExcise – Vehicle, Token Tax & License Services in Pakistan",
-    ogTitleUr: "PakExcise – پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات",
+    ogTitleUr: "پاک ایکسائز – پاکستان میں گاڑی، ٹوکن ٹیکس اور لائسنس خدمات",
     ogDescriptionEn:
       "Private facilitation support for vehicle transfer, token tax, registration, license renewal, and related services in Pakistan.",
     ogDescriptionUr:

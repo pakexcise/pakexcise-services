@@ -14,6 +14,8 @@ const publishedPostSelect = {
   contentUr: true,
   categoryEn: true,
   categoryUr: true,
+  categoryId: true,
+  subCategoryId: true,
   tags: true,
   authorNameEn: true,
   authorNameUr: true,
@@ -44,6 +46,12 @@ const publishedPostSelect = {
   publishedAt: true,
   updatedAt: true,
   seoMeta: true,
+  category: {
+    select: { id: true, nameEn: true, nameUr: true, slug: true },
+  },
+  subCategory: {
+    select: { id: true, nameEn: true, nameUr: true, slug: true },
+  },
 } as const;
 
 const publishedCardSelect = {
