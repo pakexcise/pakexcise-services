@@ -25,16 +25,16 @@ export function BlogPostSidebar({
   return (
     <aside
       className={cn(
-        "hidden lg:block lg:sticky lg:top-24 lg:z-10 lg:col-start-2 lg:row-start-1 lg:self-start",
+        "hidden w-full lg:block lg:sticky lg:top-24 lg:z-10 lg:self-start",
         className,
       )}
     >
-      <div className="flex max-h-[calc(100dvh-7rem)] flex-col gap-6">
+      <div className="flex flex-col gap-6">
         {tocItems.length > 0 ? (
           <BlogTableOfContents
             items={tocItems}
             title={tableOfContentsTitle}
-            className="min-h-0 shrink"
+            compact
           />
         ) : null}
         <BlogSidebarCta
@@ -42,7 +42,6 @@ export function BlogPostSidebar({
           description={sidebarDescription}
           servicesLabel={servicesLabel}
           whatsappLabel={whatsappLabel}
-          className="shrink-0"
         />
       </div>
     </aside>

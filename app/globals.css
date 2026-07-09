@@ -298,4 +298,23 @@
   html[dir="rtl"] .prose-content :where(p, li, dd) {
     line-height: 2.5;
   }
+
+  .blog-toc-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent)
+      transparent;
+  }
+
+  .blog-toc-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .blog-toc-scroll::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+  }
+
+  .blog-toc-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }

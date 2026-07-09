@@ -259,7 +259,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
       </article>
 
       <div className="container-site py-10 md:py-12">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(240px,300px)] lg:items-start lg:gap-12 xl:gap-16">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] lg:items-start lg:gap-14 xl:gap-16">
           <div className="min-w-0 space-y-10">
             {tocItems.length > 0 ? (
               <div className="lg:hidden">
