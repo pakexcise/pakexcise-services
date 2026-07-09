@@ -10,10 +10,18 @@ export function JsonLd({ data }: JsonLdProps) {
     return null;
   }
 
+  const payload = Array.isArray(data)
+    ? data.filter((item) => item && Object.keys(item).length > 0)
+    : data;
+
+  if (Array.isArray(payload) && payload.length === 0) {
+    return null;
+  }
+
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(payload) }}
     />
   );
 }

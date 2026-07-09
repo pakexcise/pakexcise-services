@@ -12,6 +12,7 @@ import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import {
   buildLocalBusinessJsonLd,
+  buildBusinessContactPoints,
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
 } from "@/features/seo/lib/metadata";
@@ -26,7 +27,9 @@ import {
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
 import { routing, type Locale } from "@/i18n/config";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { seoAbsoluteUrl } from "@/lib/seo-url";
+import { getActiveSocialLinks } from "@/server/repositories";
 import { getCurrentLocale, isValidLocale } from "@/server/i18n/get-locale";
 
 type LocaleLayoutProps = {
@@ -60,12 +63,25 @@ export default async function LocaleLayout({
 
   const publicSettings = await getPublicSettings();
   const { business, seo, tracking, features, publicUi, branding } = publicSettings;
+  const socialLinks = await getActiveSocialLinks();
   const trackingRuntime = buildTrackingRuntimeConfig(tracking);
   const localized = localizeGlobalSiteContent(business, locale, publicUi);
 
   const baseUrl = seoAbsoluteUrl("/");
+  const whatsappLinkNumber = resolveWhatsappLinkNumber(business);
+  const whatsappMessage = resolveWhatsappDefaultMessage(business, locale);
   const siteJsonLd = [
-    buildOrganizationJsonLd(baseUrl, seo, branding),
+    buildOrganizationJsonLd(baseUrl, seo, branding, {
+      sameAs: socialLinks.map((link) => link.url),
+      contactPoints: buildBusinessContactPoints({
+        phone: business.phoneDisplayNumber,
+        email: business.businessEmail,
+        whatsappUrl: whatsappLinkNumber
+          ? buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage)
+          : null,
+        whatsappChannelUrl: business.whatsappChannelUrl,
+      }),
+    }),
     buildWebSiteJsonLd(baseUrl, business.siteName || seo.organizationName),
     buildLocalBusinessJsonLd(baseUrl, seo),
   ];

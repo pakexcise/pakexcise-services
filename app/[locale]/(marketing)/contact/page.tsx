@@ -14,7 +14,9 @@ import {
   localizeContactPageSettings,
 } from "@/features/contact-page/lib/contact-page-settings-cache";
 import { getFeatureFlagSettings, getFormsSettings } from "@/features/settings/lib/public-settings-cache";
-import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
+import { buildBreadcrumbJsonLd, buildBusinessContactPoints, buildContactPageJsonLd } from "@/features/seo/lib/metadata";
+import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
@@ -55,13 +57,14 @@ export default async function ContactPage() {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
-  const [settings, socialLinks, regions, featureFlags, formsSettings, tContact, tNav, tOptions] =
+  const [settings, socialLinks, regions, featureFlags, formsSettings, businessSettings, tContact, tNav, tOptions] =
     await Promise.all([
     getContactPageSettings(),
     getActiveSocialLinks(),
     regionRepository.listPublic(),
     getFeatureFlagSettings(),
     getFormsSettings(),
+    getBusinessSettings(),
     getTranslations("marketing.contact"),
     getTranslations("nav"),
     getTranslations("marketing.contact.options"),
@@ -84,10 +87,29 @@ export default async function ContactPage() {
     { name: "Home", url: absoluteUrl("/") },
     { name: tContact("breadcrumb"), url: absoluteUrl("/contact") },
   ]);
+  const contactPageJsonLd = buildContactPageJsonLd({
+    pageUrl: absoluteUrl("/contact"),
+    pageName: content.heroTitle,
+    description: content.heroDescription,
+    organizationName: businessSettings.siteName,
+    baseUrl: absoluteUrl("/"),
+    sameAs: socialLinks.map((link) => link.url),
+    contactPoints: buildBusinessContactPoints({
+      phone: settings.phoneNumber ?? businessSettings.phoneDisplayNumber,
+      email: settings.supportEmail ?? businessSettings.businessEmail,
+      whatsappUrl: settings.whatsappNumber
+        ? buildWhatsAppUrl(
+            settings.whatsappNumber,
+            settings.whatsappPrefillMessage ?? "",
+          )
+        : null,
+      whatsappChannelUrl: settings.whatsappChannelUrl,
+    }),
+  });
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={[breadcrumbJsonLd, contactPageJsonLd]} />
       <PageHero
         title={content.heroTitle}
         description={content.heroDescription}

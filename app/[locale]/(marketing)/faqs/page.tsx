@@ -68,14 +68,14 @@ export default async function FaqsPage() {
     { name: "Home", url: absoluteUrl("/") },
     { name: title, url: absoluteUrl("/faqs") },
   ]);
-  const faqJsonLd =
-    faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
+  const faqJsonLd = buildFaqJsonLd(faqItems);
+  const jsonLd = [breadcrumbJsonLd, faqJsonLd].filter(
+    (item): item is NonNullable<typeof item> => item !== null,
+  );
 
   return (
     <>
-      <JsonLd
-        data={faqJsonLd ? [breadcrumbJsonLd, faqJsonLd] : breadcrumbJsonLd}
-      />
+      <JsonLd data={jsonLd} />
       <PageHero
         title={title}
         description={description}

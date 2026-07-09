@@ -32,20 +32,12 @@ import {
 import type { HomeSectionKey } from "@/features/home-page/types";
 import {
   buildFaqJsonLd,
-  buildLocalBusinessJsonLd,
-  buildOrganizationJsonLd,
-  buildServiceJsonLd,
-  buildWebSiteJsonLd,
+  buildItemListJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import {
-  getServiceAssignedRegions,
-  getServiceRegionLabel,
-} from "@/features/services/lib/service-regions";
-import {
   getBusinessSettings,
   getFeatureFlagSettings,
-  getSeoSettings,
 } from "@/features/settings/lib/public-settings-cache";
 import {
   resolveWhatsappDefaultMessage,
@@ -112,7 +104,6 @@ export default async function HomePage() {
     settings,
     content,
     businessSettings,
-    seoSettings,
     featureFlags,
     categoryGroups,
     popularServices,
@@ -129,7 +120,6 @@ export default async function HomePage() {
       localizeHomePageSettings(value, locale),
     ),
     getBusinessSettings(),
-    getSeoSettings(),
     getFeatureFlagSettings(),
     serviceCategoryRepository.listPublicGrouped(),
     getHomePageSettings().then(async (homeSettings) =>
@@ -161,47 +151,26 @@ export default async function HomePage() {
   const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings, locale);
   const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
   const faqItems = mapFaqsForLocale(faqs, locale);
-  const baseUrl = absoluteUrl("/");
   const orderedSections = getOrderedActiveHomeSections(settings);
 
-  const jsonLd = [
-    buildOrganizationJsonLd(baseUrl, seoSettings),
-    buildWebSiteJsonLd(baseUrl),
-    buildLocalBusinessJsonLd(baseUrl, seoSettings),
-    ...(faqItems.length > 0 ? [buildFaqJsonLd(faqItems)] : []),
-    ...popularServices.map((service) => {
-      const name = pickLocalized(locale, {
+  const faqJsonLd = buildFaqJsonLd(faqItems);
+  const featuredServicesJsonLd = buildItemListJsonLd({
+    name: pickLocalized(locale, {
+      en: "Featured excise facilitation services",
+      ur: "نمایاں ایکسائز سہولت خدمات",
+    }),
+    items: popularServices.map((service) => ({
+      name: pickLocalized(locale, {
         en: service.nameEn,
         ur: service.nameUr,
-      });
-      const description = pickLocalized(locale, {
-        en: service.shortDescriptionEn ?? service.nameEn,
-        ur: service.shortDescriptionUr ?? service.nameUr,
-      });
-      const assignedRegions = getServiceAssignedRegions(service);
-      const regionName = getServiceRegionLabel(
-        service,
-        locale,
-        tMarketing("services.multipleRegions"),
-        tMarketing("services.allProvinces"),
-      );
-      const areaServed =
-        assignedRegions.length > 0
-          ? assignedRegions
-              .map((region) =>
-                pickLocalized(locale, { en: region.nameEn, ur: region.nameUr }),
-              )
-              .join(", ")
-          : regionName;
+      }),
+      url: absoluteUrl(`/services/${service.slug}`),
+    })),
+  });
 
-      return buildServiceJsonLd({
-        name,
-        description,
-        url: absoluteUrl(`/services/${service.slug}`),
-        areaServed,
-      });
-    }),
-  ];
+  const jsonLd = [faqJsonLd, featuredServicesJsonLd].filter(
+    (item): item is NonNullable<typeof item> => item !== null,
+  );
 
   const supportOptionLabels = {
     sectionTitle: content.sections.options.title,

@@ -200,8 +200,10 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     url: serviceUrl,
     areaServed,
   });
-  const faqJsonLd =
-    faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
+  const faqJsonLd = buildFaqJsonLd(faqItems);
+  const jsonLd = [breadcrumbJsonLd, serviceJsonLd, faqJsonLd].filter(
+    (item): item is NonNullable<typeof item> => item !== null,
+  );
 
   const serviceOptionsLabels = {
     sectionTitle: t("serviceOptions.title"),
@@ -223,13 +225,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   return (
     <>
       <ViewServiceTracker serviceSlug={service.slug} serviceId={service.id} />
-      <JsonLd
-        data={
-          faqJsonLd
-            ? [breadcrumbJsonLd, serviceJsonLd, faqJsonLd]
-            : [breadcrumbJsonLd, serviceJsonLd]
-        }
-      />
+      <JsonLd data={jsonLd} />
       <PageHero
         title={name}
         description={description}

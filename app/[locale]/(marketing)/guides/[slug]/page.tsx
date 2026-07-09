@@ -12,10 +12,14 @@ import {
 } from "@/features/cms/lib/load-content-extras";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import {
+  buildArticleJsonLd,
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { getBrandingSettings, getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
+import { resolveDefaultOgImagePath } from "@/features/settings/lib/branding-resolvers";
+import { resolveSeoImageUrl } from "@/lib/seo-url";
 import { redirect } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl, formatDate } from "@/lib/utils";
@@ -79,9 +83,11 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
   }
 
   const t = await getTranslations("marketing.guides");
-  const [relatedServices, attachedFaqs] = await Promise.all([
+  const [relatedServices, attachedFaqs, branding, business] = await Promise.all([
     loadRelatedServices(guide.relatedServiceIds),
     loadAttachedFaqs(guide.attachedFaqIds),
+    getBrandingSettings(),
+    getBusinessSettings(),
   ]);
 
   const title = pickLocalized(locale, {
@@ -104,11 +110,29 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
   ]);
 
   const faqItems = mapFaqsForLocale(attachedFaqs, locale);
-  const faqJsonLd = faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
+  const faqJsonLd = buildFaqJsonLd(faqItems);
+  const pageUrl = absoluteUrl(`/guides/${guide.slug}`);
+  const articleJsonLd = buildArticleJsonLd({
+    type: "Article",
+    headline: title,
+    description: excerpt ?? content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160),
+    url: pageUrl,
+    datePublished: guide.publishedAt?.toISOString(),
+    dateModified: guide.updatedAt.toISOString(),
+    imageUrl:
+      resolveSeoImageUrl(guide.seoMeta?.ogImage) ??
+      resolveSeoImageUrl(resolveDefaultOgImagePath(branding, locale)),
+    publisherName: business.siteName,
+    publisherLogoUrl: resolveSeoImageUrl(branding.logoPath),
+    inLanguage: locale === "ur" ? "ur-PK" : "en-PK",
+  });
+  const jsonLd = [breadcrumbJsonLd, articleJsonLd, faqJsonLd].filter(
+    (item): item is NonNullable<typeof item> => item !== null,
+  );
 
   return (
     <>
-      <JsonLd data={faqJsonLd ? [breadcrumbJsonLd, faqJsonLd] : breadcrumbJsonLd} />
+      <JsonLd data={jsonLd} />
       <PageHero
         title={title}
         description={excerpt}

@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { ReviewCard } from "@/components/marketing/review-card";
-import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
+import { buildBreadcrumbJsonLd, buildReviewsJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { requireReviewsEnabled } from "@/features/settings/lib/feature-gates";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
@@ -72,10 +72,29 @@ export default async function ReviewsPage() {
     { name: "Home", url: absoluteUrl("/") },
     { name: title, url: absoluteUrl("/reviews") },
   ]);
+  const reviewJsonLd =
+    reviews.length > 0
+      ? buildReviewsJsonLd({
+          pageUrl: absoluteUrl("/reviews"),
+          itemReviewedName: business.siteName,
+          itemReviewedUrl: absoluteUrl("/"),
+          reviews: reviews.map((review) => ({
+            authorName: pickLocalized(locale, {
+              en: review.authorNameEn,
+              ur: review.authorNameUr ?? review.authorNameEn,
+            }),
+            content: pickLocalized(locale, {
+              en: review.contentEn,
+              ur: review.contentUr,
+            }),
+            rating: review.rating,
+          })),
+        })
+      : [];
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={[breadcrumbJsonLd, ...reviewJsonLd]} />
       <PageHero
         title={title}
         breadcrumbs={[

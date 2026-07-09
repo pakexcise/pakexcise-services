@@ -109,7 +109,6 @@ export default async function CityDetailPage({ params }: CityPageProps) {
   });
 
   const faqItems = mapFaqsForLocale(faqs.slice(0, 6), locale);
-  const faqJsonLd = faqItems.length > 0 ? buildFaqJsonLd(faqItems) : null;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: t("regions.title"), url: absoluteUrl("/regions") },
@@ -119,10 +118,14 @@ export default async function CityDetailPage({ params }: CityPageProps) {
       url: absoluteUrl(`/regions/${region.slug}/${city.slug}`),
     },
   ]);
+  const faqJsonLd = buildFaqJsonLd(faqItems);
+  const jsonLd = [breadcrumbJsonLd, faqJsonLd].filter(
+    (item): item is NonNullable<typeof item> => item !== null,
+  );
 
   return (
     <>
-      <JsonLd data={faqJsonLd ? [breadcrumbJsonLd, faqJsonLd] : breadcrumbJsonLd} />
+      <JsonLd data={jsonLd} />
       <PageHero
         title={cityName}
         description={description}

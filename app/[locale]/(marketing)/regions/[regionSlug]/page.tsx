@@ -134,16 +134,19 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
     })),
     ...faqItems,
   ].slice(0, 8);
-  const faqJsonLd = combinedFaqItems.length > 0 ? buildFaqJsonLd(combinedFaqItems) : null;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: t("regions.title"), url: absoluteUrl("/regions") },
     { name, url: absoluteUrl(`/regions/${region.slug}`) },
   ]);
+  const faqJsonLd = buildFaqJsonLd(combinedFaqItems);
+  const jsonLd = [breadcrumbJsonLd, faqJsonLd].filter(
+    (item): item is NonNullable<typeof item> => item !== null,
+  );
 
   return (
     <>
-      <JsonLd data={faqJsonLd ? [breadcrumbJsonLd, faqJsonLd] : breadcrumbJsonLd} />
+      <JsonLd data={jsonLd} />
       <PageHero
         title={name}
         description={description}
