@@ -1490,6 +1490,7 @@
       "seo": "SEO",
       "redirects": "Redirects",
       "blog": "Blog",
+      "blogCategories": "Blog categories",
       "guides": "Guides",
       "auditLogs": "Audit logs",
       "settings": "Settings",
@@ -2590,7 +2591,11 @@
         "description": "Create and publish blog content with SEO fields.",
         "emptyTitle": "No blog posts to manage",
         "emptyDescription": "Blog posts will appear here for CRUD operations.",
-        "create": "Add blog post"
+        "create": "Add blog post",
+        "tabs": {
+          "posts": "Blog posts",
+          "categories": "Categories"
+        }
       },
       "guides": {
         "title": "Guides",
@@ -3429,6 +3434,69 @@
         "save": "Save FAQ",
         "saving": "Saving...",
         "saveFailed": "Could not save FAQ",
+        "cancel": "Cancel"
+      }
+    },
+    "blogCategories": {
+      "title": "Blog categories",
+      "description": "Manage blog categories and sub-categories assigned to posts.",
+      "create": "Add category",
+      "createTitle": "Create blog category",
+      "createDescription": "Add a top-level category or sub-category for blog posts.",
+      "editTitle": "Edit blog category",
+      "editDescription": "Update labels and visibility for {name}.",
+      "backToList": "Back to categories",
+      "searchPlaceholder": "Search by name or slug",
+      "emptyTitle": "No blog categories found",
+      "emptyDescription": "Create your first blog category.",
+      "tabs": {
+        "posts": "Blog posts",
+        "categories": "Categories"
+      },
+      "columns": {
+        "order": "Order",
+        "name": "Name",
+        "slug": "Slug",
+        "type": "Type",
+        "parent": "Parent",
+        "posts": "Posts",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "types": {
+        "category": "Category",
+        "subCategory": "Sub-category"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "filters": {
+        "all": "All statuses",
+        "allLevels": "All levels",
+        "parentsOnly": "Categories only",
+        "subOnly": "Sub-categories only",
+        "apply": "Apply filters"
+      },
+      "actions": {
+        "edit": "Edit",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete",
+        "confirmDelete": "Delete this blog category?",
+        "deleteBlocked": "Reassign or remove blog posts and sub-categories before deleting."
+      },
+      "form": {
+        "slug": "Slug",
+        "nameEn": "Name (English)",
+        "nameUr": "Name (Urdu)",
+        "parent": "Parent category",
+        "noParent": "Top-level category (no parent)",
+        "isActive": "Active",
+        "displayOrder": "Display order",
+        "save": "Save category",
+        "saving": "Saving...",
+        "saveFailed": "Failed to save category",
         "cancel": "Cancel"
       }
     },

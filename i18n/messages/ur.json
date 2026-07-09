@@ -1491,6 +1491,7 @@
       "seo": "SEO",
       "redirects": "ری ڈائریکٹس",
       "blog": "بلاگ",
+      "blogCategories": "بلاگ زمرے",
       "guides": "رہنما",
       "auditLogs": "آڈٹ لاگز",
       "settings": "ترتیبات",
@@ -2591,7 +2592,11 @@
         "description": "SEO فیلڈز کے ساتھ بلاگ مواد بنائیں اور شائع کریں۔",
         "emptyTitle": "منظم کرنے کے لیے کوئی بلاگ پوسٹ نہیں",
         "emptyDescription": "بلاگ پوسٹس CRUD آپریشنز کے لیے یہاں ظاہر ہوں گی۔",
-        "create": "بلاگ پوسٹ شامل کریں"
+        "create": "بلاگ پوسٹ شامل کریں",
+        "tabs": {
+          "posts": "بلاگ پوسٹس",
+          "categories": "زمرے"
+        }
       },
       "guides": {
         "title": "رہنما",
@@ -3430,6 +3435,69 @@
         "save": "FAQ محفوظ کریں",
         "saving": "محفوظ ہو رہا ہے...",
         "saveFailed": "FAQ محفوظ نہیں ہو سکا",
+        "cancel": "منسوخ"
+      }
+    },
+    "blogCategories": {
+      "title": "بلاگ زمرے",
+      "description": "بلاگ پوسٹس کے لیے زمرے اور ذیلی زمرے منظم کریں۔",
+      "create": "زمرہ شامل کریں",
+      "createTitle": "بلاگ زمرہ بنائیں",
+      "createDescription": "بلاگ پوسٹس کے لیے اعلیٰ سطح کا زمرہ یا ذیلی زمرہ شامل کریں۔",
+      "editTitle": "بلاگ زمرہ ترمیم",
+      "editDescription": "{name} کے لیے لیبلز اور نمائش اپ ڈیٹ کریں۔",
+      "backToList": "زمروں پر واپس",
+      "searchPlaceholder": "نام یا slug سے تلاش",
+      "emptyTitle": "کوئی بلاگ زمرہ نہیں ملا",
+      "emptyDescription": "اپنا پہلا بلاگ زمرہ بنائیں۔",
+      "tabs": {
+        "posts": "بلاگ پوسٹس",
+        "categories": "زمرے"
+      },
+      "columns": {
+        "order": "ترتیب",
+        "name": "نام",
+        "slug": "Slug",
+        "type": "قسم",
+        "parent": "والد زمرہ",
+        "posts": "پوسٹس",
+        "status": "حالت",
+        "actions": "اقدامات"
+      },
+      "types": {
+        "category": "زمرہ",
+        "subCategory": "ذیلی زمرہ"
+      },
+      "status": {
+        "active": "فعال",
+        "inactive": "غیر فعال"
+      },
+      "filters": {
+        "all": "تمام حالتیں",
+        "allLevels": "تمام سطحیں",
+        "parentsOnly": "صرف زمرے",
+        "subOnly": "صرف ذیلی زمرے",
+        "apply": "فلٹرز لگائیں"
+      },
+      "actions": {
+        "edit": "ترمیم",
+        "activate": "فعال کریں",
+        "deactivate": "غیر فعال کریں",
+        "delete": "حذف",
+        "confirmDelete": "یہ بلاگ زمرہ حذف کریں؟",
+        "deleteBlocked": "حذف سے پہلے بلاگ پوسٹس اور ذیلی زمرے دوبارہ تفویض یا ہٹائیں۔"
+      },
+      "form": {
+        "slug": "Slug",
+        "nameEn": "نام (انگریزی)",
+        "nameUr": "نام (اردو)",
+        "parent": "والد زمرہ",
+        "noParent": "اعلیٰ سطح کا زمرہ (بغیر والد)",
+        "isActive": "فعال",
+        "displayOrder": "نمائش کی ترتیب",
+        "save": "زمرہ محفوظ کریں",
+        "saving": "محفوظ ہو رہا ہے...",
+        "saveFailed": "زمرہ محفوظ نہیں ہو سکا",
         "cancel": "منسوخ"
       }
     },

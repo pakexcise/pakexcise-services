@@ -33,6 +33,19 @@ export type {
   AdminFaqCategoryListItem,
 } from "./admin-faq-category-repository";
 export {
+  adminBlogCategoryRepository,
+  AdminBlogCategoryRepository,
+} from "./admin-blog-category-repository";
+export type {
+  AdminBlogCategoryDetail,
+  AdminBlogCategoryListItem,
+} from "./admin-blog-category-repository";
+export {
+  blogCategoryRepository,
+  BlogCategoryRepository,
+} from "./blog-category-repository";
+export type { BlogCategoryOption } from "./blog-category-repository";
+export {
   faqCategoryRepository,
   FaqCategoryRepository,
 } from "./faq-category-repository";

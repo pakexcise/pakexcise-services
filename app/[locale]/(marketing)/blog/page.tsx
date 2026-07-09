@@ -161,10 +161,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           >
             <option value="">{t("blog.allCategories")}</option>
             {categories.map((item) => (
-              <option key={item.categoryEn ?? ""} value={item.categoryEn ?? ""}>
+              <option key={item.slug} value={item.slug}>
                 {pickLocalized(locale, {
-                  en: item.categoryEn,
-                  ur: item.categoryUr,
+                  en: item.nameEn,
+                  ur: item.nameUr,
                 })}
               </option>
             ))}

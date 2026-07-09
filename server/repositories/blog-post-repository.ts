@@ -63,6 +63,8 @@ const publishedCardSelect = {
   excerptUr: true,
   categoryEn: true,
   categoryUr: true,
+  categoryId: true,
+  subCategoryId: true,
   authorNameEn: true,
   authorNameUr: true,
   readingTimeMinutes: true,
@@ -74,6 +76,12 @@ const publishedCardSelect = {
   publishedAt: true,
   updatedAt: true,
   seoMeta: true,
+  category: {
+    select: { id: true, slug: true, nameEn: true, nameUr: true },
+  },
+  subCategory: {
+    select: { id: true, slug: true, nameEn: true, nameUr: true },
+  },
 } as const;
 
 export type BlogListFilters = {
@@ -91,6 +99,7 @@ export class BlogPostRepository extends Repository {
       isPublished: true;
       slug?: { not: string };
       OR?: Array<Record<string, unknown>>;
+      category?: { slug: { equals: string; mode: "insensitive" } };
       categoryEn?: { equals: string; mode: "insensitive" };
       tags?: { has: string };
     } = {
@@ -112,9 +121,9 @@ export class BlogPostRepository extends Repository {
     }
 
     if (filters.category?.trim()) {
-      where.categoryEn = {
-        equals: filters.category.trim(),
-        mode: "insensitive",
+      const category = filters.category.trim();
+      where.category = {
+        slug: { equals: category, mode: "insensitive" },
       };
     }
 
@@ -165,14 +174,23 @@ export class BlogPostRepository extends Repository {
   }
 
   async listPublishedCategories() {
-    const rows = await this.db.blogPost.findMany({
-      where: { isPublished: true, categoryEn: { not: null } },
-      select: { categoryEn: true, categoryUr: true },
-      distinct: ["categoryEn"],
-      orderBy: { categoryEn: "asc" },
+    return this.db.blogCategory.findMany({
+      where: {
+        isActive: true,
+        parentId: null,
+        posts: {
+          some: {
+            isPublished: true,
+          },
+        },
+      },
+      orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+      select: {
+        slug: true,
+        nameEn: true,
+        nameUr: true,
+      },
     });
-
-    return rows.filter((row) => row.categoryEn);
   }
 
   async findFeaturedPublished() {
@@ -205,6 +223,7 @@ export class BlogPostRepository extends Repository {
     current: {
       id: string;
       slug: string;
+      categoryId?: string | null;
       categoryEn?: string | null;
       tags?: string[];
     },

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { resolveBlogPostCategoryLabel } from "@/features/blog/lib/resolve-blog-post-category";
 import { Link } from "@/i18n/navigation";
 import { resolveBlogFeaturedImage } from "@/lib/i18n/blog-featured-image";
 import { pickLocalized } from "@/lib/i18n/content";
@@ -19,6 +20,8 @@ type BlogFeaturedHeroCardProps = {
     excerptUr?: string | null;
     categoryEn?: string | null;
     categoryUr?: string | null;
+    category?: { nameEn: string; nameUr: string } | null;
+    subCategory?: { nameEn: string; nameUr: string } | null;
     authorNameEn?: string | null;
     authorNameUr?: string | null;
     readingTimeMinutes?: number | null;
@@ -46,10 +49,7 @@ export function BlogFeaturedHeroCard({
     en: post.excerptEn,
     ur: post.excerptUr,
   });
-  const category = pickLocalized(locale, {
-    en: post.categoryEn,
-    ur: post.categoryUr,
-  });
+  const category = resolveBlogPostCategoryLabel(locale, post);
   const author = pickLocalized(locale, {
     en: post.authorNameEn,
     ur: post.authorNameUr,

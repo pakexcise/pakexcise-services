@@ -20,7 +20,7 @@ export default async function AdminBlogNewPage() {
   const t = await getTranslations("admin.resources.blog");
   const [options, categoryOptions] = await Promise.all([
     loadCmsEditorOptions(),
-    loadBlogCategoryOptions(),
+    loadBlogCategoryOptions(locale),
   ]);
 
   return (

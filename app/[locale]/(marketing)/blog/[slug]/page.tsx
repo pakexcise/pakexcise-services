@@ -127,6 +127,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
       {
         id: post.id,
         slug: post.slug,
+        categoryId: post.categoryId,
         categoryEn: post.categoryEn,
         tags: post.tags,
       },

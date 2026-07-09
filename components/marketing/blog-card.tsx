@@ -4,6 +4,7 @@ import { BlogCardImage } from "@/components/marketing/blog-card-image";
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { resolveBlogPostCategoryLabel } from "@/features/blog/lib/resolve-blog-post-category";
 import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { formatDate } from "@/lib/utils";
@@ -17,6 +18,8 @@ type BlogCardProps = {
     excerptUr?: string | null;
     categoryEn?: string | null;
     categoryUr?: string | null;
+    category?: { nameEn: string; nameUr: string } | null;
+    subCategory?: { nameEn: string; nameUr: string } | null;
     authorNameEn?: string | null;
     authorNameUr?: string | null;
     readingTimeMinutes?: number | null;
@@ -46,10 +49,7 @@ export function BlogCard({
     en: post.excerptEn,
     ur: post.excerptUr,
   });
-  const category = pickLocalized(locale, {
-    en: post.categoryEn,
-    ur: post.categoryUr,
-  });
+  const category = resolveBlogPostCategoryLabel(locale, post);
   const author = pickLocalized(locale, {
     en: post.authorNameEn,
     ur: post.authorNameUr,

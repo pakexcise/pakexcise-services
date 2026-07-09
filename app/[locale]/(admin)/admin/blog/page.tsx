@@ -6,6 +6,7 @@ import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { BlogRowActions } from "@/features/blog/admin/components/blog-list-actions";
+import { BlogAdminTabs } from "@/features/blog/admin/components/blog-admin-tabs";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { adminDefaultPageSize } from "@/config/admin";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +70,13 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
 
   return (
     <div className="space-y-6">
+      <BlogAdminTabs
+        labels={{
+          posts: t("tabs.posts"),
+          categories: t("tabs.categories"),
+        }}
+      />
+
       <AdminPageHeader
         title={t("title")}
         description={t("description")}

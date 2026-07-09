@@ -1,12 +1,16 @@
 import type { PublicBlogPostCard } from "@/features/blog/types";
 
 type RelatedPostCandidate = PublicBlogPostCard & {
+  categoryId?: string | null;
   categoryEn?: string | null;
   tags?: string[];
 };
 
 export function rankRelatedBlogPosts(
-  current: Pick<RelatedPostCandidate, "id" | "slug" | "categoryEn" | "tags">,
+  current: Pick<
+    RelatedPostCandidate,
+    "id" | "slug" | "categoryId" | "categoryEn" | "tags"
+  >,
   candidates: RelatedPostCandidate[],
   limit = 3,
 ): RelatedPostCandidate[] {
@@ -17,6 +21,12 @@ export function rankRelatedBlogPosts(
       let score = 0;
 
       if (
+        current.categoryId &&
+        post.categoryId &&
+        current.categoryId === post.categoryId
+      ) {
+        score += 100;
+      } else if (
         current.categoryEn &&
         post.categoryEn &&
         current.categoryEn.toLowerCase() === post.categoryEn.toLowerCase()

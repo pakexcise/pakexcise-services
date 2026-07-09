@@ -2,7 +2,7 @@ import "server-only";
 
 import { blogCategoryRepository } from "@/server/repositories/blog-category-repository";
 
-export async function loadBlogCategoryOptions() {
+export async function loadBlogCategoryOptions(locale = "en") {
   const categories = await blogCategoryRepository.listActive();
   const parents = categories.filter((category) => !category.parentId);
   const childrenByParent = new Map<string, typeof categories>();
@@ -17,15 +17,18 @@ export async function loadBlogCategoryOptions() {
     childrenByParent.set(category.parentId, siblings);
   }
 
+  const labelFor = (category: (typeof categories)[number]) =>
+    locale === "ur" ? category.nameUr : category.nameEn;
+
   return {
     parents: parents.map((category) => ({
       id: category.id,
-      label: category.nameEn,
+      label: labelFor(category),
     })),
     childrenByParent: Object.fromEntries(
       [...childrenByParent.entries()].map(([parentId, items]) => [
         parentId,
-        items.map((item) => ({ id: item.id, label: item.nameEn })),
+        items.map((item) => ({ id: item.id, label: labelFor(item) })),
       ]),
     ),
     all: categories,

@@ -31,7 +31,7 @@ export default async function AdminBlogEditPage({ params }: EditBlogPageProps) {
   const [post, options, categoryOptions] = await Promise.all([
     adminBlogRepository.findById(id),
     loadCmsEditorOptions(),
-    loadBlogCategoryOptions(),
+    loadBlogCategoryOptions(locale),
   ]);
 
   if (!post) notFound();
