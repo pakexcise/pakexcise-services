@@ -5,13 +5,12 @@ import { join } from "node:path";
 
 import {
   extractBlogImageFileName,
-  readBlogImageContent,
-} from "@/features/blog/lib/upload-blog-image";
+  isLocalPublicImagePath,
+} from "@/features/blog/lib/blog-image-paths";
+import type { BlogImageDimensions } from "@/features/blog/lib/blog-image-paths";
+import { readBlogImageContent } from "@/features/blog/lib/upload-blog-image";
 
-export type ImageDimensions = {
-  width: number;
-  height: number;
-};
+export type ImageDimensions = BlogImageDimensions;
 
 function parsePngDimensions(buffer: Buffer): ImageDimensions | null {
   if (buffer.length < 24) {
@@ -108,10 +107,6 @@ function parseImageDimensions(buffer: Buffer): ImageDimensions | null {
     parseJpegDimensions(buffer) ??
     parseWebpDimensions(buffer)
   );
-}
-
-export function isLocalPublicImagePath(src: string): boolean {
-  return src.startsWith("/") && !src.startsWith("//") && !src.startsWith("/api/");
 }
 
 export async function resolvePublicImageDimensions(

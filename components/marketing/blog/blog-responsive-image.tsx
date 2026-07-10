@@ -1,11 +1,11 @@
 import Image from "next/image";
 
 import { BLOG_IMAGE_SPEC } from "@/features/blog/lib/image-spec";
-import { isUploadedBlogImagePath } from "@/features/blog/lib/blog-image-paths";
 import {
   isLocalPublicImagePath,
-  type ImageDimensions,
-} from "@/features/blog/lib/resolve-image-dimensions";
+  isUploadedBlogImagePath,
+  type BlogImageDimensions,
+} from "@/features/blog/lib/blog-image-paths";
 import { cn } from "@/lib/utils";
 
 type BlogResponsiveImageProps = {
@@ -15,7 +15,7 @@ type BlogResponsiveImageProps = {
   variant?: "hero" | "card" | "content";
   priority?: boolean;
   className?: string;
-  naturalDimensions?: ImageDimensions | null;
+  naturalDimensions?: BlogImageDimensions | null;
 };
 
 const VARIANTS = {
@@ -55,7 +55,7 @@ const VARIANTS = {
 
 function resolveRenderDimensions(
   variant: keyof typeof VARIANTS,
-  naturalDimensions?: ImageDimensions | null,
+  naturalDimensions?: BlogImageDimensions | null,
 ) {
   const config = VARIANTS[variant];
   const natural = naturalDimensions ?? null;

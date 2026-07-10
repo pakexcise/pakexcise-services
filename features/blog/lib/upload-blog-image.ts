@@ -10,6 +10,10 @@ import {
   validateUploadFile,
 } from "@/config/uploads";
 import {
+  buildBlogImagePublicPath,
+  isSafeBlogImageFileName,
+} from "@/features/blog/lib/blog-image-paths";
+import {
   putStoredObject,
   readStoredObject,
   isObjectStorageConfigured,
@@ -31,30 +35,6 @@ function slugifyBaseName(fileName: string): string {
 
 export function buildBlogImageStorageKey(fileName: string): string {
   return `blog/images/${fileName}`;
-}
-
-export function buildBlogImagePublicPath(fileName: string): string {
-  return `/api/blog/images/${fileName}`;
-}
-
-export function extractBlogImageFileName(imagePath: string): string | null {
-  const trimmed = imagePath.trim();
-
-  if (trimmed.startsWith("/api/blog/images/")) {
-    const fileName = trimmed.slice("/api/blog/images/".length);
-    return isSafeBlogImageFileName(fileName) ? fileName : null;
-  }
-
-  if (trimmed.startsWith("/blog/uploads/")) {
-    const fileName = trimmed.slice("/blog/uploads/".length);
-    return isSafeBlogImageFileName(fileName) ? fileName : null;
-  }
-
-  return null;
-}
-
-export function isSafeBlogImageFileName(fileName: string): boolean {
-  return /^[a-z0-9][a-z0-9._-]+\.(jpg|jpeg|png|webp)$/i.test(fileName);
 }
 
 export type BlogImageUploadError = {
