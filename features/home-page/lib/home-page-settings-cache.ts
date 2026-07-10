@@ -79,6 +79,24 @@ export function localizeHomePageSettings(
   ) as LocalizedHomeContent["sections"];
 
   const vehicleVisual = settings.vehicleVisual ?? defaultVehicleVisualSettings();
+  const trustBadges = Array.isArray(settings.hero?.trustBadges)
+    ? settings.hero.trustBadges
+    : [];
+  const processCards = Array.isArray(settings.hero?.processCards)
+    ? settings.hero.processCards
+    : [];
+  const howItWorksSteps = Array.isArray(settings.howItWorksSteps)
+    ? settings.howItWorksSteps
+    : [];
+  const whyChooseItems = Array.isArray(settings.whyChooseItems)
+    ? settings.whyChooseItems
+    : [];
+  const featurePoints = Array.isArray(vehicleVisual.featurePoints)
+    ? vehicleVisual.featurePoints
+    : [];
+  const trustCards = Array.isArray(settings.about?.trustCards)
+    ? settings.about.trustCards
+    : [];
 
   return {
     hero: {
@@ -106,33 +124,25 @@ export function localizeHomePageSettings(
         en: settings.hero.requestCtaEn,
         ur: settings.hero.requestCtaUr,
       }),
-      trustBadges: settings.hero.trustBadges.map((badge) =>
-        localizePair(badge, locale),
-      ),
-      processCards: settings.hero.processCards.map((card) =>
-        localizeBlock(card, locale),
-      ),
+      trustBadges: trustBadges.map((badge) => localizePair(badge, locale)),
+      processCards: processCards.map((card) => localizeBlock(card, locale)),
     },
     sections,
     optionsNote: pickLocalized(locale, {
       en: settings.optionsNoteEn,
       ur: settings.optionsNoteUr,
     }),
-    howItWorksSteps: settings.howItWorksSteps.map((step) =>
-      localizeBlock(step, locale),
-    ),
-    whyChooseItems: settings.whyChooseItems.map((item) =>
-      localizeBlock(item, locale),
-    ),
+    howItWorksSteps: howItWorksSteps.map((step) => localizeBlock(step, locale)),
+    whyChooseItems: whyChooseItems.map((item) => localizeBlock(item, locale)),
     vehicleVisual: {
-      imagePath: vehicleVisual.imagePath,
+      imagePath:
+        vehicleVisual.imagePath?.trim() ||
+        defaultVehicleVisualSettings().imagePath,
       imageAlt: pickLocalized(locale, {
         en: vehicleVisual.imageAltEn,
         ur: vehicleVisual.imageAltUr,
       }),
-      featurePoints: vehicleVisual.featurePoints.map((item) =>
-        localizeBlock(item, locale),
-      ),
+      featurePoints: featurePoints.map((item) => localizeBlock(item, locale)),
       browseCta: pickLocalized(locale, {
         en: vehicleVisual.browseCtaEn,
         ur: vehicleVisual.browseCtaUr,
@@ -163,9 +173,7 @@ export function localizeHomePageSettings(
         en: settings.about.ctaEn,
         ur: settings.about.ctaUr,
       }),
-      trustCards: settings.about.trustCards.map((card) =>
-        localizeBlock(card, locale),
-      ),
+      trustCards: trustCards.map((card) => localizeBlock(card, locale)),
     },
     footerDescription: pickLocalized(locale, {
       en: settings.footerDescriptionEn,

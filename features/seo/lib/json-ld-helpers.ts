@@ -12,11 +12,12 @@ export function normalizeJsonLdText(
   value: string | null | undefined,
   maxLength = 5000,
 ): string {
-  if (!value?.trim()) {
+  const text = value == null ? "" : String(value);
+  if (!text.trim()) {
     return "";
   }
 
-  const plain = stripHtmlForJsonLd(value);
+  const plain = stripHtmlForJsonLd(text);
   return plain.length > maxLength ? `${plain.slice(0, maxLength - 1)}…` : plain;
 }
 

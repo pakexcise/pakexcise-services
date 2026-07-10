@@ -45,7 +45,7 @@ import {
 } from "@/features/settings/lib/resolve-public-contact";
 import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
-import { absoluteUrl } from "@/lib/utils";
+import { seoAbsoluteUrl } from "@/lib/seo-url";
 import {
   blogPostRepository,
   documentRequirementRepository,
@@ -97,6 +97,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
+  try {
+    return await renderHomePage();
+  } catch (error) {
+    console.error("[homepage] Failed to render homepage", error);
+    throw error;
+  }
+}
+
+async function renderHomePage() {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
@@ -164,7 +173,7 @@ export default async function HomePage() {
         en: service.nameEn,
         ur: service.nameUr,
       }),
-      url: absoluteUrl(`/services/${service.slug}`),
+      url: seoAbsoluteUrl(`/services/${service.slug}`),
     })),
   });
 

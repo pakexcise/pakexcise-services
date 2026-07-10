@@ -404,6 +404,20 @@ function mergeSection(
   };
 }
 
+function sanitizeHomeLimit(
+  value: unknown,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
+  const parsed = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(max, Math.max(min, Math.trunc(parsed)));
+}
+
 export function mergeHomePageSettings(
   stored: Partial<HomePageSettings> | null | undefined,
 ): HomePageSettings {
@@ -417,6 +431,8 @@ export function mergeHomePageSettings(
   for (const key of HOME_SECTION_KEYS) {
     sections[key] = mergeSection(stored.sections?.[key], defaults.sections[key]);
   }
+
+  const storedLimits = (stored.limits ?? {}) as Partial<HomePageSettings["limits"]>;
 
   return {
     isPageActive: stored.isPageActive ?? defaults.isPageActive,
@@ -447,6 +463,9 @@ export function mergeHomePageSettings(
     vehicleVisual: {
       ...defaults.vehicleVisual,
       ...stored.vehicleVisual,
+      imagePath:
+        stored.vehicleVisual?.imagePath?.trim() ||
+        defaults.vehicleVisual.imagePath,
       featurePoints:
         stored.vehicleVisual?.featurePoints?.map((item, index) =>
           mergeContentBlock(
@@ -463,7 +482,38 @@ export function mergeHomePageSettings(
           mergeContentBlock(item, defaults.about.trustCards[index] ?? item),
         ) ?? defaults.about.trustCards,
     },
-    limits: { ...defaults.limits, ...stored.limits },
+    limits: {
+      faqCount: sanitizeHomeLimit(
+        storedLimits.faqCount,
+        defaults.limits.faqCount,
+        1,
+        20,
+      ),
+      documentCount: sanitizeHomeLimit(
+        storedLimits.documentCount,
+        defaults.limits.documentCount,
+        1,
+        20,
+      ),
+      blogCount: sanitizeHomeLimit(
+        storedLimits.blogCount,
+        defaults.limits.blogCount,
+        1,
+        12,
+      ),
+      guideCount: sanitizeHomeLimit(
+        storedLimits.guideCount,
+        defaults.limits.guideCount,
+        1,
+        12,
+      ),
+      popularCount: sanitizeHomeLimit(
+        storedLimits.popularCount,
+        defaults.limits.popularCount,
+        1,
+        6,
+      ),
+    },
     footerDescriptionEn:
       stored.footerDescriptionEn ?? defaults.footerDescriptionEn,
     footerDescriptionUr:

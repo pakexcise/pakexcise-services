@@ -135,12 +135,16 @@ export class BlogPostRepository extends Repository {
   }
 
   async listPublished(limit = 50) {
+    const take = Number.isFinite(limit)
+      ? Math.min(100, Math.max(1, Math.trunc(limit)))
+      : 50;
+
     return this.query(
       () =>
         this.db.blogPost.findMany({
           where: { isPublished: true },
           orderBy: [{ isFeatured: "desc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
-          take: limit,
+          take,
           select: publishedCardSelect,
         }),
       [],

@@ -66,6 +66,11 @@ export class FaqRepository extends Repository {
   }
 
   async listFeaturedGlobalPublic(limit?: number) {
+    const take =
+      typeof limit === "number" && Number.isFinite(limit)
+        ? Math.min(50, Math.max(1, Math.trunc(limit)))
+        : undefined;
+
     return this.query(
       () =>
         this.db.fAQ.findMany({
@@ -77,7 +82,7 @@ export class FaqRepository extends Repository {
             { featuredDisplayOrder: "asc" },
             { displayOrder: "asc" },
           ],
-          take: limit,
+          ...(take ? { take } : {}),
           select: publicFaqSelect,
         }),
       [],

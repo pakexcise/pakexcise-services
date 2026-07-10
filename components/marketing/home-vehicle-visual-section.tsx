@@ -11,6 +11,7 @@ import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import {
+  DEFAULT_HOME_VEHICLE_VISUAL_IMAGE,
   HOME_VEHICLE_VISUAL_IMAGE_HEIGHT,
   HOME_VEHICLE_VISUAL_IMAGE_WIDTH,
 } from "@/features/home-page/lib/vehicle-visual";
@@ -43,6 +44,10 @@ export function HomeVehicleVisualSection({
   whatsappHref,
   className,
 }: HomeVehicleVisualSectionProps) {
+  const resolvedImagePath =
+    imagePath?.trim() || DEFAULT_HOME_VEHICLE_VISUAL_IMAGE;
+  const points = Array.isArray(featurePoints) ? featurePoints : [];
+
   return (
     <section
       className={cn(
@@ -73,12 +78,12 @@ export function HomeVehicleVisualSection({
             </div>
 
             <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4">
-              {featurePoints.map((point, index) => {
+              {points.map((point, index) => {
                 const Icon = FEATURE_ICONS[index % FEATURE_ICONS.length] ?? FileText;
 
                 return (
                   <li
-                    key={point.title}
+                    key={`${point.title}-${index}`}
                     className="flex gap-3 rounded-xl border border-border/50 bg-background/80 p-3.5 backdrop-blur-sm sm:p-4"
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
@@ -132,8 +137,8 @@ export function HomeVehicleVisualSection({
               />
               <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white shadow-2xl shadow-primary/10 ring-1 ring-border/40">
                 <Image
-                  src={imagePath}
-                  alt={imageAlt}
+                  src={resolvedImagePath}
+                  alt={imageAlt || title}
                   width={HOME_VEHICLE_VISUAL_IMAGE_WIDTH}
                   height={HOME_VEHICLE_VISUAL_IMAGE_HEIGHT}
                   unoptimized

@@ -5,20 +5,28 @@ export type LocalizedField<T = string> = {
   ur: T | null | undefined;
 };
 
+function asLocalizedText(value: unknown): string {
+  if (value == null) {
+    return "";
+  }
+
+  return String(value);
+}
+
 export function pickLocalized<T extends string>(
   locale: Locale | string,
   field: LocalizedField<T>,
   fallback = "",
 ): T | string {
   const isUrdu = locale === "ur";
-  const primary = isUrdu ? field.ur : field.en;
-  const secondary = isUrdu ? field.en : field.ur;
+  const primary = asLocalizedText(isUrdu ? field.ur : field.en);
+  const secondary = asLocalizedText(isUrdu ? field.en : field.ur);
 
-  if (primary && primary.trim().length > 0) {
+  if (primary.trim().length > 0) {
     return primary;
   }
 
-  if (secondary && secondary.trim().length > 0) {
+  if (secondary.trim().length > 0) {
     return secondary;
   }
 

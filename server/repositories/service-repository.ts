@@ -508,13 +508,16 @@ export async function getFooterServices() {
 export async function getFeaturedServices(
   limit = 6,
 ): Promise<PublicServiceSelect[]> {
-  const cappedLimit = Math.min(6, Math.max(1, limit));
+  const parsedLimit = Number(limit);
+  const cappedLimit = Number.isFinite(parsedLimit)
+    ? Math.min(6, Math.max(1, Math.trunc(parsedLimit)))
+    : 6;
   const featured = await serviceRepository.listFeatured(cappedLimit);
   if (featured.length > 0) {
     return featured;
   }
 
-  return serviceRepository.listPublic(limit);
+  return serviceRepository.listPublic(cappedLimit);
 }
 
 export async function getActiveServices(limit = 6): Promise<PublicServiceSelect[]> {

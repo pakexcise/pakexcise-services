@@ -8,7 +8,7 @@ const UNSAFE_PATTERNS = [
 ];
 
 export function stripUnsafeMarkup(text: string): string {
-  let sanitized = text;
+  let sanitized = text == null ? "" : String(text);
 
   for (const pattern of UNSAFE_PATTERNS) {
     sanitized = sanitized.replace(pattern, "");
@@ -18,7 +18,7 @@ export function stripUnsafeMarkup(text: string): string {
 }
 
 export function sanitizeFaqAnswer(text: string): string {
-  return stripUnsafeMarkup(text);
+  return stripUnsafeMarkup(text ?? "");
 }
 
 export function escapeHtml(text: string): string {

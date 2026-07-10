@@ -73,7 +73,7 @@ export function BlogCard({
             {post.publishedAt ? (
               <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <CalendarDays className="size-3.5 shrink-0" aria-hidden="true" />
-                <time dateTime={post.publishedAt.toISOString()}>
+                <time dateTime={new Date(post.publishedAt).toISOString()}>
                   {formatDate(post.publishedAt, locale)}
                 </time>
               </p>

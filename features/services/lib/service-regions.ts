@@ -16,7 +16,7 @@ type RegionListLabels = {
 export function getServiceAssignedRegions(
   service: Pick<PublicServiceSelect, "serviceRegions">,
 ): RegionRef[] {
-  return service.serviceRegions
+  return (service.serviceRegions ?? [])
     .map((entry) => entry.region)
     .filter((region): region is RegionRef => Boolean(region));
 }
