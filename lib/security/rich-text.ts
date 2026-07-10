@@ -1,4 +1,5 @@
 import { slugifyHeading } from "@/features/blog/lib/toc";
+import { resolveBlogImageSrc } from "@/features/blog/lib/blog-image-paths";
 import { escapeHtml, stripUnsafeMarkup } from "@/lib/security/sanitize-content";
 
 const MARKDOWN_LINK =
@@ -168,7 +169,7 @@ export function renderRichTextHtml(content: string): string {
 
       if (block.type === "image") {
         const alt = escapeHtml(block.alt);
-        const src = escapeHtml(block.src);
+        const src = escapeHtml(resolveBlogImageSrc(block.src) ?? block.src);
         return `<figure class="my-8 mx-auto w-full max-w-3xl overflow-hidden rounded-2xl border bg-muted/20 shadow-sm"><img src="${src}" alt="${alt}" width="1200" height="675" class="h-auto w-full object-contain" loading="lazy" decoding="async" /></figure>`;
       }
 

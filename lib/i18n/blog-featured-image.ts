@@ -1,3 +1,5 @@
+import { resolveBlogImageSrc } from "@/features/blog/lib/blog-image-paths";
+
 type BlogPostWithFeaturedImage = {
   featuredImagePath?: string | null;
 };
@@ -6,6 +8,5 @@ type BlogPostWithFeaturedImage = {
 export function resolveBlogFeaturedImage(
   post: BlogPostWithFeaturedImage,
 ): string | null {
-  const featured = post.featuredImagePath?.trim();
-  return featured || null;
+  return resolveBlogImageSrc(post.featuredImagePath);
 }

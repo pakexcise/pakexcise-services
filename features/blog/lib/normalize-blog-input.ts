@@ -1,4 +1,5 @@
 import { DEFAULT_BLOG_AUTHOR } from "@/features/blog/lib/blog-authors";
+import { resolveBlogImageSrc } from "@/features/blog/lib/blog-image-paths";
 import { normalizeUrduBrandText } from "@/features/blog/lib/blog-brand";
 import { computeReadingTimeMinutes } from "@/features/blog/lib/reading-time";
 import { parseBlogContentFaqs } from "@/features/blog/lib/content-faqs";
@@ -94,7 +95,7 @@ export function normalizeBlogPostInput(input: {
     authorNameEn: trimOptional(input.authorNameEn) ?? DEFAULT_BLOG_AUTHOR.en,
     authorNameUr: normalizeUrduOptional(input.authorNameUr) ?? DEFAULT_BLOG_AUTHOR.ur,
     readingTimeMinutes,
-    featuredImagePath: trimOptional(input.featuredImagePath),
+    featuredImagePath: trimOptional(resolveBlogImageSrc(input.featuredImagePath) ?? input.featuredImagePath),
     featuredImageTitleEn: trimOptional(input.featuredImageTitleEn),
     featuredImageTitleUr: normalizeUrduOptional(input.featuredImageTitleUr),
     featuredImageAltEn: trimOptional(input.featuredImageAltEn),

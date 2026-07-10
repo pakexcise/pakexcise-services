@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { BLOG_IMAGE_SPEC } from "@/features/blog/lib/image-spec";
+import { isUploadedBlogImagePath } from "@/features/blog/lib/blog-image-paths";
 import {
   isLocalPublicImagePath,
   type ImageDimensions,
@@ -98,9 +99,10 @@ export function BlogResponsiveImage({
       : `(max-width: ${width}px) 100vw, ${width}px`;
 
   const shouldServeOriginal =
-    isLocalPublicImagePath(src) &&
-    Boolean(natural) &&
-    natural!.width <= config.maxDisplayWidth;
+    isUploadedBlogImagePath(src) ||
+    (isLocalPublicImagePath(src) &&
+      Boolean(natural) &&
+      natural!.width <= config.maxDisplayWidth);
 
   if (variant === "card") {
     return (

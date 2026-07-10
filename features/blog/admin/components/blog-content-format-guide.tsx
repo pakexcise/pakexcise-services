@@ -40,7 +40,7 @@ export function BlogContentFormatGuide({ title }: BlogContentFormatGuideProps) {
             </li>
             <li>
               <strong>Image:</strong>{" "}
-              <code className="rounded bg-muted px-1">![alt text](/blog/uploads/image.webp)</code>
+              <code className="rounded bg-muted px-1">![alt text](/api/blog/images/image.webp)</code>
             </li>
           </ul>
         </section>

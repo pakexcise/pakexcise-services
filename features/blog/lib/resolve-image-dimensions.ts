@@ -3,6 +3,11 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
+import {
+  extractBlogImageFileName,
+  readBlogImageContent,
+} from "@/features/blog/lib/upload-blog-image";
+
 export type ImageDimensions = {
   width: number;
   height: number;
@@ -106,12 +111,22 @@ function parseImageDimensions(buffer: Buffer): ImageDimensions | null {
 }
 
 export function isLocalPublicImagePath(src: string): boolean {
-  return src.startsWith("/") && !src.startsWith("//");
+  return src.startsWith("/") && !src.startsWith("//") && !src.startsWith("/api/");
 }
 
 export async function resolvePublicImageDimensions(
   src: string,
 ): Promise<ImageDimensions | null> {
+  const uploadedFileName = extractBlogImageFileName(src);
+
+  if (uploadedFileName) {
+    const uploaded = await readBlogImageContent(uploadedFileName);
+    if (uploaded.ok) {
+      return parseImageDimensions(uploaded.body);
+    }
+    return null;
+  }
+
   if (!isLocalPublicImagePath(src)) {
     return null;
   }

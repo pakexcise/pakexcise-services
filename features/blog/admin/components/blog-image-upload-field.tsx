@@ -12,6 +12,7 @@ import {
   BLOG_IMAGE_MIME_TYPES,
 } from "@/config/uploads";
 import { validateClientUpload } from "@/features/applications/lib/validate-upload";
+import { resolveBlogImageSrc } from "@/features/blog/lib/blog-image-paths";
 import { BLOG_IMAGE_ADMIN_HINT } from "@/features/blog/lib/image-spec";
 import { resolveClientFileMimeType } from "@/lib/utils/resolve-file-mime";
 
@@ -94,6 +95,8 @@ export function BlogImageUploadField({
     });
   }
 
+  const previewSrc = resolveBlogImageSrc(value);
+
   return (
     <div className="space-y-3">
       <Label>{label}</Label>
@@ -101,7 +104,7 @@ export function BlogImageUploadField({
         <Input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="/blog/uploads/example.webp"
+          placeholder="/api/blog/images/example.webp"
           className="max-w-xl"
         />
         <Button type="button" variant="outline" onClick={handlePickFile} disabled={isPending}>
@@ -115,17 +118,22 @@ export function BlogImageUploadField({
       </div>
       <p className="text-xs text-muted-foreground">{hint}</p>
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
-      {value ? (
+      {previewSrc ? (
         <div className="relative aspect-[16/9] max-w-md overflow-hidden rounded-xl border bg-muted/20">
           <Image
-            src={value}
+            src={previewSrc}
             alt="Uploaded preview"
             fill
             sizes="400px"
-            quality={90}
+            quality={95}
+            unoptimized
             className="object-contain p-2"
           />
         </div>
+      ) : value ? (
+        <p className="text-sm text-destructive">
+          Image path is saved but the file could not be resolved for preview.
+        </p>
       ) : (
         <div className="flex max-w-md items-center justify-center rounded-xl border border-dashed bg-muted/10 p-8 text-muted-foreground">
           <ImageIcon className="size-8" aria-hidden="true" />
