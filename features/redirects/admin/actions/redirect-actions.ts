@@ -3,6 +3,10 @@
 import { revalidatePath } from "next/cache";
 
 import {
+  LEGACY_SERVICE_SLUGS_TO_DEACTIVATE,
+  RECOMMENDED_SERVICE_REDIRECTS,
+} from "@/config/recommended-redirects";
+import {
   createRedirectSchema,
   redirectIdSchema,
   toggleRedirectSchema,
@@ -42,6 +46,8 @@ function revalidateRedirectPaths() {
   revalidatePath("/services");
   revalidatePath("/blog");
   revalidatePath("/guides");
+  revalidatePath("/apply");
+  revalidatePath("/request");
 }
 
 export async function createRedirectAction(
@@ -165,4 +171,73 @@ export async function deleteRedirectAction(
 
   revalidateRedirectPaths();
   return successResult({ id: existing.id });
+}
+
+export async function deleteAllRedirectsAction(): Promise<
+  ActionResult<{ deletedCount: number }>
+> {
+  const user = await requirePermission("platform:manage");
+
+  const existing = await prisma.redirect.findMany({
+    select: { id: true, oldSlug: true, newSlug: true },
+  });
+
+  const result = await prisma.redirect.deleteMany({});
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "DELETE",
+    entityType: "redirect",
+    entityId: "all",
+    before: { count: existing.length, items: existing },
+    after: { deletedCount: result.count },
+  });
+
+  revalidateRedirectPaths();
+  return successResult({ deletedCount: result.count });
+}
+
+export async function resetRecommendedRedirectsAction(): Promise<
+  ActionResult<{ deletedCount: number; createdCount: number }>
+> {
+  const user = await requirePermission("platform:manage");
+
+  const existing = await prisma.redirect.findMany({
+    select: { id: true, oldSlug: true, newSlug: true },
+  });
+
+  const deleted = await prisma.redirect.deleteMany({});
+
+  await prisma.service.updateMany({
+    where: { slug: { in: [...LEGACY_SERVICE_SLUGS_TO_DEACTIVATE] } },
+    data: { isActive: false },
+  });
+
+  await prisma.redirect.createMany({
+    data: RECOMMENDED_SERVICE_REDIRECTS.map((item) => ({
+      oldSlug: item.oldSlug,
+      newSlug: item.newSlug,
+      statusCode: 301,
+      isActive: true,
+    })),
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "UPDATE",
+    entityType: "redirect",
+    entityId: "recommended-reset",
+    before: { count: existing.length, items: existing },
+    after: {
+      deletedCount: deleted.count,
+      createdCount: RECOMMENDED_SERVICE_REDIRECTS.length,
+      redirects: RECOMMENDED_SERVICE_REDIRECTS,
+    },
+  });
+
+  revalidateRedirectPaths();
+  return successResult({
+    deletedCount: deleted.count,
+    createdCount: RECOMMENDED_SERVICE_REDIRECTS.length,
+  });
 }

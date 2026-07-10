@@ -19,6 +19,7 @@ import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
 import { redirect } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/content";
 import { applicationWizardRepository } from "@/server/repositories/application-wizard-repository";
+import { redirectRepository } from "@/server/repositories/redirect-repository";
 import { serviceRepository } from "@/server/repositories/service-repository";
 import { getApplyAccess } from "@/server/permissions/apply-access";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
@@ -64,6 +65,15 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
   );
 
   if (!serviceRecord) {
+    const slugRedirect = await redirectRepository.findActiveByOldSlug(serviceSlug);
+
+    if (slugRedirect) {
+      redirect({
+        href: `/apply/${slugRedirect.newSlug}`,
+        locale,
+      });
+    }
+
     notFound();
   }
 

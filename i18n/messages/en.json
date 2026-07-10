@@ -2604,10 +2604,32 @@
       },
       "redirects": {
         "title": "Redirects",
-        "description": "Manage slug redirects for services, guides, and blog posts.",
+        "description": "Manage slug redirects for services, guides, and blog posts. Your current pages and posts stay at their own URLs.",
         "emptyTitle": "No redirects configured",
-        "emptyDescription": "Redirect rules will appear here.",
-        "create": "Add redirect"
+        "emptyDescription": "Redirect rules will appear here. Use Reset recommended to install the clean legacy service map.",
+        "create": "Add redirect",
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteConfirm": "Delete this redirect?",
+        "clearAll": "Clear all",
+        "clearAllConfirm": "Delete ALL redirects? Your pages and posts will keep their current URLs. Legal and region redirects in next.config are not affected.",
+        "resetRecommended": "Reset recommended",
+        "resetRecommendedConfirm": "Delete all redirects and install the recommended legacy service redirects? Blog and guide posts keep their current slugs. Legal/region redirects stay in next.config.",
+        "setupHint": "Perfect setup: only legacy service slugs redirect to current services. Blog/guide redirects use blog: and guide: prefixes when you rename content. /privacy, /terms, /refund and region aliases are configured in next.config — do not add them here.",
+        "searchPlaceholder": "Search slugs",
+        "filter": "Filter",
+        "filterAll": "All",
+        "filterActive": "Active",
+        "filterInactive": "Inactive",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "columns": {
+          "oldSlug": "Old slug",
+          "newSlug": "New slug",
+          "code": "Code",
+          "status": "Status",
+          "updated": "Updated"
+        }
       },
       "blog": {
         "title": "Blog posts",

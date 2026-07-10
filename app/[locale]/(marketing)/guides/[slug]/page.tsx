@@ -71,14 +71,14 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
-  const slugRedirect = await redirectRepository.findActiveByOldSlug(`guide:${slug}`);
-  if (slugRedirect) {
-    const newSlug = slugRedirect.newSlug.replace(/^guide:/, "");
-    redirect({ href: `/guides/${newSlug}`, locale });
-  }
-
   const guide = await guideRepository.findPublishedBySlug(slug);
   if (!guide) {
+    const slugRedirect = await redirectRepository.findActiveByOldSlug(`guide:${slug}`);
+    if (slugRedirect) {
+      const newSlug = slugRedirect.newSlug.replace(/^guide:/, "");
+      redirect({ href: `/guides/${newSlug}`, locale });
+    }
+
     notFound();
   }
 

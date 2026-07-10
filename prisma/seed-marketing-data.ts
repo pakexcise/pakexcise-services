@@ -1,5 +1,9 @@
 import type { PrismaClient } from "@prisma/client";
 
+import {
+  LEGACY_SERVICE_SLUGS_TO_DEACTIVATE,
+  RECOMMENDED_SERVICE_REDIRECTS,
+} from "../config/recommended-redirects";
 import { REGION_SLUG_ALIASES } from "../config/region-slugs";
 import { CITY_SEED } from "./seed-cities-data";
 import { seedServiceConfig } from "./seed-service-config";
@@ -917,86 +921,22 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     }
   }
 
-  const legacyServiceSlugs = [
-    "vehicle-transfer-punjab",
-    "vehicle-transfer-islamabad-ict",
-    "token-tax",
-    "token-tax-all-provinces",
-    "new-vehicle-registration-punjab",
-    "new-vehicle-registration-islamabad-ict",
-    "vehicle-inspection",
-    "vehicle-inspection-punjab",
-    "vehicle-inspection-islamabad-ict",
-    "vehicle-passing-fitness-islamabad-ict",
-    "route-permit-punjab",
-    "route-permit-islamabad-ict",
-    "data-correction-punjab-ict",
-    "data-correction-islamabad-ict",
-    "driving-license-renewal-punjab",
-    "driving-license-renewal-punjab-ict",
-    "learner-license-punjab-ict",
-  ];
-
   await prisma.service.updateMany({
-    where: { slug: { in: legacyServiceSlugs } },
+    where: { slug: { in: [...LEGACY_SERVICE_SLUGS_TO_DEACTIVATE] } },
     data: { isActive: false },
   });
 
-  const redirects = [
-    { oldSlug: "token-tax-all-provinces", newSlug: "token-tax-payment" },
-    { oldSlug: "token-tax", newSlug: "token-tax-payment" },
-    { oldSlug: "vehicle-transfer-punjab", newSlug: "vehicle-transfer" },
-    { oldSlug: "vehicle-transfer-islamabad-ict", newSlug: "vehicle-transfer" },
-    {
-      oldSlug: "new-vehicle-registration-punjab",
-      newSlug: "new-vehicle-registration",
-    },
-    {
-      oldSlug: "new-vehicle-registration-islamabad-ict",
-      newSlug: "new-vehicle-registration",
-    },
-    { oldSlug: "vehicle-inspection", newSlug: "vehicle-passing-fitness" },
-    { oldSlug: "vehicle-inspection-punjab", newSlug: "vehicle-passing-fitness" },
-    {
-      oldSlug: "vehicle-inspection-islamabad-ict",
-      newSlug: "vehicle-passing-fitness",
-    },
-    {
-      oldSlug: "vehicle-passing-fitness-islamabad-ict",
-      newSlug: "vehicle-passing-fitness",
-    },
-    { oldSlug: "route-permit-punjab", newSlug: "route-permit" },
-    { oldSlug: "route-permit-islamabad-ict", newSlug: "route-permit" },
-    { oldSlug: "data-correction-punjab-ict", newSlug: "vehicle-data-correction" },
-    {
-      oldSlug: "data-correction-islamabad-ict",
-      newSlug: "vehicle-data-correction",
-    },
-    {
-      oldSlug: "driving-license-renewal-punjab-ict",
-      newSlug: "driving-license-renewal",
-    },
-    {
-      oldSlug: "learner-license-punjab-ict",
-      newSlug: "learner-license",
-    },
-    { oldSlug: "privacy", newSlug: "privacy-policy" },
-    { oldSlug: "terms", newSlug: "terms-and-conditions" },
-    { oldSlug: "refund", newSlug: "refund-policy" },
-  ];
+  // Wipe stale/conflicting redirects, then install the recommended service map only.
+  // Legal + region aliases are handled in next.config.ts (not duplicated in DB).
+  await prisma.redirect.deleteMany({});
 
-  for (const redirect of redirects) {
-    await prisma.redirect.upsert({
-      where: { oldSlug: redirect.oldSlug },
-      update: { newSlug: redirect.newSlug, isActive: true },
-      create: { ...redirect, isActive: true },
-    });
-  }
-
-  // Remove legacy redirect that sent the canonical slug to the old slug.
-  await prisma.redirect.updateMany({
-    where: { oldSlug: "token-tax-payment", newSlug: "token-tax" },
-    data: { isActive: false },
+  await prisma.redirect.createMany({
+    data: RECOMMENDED_SERVICE_REDIRECTS.map((redirect) => ({
+      oldSlug: redirect.oldSlug,
+      newSlug: redirect.newSlug,
+      statusCode: 301,
+      isActive: true,
+    })),
   });
 
   const staticPages: Array<{

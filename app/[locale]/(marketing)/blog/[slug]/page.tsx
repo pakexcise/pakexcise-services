@@ -105,14 +105,14 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
-  const slugRedirect = await redirectRepository.findActiveByOldSlug(`blog:${slug}`);
-  if (slugRedirect) {
-    const newSlug = slugRedirect.newSlug.replace(/^blog:/, "");
-    redirect({ href: `/blog/${newSlug}`, locale });
-  }
-
   const post = await blogPostRepository.findPublishedBySlug(slug);
   if (!post) {
+    const slugRedirect = await redirectRepository.findActiveByOldSlug(`blog:${slug}`);
+    if (slugRedirect) {
+      const newSlug = slugRedirect.newSlug.replace(/^blog:/, "");
+      redirect({ href: `/blog/${newSlug}`, locale });
+    }
+
     notFound();
   }
 

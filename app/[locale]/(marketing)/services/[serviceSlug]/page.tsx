@@ -92,18 +92,18 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
-  const slugRedirect = await redirectRepository.findActiveByOldSlug(serviceSlug);
-
-  if (slugRedirect) {
-    redirect({
-      href: `/services/${slugRedirect.newSlug}`,
-      locale,
-    });
-  }
-
   const service = await serviceRepository.findPublicDetailBySlug(serviceSlug);
 
   if (!service) {
+    const slugRedirect = await redirectRepository.findActiveByOldSlug(serviceSlug);
+
+    if (slugRedirect) {
+      redirect({
+        href: `/services/${slugRedirect.newSlug}`,
+        locale,
+      });
+    }
+
     notFound();
   }
 

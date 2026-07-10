@@ -2605,10 +2605,32 @@
       },
       "redirects": {
         "title": "ری ڈائریکٹس",
-        "description": "خدمات، رہنما اور بلاگ پوسٹس کے slug ری ڈائریکٹس منظم کریں۔",
+        "description": "خدمات، رہنما اور بلاگ پوسٹس کے slug ری ڈائریکٹس منظم کریں۔ آپ کے موجودہ صفحات اور پوسٹس اپنی URLs پر رہتے ہیں۔",
         "emptyTitle": "کوئی ری ڈائریکٹ ترتیب نہیں",
-        "emptyDescription": "ری ڈائریکٹ قوانین یہاں ظاہر ہوں گے۔",
-        "create": "ری ڈائریکٹ شامل کریں"
+        "emptyDescription": "ری ڈائریکٹ قوانین یہاں ظاہر ہوں گے۔ صاف لیگیسی سروس میپ کے لیے Reset recommended استعمال کریں۔",
+        "create": "ری ڈائریکٹ شامل کریں",
+        "edit": "ترمیم",
+        "delete": "حذف",
+        "deleteConfirm": "یہ ری ڈائریکٹ حذف کریں؟",
+        "clearAll": "سب صاف کریں",
+        "clearAllConfirm": "تمام ری ڈائریکٹس حذف کریں؟ آپ کے صفحات اور پوسٹس اپنی موجودہ URLs پر رہیں گے۔ next.config میں قانونی اور ریجن ری ڈائریکٹس متاثر نہیں ہوں گے۔",
+        "resetRecommended": "تجویز کردہ ری سیٹ",
+        "resetRecommendedConfirm": "تمام ری ڈائریکٹس حذف کر کے تجویز کردہ لیگیسی سروس ری ڈائریکٹس انسٹال کریں؟ بلاگ اور گائیڈ پوسٹس اپنے موجودہ slugs رکھیں گے۔ قانونی/ریجن ری ڈائریکٹس next.config میں رہیں گے۔",
+        "setupHint": "صحیح سیٹ اپ: صرف پرانے سروس slugs موجودہ سروسز پر جائیں۔ بلاگ/گائیڈ ری ڈائریکٹس مواد کا نام بدلنے پر blog: اور guide: prefixes استعمال کرتے ہیں۔ /privacy، /terms، /refund اور ریجن aliases next.config میں ہیں — انہیں یہاں شامل نہ کریں۔",
+        "searchPlaceholder": "slugs تلاش کریں",
+        "filter": "فلٹر",
+        "filterAll": "سب",
+        "filterActive": "فعال",
+        "filterInactive": "غیر فعال",
+        "statusActive": "فعال",
+        "statusInactive": "غیر فعال",
+        "columns": {
+          "oldSlug": "پرانا slug",
+          "newSlug": "نیا slug",
+          "code": "کوڈ",
+          "status": "حیثیت",
+          "updated": "اپ ڈیٹ"
+        }
       },
       "blog": {
         "title": "بلاگ پوسٹس",

@@ -18,6 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { RedirectBulkActions } from "@/features/redirects/admin/components/redirect-bulk-actions";
+import { RedirectRowActions } from "@/features/redirects/admin/components/redirect-row-actions";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import { adminRedirectRepository } from "@/server/repositories/admin-redirect-repository";
@@ -61,27 +63,41 @@ export default async function AdminRedirectsPage({
         title={t("title")}
         description={t("description")}
         actions={
-          <Button asChild>
-            <Link href="/admin/redirects/new">
-              <Plus className="size-4" />
-              {t("create")}
-            </Link>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <RedirectBulkActions
+              labels={{
+                clearAll: t("clearAll"),
+                clearAllConfirm: t("clearAllConfirm"),
+                resetRecommended: t("resetRecommended"),
+                resetRecommendedConfirm: t("resetRecommendedConfirm"),
+              }}
+            />
+            <Button asChild>
+              <Link href="/admin/redirects/new">
+                <Plus className="size-4" />
+                {t("create")}
+              </Link>
+            </Button>
+          </div>
         }
       />
+
+      <p className="rounded-xl border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+        {t("setupHint")}
+      </p>
 
       <form
         action="/admin/redirects"
         method="get"
         className="flex flex-wrap gap-3 rounded-xl border p-4"
       >
-        <Input name="q" defaultValue={q ?? ""} placeholder="Search slugs" className="max-w-sm" />
+        <Input name="q" defaultValue={q ?? ""} placeholder={t("searchPlaceholder")} className="max-w-sm" />
         <select name="active" defaultValue={active} className="h-10 rounded-md border px-3 text-sm">
-          <option value="all">All</option>
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
+          <option value="all">{t("filterAll")}</option>
+          <option value="true">{t("filterActive")}</option>
+          <option value="false">{t("filterInactive")}</option>
         </select>
-        <Button type="submit">Filter</Button>
+        <Button type="submit">{t("filter")}</Button>
       </form>
 
       {result.items.length === 0 ? (
@@ -91,11 +107,11 @@ export default async function AdminRedirectsPage({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Old slug</TableHead>
-                <TableHead>New slug</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Updated</TableHead>
+                <TableHead>{t("columns.oldSlug")}</TableHead>
+                <TableHead>{t("columns.newSlug")}</TableHead>
+                <TableHead>{t("columns.code")}</TableHead>
+                <TableHead>{t("columns.status")}</TableHead>
+                <TableHead>{t("columns.updated")}</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -107,14 +123,20 @@ export default async function AdminRedirectsPage({
                   <TableCell>{redirect.statusCode}</TableCell>
                   <TableCell>
                     <Badge variant={redirect.isActive ? "default" : "secondary"}>
-                      {redirect.isActive ? "Active" : "Inactive"}
+                      {redirect.isActive ? t("statusActive") : t("statusInactive")}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatDate(redirect.updatedAt, locale)}</TableCell>
                   <TableCell>
-                    <Button size="sm" variant="outline" asChild>
-                      <Link href={`/admin/redirects/${redirect.id}/edit`}>Edit</Link>
-                    </Button>
+                    <RedirectRowActions
+                      id={redirect.id}
+                      editHref={`/admin/redirects/${redirect.id}/edit`}
+                      labels={{
+                        edit: t("edit"),
+                        delete: t("delete"),
+                        deleteConfirm: t("deleteConfirm"),
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
