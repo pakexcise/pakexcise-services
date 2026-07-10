@@ -23,18 +23,30 @@ function getGoogleSiteVerification(): string | undefined {
   return token || undefined;
 }
 
+function getBingSiteVerification(): string | undefined {
+  const token = process.env.BING_SITE_VERIFICATION?.trim();
+  return token || undefined;
+}
+
 function buildSearchMetadata(icons: Metadata["icons"]): Metadata {
   const googleVerification = getGoogleSiteVerification();
+  const bingVerification = getBingSiteVerification();
+
+  const verification: NonNullable<Metadata["verification"]> = {};
+
+  if (googleVerification) {
+    verification.google = googleVerification;
+  }
+
+  if (bingVerification) {
+    verification.other = {
+      "msvalidate.01": bingVerification,
+    };
+  }
 
   return {
     icons,
-    ...(googleVerification
-      ? {
-          verification: {
-            google: googleVerification,
-          },
-        }
-      : {}),
+    ...(Object.keys(verification).length > 0 ? { verification } : {}),
   };
 }
 

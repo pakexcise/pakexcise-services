@@ -3,6 +3,7 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { shouldAllowSearchIndexing } from "@/config/env.server";
 import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { BrandingProvider } from "@/components/shared/branding-context";
@@ -65,7 +66,9 @@ export default async function LocaleLayout({
   const publicSettings = await getPublicSettings();
   const { business, seo, tracking, features, publicUi, branding } = publicSettings;
   const socialLinks = await getActiveSocialLinks();
-  const trackingRuntime = buildTrackingRuntimeConfig(tracking);
+  const trackingRuntime = buildTrackingRuntimeConfig(tracking, {
+    productionTrackingEnabled: shouldAllowSearchIndexing(),
+  });
   const localized = localizeGlobalSiteContent(business, locale, publicUi);
 
   const baseUrl = seoAbsoluteUrl("/");

@@ -2577,7 +2577,30 @@
         "emptyDescription": "SEO metadata entries will appear here.",
         "legalPagesLinkTitle": "Legal pages",
         "legalPagesLinkDescription": "Manage privacy, terms, disclaimer, refund, payment, and cookie policies from the dedicated Legal Pages module.",
-        "manageLegalPages": "Open legal pages"
+        "manageLegalPages": "Open legal pages",
+        "health": {
+          "title": "SEO health",
+          "description": "Environment-aware indexing, verification, and metadata coverage for PakExcise.",
+          "appEnv": "App environment",
+          "indexing": "Search indexing",
+          "indexingOn": "Production indexable",
+          "indexingOff": "Noindex (non-production)",
+          "canonicalBase": "Canonical base URL",
+          "sitemap": "Sitemap",
+          "sitemapOn": "Enabled",
+          "sitemapOff": "Disabled / empty",
+          "robots": "robots.txt",
+          "llms": "llms.txt",
+          "googleVerification": "Google verification",
+          "bingVerification": "Bing verification",
+          "ga4": "GA4 ID",
+          "gtm": "GTM ID",
+          "configured": "Configured",
+          "missing": "Not set",
+          "seoRecords": "SEO records",
+          "missingTitles": "Missing English titles",
+          "missingDescriptions": "Missing English descriptions"
+        }
       },
       "redirects": {
         "title": "Redirects",

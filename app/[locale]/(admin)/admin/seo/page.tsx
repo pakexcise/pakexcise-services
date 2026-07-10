@@ -5,6 +5,8 @@ import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { adminMetadata } from "@/features/admin/lib/metadata";
+import { SeoHealthPanel } from "@/features/seo/admin/components/seo-health-panel";
+import { getSeoHealthSnapshot } from "@/features/seo/admin/lib/seo-health";
 import { adminDefaultPageSize } from "@/config/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,15 +44,45 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
   const page = Math.max(1, Number(params.page ?? "1") || 1);
   const q = params.q?.trim() || undefined;
 
-  const result = await adminSeoRepository.listPaginated({
-    page,
-    pageSize: adminDefaultPageSize,
-    q,
-  });
+  const [result, health] = await Promise.all([
+    adminSeoRepository.listPaginated({
+      page,
+      pageSize: adminDefaultPageSize,
+      q,
+    }),
+    getSeoHealthSnapshot(),
+  ]);
 
   return (
     <div className="space-y-6">
       <AdminPageHeader title={t("title")} description={t("description")} />
+
+      <SeoHealthPanel
+        health={health}
+        labels={{
+          title: t("health.title"),
+          description: t("health.description"),
+          appEnv: t("health.appEnv"),
+          indexing: t("health.indexing"),
+          indexingOn: t("health.indexingOn"),
+          indexingOff: t("health.indexingOff"),
+          canonicalBase: t("health.canonicalBase"),
+          sitemap: t("health.sitemap"),
+          sitemapOn: t("health.sitemapOn"),
+          sitemapOff: t("health.sitemapOff"),
+          robots: t("health.robots"),
+          llms: t("health.llms"),
+          googleVerification: t("health.googleVerification"),
+          bingVerification: t("health.bingVerification"),
+          ga4: t("health.ga4"),
+          gtm: t("health.gtm"),
+          configured: t("health.configured"),
+          missing: t("health.missing"),
+          seoRecords: t("health.seoRecords"),
+          missingTitles: t("health.missingTitles"),
+          missingDescriptions: t("health.missingDescriptions"),
+        }}
+      />
 
       <section className="rounded-xl border p-4">
         <h2 className="text-sm font-semibold">{t("legalPagesLinkTitle")}</h2>

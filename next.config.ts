@@ -60,7 +60,25 @@ const nextConfig: NextConfig = {
       ],
     );
 
-    return regionRedirects;
+    const legalRedirects = [
+      {
+        source: "/privacy",
+        destination: "/privacy-policy",
+        permanent: true,
+      },
+      {
+        source: "/terms",
+        destination: "/terms-and-conditions",
+        permanent: true,
+      },
+      {
+        source: "/refund",
+        destination: "/refund-policy",
+        permanent: true,
+      },
+    ];
+
+    return [...legalRedirects, ...regionRedirects];
   },
 };
 

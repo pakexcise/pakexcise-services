@@ -2578,7 +2578,30 @@
         "emptyDescription": "SEO میٹا ڈیٹا اندراجات یہاں ظاہر ہوں گی۔",
         "legalPagesLinkTitle": "قانونی صفحات",
         "legalPagesLinkDescription": "رازداری، شرائط، ڈس کلیمر، واپسی، ادائیگی، اور کوکی پالیسیاں مخصوص Legal Pages ماڈیول سے منظم کریں۔",
-        "manageLegalPages": "قانونی صفحات کھولیں"
+        "manageLegalPages": "قانونی صفحات کھولیں",
+        "health": {
+          "title": "SEO صحت",
+          "description": "PakExcise کے لیے ماحول پر مبنی انڈیکسنگ، تصدیق، اور میٹا ڈیٹا کوریج۔",
+          "appEnv": "ایپ ماحول",
+          "indexing": "سرچ انڈیکسنگ",
+          "indexingOn": "پروڈکشن انڈیکس ایبل",
+          "indexingOff": "نو انڈیکس (غیر پروڈکشن)",
+          "canonicalBase": "کینونیکل بیس URL",
+          "sitemap": "سائٹ میپ",
+          "sitemapOn": "فعال",
+          "sitemapOff": "غیر فعال / خالی",
+          "robots": "robots.txt",
+          "llms": "llms.txt",
+          "googleVerification": "گوگل تصدیق",
+          "bingVerification": "بنگ تصدیق",
+          "ga4": "GA4 ID",
+          "gtm": "GTM ID",
+          "configured": "ترتیب شدہ",
+          "missing": "سیٹ نہیں",
+          "seoRecords": "SEO ریکارڈز",
+          "missingTitles": "غائب انگریزی ٹائٹلز",
+          "missingDescriptions": "غائب انگریزی تفصیلات"
+        }
       },
       "redirects": {
         "title": "ری ڈائریکٹس",

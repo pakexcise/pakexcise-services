@@ -8,11 +8,12 @@ import { ServicesCategoryNav } from "@/components/marketing/services-category-na
 import { ServicesEmptyState } from "@/components/marketing/services-empty-state";
 import {
   buildBreadcrumbJsonLd,
+  buildItemListJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import { pickLocalized } from "@/lib/i18n/content";
-import { absoluteUrl } from "@/lib/utils";
+import { seoAbsoluteUrl } from "@/lib/seo-url";
 import { seoMetaRepository } from "@/server/repositories";
 import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
@@ -65,17 +66,33 @@ export default async function ServicesPage() {
     ur: seo?.metaDescriptionUr ?? t("services.metaDescription"),
   });
 
-  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "Home", url: absoluteUrl("/") },
-    { name: title, url: absoluteUrl("/services") },
-  ]);
+  const serviceListItems = categoryGroups.flatMap((group) =>
+    group.services.map((service) => ({
+      name: pickLocalized(locale, {
+        en: service.nameEn,
+        ur: service.nameUr,
+      }),
+      url: seoAbsoluteUrl(`/services/${service.slug}`),
+    })),
+  );
+
+  const jsonLd = [
+    buildBreadcrumbJsonLd([
+      { name: "Home", url: seoAbsoluteUrl("/") },
+      { name: title, url: seoAbsoluteUrl("/services") },
+    ]),
+    buildItemListJsonLd({
+      name: title,
+      items: serviceListItems,
+    }),
+  ].filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 
   const hasServices = categoryGroups.length > 0;
   const serviceCardLabels = buildServiceCardLabels(tCommon, t);
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={jsonLd} />
       <PageHero
         title={title}
         description={description}

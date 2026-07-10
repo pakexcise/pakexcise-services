@@ -8,11 +8,29 @@ export type TrackingRuntimeConfig = {
   tiktokPixelId?: string;
   consentMode: ConsentMode;
   requireConsentBeforeScripts: boolean;
+  /** True only when APP_ENV=production. Staging/dev never load marketing pixels. */
+  productionTrackingEnabled: boolean;
 };
 
+/**
+ * Build client tracking config.
+ * Marketing pixels (GA4/GTM/Meta/TikTok) are production-only.
+ * Root layout already injects GA4/GTM in production — AnalyticsProvider must not re-inject them.
+ */
 export function buildTrackingRuntimeConfig(
   tracking: TrackingSettings,
+  options?: { productionTrackingEnabled?: boolean },
 ): TrackingRuntimeConfig {
+  const productionTrackingEnabled = options?.productionTrackingEnabled ?? false;
+
+  if (!productionTrackingEnabled) {
+    return {
+      consentMode: tracking.consentMode,
+      requireConsentBeforeScripts: tracking.requireConsentBeforeScripts,
+      productionTrackingEnabled: false,
+    };
+  }
+
   return {
     ga4MeasurementId: resolvePublicTrackingId(
       tracking.ga4MeasurementId,
@@ -32,5 +50,6 @@ export function buildTrackingRuntimeConfig(
     ),
     consentMode: tracking.consentMode,
     requireConsentBeforeScripts: tracking.requireConsentBeforeScripts,
+    productionTrackingEnabled: true,
   };
 }

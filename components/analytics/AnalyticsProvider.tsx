@@ -12,8 +12,6 @@ import type { TrackingRuntimeConfig } from "@/features/settings/lib/tracking-run
 import { mapAnalyticsEventToActivity } from "@/features/tracking/lib/map-analytics-event";
 import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
 import {
-  isGoogleAnalyticsLoaded,
-  isGoogleTagManagerLoaded,
   pushGa4PageView,
   pushGtmPageView,
 } from "@/lib/analytics/client-tracking";
@@ -63,40 +61,16 @@ function injectScript(id: string, src: string): void {
 }
 
 function loadThirdPartyScripts(tracking?: TrackingRuntimeConfig): void {
-  if (!hasAnalyticsConsent(tracking)) {
+  if (!tracking?.productionTrackingEnabled || !hasAnalyticsConsent(tracking)) {
     return;
   }
 
   window.dataLayer = window.dataLayer ?? [];
 
-  const gtmId = tracking?.gtmId;
-  const ga4Id = tracking?.ga4MeasurementId;
-  const metaPixelId = tracking?.metaPixelId;
-  const tiktokPixelId = tracking?.tiktokPixelId;
-
-  if (gtmId && !isGoogleTagManagerLoaded(gtmId)) {
-    window.dataLayer.push({
-      event: "gtm.js",
-      event_id: `gtm_${Date.now()}`,
-      event_time: Math.floor(Date.now() / 1000),
-      "gtm.start": Date.now(),
-    });
-    injectScript("pakexcise-gtm", `https://www.googletagmanager.com/gtm.js?id=${gtmId}`);
-  }
-
-  if (ga4Id && !isGoogleAnalyticsLoaded(ga4Id)) {
-    injectScript(
-      "pakexcise-gtag",
-      `https://www.googletagmanager.com/gtag/js?id=${ga4Id}`,
-    );
-
-    window.gtag = function gtag(...args: unknown[]) {
-      window.dataLayer?.push(args as never);
-    };
-
-    window.gtag("js", new Date());
-    window.gtag("config", ga4Id, { send_page_view: true });
-  }
+  // GA4 + GTM are injected once by the root layout in production.
+  // Only load Meta / TikTok here to avoid double-counting pageviews.
+  const metaPixelId = tracking.metaPixelId;
+  const tiktokPixelId = tracking.tiktokPixelId;
 
   if (metaPixelId) {
     type FbqStub = ((...args: unknown[]) => void) & {
@@ -160,25 +134,40 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const scriptsLoadedRef = useRef(false);
+  const isFirstPageViewRef = useRef(true);
 
   useEffect(() => {
     captureAttributionFromUrl();
   }, [pathname, searchParams]);
 
   useEffect(() => {
-    if (!hasAnalyticsConsent(tracking)) {
+    const query = searchParams.toString();
+    const pagePath = query ? `${pathname}?${query}` : pathname;
+
+    // Always keep first-party activity events (no PII) for product analytics.
+    recordClientActivity({
+      event: "page_view",
+      path: pagePath,
+      metadata: getTrafficAnalyticsContext(),
+    });
+
+    if (!tracking?.productionTrackingEnabled || !hasAnalyticsConsent(tracking)) {
       return;
     }
 
-    const ga4Id = tracking?.ga4MeasurementId;
-    const gtmId = tracking?.gtmId;
+    const ga4Id = tracking.ga4MeasurementId;
+    const gtmId = tracking.gtmId;
 
     if (!ga4Id && !gtmId) {
       return;
     }
 
-    const query = searchParams.toString();
-    const pagePath = query ? `${pathname}?${query}` : pathname;
+    // Root layout already sends the initial GA4 page_view. Skip the first
+    // client push to avoid double-counting; keep SPA navigations.
+    if (isFirstPageViewRef.current) {
+      isFirstPageViewRef.current = false;
+      return;
+    }
 
     if (ga4Id) {
       pushGa4PageView(ga4Id, pagePath, getTrafficAnalyticsContext());
@@ -187,15 +176,13 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     if (gtmId) {
       pushGtmPageView(pagePath, getTrafficAnalyticsContext());
     }
-
-    recordClientActivity({
-      event: "page_view",
-      path: pagePath,
-      metadata: getTrafficAnalyticsContext(),
-    });
   }, [pathname, searchParams, tracking]);
 
   useEffect(() => {
+    if (!tracking?.productionTrackingEnabled) {
+      return;
+    }
+
     if (scriptsLoadedRef.current) {
       return;
     }
