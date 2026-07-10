@@ -23,11 +23,18 @@ import {
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import { adminBlogRepository } from "@/server/repositories/admin-blog-repository";
+import { adminBlogCategoryRepository } from "@/server/repositories/admin-blog-category-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 
 type BlogAdminPageProps = {
-  searchParams: Promise<{ page?: string; q?: string; status?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    q?: string;
+    status?: string;
+    categoryId?: string;
+    subCategoryId?: string;
+  }>;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,14 +43,26 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function formatCategoryLabel(
-  category: { nameEn: string } | null,
-  subCategory: { nameEn: string } | null,
+  locale: string,
+  category: { nameEn: string; nameUr: string } | null,
+  subCategory: { nameEn: string; nameUr: string } | null,
 ): string {
-  if (category && subCategory) {
-    return `${category.nameEn} › ${subCategory.nameEn}`;
+  const categoryLabel = category
+    ? locale === "ur"
+      ? category.nameUr
+      : category.nameEn
+    : null;
+  const subCategoryLabel = subCategory
+    ? locale === "ur"
+      ? subCategory.nameUr
+      : subCategory.nameEn
+    : null;
+
+  if (categoryLabel && subCategoryLabel) {
+    return `${categoryLabel} › ${subCategoryLabel}`;
   }
 
-  return category?.nameEn ?? subCategory?.nameEn ?? "—";
+  return categoryLabel ?? subCategoryLabel ?? "—";
 }
 
 export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps) {
@@ -60,13 +79,32 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
     params.status === "published" || params.status === "draft"
       ? params.status
       : "all";
+  const categoryId = params.categoryId?.trim() || undefined;
+  const subCategoryId = params.subCategoryId?.trim() || undefined;
 
-  const result = await adminBlogRepository.listPaginated({
-    page,
-    pageSize: adminDefaultPageSize,
-    q,
-    status,
-  });
+  const [result, categories] = await Promise.all([
+    adminBlogRepository.listPaginated({
+      page,
+      pageSize: adminDefaultPageSize,
+      q,
+      status,
+      categoryId,
+      subCategoryId,
+    }),
+    adminBlogCategoryRepository.listForFilter(),
+  ]);
+
+  const parentCategories = categories.filter((category) => !category.parentId);
+  const subCategories = categoryId
+    ? categories.filter((category) => category.parentId === categoryId)
+    : [];
+
+  const paginationSearchParams = {
+    ...(q ? { q } : {}),
+    ...(status !== "all" ? { status } : {}),
+    ...(categoryId ? { categoryId } : {}),
+    ...(subCategoryId ? { subCategoryId } : {}),
+  };
 
   return (
     <div className="space-y-6">
@@ -91,13 +129,43 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
       />
 
       <form action="/admin/blog" method="get" className="flex flex-wrap gap-3 rounded-xl border p-4">
-        <Input name="q" defaultValue={q ?? ""} placeholder="Search title or slug" className="max-w-sm" />
-        <select name="status" defaultValue={status} className="h-10 rounded-md border px-3 text-sm">
-          <option value="all">All statuses</option>
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
+        <Input
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder={t("searchPlaceholder")}
+          className="max-w-sm"
+        />
+        <select
+          name="categoryId"
+          defaultValue={categoryId ?? ""}
+          className="h-10 max-w-[220px] rounded-md border px-3 text-sm"
+        >
+          <option value="">{t("filters.allCategories")}</option>
+          {parentCategories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {locale === "ur" ? category.nameUr : category.nameEn}
+            </option>
+          ))}
         </select>
-        <Button type="submit">Filter</Button>
+        <select
+          name="subCategoryId"
+          defaultValue={subCategoryId ?? ""}
+          disabled={!categoryId || subCategories.length === 0}
+          className="h-10 max-w-[220px] rounded-md border px-3 text-sm disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <option value="">{t("filters.allSubCategories")}</option>
+          {subCategories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {locale === "ur" ? category.nameUr : category.nameEn}
+            </option>
+          ))}
+        </select>
+        <select name="status" defaultValue={status} className="h-10 rounded-md border px-3 text-sm">
+          <option value="all">{t("filters.allStatuses")}</option>
+          <option value="published">{t("status.published")}</option>
+          <option value="draft">{t("status.draft")}</option>
+        </select>
+        <Button type="submit">{t("filters.apply")}</Button>
       </form>
 
       {result.items.length === 0 ? (
@@ -108,12 +176,12 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Published</TableHead>
-                  <TableHead>Updated</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t("columns.title")}</TableHead>
+                  <TableHead>{t("columns.category")}</TableHead>
+                  <TableHead>{t("columns.status")}</TableHead>
+                  <TableHead>{t("columns.published")}</TableHead>
+                  <TableHead>{t("columns.updated")}</TableHead>
+                  <TableHead className="text-right">{t("columns.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -126,14 +194,16 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
                       </div>
                     </TableCell>
                     <TableCell className="max-w-[220px] text-sm">
-                      {formatCategoryLabel(post.category, post.subCategory)}
+                      {formatCategoryLabel(locale, post.category, post.subCategory)}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant={post.isPublished ? "default" : "secondary"}>
-                          {post.isPublished ? "Published" : "Draft"}
+                          {post.isPublished ? t("status.published") : t("status.draft")}
                         </Badge>
-                        {post.isFeatured ? <Badge variant="outline">Featured</Badge> : null}
+                        {post.isFeatured ? (
+                          <Badge variant="outline">{t("status.featured")}</Badge>
+                        ) : null}
                       </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap text-sm">
@@ -145,13 +215,16 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
                     <TableCell className="text-right">
                       <BlogRowActions
                         id={post.id}
+                        slug={post.slug}
                         isPublished={post.isPublished}
                         labels={{
-                          edit: "Edit blog post",
-                          publish: "Publish blog post",
-                          unpublish: "Move to draft",
-                          delete: "Delete blog post",
-                          deleteConfirm: "Delete this blog post?",
+                          edit: t("actions.edit"),
+                          preview: t("actions.preview"),
+                          previewDisabled: t("actions.previewDisabled"),
+                          publish: t("actions.publish"),
+                          unpublish: t("actions.unpublish"),
+                          delete: t("actions.delete"),
+                          deleteConfirm: t("actions.deleteConfirm"),
                         }}
                       />
                     </TableCell>
@@ -164,7 +237,7 @@ export default async function AdminBlogPage({ searchParams }: BlogAdminPageProps
             page={result.page}
             totalPages={result.totalPages}
             basePath="/admin/blog"
-            searchParams={{ ...(q ? { q } : {}), ...(status !== "all" ? { status } : {}) }}
+            searchParams={paginationSearchParams}
           />
         </>
       )}

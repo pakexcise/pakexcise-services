@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 import { useTransition } from "react";
 
 import {
@@ -13,9 +13,12 @@ import { cn } from "@/lib/utils";
 
 type BlogRowActionsProps = {
   id: string;
+  slug: string;
   isPublished: boolean;
   labels: {
     edit: string;
+    preview: string;
+    previewDisabled: string;
     publish: string;
     unpublish: string;
     delete: string;
@@ -23,7 +26,12 @@ type BlogRowActionsProps = {
   };
 };
 
-export function BlogRowActions({ id, isPublished, labels }: BlogRowActionsProps) {
+export function BlogRowActions({
+  id,
+  slug,
+  isPublished,
+  labels,
+}: BlogRowActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -47,6 +55,37 @@ export function BlogRowActions({ id, isPublished, labels }: BlogRowActionsProps)
 
   return (
     <div className="flex items-center justify-end gap-1">
+      {isPublished ? (
+        <Button
+          size="icon"
+          variant="ghost"
+          className="size-8"
+          asChild
+          title={labels.preview}
+        >
+          <a
+            href={`/blog/${slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={labels.preview}
+          >
+            <ExternalLink className="size-4" />
+          </a>
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          className="size-8"
+          disabled
+          title={labels.previewDisabled}
+          aria-label={labels.previewDisabled}
+        >
+          <ExternalLink className="size-4 opacity-40" />
+        </Button>
+      )}
+
       <Button
         size="icon"
         variant="ghost"
@@ -91,17 +130,22 @@ export function BlogRowActions({ id, isPublished, labels }: BlogRowActionsProps)
 /** @deprecated Use BlogRowActions instead. */
 export function BlogPublishToggle({
   id,
+  slug,
   isPublished,
 }: {
   id: string;
+  slug: string;
   isPublished: boolean;
 }) {
   return (
     <BlogRowActions
       id={id}
+      slug={slug}
       isPublished={isPublished}
       labels={{
         edit: "Edit",
+        preview: "Preview public post",
+        previewDisabled: "Publish the post to preview on site",
         publish: "Publish",
         unpublish: "Move to draft",
         delete: "Delete",

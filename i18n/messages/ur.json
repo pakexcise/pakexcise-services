@@ -2593,9 +2593,38 @@
         "emptyTitle": "منظم کرنے کے لیے کوئی بلاگ پوسٹ نہیں",
         "emptyDescription": "بلاگ پوسٹس CRUD آپریشنز کے لیے یہاں ظاہر ہوں گی۔",
         "create": "بلاگ پوسٹ شامل کریں",
+        "searchPlaceholder": "عنوان یا slug تلاش کریں",
         "tabs": {
           "posts": "بلاگ پوسٹس",
           "categories": "زمرے"
+        },
+        "columns": {
+          "title": "عنوان",
+          "category": "زمرہ",
+          "status": "حالت",
+          "published": "شائع",
+          "updated": "اپڈیٹ",
+          "actions": "اقدامات"
+        },
+        "status": {
+          "published": "شائع شدہ",
+          "draft": "مسودہ",
+          "featured": "نمایاں"
+        },
+        "filters": {
+          "allCategories": "تمام زمرے",
+          "allSubCategories": "تمام ذیلی زمرے",
+          "allStatuses": "تمام حالتیں",
+          "apply": "فلٹر"
+        },
+        "actions": {
+          "edit": "بلاگ پوسٹ میں ترمیم",
+          "preview": "عوامی پوسٹ کا پیش نظارہ",
+          "previewDisabled": "سائٹ پر پیش نظارہ کے لیے پوسٹ شائع کریں",
+          "publish": "بلاگ پوسٹ شائع کریں",
+          "unpublish": "مسودہ میں منتقل کریں",
+          "delete": "بلاگ پوسٹ حذف کریں",
+          "deleteConfirm": "یہ بلاگ پوسٹ حذف کریں؟"
         }
       },
       "guides": {

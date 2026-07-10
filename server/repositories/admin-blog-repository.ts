@@ -89,6 +89,8 @@ export type AdminBlogListFilters = {
   pageSize?: number;
   q?: string;
   status?: "published" | "draft" | "all";
+  categoryId?: string;
+  subCategoryId?: string;
 };
 
 export class AdminBlogRepository extends Repository {
@@ -110,6 +112,12 @@ export class AdminBlogRepository extends Repository {
         { categoryEn: { contains: q, mode: "insensitive" } },
         { authorNameEn: { contains: q, mode: "insensitive" } },
       ];
+    }
+
+    if (filters.subCategoryId) {
+      where.subCategoryId = filters.subCategoryId;
+    } else if (filters.categoryId) {
+      where.categoryId = filters.categoryId;
     }
 
     return where;

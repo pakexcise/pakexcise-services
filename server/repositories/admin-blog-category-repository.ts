@@ -151,6 +151,17 @@ export class AdminBlogCategoryRepository extends Repository {
     });
   }
 
+  listForFilter(): Promise<AdminBlogCategoryListItem[]> {
+    return this.db.blogCategory.findMany({
+      orderBy: [
+        { parentId: "asc" },
+        { displayOrder: "asc" },
+        { nameEn: "asc" },
+      ],
+      select: adminBlogCategoryListSelect,
+    });
+  }
+
   getNextDisplayOrder(parentId: string | null): Promise<number> {
     return this.db.blogCategory
       .aggregate({

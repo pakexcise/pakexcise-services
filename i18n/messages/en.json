@@ -2592,9 +2592,38 @@
         "emptyTitle": "No blog posts to manage",
         "emptyDescription": "Blog posts will appear here for CRUD operations.",
         "create": "Add blog post",
+        "searchPlaceholder": "Search title or slug",
         "tabs": {
           "posts": "Blog posts",
           "categories": "Categories"
+        },
+        "columns": {
+          "title": "Title",
+          "category": "Category",
+          "status": "Status",
+          "published": "Published",
+          "updated": "Updated",
+          "actions": "Actions"
+        },
+        "status": {
+          "published": "Published",
+          "draft": "Draft",
+          "featured": "Featured"
+        },
+        "filters": {
+          "allCategories": "All categories",
+          "allSubCategories": "All sub-categories",
+          "allStatuses": "All statuses",
+          "apply": "Filter"
+        },
+        "actions": {
+          "edit": "Edit blog post",
+          "preview": "Preview public post",
+          "previewDisabled": "Publish the post to preview on site",
+          "publish": "Publish blog post",
+          "unpublish": "Move to draft",
+          "delete": "Delete blog post",
+          "deleteConfirm": "Delete this blog post?"
         }
       },
       "guides": {
