@@ -28,6 +28,11 @@ function getBingSiteVerification(): string | undefined {
   return token || undefined;
 }
 
+/**
+ * Keep verification tokens in Metadata for completeness, but Bing requires the
+ * msvalidate tag in the *initial* <head>. Next.js streaming metadata appends
+ * tags after </head>, which Bing rejects as "Verification key incorrect".
+ */
 function buildSearchMetadata(icons: Metadata["icons"]): Metadata {
   const googleVerification = getGoogleSiteVerification();
   const bingVerification = getBingSiteVerification();
@@ -104,6 +109,11 @@ export default async function RootLayout({
   const locale =
     cookieLocale && isValidLocale(cookieLocale) ? cookieLocale : defaultLocale;
   const direction = locale === "ur" ? "rtl" : "ltr";
+  const allowIndexing = shouldAllowSearchIndexing();
+  const googleVerification = allowIndexing
+    ? getGoogleSiteVerification()
+    : undefined;
+  const bingVerification = allowIndexing ? getBingSiteVerification() : undefined;
 
   return (
     <html
@@ -116,6 +126,15 @@ export default async function RootLayout({
       <head>
         <meta name="google" content="notranslate" />
         <meta httpEquiv="Content-Language" content={locale} />
+        {googleVerification ? (
+          <meta
+            name="google-site-verification"
+            content={googleVerification}
+          />
+        ) : null}
+        {bingVerification ? (
+          <meta name="msvalidate.01" content={bingVerification} />
+        ) : null}
         <GoogleTagManagerHead />
         <GoogleAnalyticsScripts />
         <BrandThemeStyles />
