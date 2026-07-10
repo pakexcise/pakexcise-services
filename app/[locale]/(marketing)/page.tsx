@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 
 import { ContactSupportOptionsSection } from "@/components/marketing/contact-support-options";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
@@ -18,6 +19,7 @@ import { HomeServicesSection } from "@/components/marketing/home-services-sectio
 import { HomeVehicleVisualSection } from "@/components/marketing/home-vehicle-visual-section";
 import { HomeWhyChooseSection } from "@/components/marketing/home-why-choose-section";
 import { JsonLd } from "@/components/marketing/json-ld";
+import { SectionErrorBoundary } from "@/components/marketing/section-error-boundary";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
@@ -29,6 +31,7 @@ import {
   getOrderedActiveHomeSections,
   localizeHomePageSettings,
 } from "@/features/home-page/lib/home-page-settings-cache";
+import { defaultHomePageSettings } from "@/features/home-page/lib/defaults";
 import type { HomeSectionKey } from "@/features/home-page/types";
 import {
   buildFaqJsonLd,
@@ -39,6 +42,10 @@ import {
   getBusinessSettings,
   getFeatureFlagSettings,
 } from "@/features/settings/lib/public-settings-cache";
+import {
+  defaultBusinessSettings,
+  defaultFeatureFlagSettings,
+} from "@/features/settings/lib/defaults";
 import {
   resolveWhatsappDefaultMessage,
   resolveWhatsappLinkNumber,
@@ -58,7 +65,7 @@ import {
 import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 type HomeSectionTone = "default" | "muted" | "accent";
 
@@ -68,11 +75,20 @@ function getSectionTone(index: number): HomeSectionTone {
   return SECTION_TONES[index % SECTION_TONES.length] ?? "default";
 }
 
+async function safeLoad<T>(label: string, operation: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    console.error(`[homepage] ${label} failed`, error);
+    return fallback;
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getCurrentLocale();
   const [settings, seo] = await Promise.all([
-    getHomePageSettings(),
-    seoMetaRepository.findByPageKey("home"),
+    safeLoad("metadata:settings", () => getHomePageSettings(), defaultHomePageSettings()),
+    safeLoad("metadata:seo", () => seoMetaRepository.findByPageKey("home"), null),
   ]);
 
   return await resolveMetadataFromSeo({
@@ -97,21 +113,28 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  try {
-    return await renderHomePage();
-  } catch (error) {
-    console.error("[homepage] Failed to render homepage", error);
-    throw error;
-  }
-}
-
-async function renderHomePage() {
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
 
+  const defaults = defaultHomePageSettings();
+
+  const settings = await safeLoad(
+    "settings",
+    () => getHomePageSettings(),
+    defaults,
+  );
+
+  if (!settings.isPageActive) {
+    notFound();
+  }
+
+  const content = await safeLoad(
+    "localize",
+    async () => localizeHomePageSettings(settings, locale),
+    localizeHomePageSettings(defaults, locale),
+  );
+
   const [
-    settings,
-    content,
     businessSettings,
     featureFlags,
     categoryGroups,
@@ -124,62 +147,73 @@ async function renderHomePage() {
     tCommon,
     tMarketing,
   ] = await Promise.all([
-    getHomePageSettings(),
-    getHomePageSettings().then((value) =>
-      localizeHomePageSettings(value, locale),
+    safeLoad("business", () => getBusinessSettings(), defaultBusinessSettings()),
+    safeLoad(
+      "features",
+      () => getFeatureFlagSettings(),
+      defaultFeatureFlagSettings(),
     ),
-    getBusinessSettings(),
-    getFeatureFlagSettings(),
-    serviceCategoryRepository.listPublicGrouped(),
-    getHomePageSettings().then(async (homeSettings) =>
-      getFeaturedServices(homeSettings.limits.popularCount),
+    safeLoad("categories", () => serviceCategoryRepository.listPublicGrouped(), []),
+    safeLoad(
+      "popularServices",
+      () => getFeaturedServices(settings.limits.popularCount),
+      [],
     ),
-    regionRepository.listPublicWithServiceCounts(),
-    getHomePageSettings().then(async (homeSettings) =>
-      faqRepository.listFeaturedGlobalPublic(homeSettings.limits.faqCount),
+    safeLoad("regions", () => regionRepository.listPublicWithServiceCounts(), []),
+    safeLoad(
+      "faqs",
+      () => faqRepository.listFeaturedGlobalPublic(settings.limits.faqCount),
+      [],
     ),
-    getHomePageSettings().then(async (homeSettings) =>
-      documentRequirementRepository.listPublicPreview(homeSettings.limits.documentCount),
+    safeLoad(
+      "documents",
+      () =>
+        documentRequirementRepository.listPublicPreview(settings.limits.documentCount),
+      [],
     ),
-    getHomePageSettings().then(async (homeSettings) =>
-      blogPostRepository.listPublished(homeSettings.limits.blogCount),
+    safeLoad(
+      "blog",
+      () => blogPostRepository.listPublished(settings.limits.blogCount),
+      [],
     ),
-    getHomePageSettings().then(async (homeSettings) =>
-      guideRepository.listPublished(homeSettings.limits.guideCount),
+    safeLoad(
+      "guides",
+      () => guideRepository.listPublished(settings.limits.guideCount),
+      [],
     ),
     getTranslations("common"),
     getTranslations("marketing"),
   ]);
 
-  if (!settings.isPageActive) {
-    notFound();
-  }
-
   const serviceCardLabels = buildServiceCardLabels(tCommon, tMarketing);
   const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
   const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings, locale);
   const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
-  const faqItems = mapFaqsForLocale(faqs, locale);
+  const faqItems = mapFaqsForLocale(faqs ?? [], locale);
   const orderedSections = getOrderedActiveHomeSections(settings);
 
-  const faqJsonLd = buildFaqJsonLd(faqItems);
-  const featuredServicesJsonLd = buildItemListJsonLd({
-    name: pickLocalized(locale, {
-      en: "Featured excise facilitation services",
-      ur: "نمایاں ایکسائز سہولت خدمات",
-    }),
-    items: popularServices.map((service) => ({
+  let jsonLd: Array<Record<string, unknown>> = [];
+  try {
+    const faqJsonLd = buildFaqJsonLd(faqItems);
+    const featuredServicesJsonLd = buildItemListJsonLd({
       name: pickLocalized(locale, {
-        en: service.nameEn,
-        ur: service.nameUr,
+        en: "Featured excise facilitation services",
+        ur: "نمایاں ایکسائز سہولت خدمات",
       }),
-      url: seoAbsoluteUrl(`/services/${service.slug}`),
-    })),
-  });
-
-  const jsonLd = [faqJsonLd, featuredServicesJsonLd].filter(
-    (item): item is NonNullable<typeof item> => item !== null,
-  );
+      items: (popularServices ?? []).map((service) => ({
+        name: pickLocalized(locale, {
+          en: service.nameEn,
+          ur: service.nameUr,
+        }),
+        url: seoAbsoluteUrl(`/services/${service.slug}`),
+      })),
+    });
+    jsonLd = [faqJsonLd, featuredServicesJsonLd].filter(
+      (item): item is NonNullable<typeof item> => item !== null,
+    );
+  } catch (error) {
+    console.error("[homepage] json-ld failed", error);
+  }
 
   const supportOptionLabels = {
     sectionTitle: content.sections.options.title,
@@ -197,219 +231,235 @@ async function renderHomePage() {
     trackingBadge: tMarketing("serviceOptions.trackingBadge"),
   };
 
-  function renderSection(key: HomeSectionKey, tone: HomeSectionTone) {
-    switch (key) {
-      case "options":
-        return (
-          <HomeSectionShell key={key} tone={tone}>
-            <ContactSupportOptionsSection
-              whatsappPhone={whatsappLinkNumber}
-              whatsappMessage={whatsappMessage}
-              requestHref="/contact#contact-form"
-              note={content.optionsNote}
-              labels={supportOptionLabels}
+  function renderSection(key: HomeSectionKey, tone: HomeSectionTone): ReactNode {
+    try {
+      let sectionNode: ReactNode = null;
+
+      switch (key) {
+        case "options":
+          sectionNode = (
+            <HomeSectionShell tone={tone}>
+              <ContactSupportOptionsSection
+                whatsappPhone={whatsappLinkNumber}
+                whatsappMessage={whatsappMessage}
+                requestHref="/contact#contact-form"
+                note={content.optionsNote}
+                labels={supportOptionLabels}
+              />
+            </HomeSectionShell>
+          );
+          break;
+
+        case "popular":
+          sectionNode = (
+            <HomePopularServicesSection
+              title={content.sections.popular.title}
+              description={content.sections.popular.description}
+              services={popularServices ?? []}
+              locale={locale}
+              labels={serviceCardLabels}
+              badgeLabel={tMarketing("services.popularBadge")}
+              viewAllLabel={tCommon("viewAll")}
+              emptyMessage={tMarketing("services.empty")}
+              tone={tone}
             />
-          </HomeSectionShell>
-        );
+          );
+          break;
 
-      case "popular":
-        return (
-          <HomePopularServicesSection
-            key={key}
-            title={content.sections.popular.title}
-            description={content.sections.popular.description}
-            services={popularServices}
-            locale={locale}
-            labels={serviceCardLabels}
-            badgeLabel={tMarketing("services.popularBadge")}
-            viewAllLabel={tCommon("viewAll")}
-            emptyMessage={tMarketing("services.empty")}
-            tone={tone}
-          />
-        );
-
-      case "services":
-        return (
-          <HomeServicesSection
-            key={key}
-            title={content.sections.services.title}
-            description={content.sections.services.description}
-            categoryGroups={categoryGroups}
-            locale={locale}
-            labels={serviceCardLabels}
-            viewAllLabel={tCommon("viewAll")}
-            emptyMessage={tMarketing("services.empty")}
-            emptyActionLabel={tMarketing("service.ctaTitle")}
-            tone={tone}
-          />
-        );
-
-      case "regions":
-        return (
-          <HomeRegionsSection
-            key={key}
-            title={content.sections.regions.title}
-            description={content.sections.regions.description}
-            regions={regions}
-            locale={locale}
-            viewLabel={tMarketing("regions.viewServices")}
-            viewAllLabel={tCommon("viewAll")}
-            emptyMessage={tMarketing("regions.empty")}
-            tone={tone}
-          />
-        );
-
-      case "howItWorks":
-        return (
-          <HomeHowItWorksSection
-            key={key}
-            title={content.sections.howItWorks.title}
-            description={content.sections.howItWorks.description}
-            steps={content.howItWorksSteps}
-            tone={tone}
-          />
-        );
-
-      case "vehicleVisual":
-        return (
-          <HomeVehicleVisualSection
-            key={key}
-            title={content.sections.vehicleVisual.title}
-            description={content.sections.vehicleVisual.description}
-            imagePath={content.vehicleVisual.imagePath}
-            imageAlt={content.vehicleVisual.imageAlt}
-            featurePoints={content.vehicleVisual.featurePoints}
-            browseCta={content.vehicleVisual.browseCta}
-            whatsappCta={content.vehicleVisual.whatsappCta}
-            requestCta={content.vehicleVisual.requestCta}
-            whatsappHref={whatsappHref}
-          />
-        );
-
-      case "documents":
-        return (
-          <HomeDocumentsPreviewSection
-            key={key}
-            title={content.sections.documents.title}
-            description={content.sections.documents.description}
-            documents={documents}
-            locale={locale}
-            requiredLabel={tMarketing("service.required")}
-            optionalLabel={tMarketing("service.optional")}
-            viewAllLabel={tCommon("learnMore")}
-            emptyMessage={tMarketing("service.documentsEmpty")}
-            tone={tone}
-          />
-        );
-
-      case "whyChoose":
-        return (
-          <HomeWhyChooseSection
-            key={key}
-            title={content.sections.whyChoose.title}
-            description={content.sections.whyChoose.description}
-            items={content.whyChooseItems}
-            tone={tone}
-          />
-        );
-
-      case "about":
-        return (
-          <HomeAboutSection
-            key={key}
-            title={content.about.title}
-            description={content.about.description}
-            additional={content.about.additional}
-            cta={content.about.cta}
-            trustCards={content.about.trustCards}
-            tone={tone}
-          />
-        );
-
-      case "guides":
-        if (!featureFlags.guidesEnabled) {
-          return null;
-        }
-        return (
-          <HomeGuidesSection
-            key={key}
-            title={content.sections.guides.title}
-            description={content.sections.guides.description}
-            guides={guides}
-            locale={locale}
-            readGuideLabel={tCommon("learnMore")}
-            viewAllLabel={tCommon("viewAll")}
-            emptyMessage={tMarketing("guides.empty")}
-            tone={tone}
-          />
-        );
-
-      case "blog":
-        if (!featureFlags.blogEnabled) {
-          return null;
-        }
-        return (
-          <HomeBlogSection
-            key={key}
-            title={content.sections.blog.title}
-            description={content.sections.blog.description}
-            posts={blogPosts}
-            locale={locale}
-            readMoreLabel={tCommon("learnMore")}
-            viewAllLabel={tCommon("viewAll")}
-            emptyMessage={tMarketing("blog.empty")}
-            tone={tone}
-          />
-        );
-
-      case "faqs":
-        return (
-          <HomeSectionShell key={key} tone={tone}>
-            <SectionHeader
-              title={content.sections.faqs.title}
-              description={content.sections.faqs.description}
-              action={
-                <Button asChild variant="ghost" className="hidden sm:inline-flex">
-                  <Link href="/faqs">
-                    {tCommon("viewAll")}
-                    <DirectionalArrow />
-                  </Link>
-                </Button>
-              }
+        case "services":
+          sectionNode = (
+            <HomeServicesSection
+              title={content.sections.services.title}
+              description={content.sections.services.description}
+              categoryGroups={categoryGroups ?? []}
+              locale={locale}
+              labels={serviceCardLabels}
+              viewAllLabel={tCommon("viewAll")}
+              emptyMessage={tMarketing("services.empty")}
+              emptyActionLabel={tMarketing("service.ctaTitle")}
+              tone={tone}
             />
-            <div className="mt-8">
-              <FaqAccordion items={faqItems} emptyMessage={tMarketing("faqs.empty")} />
-            </div>
-          </HomeSectionShell>
-        );
+          );
+          break;
 
-      case "finalCta":
-        return (
-          <HomeSectionShell
-            key={key}
-            tone={tone}
-            containerClassName="pb-8 md:pb-12"
-          >
-            <HomeFinalCtaSection
-              title={content.sections.finalCta.title}
-              description={content.sections.finalCta.description}
-              browseLabel={content.hero.browseCta}
-              whatsappLabel={content.hero.whatsappCta}
-              requestLabel={content.hero.requestCta}
-              accountLabel={tMarketing("serviceOptions.accountCta")}
+        case "regions":
+          sectionNode = (
+            <HomeRegionsSection
+              title={content.sections.regions.title}
+              description={content.sections.regions.description}
+              regions={regions ?? []}
+              locale={locale}
+              viewLabel={tMarketing("regions.viewServices")}
+              viewAllLabel={tCommon("viewAll")}
+              emptyMessage={tMarketing("regions.empty")}
+              tone={tone}
+            />
+          );
+          break;
+
+        case "howItWorks":
+          sectionNode = (
+            <HomeHowItWorksSection
+              title={content.sections.howItWorks.title}
+              description={content.sections.howItWorks.description}
+              steps={content.howItWorksSteps}
+              tone={tone}
+            />
+          );
+          break;
+
+        case "vehicleVisual":
+          sectionNode = (
+            <HomeVehicleVisualSection
+              title={content.sections.vehicleVisual.title}
+              description={content.sections.vehicleVisual.description}
+              imagePath={content.vehicleVisual.imagePath}
+              imageAlt={content.vehicleVisual.imageAlt}
+              featurePoints={content.vehicleVisual.featurePoints}
+              browseCta={content.vehicleVisual.browseCta}
+              whatsappCta={content.vehicleVisual.whatsappCta}
+              requestCta={content.vehicleVisual.requestCta}
               whatsappHref={whatsappHref}
             />
-          </HomeSectionShell>
-        );
+          );
+          break;
 
-      default:
+        case "documents":
+          sectionNode = (
+            <HomeDocumentsPreviewSection
+              title={content.sections.documents.title}
+              description={content.sections.documents.description}
+              documents={documents ?? []}
+              locale={locale}
+              requiredLabel={tMarketing("service.required")}
+              optionalLabel={tMarketing("service.optional")}
+              viewAllLabel={tCommon("learnMore")}
+              emptyMessage={tMarketing("service.documentsEmpty")}
+              tone={tone}
+            />
+          );
+          break;
+
+        case "whyChoose":
+          sectionNode = (
+            <HomeWhyChooseSection
+              title={content.sections.whyChoose.title}
+              description={content.sections.whyChoose.description}
+              items={content.whyChooseItems}
+              tone={tone}
+            />
+          );
+          break;
+
+        case "about":
+          sectionNode = (
+            <HomeAboutSection
+              title={content.about.title}
+              description={content.about.description}
+              additional={content.about.additional}
+              cta={content.about.cta}
+              trustCards={content.about.trustCards}
+              tone={tone}
+            />
+          );
+          break;
+
+        case "guides":
+          if (!featureFlags.guidesEnabled) {
+            return null;
+          }
+          sectionNode = (
+            <HomeGuidesSection
+              title={content.sections.guides.title}
+              description={content.sections.guides.description}
+              guides={guides ?? []}
+              locale={locale}
+              readGuideLabel={tCommon("learnMore")}
+              viewAllLabel={tCommon("viewAll")}
+              emptyMessage={tMarketing("guides.empty")}
+              tone={tone}
+            />
+          );
+          break;
+
+        case "blog":
+          if (!featureFlags.blogEnabled) {
+            return null;
+          }
+          sectionNode = (
+            <HomeBlogSection
+              title={content.sections.blog.title}
+              description={content.sections.blog.description}
+              posts={blogPosts ?? []}
+              locale={locale}
+              readMoreLabel={tCommon("learnMore")}
+              viewAllLabel={tCommon("viewAll")}
+              emptyMessage={tMarketing("blog.empty")}
+              tone={tone}
+            />
+          );
+          break;
+
+        case "faqs":
+          sectionNode = (
+            <HomeSectionShell tone={tone}>
+              <SectionHeader
+                title={content.sections.faqs.title}
+                description={content.sections.faqs.description}
+                action={
+                  <Button asChild variant="ghost" className="hidden sm:inline-flex">
+                    <Link href="/faqs">
+                      {tCommon("viewAll")}
+                      <DirectionalArrow />
+                    </Link>
+                  </Button>
+                }
+              />
+              <div className="mt-8">
+                <FaqAccordion items={faqItems} emptyMessage={tMarketing("faqs.empty")} />
+              </div>
+            </HomeSectionShell>
+          );
+          break;
+
+        case "finalCta":
+          sectionNode = (
+            <HomeSectionShell tone={tone} containerClassName="pb-8 md:pb-12">
+              <HomeFinalCtaSection
+                title={content.sections.finalCta.title}
+                description={content.sections.finalCta.description}
+                browseLabel={content.hero.browseCta}
+                whatsappLabel={content.hero.whatsappCta}
+                requestLabel={content.hero.requestCta}
+                accountLabel={tMarketing("serviceOptions.accountCta")}
+                whatsappHref={whatsappHref}
+              />
+            </HomeSectionShell>
+          );
+          break;
+
+        default:
+          return null;
+      }
+
+      if (!sectionNode) {
         return null;
+      }
+
+      return (
+        <SectionErrorBoundary key={key} name={key}>
+          {sectionNode}
+        </SectionErrorBoundary>
+      );
+    } catch (error) {
+      console.error(`[homepage] section ${key} failed`, error);
+      return null;
     }
   }
 
   return (
     <>
-      <JsonLd data={jsonLd} />
+      {jsonLd.length > 0 ? <JsonLd data={jsonLd} /> : null}
 
       <HomeHeroSection
         badge={content.hero.badge}
@@ -419,8 +469,8 @@ async function renderHomePage() {
         whatsappCta={content.hero.whatsappCta}
         requestCta={content.hero.requestCta}
         whatsappHref={whatsappHref}
-        trustBadges={content.hero.trustBadges}
-        processCards={content.hero.processCards}
+        trustBadges={content.hero.trustBadges ?? []}
+        processCards={content.hero.processCards ?? []}
         processTitle={tMarketing("services.processTitle")}
       />
 

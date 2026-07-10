@@ -68,7 +68,7 @@ export function HomeHeroSection({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {trustBadges.slice(0, 4).map((item) => (
+            {(trustBadges ?? []).slice(0, 4).map((item) => (
               <span
                 key={item}
                 className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium text-foreground/85"
@@ -112,8 +112,8 @@ export function HomeHeroSection({
             {processTitle}
           </p>
           <ol className="space-y-4">
-            {processCards.map((card, index) => (
-              <li key={card.title} className="flex gap-4">
+            {(processCards ?? []).map((card, index) => (
+              <li key={`${card.title}-${index}`} className="flex gap-4">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                   {index + 1}
                 </span>

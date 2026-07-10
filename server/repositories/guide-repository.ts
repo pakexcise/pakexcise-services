@@ -20,6 +20,10 @@ const publishedGuideSelect = {
 
 export class GuideRepository extends Repository {
   async listPublished(limit = 50) {
+    const take = Number.isFinite(limit)
+      ? Math.min(100, Math.max(1, Math.trunc(limit)))
+      : 50;
+
     return this.query(
       () =>
         this.db.guide.findMany({
@@ -27,7 +31,7 @@ export class GuideRepository extends Repository {
             isPublished: true,
           },
           orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-          take: limit,
+          take,
           select: publishedGuideSelect,
         }),
       [],
