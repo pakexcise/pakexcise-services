@@ -2850,7 +2850,16 @@
         "defaultServiceFallbackImagePath": "سروس fallback تصویر",
         "defaultRegionFallbackImagePath": "ریجن/شہر fallback تصویر",
         "primaryBrandColor": "پرائمری برانڈ رنگ",
-        "secondaryBrandColor": "سیکنڈری برانڈ رنگ"
+        "secondaryBrandColor": "سیکنڈری برانڈ رنگ",
+        "upload": "اپ لوڈ",
+        "uploading": "اپ لوڈ ہو رہا ہے…",
+        "uploadHint": "لوگو کے لیے شفاف پس منظر والی PNG تجویز کی جاتی ہے۔ JPEG، PNG، یا WebP، زیادہ سے زیادہ 2 MB۔ اپ لوڈ کے بعد ترتیبات محفوظ کریں۔",
+        "previewAlt": "برانڈنگ اثاثہ پیش منظر",
+        "uploadError": "اپ لوڈ ناکام",
+        "invalidType": "صرف JPEG، PNG، یا WebP تصاویر کی اجازت ہے۔",
+        "tooLarge": "تصویر 2 MB یا اس سے چھوٹی ہونی چاہیے۔",
+        "invalidName": "غلط فائل نام۔",
+        "unresolvedPreview": "راستہ محفوظ ہے لیکن پیش منظر کے لیے فائل نہیں مل سکی۔"
       },
       "social": {
         "title": "سوشل لنکس",

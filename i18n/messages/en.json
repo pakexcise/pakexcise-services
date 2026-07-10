@@ -2849,7 +2849,16 @@
         "defaultServiceFallbackImagePath": "Service fallback image",
         "defaultRegionFallbackImagePath": "Region/city fallback image",
         "primaryBrandColor": "Primary brand color",
-        "secondaryBrandColor": "Secondary brand color"
+        "secondaryBrandColor": "Secondary brand color",
+        "upload": "Upload",
+        "uploading": "Uploading…",
+        "uploadHint": "PNG with transparent background recommended for logos. JPEG, PNG, or WebP up to 2 MB. Save settings after uploading.",
+        "previewAlt": "Branding asset preview",
+        "uploadError": "Upload failed",
+        "invalidType": "Only JPEG, PNG, or WebP images are allowed.",
+        "tooLarge": "Image must be 2 MB or smaller.",
+        "invalidName": "Invalid file name.",
+        "unresolvedPreview": "Path is saved but the file could not be resolved for preview."
       },
       "social": {
         "title": "Social links",

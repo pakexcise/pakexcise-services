@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { BrandingImageUploadField } from "@/features/settings/admin/components/branding-image-upload-field";
 import { updateGlobalSiteSettingsAction } from "@/features/settings/admin/actions/site-settings-actions";
 import type { GlobalSiteFormValues } from "@/features/settings/admin/lib/global-site-form";
 import { useRouter } from "@/i18n/navigation";
@@ -100,6 +101,15 @@ export type SiteSettingsPanelLabels = {
     defaultRegionFallbackImagePath: string;
     primaryBrandColor: string;
     secondaryBrandColor: string;
+    upload: string;
+    uploading: string;
+    uploadHint: string;
+    previewAlt: string;
+    uploadError: string;
+    invalidType: string;
+    tooLarge: string;
+    invalidName: string;
+    unresolvedPreview: string;
   };
 };
 
@@ -833,7 +843,7 @@ export function SiteSettingsPanel({
       ) : null}
 
       {activeTab === "branding" ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {(
             [
               ["logoPath", labels.branding.logoPath],
@@ -851,17 +861,26 @@ export function SiteSettingsPanel({
               ["defaultRegionFallbackImagePath", labels.branding.defaultRegionFallbackImagePath],
             ] as const
           ).map(([key, label]) => (
-            <Field key={key} label={label}>
-              <Input
-                value={values.branding[key]}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    branding: { ...current.branding, [key]: event.target.value },
-                  }))
-                }
-              />
-            </Field>
+            <BrandingImageUploadField
+              key={key}
+              label={label}
+              value={values.branding[key]}
+              onChange={(path) =>
+                setValues((current) => ({
+                  ...current,
+                  branding: { ...current.branding, [key]: path },
+                }))
+              }
+              uploadLabel={labels.branding.upload}
+              uploadingLabel={labels.branding.uploading}
+              hint={labels.branding.uploadHint}
+              previewAlt={labels.branding.previewAlt}
+              uploadErrorLabel={labels.branding.uploadError}
+              invalidTypeLabel={labels.branding.invalidType}
+              tooLargeLabel={labels.branding.tooLarge}
+              invalidNameLabel={labels.branding.invalidName}
+              unresolvedPreviewLabel={labels.branding.unresolvedPreview}
+            />
           ))}
           <Field label={labels.branding.primaryBrandColor}>
             <div className="flex gap-2">

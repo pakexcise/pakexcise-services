@@ -4,6 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { brandingAssets } from "@/config/branding";
+import { extractBrandingImageFileName } from "@/features/settings/lib/branding-image-paths";
+import { readBrandingUploadFileSync } from "@/features/settings/lib/upload-branding-image";
 
 function detectImageMimeType(buffer: Buffer, filePath: string): string {
   if (buffer.length >= 4) {
@@ -63,6 +65,17 @@ export function getBrandingAssetFilePath(
 }
 
 export function getBrandingAssetDataUriFromPath(assetPath: string): string | null {
+  const uploadedFileName = extractBrandingImageFileName(assetPath);
+  if (uploadedFileName) {
+    const buffer = readBrandingUploadFileSync(uploadedFileName);
+    if (!buffer) {
+      return null;
+    }
+
+    const mimeType = detectImageMimeType(buffer, uploadedFileName);
+    return `data:${mimeType};base64,${buffer.toString("base64")}`;
+  }
+
   const filePath = resolvePublicAssetFilePath(assetPath);
   if (!filePath) {
     return null;

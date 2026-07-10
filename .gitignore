@@ -21,6 +21,7 @@
 # local dev uploads (when R2 is not configured)
 .local-uploads/
 storage/blog-uploads/
+storage/branding-uploads/
 
 # misc
 .DS_Store

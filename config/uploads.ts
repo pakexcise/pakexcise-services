@@ -44,6 +44,10 @@ export const BLOG_IMAGE_MIME_TYPES = PAYMENT_METHOD_QR_MIME_TYPES;
 
 export const BLOG_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
 
+export const BRANDING_IMAGE_MIME_TYPES = PAYMENT_METHOD_QR_MIME_TYPES;
+
+export const BRANDING_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
+
 export type PaymentMethodQrMimeType = (typeof PAYMENT_METHOD_QR_MIME_TYPES)[number];
 
 export const COMPLETION_PROOF_DOC_TYPE = "completion_proof";

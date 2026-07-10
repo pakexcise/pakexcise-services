@@ -133,6 +133,15 @@ export default async function AdminSiteSettingsPage() {
               defaultRegionFallbackImagePath: t("branding.defaultRegionFallbackImagePath"),
               primaryBrandColor: t("branding.primaryBrandColor"),
               secondaryBrandColor: t("branding.secondaryBrandColor"),
+              upload: t("branding.upload"),
+              uploading: t("branding.uploading"),
+              uploadHint: t("branding.uploadHint"),
+              previewAlt: t("branding.previewAlt"),
+              uploadError: t("branding.uploadError"),
+              invalidType: t("branding.invalidType"),
+              tooLarge: t("branding.tooLarge"),
+              invalidName: t("branding.invalidName"),
+              unresolvedPreview: t("branding.unresolvedPreview"),
             },
           }}
         />
