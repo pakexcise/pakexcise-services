@@ -1,18 +1,16 @@
 /**
- * Promote marketing/CMS content from staging DB → live DB.
+ * DEPRECATED — emergency / recovery only. Not part of normal releases.
  *
- * Never touches: users, applications, invoices, payments, documents,
- * audit logs, analytics, guest leads, or env-specific settings.
+ * Normal workflow: deploy code with scripts/deploy-live.sh, then manage
+ * production CMS in Live Admin (or run git-backed seeds on live only).
  *
- * Uploaded blog/branding image *files* are NOT in the database. On the VPS,
- * always run via scripts/run-promote-staging-content.sh so storage/blog-uploads
- * (and related dirs) are rsynced from staging → live after DB promote.
+ * This script copies marketing/CMS rows from staging Neon → live Neon.
+ * It never touches users, applications, invoices, payments, or documents.
  *
- * Usage (on live VPS — preferred):
- *   bash scripts/run-promote-staging-content.sh --dry-run
- *   bash scripts/run-promote-staging-content.sh
+ * Prefer R2 for blog/branding images so both envs share object keys.
+ * Do not use local folder sync as the default deploy model.
  *
- * Or DB-only:
+ * Emergency usage (on live VPS):
  *   SOURCE_DATABASE_URL="..." pnpm db:promote-staging-content -- --dry-run
  *   SOURCE_DATABASE_URL="..." pnpm db:promote-staging-content
  */

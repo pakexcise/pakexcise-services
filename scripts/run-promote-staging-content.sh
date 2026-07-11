@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# Promote marketing content from staging Neon DB → live Neon DB,
-# and sync blog/branding upload files that live outside git.
+# DEPRECATED — emergency / recovery only. Not part of normal releases.
 #
-# Prefer the full one-command promote:
-#   bash scripts/promote-staging-to-live.sh
+# Normal releases:
+#   bash scripts/deploy-staging.sh
+#   bash scripts/deploy-live.sh
+# Production CMS: Live Admin (or pnpm db:seed-* on live only).
 #
-# Content/media only:
-#   bash scripts/run-promote-staging-content.sh
+# This script copies staging CMS DB rows + local upload folders to live.
+# Prefer shared R2 for marketing images instead of disk sync.
+#
+# Emergency:
 #   bash scripts/run-promote-staging-content.sh --dry-run
 #   bash scripts/run-promote-staging-content.sh --skip-restart
 
@@ -25,6 +28,8 @@ for arg in "$@"; do
 done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "WARNING: DEPRECATED emergency content promote. Prefer deploy-live.sh + Live Admin." >&2
 
 if [[ ! -d "$LIVE_DIR" ]]; then
   echo "Live app dir not found: $LIVE_DIR" >&2
@@ -55,33 +60,20 @@ fi
 
 export SOURCE_DATABASE_URL
 
-# Media first so DB paths resolve immediately after promote.
 if [[ "$DRY_RUN" -eq 1 ]]; then
   LIVE_DIR="$LIVE_DIR" STAGING_DIR="$STAGING_DIR" \
     bash "$SCRIPT_DIR/sync-staging-uploads.sh" --dry-run
-else
-  LIVE_DIR="$LIVE_DIR" STAGING_DIR="$STAGING_DIR" \
-    bash "$SCRIPT_DIR/sync-staging-uploads.sh"
-fi
-
-echo "==> Promoting staging CMS → live DB"
-echo "    live dir:    $LIVE_DIR"
-echo "    staging dir: $STAGING_DIR"
-if [[ "$DRY_RUN" -eq 1 ]]; then
-  echo "    mode: dry-run"
   pnpm db:promote-staging-content -- --dry-run
   exit 0
 fi
 
-echo "    mode: apply"
+LIVE_DIR="$LIVE_DIR" STAGING_DIR="$STAGING_DIR" \
+  bash "$SCRIPT_DIR/sync-staging-uploads.sh"
 pnpm db:promote-staging-content
 
 if [[ "$SKIP_RESTART" -eq 1 ]]; then
-  echo "==> Skipping PM2 restart (--skip-restart)"
   exit 0
 fi
 
-echo "==> Clearing Next.js ISR cache"
 rm -rf .next/cache
-echo "==> Recreating live PM2 process"
 bash "$SCRIPT_DIR/ensure-live-pm2.sh" "$LIVE_DIR" 3000

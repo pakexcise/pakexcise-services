@@ -26,6 +26,8 @@ const BRANDING_UPLOADS_DIR = path.join(
   "branding-uploads",
 );
 
+/** Prefer shared R2 on staging + live; local storage/branding-uploads is a cache/fallback. */
+
 function slugifyBaseName(fileName: string): string {
   const withoutExt = fileName.replace(/\.[^.]+$/, "");
   const slug = withoutExt

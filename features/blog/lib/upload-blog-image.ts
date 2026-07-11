@@ -22,6 +22,12 @@ import {
 const BLOG_UPLOADS_DIR = path.join(process.cwd(), "storage", "blog-uploads");
 const LEGACY_PUBLIC_UPLOADS_DIR = path.join(process.cwd(), "public", "blog", "uploads");
 
+/**
+ * Marketing blog images: write to R2 when configured (preferred), plus a local
+ * disk cache under storage/blog-uploads. Staging and live should share the same
+ * R2 bucket so `/api/blog/images/...` works without copying server folders.
+ * Committed assets under public/blog/ are also fine for seed content.
+ */
 function slugifyBaseName(fileName: string): string {
   const withoutExt = fileName.replace(/\.[^.]+$/, "");
   const slug = withoutExt

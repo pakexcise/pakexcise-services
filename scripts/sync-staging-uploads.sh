@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Sync gitignored marketing uploads from staging app dir → live app dir.
-# Sourced by promote scripts. Safe to call directly:
-#   bash scripts/sync-staging-uploads.sh
-#   bash scripts/sync-staging-uploads.sh --dry-run
+# DEPRECATED — emergency disk sync only.
+# Prefer shared Cloudflare R2 for blog/branding marketing assets on both envs.
+# Normal deploys: scripts/deploy-staging.sh / scripts/deploy-live.sh
 
 set -euo pipefail
 

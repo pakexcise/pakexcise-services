@@ -18,12 +18,13 @@ Use this checklist before going live. `.env.example` lists every variable; fill 
 - [ ] Set `ENCRYPTION_KEY` (32-byte base64) for sensitive field encryption
 - [ ] Set `OTP_PEPPER`, `IP_HASH_PEPPER`, `NOTIFICATION_RECIPIENT_PEPPER`
 
-## 3. Cloudflare R2 (private documents)
+## 3. Cloudflare R2 (private documents + marketing uploads)
 
 - [ ] Create private bucket (no public access)
 - [ ] Set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`
 - [ ] Do **not** expose `R2_PUBLIC_URL` for customer documents
 - [ ] Verify signed URL expiry (view: 1h, proof: 24h)
+- [ ] **Use the same R2 bucket on staging and live** for marketing assets (`blog/images/*`, branding). Blog/branding uploads go to R2 first; local `storage/*-uploads` is only a cache/fallback. Do not rsync upload folders between envs for normal releases.
 
 ## 4. Upstash Redis
 
@@ -154,7 +155,22 @@ location /api/realtime/ {
 
 ## VPS deploy (Hostinger / PM2)
 
-Run from the app directory on the server (`/var/www/pakexcise-live` or `/var/www/pakexcise-staging`).
+Run **on the VPS over SSH** (`deploy@…`), not on your local Windows machine. Paths like `/var/www/pakexcise-live` only exist on the server.
+
+### Environment model
+
+| | Staging | Live |
+|---|---|---|
+| URL | `https://staging.pakexcise.com` | `https://pakexcise.com` |
+| App dir | `/var/www/pakexcise-staging` | `/var/www/pakexcise-live` |
+| PM2 | `pakexcise-staging` :3001 | `pakexcise-live` :3000 |
+| Database | Staging Neon | Live Neon (separate) |
+| CMS content | Staging Admin / seeds | **Live Admin** / seeds on live |
+
+- Deploy moves **code + schema** only.
+- Do **not** copy staging CMS, uploads folders, users, or applications to live for normal releases.
+- Production blogs, guides, regions, SEO, and pages are authored in **Live Admin** (or seeded on live from git).
+- Marketing images: shared **R2** (preferred) or committed files under `public/blog/`.
 
 ### Environment file location
 
@@ -171,80 +187,50 @@ SES_FROM_EMAIL=noreply@pakexcise.com
 SES_REPLY_TO_EMAIL=info@pakexcise.com
 ```
 
-Optional dedicated SES IAM keys (if R2 uses different credentials):
-
-```env
-AWS_SES_ACCESS_KEY_ID=...
-AWS_SES_SECRET_ACCESS_KEY=...
-```
-
-### Clean deploy script
+### Normal release workflow
 
 ```bash
-# Staging (code only)
-bash scripts/deploy-app.sh /var/www/pakexcise-staging pakexcise-staging staging
+ssh deploy@YOUR_VPS_IP
 
-# Live — preferred one command (code + schema + CMS + images/uploads)
-bash scripts/promote-staging-to-live.sh
+# 1) Deploy code to staging and QA
+cd /var/www/pakexcise-staging
+bash scripts/deploy-staging.sh
+# → https://staging.pakexcise.com
+
+# 2) Same commit to live (after QA)
+cd /var/www/pakexcise-live
+bash scripts/deploy-live.sh
+# → https://pakexcise.com
 ```
 
-`promote-staging-to-live.sh` automatically:
+Each command: `git pull` → `pnpm install` → `pnpm build` → `prisma db push` → recreate PM2.
 
-1. Pulls/builds live from the `staging` git branch
-2. Runs `prisma db push` (additive schema)
-3. Copies uploaded media from staging → live (`storage/blog-uploads`, branding uploads, legacy blog uploads)
-4. Promotes CMS content from staging Neon → live Neon (blogs, guides, regions, services, FAQs, SEO, pages, redirects, …)
-5. Clears ISR cache and recreates `pakexcise-live` on port 3000
+### Production content (live only)
 
-It does **not** copy users, applications, invoices, payments, documents, or audit logs.
+Edit blogs, guides, FAQs, regions, SEO in **https://pakexcise.com/admin**.
 
-`deploy-app.sh` for live also auto-promotes CMS + uploads after build (same content path). Use `SKIP_CONTENT_PROMOTE=1` only if you want a code-only live deploy.
-
-```bash
-# Code-only live deploy (rare)
-SKIP_CONTENT_PROMOTE=1 bash scripts/deploy-app.sh /var/www/pakexcise-live pakexcise-live staging
-
-# Content/media only (after code already deployed)
-SKIP_BUILD=1 bash scripts/promote-staging-to-live.sh
-```
-
-### What gets promoted (staging → live)
-
-- Blog categories + posts (live posts not in staging are removed) + blog images
-- Guides, legal pages, FAQs, social links, reviews
-- Redirects (merge upsert; live-only redirects kept)
-- SEO meta (rewrites `staging.pakexcise.com` → `pakexcise.com` in canonicals)
-- Regions, cities, services, form fields, document requirements (keeps live IDs)
-- Allowlisted settings: home/contact page, public UI, forms, branding, business, SEO defaults
-- Uploaded files: `storage/blog-uploads/`, `storage/branding-uploads/`, `public/blog/uploads/`
-
-### What is never promoted
-
-- Users, sessions, agents, applications, documents, invoices, payments
-- Audit logs, analytics, guest leads, contact inquiries
-- Payment / tracking / feature-flag settings (env-specific)
-
-### Verify after promote
-
-- [ ] Health `buildId` matches `git rev-parse --short HEAD`
-- [ ] Live PM2 memory is hundreds of MB (not ~10–20MB)
-- [ ] `https://pakexcise.com/blog` matches staging (article + images)
-- [ ] Guides / regions / services / FAQs match staging marketing content
-- [ ] Canonicals use `pakexcise.com` (not staging host)
-- [ ] Live admin still shows real customers/applications
-
-Manual equivalent (code only — prefer `promote-staging-to-live.sh` instead):
+Baseline featured blog (git images under `public/blog/*.png`) — run **on live** after deploy if needed:
 
 ```bash
 cd /var/www/pakexcise-live
-git pull origin staging
-export BUILD_ID="$(git rev-parse --short HEAD)"
-pnpm install
-rm -rf .next
-pnpm build
-pm2 restart pakexcise-live --update-env
-curl -s http://127.0.0.1:3000/api/health
+pnpm db:seed-primary-blog
+rm -rf .next/cache
+bash scripts/ensure-live-pm2.sh
 ```
+
+Other env-scoped seeds (`pnpm db:seed-faqs`, `pnpm db:seed-legal`, …) also run against **that** environment’s `DATABASE_URL` only.
+
+### Emergency only (deprecated)
+
+Scripts `promote-staging-to-live.sh`, `run-promote-staging-content.sh`, and `pnpm db:promote-staging-content` can copy staging CMS → live for recovery. They are **not** the normal workflow. Prefer Live Admin + R2 + seeds.
+
+### Verify after live deploy
+
+- [ ] `curl -s http://127.0.0.1:3000/api/health` — `buildId` matches `git rev-parse --short HEAD`
+- [ ] Live PM2 memory is hundreds of MB (not ~10–20MB)
+- [ ] Public pages load; blog images work (R2 or `public/blog/`)
+- [ ] Live admin still shows real customers/applications
+- [ ] Staging unchanged except its own deploys
 
 ### After deploy
 
