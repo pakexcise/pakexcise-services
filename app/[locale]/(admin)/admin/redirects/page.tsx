@@ -65,11 +65,12 @@ export default async function AdminRedirectsPage({
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <RedirectBulkActions
+              hasItems={result.total > 0}
               labels={{
                 clearAll: t("clearAll"),
                 clearAllConfirm: t("clearAllConfirm"),
-                resetRecommended: t("resetRecommended"),
-                resetRecommendedConfirm: t("resetRecommendedConfirm"),
+                clearAllSuccess: t("clearAllSuccess"),
+                clearAllError: t("clearAllError"),
               }}
             />
             <Button asChild>
@@ -82,17 +83,27 @@ export default async function AdminRedirectsPage({
         }
       />
 
-      <p className="rounded-xl border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-        {t("setupHint")}
-      </p>
+      <div className="space-y-2 rounded-xl border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+        <p>{t("setupHint")}</p>
+        <p>{t("setupHintBuiltIn")}</p>
+      </div>
 
       <form
         action="/admin/redirects"
         method="get"
         className="flex flex-wrap gap-3 rounded-xl border p-4"
       >
-        <Input name="q" defaultValue={q ?? ""} placeholder={t("searchPlaceholder")} className="max-w-sm" />
-        <select name="active" defaultValue={active} className="h-10 rounded-md border px-3 text-sm">
+        <Input
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder={t("searchPlaceholder")}
+          className="max-w-sm"
+        />
+        <select
+          name="active"
+          defaultValue={active}
+          className="h-10 rounded-md border px-3 text-sm"
+        >
           <option value="all">{t("filterAll")}</option>
           <option value="true">{t("filterActive")}</option>
           <option value="false">{t("filterInactive")}</option>
@@ -135,6 +146,7 @@ export default async function AdminRedirectsPage({
                         edit: t("edit"),
                         delete: t("delete"),
                         deleteConfirm: t("deleteConfirm"),
+                        deleteError: t("deleteError"),
                       }}
                     />
                   </TableCell>

@@ -2,8 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 
 import {
   LEGACY_SERVICE_SLUGS_TO_DEACTIVATE,
-  RECOMMENDED_SERVICE_REDIRECTS,
-} from "../config/recommended-redirects";
+} from "../config/legacy-url-redirects";
 import { REGION_SLUG_ALIASES } from "../config/region-slugs";
 import { CITY_SEED } from "./seed-cities-data";
 import { seedServiceConfig } from "./seed-service-config";
@@ -926,18 +925,9 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     data: { isActive: false },
   });
 
-  // Wipe stale/conflicting redirects, then install the recommended service map only.
-  // Legal + region aliases are handled in next.config.ts (not duplicated in DB).
+  // Admin Redirects table stays empty by default.
+  // Built-in legacy service / legal / region aliases live in next.config.ts.
   await prisma.redirect.deleteMany({});
-
-  await prisma.redirect.createMany({
-    data: RECOMMENDED_SERVICE_REDIRECTS.map((redirect) => ({
-      oldSlug: redirect.oldSlug,
-      newSlug: redirect.newSlug,
-      statusCode: 301,
-      isActive: true,
-    })),
-  });
 
   const staticPages: Array<{
     key: string;

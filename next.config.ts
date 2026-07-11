@@ -5,6 +5,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
 
 import { REGION_SLUG_ALIASES } from "./config/region-slugs";
+import { buildLegacyServiceNextRedirects } from "./config/legacy-url-redirects";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -78,7 +79,11 @@ const nextConfig: NextConfig = {
       },
     ];
 
-    return [...legalRedirects, ...regionRedirects];
+    return [
+      ...legalRedirects,
+      ...regionRedirects,
+      ...buildLegacyServiceNextRedirects(),
+    ];
   },
 };
 

@@ -2,10 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import {
-  LEGACY_SERVICE_SLUGS_TO_DEACTIVATE,
-  RECOMMENDED_SERVICE_REDIRECTS,
-} from "@/config/recommended-redirects";
+import { LEGACY_SERVICE_SLUGS_TO_DEACTIVATE } from "@/config/legacy-url-redirects";
 import {
   createRedirectSchema,
   redirectIdSchema,
@@ -58,6 +55,13 @@ export async function createRedirectAction(
   if (!parsed.success) return parsed;
 
   const data = parsed.data;
+
+  if (data.oldSlug === data.newSlug) {
+    return errorResult("Old and new slug must be different", {
+      newSlug: ["Must differ from old slug"],
+    });
+  }
+
   const existing = await prisma.redirect.findUnique({
     where: { oldSlug: data.oldSlug },
   });
@@ -91,6 +95,12 @@ export async function updateRedirectAction(
   const data = parsed.data;
   const existing = await adminRedirectRepository.findById(data.id);
   if (!existing) return errorResult("Redirect not found");
+
+  if (data.oldSlug === data.newSlug) {
+    return errorResult("Old and new slug must be different", {
+      newSlug: ["Must differ from old slug"],
+    });
+  }
 
   if (data.oldSlug !== existing.oldSlug) {
     const conflict = await prisma.redirect.findUnique({
@@ -152,92 +162,60 @@ export async function toggleRedirectAction(
 export async function deleteRedirectAction(
   input: unknown,
 ): Promise<ActionResult<{ id: string }>> {
-  const user = await requirePermission("platform:manage");
-  const parsed = parseInput(redirectIdSchema, input);
-  if (!parsed.success) return parsed;
+  try {
+    const user = await requirePermission("platform:manage");
+    const parsed = parseInput(redirectIdSchema, input);
+    if (!parsed.success) return parsed;
 
-  const existing = await adminRedirectRepository.findById(parsed.data.id);
-  if (!existing) return errorResult("Redirect not found");
+    const existing = await adminRedirectRepository.findById(parsed.data.id);
+    if (!existing) return errorResult("Redirect not found");
 
-  await prisma.redirect.delete({ where: { id: parsed.data.id } });
+    await prisma.redirect.delete({ where: { id: parsed.data.id } });
 
-  await auditAdminAction({
-    actorId: user.id,
-    action: "DELETE",
-    entityType: "redirect",
-    entityId: existing.id,
-    before: redirectSnapshot(existing),
-  });
+    await auditAdminAction({
+      actorId: user.id,
+      action: "DELETE",
+      entityType: "redirect",
+      entityId: existing.id,
+      before: redirectSnapshot(existing),
+    });
 
-  revalidateRedirectPaths();
-  return successResult({ id: existing.id });
+    revalidateRedirectPaths();
+    return successResult({ id: existing.id });
+  } catch (error) {
+    console.error("[deleteRedirectAction]", error);
+    return errorResult("Could not delete redirect");
+  }
 }
 
 export async function deleteAllRedirectsAction(): Promise<
   ActionResult<{ deletedCount: number }>
 > {
-  const user = await requirePermission("platform:manage");
+  try {
+    const user = await requirePermission("platform:manage");
 
-  const existing = await prisma.redirect.findMany({
-    select: { id: true, oldSlug: true, newSlug: true },
-  });
+    const existingCount = await prisma.redirect.count();
+    const result = await prisma.redirect.deleteMany({});
 
-  const result = await prisma.redirect.deleteMany({});
+    // Keep legacy service rows inactive so old slugs do not reappear as live pages.
+    await prisma.service.updateMany({
+      where: { slug: { in: [...LEGACY_SERVICE_SLUGS_TO_DEACTIVATE] } },
+      data: { isActive: false },
+    });
 
-  await auditAdminAction({
-    actorId: user.id,
-    action: "DELETE",
-    entityType: "redirect",
-    entityId: "all",
-    before: { count: existing.length, items: existing },
-    after: { deletedCount: result.count },
-  });
+    await auditAdminAction({
+      actorId: user.id,
+      action: "DELETE",
+      entityType: "redirect",
+      entityId: null,
+      before: { count: existingCount },
+      after: { deletedCount: result.count },
+    });
 
-  revalidateRedirectPaths();
-  return successResult({ deletedCount: result.count });
-}
-
-export async function resetRecommendedRedirectsAction(): Promise<
-  ActionResult<{ deletedCount: number; createdCount: number }>
-> {
-  const user = await requirePermission("platform:manage");
-
-  const existing = await prisma.redirect.findMany({
-    select: { id: true, oldSlug: true, newSlug: true },
-  });
-
-  const deleted = await prisma.redirect.deleteMany({});
-
-  await prisma.service.updateMany({
-    where: { slug: { in: [...LEGACY_SERVICE_SLUGS_TO_DEACTIVATE] } },
-    data: { isActive: false },
-  });
-
-  await prisma.redirect.createMany({
-    data: RECOMMENDED_SERVICE_REDIRECTS.map((item) => ({
-      oldSlug: item.oldSlug,
-      newSlug: item.newSlug,
-      statusCode: 301,
-      isActive: true,
-    })),
-  });
-
-  await auditAdminAction({
-    actorId: user.id,
-    action: "UPDATE",
-    entityType: "redirect",
-    entityId: "recommended-reset",
-    before: { count: existing.length, items: existing },
-    after: {
-      deletedCount: deleted.count,
-      createdCount: RECOMMENDED_SERVICE_REDIRECTS.length,
-      redirects: RECOMMENDED_SERVICE_REDIRECTS,
-    },
-  });
-
-  revalidateRedirectPaths();
-  return successResult({
-    deletedCount: deleted.count,
-    createdCount: RECOMMENDED_SERVICE_REDIRECTS.length,
-  });
+    revalidateRedirectPaths();
+    return successResult({ deletedCount: result.count });
+  } catch (error) {
+    console.error("[deleteAllRedirectsAction]", error);
+    return errorResult("Could not clear redirects");
+  }
 }

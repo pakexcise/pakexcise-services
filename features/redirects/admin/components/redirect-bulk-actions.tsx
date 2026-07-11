@@ -1,71 +1,86 @@
 "use client";
 
-import { RefreshCw, Trash2 } from "lucide-react";
-import { useTransition } from "react";
+import { Trash2 } from "lucide-react";
+import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  deleteAllRedirectsAction,
-  resetRecommendedRedirectsAction,
-} from "@/features/redirects/admin/actions/redirect-actions";
+import { deleteAllRedirectsAction } from "@/features/redirects/admin/actions/redirect-actions";
 import { useRouter } from "@/i18n/navigation";
 
 type RedirectBulkActionsProps = {
   labels: {
     clearAll: string;
     clearAllConfirm: string;
-    resetRecommended: string;
-    resetRecommendedConfirm: string;
+    clearAllSuccess: string;
+    clearAllError: string;
   };
+  hasItems: boolean;
 };
 
-export function RedirectBulkActions({ labels }: RedirectBulkActionsProps) {
+export function RedirectBulkActions({
+  labels,
+  hasItems,
+}: RedirectBulkActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [message, setMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
 
   function handleClearAll() {
+    if (!hasItems) {
+      return;
+    }
+
     if (!window.confirm(labels.clearAllConfirm)) {
       return;
     }
 
-    startTransition(async () => {
-      await deleteAllRedirectsAction();
-      router.refresh();
-    });
-  }
-
-  function handleResetRecommended() {
-    if (!window.confirm(labels.resetRecommendedConfirm)) {
-      return;
-    }
+    setMessage(null);
+    setIsError(false);
 
     startTransition(async () => {
-      await resetRecommendedRedirectsAction();
+      const result = await deleteAllRedirectsAction();
+
+      if (!result.success) {
+        setIsError(true);
+        setMessage(result.error || labels.clearAllError);
+        return;
+      }
+
+      setIsError(false);
+      setMessage(
+        labels.clearAllSuccess.replace(
+          "{count}",
+          String(result.data.deletedCount),
+        ),
+      );
       router.refresh();
     });
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button
-        type="button"
-        variant="outline"
-        disabled={isPending}
-        onClick={handleResetRecommended}
-      >
-        <RefreshCw className="size-4" />
-        {labels.resetRecommended}
-      </Button>
+    <div className="flex flex-col items-end gap-2">
       <Button
         type="button"
         variant="outline"
         className="text-destructive hover:text-destructive"
-        disabled={isPending}
+        disabled={isPending || !hasItems}
         onClick={handleClearAll}
       >
         <Trash2 className="size-4" />
         {labels.clearAll}
       </Button>
+      {message ? (
+        <p
+          className={
+            isError
+              ? "text-sm text-destructive"
+              : "text-sm text-green-700 dark:text-green-400"
+          }
+        >
+          {message}
+        </p>
+      ) : null}
     </div>
   );
 }

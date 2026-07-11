@@ -60,8 +60,10 @@ export function RedirectEditorForm({
   return (
     <div className="max-w-xl space-y-4 rounded-xl border p-4">
       <p className="text-sm text-muted-foreground">
-        Use service slugs for services, or prefixed keys like <code>blog:old-slug</code> and{" "}
-        <code>guide:old-slug</code> for content redirects.
+        Add a custom rule only when needed. Use a bare service slug, or{" "}
+        <code>blog:old-slug</code> / <code>guide:old-slug</code> for content.
+        Built-in legal, region, and legacy service aliases are already handled by
+        the app and should not be duplicated here.
       </p>
       <div className="space-y-2">
         <Label htmlFor="oldSlug">Old slug / key</Label>
