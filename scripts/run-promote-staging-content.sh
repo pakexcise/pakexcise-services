@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Promote marketing content from staging Neon DB → live Neon DB.
+# Promote marketing content from staging Neon DB → live Neon DB,
+# and sync blog/branding upload files that live outside git.
 # Run from /var/www/pakexcise-live after code deploy + prisma db push.
 #
 # Usage:
@@ -47,6 +48,53 @@ if [[ -z "$SOURCE_DATABASE_URL" ]]; then
 fi
 
 export SOURCE_DATABASE_URL
+
+sync_upload_dir() {
+  local label="$1"
+  local src="$2"
+  local dest="$3"
+
+  if [[ ! -d "$src" ]]; then
+    echo "  skip ${label}: source missing (${src})"
+    return 0
+  fi
+
+  mkdir -p "$dest"
+
+  local count
+  count="$(find "$src" -type f ! -name '.gitkeep' | wc -l | tr -d ' ')"
+  echo "  ${label}: ${count} file(s) from ${src}"
+
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    find "$src" -type f ! -name '.gitkeep' | sed 's/^/    would copy: /' | head -n 50
+    if [[ "$count" -gt 50 ]]; then
+      echo "    ... and $((count - 50)) more"
+    fi
+    return 0
+  fi
+
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --exclude '.gitkeep' "${src}/" "${dest}/"
+  else
+    find "$src" -type f ! -name '.gitkeep' -print0 \
+      | while IFS= read -r -d '' file; do
+          rel="${file#"$src"/}"
+          mkdir -p "$(dirname "${dest}/${rel}")"
+          cp -f "$file" "${dest}/${rel}"
+        done
+  fi
+}
+
+echo "==> Syncing uploaded media (gitignored storage)"
+sync_upload_dir "blog-uploads" \
+  "${STAGING_DIR}/storage/blog-uploads" \
+  "${LIVE_DIR}/storage/blog-uploads"
+sync_upload_dir "branding-uploads" \
+  "${STAGING_DIR}/storage/branding-uploads" \
+  "${LIVE_DIR}/storage/branding-uploads"
+sync_upload_dir "legacy-blog-public-uploads" \
+  "${STAGING_DIR}/public/blog/uploads" \
+  "${LIVE_DIR}/public/blog/uploads"
 
 echo "==> Promoting staging content → live"
 echo "    live dir:    $LIVE_DIR"

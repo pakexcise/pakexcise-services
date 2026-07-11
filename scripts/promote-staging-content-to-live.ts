@@ -4,13 +4,17 @@
  * Never touches: users, applications, invoices, payments, documents,
  * audit logs, analytics, guest leads, or env-specific settings.
  *
- * Usage (on live VPS):
+ * Uploaded blog/branding image *files* are NOT in the database. On the VPS,
+ * always run via scripts/run-promote-staging-content.sh so storage/blog-uploads
+ * (and related dirs) are rsynced from staging → live after DB promote.
+ *
+ * Usage (on live VPS — preferred):
+ *   bash scripts/run-promote-staging-content.sh --dry-run
+ *   bash scripts/run-promote-staging-content.sh
+ *
+ * Or DB-only:
  *   SOURCE_DATABASE_URL="..." pnpm db:promote-staging-content -- --dry-run
  *   SOURCE_DATABASE_URL="..." pnpm db:promote-staging-content
- *
- * Or:
- *   SOURCE_DATABASE_URL="$(grep ^DATABASE_URL= /var/www/pakexcise-staging/.env.production | cut -d= -f2- | tr -d '"')" \
- *     pnpm db:promote-staging-content
  */
 import { Prisma, PrismaClient } from "@prisma/client";
 

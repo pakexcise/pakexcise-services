@@ -236,6 +236,7 @@ What the promote script syncs (by slug / pageKey):
 - SEO meta (rewrites `staging.pakexcise.com` → `pakexcise.com` in canonicals)
 - Regions, cities, services, form fields, document requirements (keeps live IDs)
 - Allowlisted settings only: home/contact page, public UI, forms, branding, business, SEO defaults
+- **Uploaded media** via `scripts/run-promote-staging-content.sh`: copies `storage/blog-uploads/`, `storage/branding-uploads/`, and legacy `public/blog/uploads/` from staging → live (these paths are gitignored and are **not** included in a git deploy alone)
 
 What it never touches:
 
@@ -248,6 +249,7 @@ Verify after promote:
 - [ ] Health `buildId` matches `git rev-parse --short HEAD`
 - [ ] Live PM2 memory is hundreds of MB (not ~10–20MB)
 - [ ] `https://pakexcise.com/blog` matches staging featured article
+- [ ] Blog featured/content images load (not broken `/api/blog/images/...` 404s)
 - [ ] Canonicals use `pakexcise.com` (not staging host)
 - [ ] Live admin still shows real customers/applications
 
