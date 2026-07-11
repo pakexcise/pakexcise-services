@@ -11,11 +11,15 @@ import type { AnalyticsEventName } from "@/features/analytics/events";
 import type { TrackingRuntimeConfig } from "@/features/settings/lib/tracking-runtime";
 import { mapAnalyticsEventToActivity } from "@/features/tracking/lib/map-analytics-event";
 import { recordClientActivity } from "@/features/tracking/lib/record-client-activity";
+import { isPublicAnalyticsPath } from "@/features/tracking/lib/public-analytics-path";
 import {
   pushGa4PageView,
   pushGtmPageView,
 } from "@/lib/analytics/client-tracking";
-import { getTrafficAnalyticsContext } from "@/lib/analytics/traffic-context";
+import {
+  captureAndGetTrafficAnalyticsContext,
+  getTrafficAnalyticsContext,
+} from "@/lib/analytics/traffic-context";
 import { captureAttributionFromUrl } from "@/lib/attribution";
 
 const CONSENT_STORAGE_KEY = "pakexcise.analytics.consent";
@@ -149,12 +153,31 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     const query = searchParams.toString();
     const pagePath = query ? `${pathname}?${query}` : pathname;
 
-    // Always keep first-party activity events (no PII) for product analytics.
-    recordClientActivity({
-      event: "page_view",
-      path: pagePath,
-      metadata: getTrafficAnalyticsContext(),
-    });
+    // Capture UTMs/referrer first, then record first-party page_view for public routes only.
+    const traffic = captureAndGetTrafficAnalyticsContext();
+
+    if (isPublicAnalyticsPath(pathname)) {
+      const dedupeKey = `pe_pv:${pathname}`;
+      try {
+        const last = sessionStorage.getItem(dedupeKey);
+        const now = Date.now();
+        // Soft dedupe Strict Mode double-mount / rapid remounts (2s).
+        if (!last || now - Number(last) > 2000) {
+          sessionStorage.setItem(dedupeKey, String(now));
+          recordClientActivity({
+            event: "page_view",
+            path: pagePath,
+            metadata: traffic,
+          });
+        }
+      } catch {
+        recordClientActivity({
+          event: "page_view",
+          path: pagePath,
+          metadata: traffic,
+        });
+      }
+    }
 
     if (!tracking?.productionTrackingEnabled || !hasAnalyticsConsent(tracking)) {
       return;
@@ -171,6 +194,10 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     // client push to avoid double-counting; keep SPA navigations.
     if (isFirstPageViewRef.current) {
       isFirstPageViewRef.current = false;
+      return;
+    }
+
+    if (!isPublicAnalyticsPath(pathname)) {
       return;
     }
 
@@ -238,7 +265,10 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
       if (activityEvent) {
         recordClientActivity({
           event: activityEvent,
-          metadata: payload as Record<string, string | number | boolean>,
+          metadata: {
+            ...captureAndGetTrafficAnalyticsContext(),
+            ...(payload as Record<string, string | number | boolean>),
+          },
         });
       }
     }

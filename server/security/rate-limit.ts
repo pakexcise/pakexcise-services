@@ -41,6 +41,13 @@ export const publicFormRateLimit = createLimiter(
   "1 m",
 );
 
+/** First-party activity events (page_view etc.) — far higher than form spam limits. */
+export const activityEventRateLimit = createLimiter(
+  "pakexcise:ratelimit:activity-event",
+  180,
+  "1 m",
+);
+
 export const trackLookupRateLimit = createLimiter(
   "pakexcise:ratelimit:track-lookup",
   8,

@@ -20,6 +20,7 @@ import {
   enforceRateLimit,
   publicFormRateLimit,
 } from "@/server/security/rate-limit";
+import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 
 export type SubmitGuestLeadResult = {
   referenceId: string;
@@ -76,6 +77,15 @@ export async function submitGuestLeadAction(
     message: parsed.data.message?.trim() || null,
     locale: parsed.data.locale,
     ipHash: ipAddress ? hashIpAddress(ipAddress) : null,
+  });
+
+  await trackActivityFromRequest({
+    event: "contact_form_submit",
+    metadata: {
+      locale: parsed.data.locale,
+      source: "guest_lead",
+      service_slug: service.slug,
+    },
   });
 
   return successResult({

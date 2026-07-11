@@ -52,6 +52,8 @@ export function MarketingCta({
             href={buildWhatsAppHref(whatsappPhone, whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
+            data-analytics-event="click_whatsapp"
+            data-analytics-placement="marketing_cta"
           >
             <WhatsAppIcon className="size-4" />
             {whatsappLabel}

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { AppEnv } from "@/config/env.shared";
 import type { ActivityEventName } from "@/features/tracking/events";
+import { isLikelyBotUserAgent } from "@/features/tracking/lib/public-analytics-path";
 import { getServerSession, getRequestMeta } from "@/server/auth/session";
 import { activityEventRepository } from "@/server/repositories/activity-event-repository";
 import { hashIpAddress } from "@/server/security/hash";
@@ -44,6 +45,10 @@ function buildActivityRecord(input: TrackActivityInput) {
 }
 
 export function trackActivity(input: TrackActivityInput): void {
+  if (isLikelyBotUserAgent(input.userAgent)) {
+    return;
+  }
+
   void activityEventRepository
     .create(buildActivityRecord(input))
     .catch(() => {

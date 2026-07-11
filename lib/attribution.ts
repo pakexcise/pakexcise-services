@@ -238,7 +238,12 @@ export function captureAttributionFromUrl(): AttributionData {
       deviceType: getDeviceType(),
       ...inferred,
     };
-    persistAttribution(bootstrap, bootstrap);
+    // Persist even for direct visits so landingPage/deviceType/referrer exist.
+    persistAttribution(bootstrap, {
+      ...bootstrap,
+      lastTouchSource: bootstrap.firstTouchSource,
+      lastTouchCampaign: bootstrap.firstTouchCampaign,
+    });
   }
 
   return getStoredAttribution();

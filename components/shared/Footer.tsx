@@ -313,6 +313,8 @@ export async function Footer() {
                   aria-label={whatsappChannelLabel}
                   title={whatsappChannelLabel}
                   className="group inline-flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-[#25D366] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]/40 rounded-sm"
+                  data-analytics-event="click_whatsapp"
+                  data-analytics-placement="footer_whatsapp_channel"
                 >
                   <span className="flex size-8 items-center justify-center rounded-lg bg-[#25D366]/15 text-[#25D366] transition-colors group-hover:bg-[#25D366]/20">
                     <WhatsAppIcon className="size-3.5" />

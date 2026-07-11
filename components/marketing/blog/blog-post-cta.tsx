@@ -43,6 +43,8 @@ export function BlogPostCta({
             href={buildWhatsAppHref(whatsappPhone, whatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
+            data-analytics-event="click_whatsapp"
+            data-analytics-placement="blog_post_cta"
           >
             <WhatsAppIcon className="size-4" />
             {whatsappLabel}

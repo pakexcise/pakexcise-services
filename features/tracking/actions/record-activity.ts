@@ -10,9 +10,13 @@ import {
 import { getServerSession, getRequestMetaFromHeaders } from "@/server/auth/session";
 import { trackActivity } from "@/server/tracking/track-activity";
 import {
+  activityEventRateLimit,
   enforceRateLimit,
-  publicFormRateLimit,
 } from "@/server/security/rate-limit";
+import {
+  isLikelyBotUserAgent,
+  isPublicAnalyticsPath,
+} from "@/features/tracking/lib/public-analytics-path";
 
 const metadataSchema = z.record(
   z.union([z.string().max(500), z.number(), z.boolean()]),
@@ -45,11 +49,24 @@ export async function recordActivity(
 
   const headerStore = await headers();
   const meta = getRequestMetaFromHeaders(headerStore);
+
+  if (isLikelyBotUserAgent(meta.userAgent)) {
+    return { ok: true };
+  }
+
+  // Drop internal shell page views server-side (defense in depth).
+  if (
+    parsed.data.event === "page_view" &&
+    !isPublicAnalyticsPath(parsed.data.path)
+  ) {
+    return { ok: true };
+  }
+
   const rateLimitKey =
     parsed.data.sessionId ?? meta.ipAddress ?? "anonymous";
 
   try {
-    await enforceRateLimit(publicFormRateLimit, `activity:${rateLimitKey}`);
+    await enforceRateLimit(activityEventRateLimit, `activity:${rateLimitKey}`);
   } catch {
     return { ok: false };
   }

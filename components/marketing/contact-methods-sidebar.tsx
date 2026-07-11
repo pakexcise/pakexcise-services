@@ -46,7 +46,7 @@ export function ContactMethodCard({
   value,
   className,
 }: ContactMethodCardProps) {
-  const isWhatsApp = variant === "whatsapp";
+  const isWhatsApp = variant === "whatsapp" || variant === "channel";
   const isHours = variant === "hours";
 
   return (

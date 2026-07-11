@@ -40,7 +40,13 @@ export function BlogSidebarCta({
           <Link href="/services">{servicesLabel}</Link>
         </Button>
         <Button asChild variant="outline" className="w-full">
-          <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-analytics-event="click_whatsapp"
+            data-analytics-placement="blog_sidebar"
+          >
             <WhatsAppIcon className="size-4" />
             {whatsappLabel}
           </a>

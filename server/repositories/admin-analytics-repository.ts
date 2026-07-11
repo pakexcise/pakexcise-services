@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { ActivityEventName } from "@/features/tracking/events";
+import { isPublicAnalyticsPath } from "@/features/tracking/lib/public-analytics-path";
 import { Repository } from "@/server/repositories/base/repository";
 
 export type AdminAnalyticsPeriod = 7 | 30;
@@ -60,7 +61,7 @@ export class AdminAnalyticsRepository extends Repository {
   async getSummary(periodDays: AdminAnalyticsPeriod): Promise<AdminAnalyticsSummary> {
     const since = startOfPeriod(periodDays);
 
-    const [groupedEvents, detailEvents] = await Promise.all([
+    const [groupedEvents, detailEvents, pageViewPaths] = await Promise.all([
       this.db.activityEvent.groupBy({
         by: ["event"],
         where: {
@@ -83,7 +84,15 @@ export class AdminAnalyticsRepository extends Repository {
           metadata: true,
         },
         orderBy: { createdAt: "desc" },
-        take: 5000,
+        take: 8000,
+      }),
+      this.db.activityEvent.findMany({
+        where: {
+          environment: "production",
+          createdAt: { gte: since },
+          event: "page_view",
+        },
+        select: { path: true },
       }),
     ]);
 
@@ -101,6 +110,10 @@ export class AdminAnalyticsRepository extends Repository {
       }
 
       if (row.event === "page_view") {
+        if (!isPublicAnalyticsPath(row.path)) {
+          continue;
+        }
+
         const channel =
           readMetadataString(row.metadata, "traffic_channel") ?? "unknown";
         const platform =
@@ -116,6 +129,10 @@ export class AdminAnalyticsRepository extends Repository {
     const eventCountMap = new Map<string, number>(
       groupedEvents.map((row) => [row.event, row._count._all]),
     );
+
+    const publicPageViews = pageViewPaths.filter((row) =>
+      isPublicAnalyticsPath(row.path),
+    ).length;
 
     const countFor = (event: ActivityEventName): number =>
       eventCountMap.get(event) ?? 0;
@@ -147,7 +164,7 @@ export class AdminAnalyticsRepository extends Repository {
         count,
       })),
       conversionHighlights: {
-        pageViews: countFor("page_view"),
+        pageViews: publicPageViews,
         whatsappClicks: countFor("whatsapp_click"),
         signups: countFor("signup_completed"),
         applicationsSubmitted: countFor("application_submitted"),
