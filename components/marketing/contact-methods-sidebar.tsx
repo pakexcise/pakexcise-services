@@ -74,9 +74,8 @@ export function ContactMethodCard({
             className={cn(
               "w-full",
               isWhatsApp && "bg-[#25D366] text-white hover:bg-[#20bd5a]",
-              variant === "channel" && "bg-[#25D366] text-white hover:bg-[#20bd5a]",
             )}
-            variant={isWhatsApp || variant === "channel" ? "default" : "outline"}
+            variant={isWhatsApp ? "default" : "outline"}
           >
             <a
               href={href}
@@ -85,7 +84,7 @@ export function ContactMethodCard({
               data-analytics-event={isWhatsApp ? "click_whatsapp" : undefined}
               data-analytics-placement={`contact_${variant}`}
             >
-              {isWhatsApp || variant === "channel" ? (
+              {isWhatsApp ? (
                 <WhatsAppIcon className="size-4" />
               ) : variant === "call" ? (
                 <Phone className="size-4" aria-hidden="true" />
