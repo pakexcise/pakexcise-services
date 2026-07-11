@@ -23,6 +23,7 @@
     "db:seed": "node scripts/sync-env.mjs && tsx prisma/seed.ts",
     "db:clear-redirects": "node scripts/sync-env.mjs && tsx scripts/clear-db-redirects.ts",
     "db:sync-footer": "node scripts/sync-footer-navigation.mjs",
+    "db:seed-blog-categories": "node scripts/sync-env.mjs && tsx prisma/seed-blog-categories-runner.ts",
     "db:seed-legal": "node scripts/sync-env.mjs && tsx prisma/seed-legal-pages-runner.ts",
     "db:update-privacy-policy": "node scripts/sync-env.mjs && tsx prisma/update-privacy-policy.ts",
     "db:update-terms": "node scripts/sync-env.mjs && tsx prisma/update-terms-and-conditions.ts",
