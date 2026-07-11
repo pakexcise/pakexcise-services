@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { handleContentSlugRedirect } from "@/features/cms/lib/handle-content-redirect";
+import { upsertAutoRedirects } from "@/features/redirects/lib/upsert-auto-redirect";
 import { sanitizeContentRelationIds } from "@/features/cms/lib/sanitize-content-relations";
 import { normalizeLocalizedContent } from "@/features/cms/lib/normalize-content-input";
 import { upsertBlogSeo } from "@/features/cms/lib/upsert-seo";
@@ -238,8 +238,8 @@ export async function updateBlogPostAction(
   });
 
   if (data.slug !== existing.slug) {
-    await handleContentSlugRedirect({
-      prefix: "blog",
+    await upsertAutoRedirects({
+      kind: "blog",
       oldSlug: existing.slug,
       newSlug: data.slug,
       actorId: user.id,

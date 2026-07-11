@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -9,7 +9,6 @@ import { JsonLd } from "@/components/marketing/json-ld";
 import { BrandingProvider } from "@/components/shared/branding-context";
 import { ChunkLoadRecovery } from "@/components/shared/chunk-load-recovery";
 import { DocumentLocaleSync } from "@/components/shared/DocumentLocaleSync";
-import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import {
   buildLocalBusinessJsonLd,
@@ -22,7 +21,6 @@ import {
 } from "@/features/settings/lib/branding-resolvers";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
 import { buildTrackingRuntimeConfig } from "@/features/settings/lib/tracking-runtime";
-import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
 import {
   resolveWhatsappDefaultMessage,
   resolveWhatsappLinkNumber,
@@ -58,18 +56,14 @@ export default async function LocaleLayout({
   const locale: Locale = await getCurrentLocale();
 
   setRequestLocale(locale);
-  const [messages, tCommon] = await Promise.all([
-    getMessages(),
-    getTranslations("common"),
-  ]);
+  const messages = await getMessages();
 
   const publicSettings = await getPublicSettings();
-  const { business, seo, tracking, features, publicUi, branding } = publicSettings;
+  const { business, seo, tracking, branding } = publicSettings;
   const socialLinks = await getActiveSocialLinks();
   const trackingRuntime = buildTrackingRuntimeConfig(tracking, {
     productionTrackingEnabled: shouldAllowSearchIndexing(),
   });
-  const localized = localizeGlobalSiteContent(business, locale, publicUi);
 
   const baseUrl = seoAbsoluteUrl("/");
   const whatsappLinkNumber = resolveWhatsappLinkNumber(business);
@@ -115,20 +109,6 @@ export default async function LocaleLayout({
               <AnalyticsProvider tracking={trackingRuntime} />
             </Suspense>
             {children}
-            <WhatsAppFAB
-              phoneNumber={
-                features.floatingWhatsappEnabled
-                  ? resolveWhatsappLinkNumber(business)
-                  : null
-              }
-              message={
-                features.floatingWhatsappEnabled
-                  ? localized.floatingWhatsappMessage
-                  : null
-              }
-              position={publicUi.floatingWhatsappPosition}
-              ariaLabel={tCommon("whatsappHelp")}
-            />
           </ThemeProvider>
         </BrandingProvider>
       </NextIntlClientProvider>

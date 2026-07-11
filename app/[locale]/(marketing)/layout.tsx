@@ -1,7 +1,11 @@
+import { getTranslations } from "next-intl/server";
+import { headers } from "next/headers";
+
 import { MaintenanceView } from "@/components/marketing/maintenance-view";
 import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
 import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
+import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { applyMarketingPathRedirect } from "@/features/redirects/lib/path-redirects";
 import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
@@ -11,7 +15,6 @@ import {
 } from "@/features/settings/lib/resolve-public-contact";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { siteChromeShellClassName } from "@/lib/styles/site-chrome";
-import { headers } from "next/headers";
 
 export default async function MarketingLayout({
   children,
@@ -21,9 +24,10 @@ export default async function MarketingLayout({
   const headerStore = await headers();
   await applyMarketingPathRedirect(headerStore.get("x-pakexcise-pathname"));
 
-  const [locale, publicSettings] = await Promise.all([
+  const [locale, publicSettings, tCommon] = await Promise.all([
     getCurrentLocale(),
     getPublicSettings(),
+    getTranslations("common"),
   ]);
 
   const { business, publicUi, branding, features } = publicSettings;
@@ -45,6 +49,23 @@ export default async function MarketingLayout({
     logoDarkPath: branding.logoDarkPath,
   };
 
+  const fab = (
+    <WhatsAppFAB
+      phoneNumber={
+        features.floatingWhatsappEnabled
+          ? resolveWhatsappLinkNumber(business)
+          : null
+      }
+      message={
+        features.floatingWhatsappEnabled
+          ? localized.floatingWhatsappMessage
+          : null
+      }
+      position={publicUi.floatingWhatsappPosition}
+      ariaLabel={tCommon("whatsappHelp")}
+    />
+  );
+
   if (features.maintenanceMode) {
     return (
       <>
@@ -56,6 +77,7 @@ export default async function MarketingLayout({
           <MaintenanceView message={maintenanceMessage} />
         </main>
         <Footer />
+        {fab}
       </>
     );
   }
@@ -68,6 +90,7 @@ export default async function MarketingLayout({
       </div>
       <main id="main-content">{children}</main>
       <Footer />
+      {fab}
     </>
   );
 }

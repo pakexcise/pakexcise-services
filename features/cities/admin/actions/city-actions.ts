@@ -15,6 +15,7 @@ import {
   successResult,
   type ActionResult,
 } from "@/lib/validations/common";
+import { upsertAutoRedirects } from "@/features/redirects/lib/upsert-auto-redirect";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { requirePermission } from "@/server/permissions/guards";
@@ -190,6 +191,16 @@ export async function updateCityAction(
       city.slug,
       normalizeSeoInput(data.seo),
     );
+  }
+
+  if (existing.slug !== city.slug) {
+    await upsertAutoRedirects({
+      kind: "city",
+      regionSlug: city.region.slug,
+      oldSlug: existing.slug,
+      newSlug: city.slug,
+      actorId: user.id,
+    });
   }
 
   await auditAdminAction({

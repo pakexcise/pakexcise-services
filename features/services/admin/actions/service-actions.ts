@@ -19,6 +19,7 @@ import {
   successResult,
   type ActionResult,
 } from "@/lib/validations/common";
+import { upsertAutoRedirects } from "@/features/redirects/lib/upsert-auto-redirect";
 import {
   documentAuditSnapshot,
   formFieldAuditSnapshot,
@@ -80,40 +81,6 @@ async function upsertServiceSeo(
       serviceId,
       ...seo,
     },
-  });
-}
-
-async function handleSlugRedirect(
-  oldSlug: string,
-  newSlug: string,
-  actorId: string,
-) {
-  if (oldSlug === newSlug) {
-    return;
-  }
-
-  await prisma.redirect.upsert({
-    where: { oldSlug },
-    update: {
-      newSlug,
-      statusCode: 301,
-      isActive: true,
-    },
-    create: {
-      oldSlug,
-      newSlug,
-      statusCode: 301,
-      isActive: true,
-    },
-  });
-
-  await auditAdminAction({
-    actorId,
-    action: "CREATE",
-    entityType: "redirect",
-    entityId: oldSlug,
-    before: { oldSlug },
-    after: { oldSlug, newSlug, statusCode: 301 },
   });
 }
 
@@ -263,7 +230,12 @@ export async function updateServiceAction(
   }
 
   if (existing.slug !== service.slug) {
-    await handleSlugRedirect(existing.slug, service.slug, user.id);
+    await upsertAutoRedirects({
+      kind: "service",
+      oldSlug: existing.slug,
+      newSlug: service.slug,
+      actorId: user.id,
+    });
     await prisma.seoMeta.updateMany({
       where: { serviceId: service.id },
       data: { pageKey: `service:${service.slug}` },

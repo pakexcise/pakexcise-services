@@ -15,6 +15,7 @@ import {
   successResult,
   type ActionResult,
 } from "@/lib/validations/common";
+import { upsertAutoRedirects } from "@/features/redirects/lib/upsert-auto-redirect";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { requirePermission } from "@/server/permissions/guards";
@@ -180,15 +181,11 @@ export async function updateRegionAction(
   }
 
   if (existing.slug !== region.slug) {
-    await prisma.redirect.upsert({
-      where: { oldSlug: existing.slug },
-      update: { newSlug: region.slug, isActive: true, statusCode: 301 },
-      create: {
-        oldSlug: existing.slug,
-        newSlug: region.slug,
-        isActive: true,
-        statusCode: 301,
-      },
+    await upsertAutoRedirects({
+      kind: "region",
+      oldSlug: existing.slug,
+      newSlug: region.slug,
+      actorId: user.id,
     });
     await prisma.seoMeta.updateMany({
       where: { regionId: region.id },

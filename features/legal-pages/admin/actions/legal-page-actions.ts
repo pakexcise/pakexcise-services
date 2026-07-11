@@ -18,6 +18,7 @@ import {
   successResult,
   type ActionResult,
 } from "@/lib/validations/common";
+import { upsertAutoRedirects } from "@/features/redirects/lib/upsert-auto-redirect";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { adminLegalPageRepository } from "@/server/repositories/admin-legal-page-repository";
@@ -148,6 +149,15 @@ export async function updateLegalPageAction(
   });
 
   await upsertLegalPageSeo(page.id, page.slug, data.seo);
+
+  if (page.slug !== existing.slug) {
+    await upsertAutoRedirects({
+      kind: "legal",
+      oldSlug: existing.slug,
+      newSlug: page.slug,
+      actorId: user.id,
+    });
+  }
 
   await auditAdminAction({
     actorId: user.id,
