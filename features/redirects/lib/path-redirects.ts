@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Route } from "next";
 import { permanentRedirect, redirect } from "next/navigation";
 
 import { redirectRepository } from "@/server/repositories/redirect-repository";
@@ -123,8 +124,8 @@ export async function applyMarketingPathRedirect(
   }
 
   if (match.statusCode === 302) {
-    redirect(match.destination);
+    redirect(match.destination as Route);
   }
 
-  permanentRedirect(match.destination);
+  permanentRedirect(match.destination as Route);
 }
