@@ -26,6 +26,7 @@
     "db:seed-blog-categories": "node scripts/sync-env.mjs && tsx prisma/seed-blog-categories-runner.ts",
     "db:seed-primary-blog": "node scripts/sync-env.mjs && tsx prisma/seed-primary-blog-runner.ts",
     "db:promote-staging-content": "node scripts/sync-env.mjs && tsx scripts/promote-staging-content-to-live.ts",
+    "promote:staging-to-live": "bash scripts/promote-staging-to-live.sh",
     "db:seed-legal": "node scripts/sync-env.mjs && tsx prisma/seed-legal-pages-runner.ts",
     "db:update-privacy-policy": "node scripts/sync-env.mjs && tsx prisma/update-privacy-policy.ts",
     "db:update-terms": "node scripts/sync-env.mjs && tsx prisma/update-terms-and-conditions.ts",

@@ -181,79 +181,59 @@ AWS_SES_SECRET_ACCESS_KEY=...
 ### Clean deploy script
 
 ```bash
-bash scripts/deploy-app.sh /var/www/pakexcise-live pakexcise-live staging
+# Staging (code only)
 bash scripts/deploy-app.sh /var/www/pakexcise-staging pakexcise-staging staging
+
+# Live — preferred one command (code + schema + CMS + images/uploads)
+bash scripts/promote-staging-to-live.sh
 ```
 
-### Promote staging → live (code + marketing content)
+`promote-staging-to-live.sh` automatically:
 
-Live and staging use **separate Neon databases**. Deploying code does not copy blog/SEO/CMS content.
+1. Pulls/builds live from the `staging` git branch
+2. Runs `prisma db push` (additive schema)
+3. Copies uploaded media from staging → live (`storage/blog-uploads`, branding uploads, legacy blog uploads)
+4. Promotes CMS content from staging Neon → live Neon (blogs, guides, regions, services, FAQs, SEO, pages, redirects, …)
+5. Clears ISR cache and recreates `pakexcise-live` on port 3000
 
-**Never** dump/restore the whole staging DB onto live (that would wipe customers, applications, invoices, payments).
+It does **not** copy users, applications, invoices, payments, documents, or audit logs.
 
-Safe promote:
-
-1. Deploy latest `staging` branch code to live
-2. Sync schema (`prisma db push` — stop if Prisma warns about data loss)
-3. Copy marketing content from staging DB → live DB with `pnpm db:promote-staging-content`
-4. Clear ISR cache and recreate the live PM2 process
+`deploy-app.sh` for live also auto-promotes CMS + uploads after build (same content path). Use `SKIP_CONTENT_PROMOTE=1` only if you want a code-only live deploy.
 
 ```bash
-# On the VPS as deploy user
+# Code-only live deploy (rare)
+SKIP_CONTENT_PROMOTE=1 bash scripts/deploy-app.sh /var/www/pakexcise-live pakexcise-live staging
 
-# 1) Code deploy (build + ensure-live-pm2 on :3000)
-cd /var/www/pakexcise-live
-git fetch origin staging
-git reset --hard origin/staging
-bash scripts/deploy-app.sh /var/www/pakexcise-live pakexcise-live staging
-
-# 2) Schema (additive only)
-pnpm exec prisma db push
-
-# 3) Content promote (dry-run first)
-SOURCE_DATABASE_URL="$(grep ^DATABASE_URL= /var/www/pakexcise-staging/.env.production | cut -d= -f2- | tr -d '\"')" \
-  pnpm db:promote-staging-content -- --dry-run
-
-SOURCE_DATABASE_URL="$(grep ^DATABASE_URL= /var/www/pakexcise-staging/.env.production | cut -d= -f2- | tr -d '\"')" \
-  pnpm db:promote-staging-content
-
-# Or use the wrapper (apply also clears ISR + recreates PM2):
-#   bash scripts/run-promote-staging-content.sh --dry-run
-#   bash scripts/run-promote-staging-content.sh
-
-# 4) Clear ISR + verify
-rm -rf .next/cache
-bash scripts/ensure-live-pm2.sh
-curl -s http://127.0.0.1:3000/api/health
-pm2 list
+# Content/media only (after code already deployed)
+SKIP_BUILD=1 bash scripts/promote-staging-to-live.sh
 ```
 
-What the promote script syncs (by slug / pageKey):
+### What gets promoted (staging → live)
 
-- Blog categories + posts (live posts not in staging are removed)
+- Blog categories + posts (live posts not in staging are removed) + blog images
 - Guides, legal pages, FAQs, social links, reviews
 - Redirects (merge upsert; live-only redirects kept)
 - SEO meta (rewrites `staging.pakexcise.com` → `pakexcise.com` in canonicals)
 - Regions, cities, services, form fields, document requirements (keeps live IDs)
-- Allowlisted settings only: home/contact page, public UI, forms, branding, business, SEO defaults
-- **Uploaded media** via `scripts/run-promote-staging-content.sh`: copies `storage/blog-uploads/`, `storage/branding-uploads/`, and legacy `public/blog/uploads/` from staging → live (these paths are gitignored and are **not** included in a git deploy alone)
+- Allowlisted settings: home/contact page, public UI, forms, branding, business, SEO defaults
+- Uploaded files: `storage/blog-uploads/`, `storage/branding-uploads/`, `public/blog/uploads/`
 
-What it never touches:
+### What is never promoted
 
 - Users, sessions, agents, applications, documents, invoices, payments
 - Audit logs, analytics, guest leads, contact inquiries
 - Payment / tracking / feature-flag settings (env-specific)
 
-Verify after promote:
+### Verify after promote
 
 - [ ] Health `buildId` matches `git rev-parse --short HEAD`
 - [ ] Live PM2 memory is hundreds of MB (not ~10–20MB)
-- [ ] `https://pakexcise.com/blog` matches staging featured article
-- [ ] Blog featured/content images load (not broken `/api/blog/images/...` 404s)
+- [ ] `https://pakexcise.com/blog` matches staging (article + images)
+- [ ] Guides / regions / services / FAQs match staging marketing content
 - [ ] Canonicals use `pakexcise.com` (not staging host)
 - [ ] Live admin still shows real customers/applications
 
-Manual equivalent:
+Manual equivalent (code only — prefer `promote-staging-to-live.sh` instead):
 
 ```bash
 cd /var/www/pakexcise-live
