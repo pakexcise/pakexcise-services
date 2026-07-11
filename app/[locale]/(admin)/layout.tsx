@@ -12,6 +12,36 @@ export async function generateMetadata(): Promise<Metadata> {
   return adminMetadata("Admin");
 }
 
+const EMPTY_BADGES = {
+  unreadNotifications: 0,
+  pendingApplications: 0,
+} as const;
+
+async function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  fallback: T,
+  label: string,
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((resolve) => {
+        timer = setTimeout(() => {
+          console.error(`[admin-layout] timed out: ${label} after ${ms}ms`);
+          resolve(fallback);
+        }, ms);
+      }),
+    ]);
+  } finally {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+}
+
 export default async function AdminLayout({
   children,
 }: {
@@ -21,11 +51,25 @@ export default async function AdminLayout({
     requireAdminPortal,
     "/admin/dashboard",
   );
-  const navItems = getAdminNavForPermissions(
-    await getCachedEffectivePermissions(user.id, user.role),
-    { isSuperAdmin: user.role === "SUPER_ADMIN" },
-  );
-  const badgeCounts = await getAdminNavBadgeCounts(user.id);
+
+  const [permissions, badgeCounts] = await Promise.all([
+    withTimeout(
+      getCachedEffectivePermissions(user.id, user.role),
+      8000,
+      [],
+      "effective-permissions",
+    ),
+    withTimeout(
+      getAdminNavBadgeCounts(user.id),
+      8000,
+      { ...EMPTY_BADGES },
+      "nav-badges",
+    ),
+  ]);
+
+  const navItems = getAdminNavForPermissions(permissions, {
+    isSuperAdmin: user.role === "SUPER_ADMIN",
+  });
 
   return (
     <AdminShell

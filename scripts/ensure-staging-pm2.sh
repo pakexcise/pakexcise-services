@@ -35,26 +35,40 @@ if grep -qE '^PORT=' .env.production; then
 else
   printf '\nPORT=%s\n' "$PORT" >> .env.production
 fi
+
+if grep -qE '^NODE_ENV=' .env.production; then
+  sed -i 's/^NODE_ENV=.*/NODE_ENV=production/' .env.production
+else
+  printf '\nNODE_ENV=production\n' >> .env.production
+fi
+
 cp .env.production .env
 
-# Free the port if a stale process holds it.
 if command -v fuser >/dev/null 2>&1; then
   fuser -k "${PORT}/tcp" >/dev/null 2>&1 || true
 fi
 
 pm2 delete "$PM2_NAME" >/dev/null 2>&1 || true
 
-# Start Next explicitly on the staging port (never share live :3000).
-pm2 start ./node_modules/next/dist/bin/next \
-  --name "$PM2_NAME" \
-  --cwd "$APP_DIR" \
-  --time \
-  -- start -p "$PORT"
+# Prefer ecosystem when present (sets NODE_ENV + PORT cleanly).
+if [[ -f "$APP_DIR/ecosystem.config.cjs" ]]; then
+  pm2 start "$APP_DIR/ecosystem.config.cjs" --only "$PM2_NAME" --update-env
+else
+  NODE_ENV=production PORT="$PORT" BUILD_ID="$BUILD_ID" pm2 start ./node_modules/next/dist/bin/next \
+    --name "$PM2_NAME" \
+    --cwd "$APP_DIR" \
+    --time \
+    --node-args="--enable-source-maps" \
+    -- start -p "$PORT"
+fi
+
+# Force env into the running process definition.
+pm2 restart "$PM2_NAME" --update-env
 
 sleep 5
 
 echo "==> PM2 process"
-pm2 show "$PM2_NAME" | sed -n '1,100p'
+pm2 show "$PM2_NAME" | sed -n '1,120p'
 
 echo "==> Listening sockets"
 (ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null || true) | grep -E ":(3000|3001|${PORT})\\b" || true
@@ -86,15 +100,10 @@ MEM_MB="$(
 
 if [[ -n "${MEM_MB}" ]]; then
   echo "==> Memory: ${MEM_MB}mb"
-  if [[ "$MEM_MB" -lt 80 ]]; then
-    echo "WARNING: memory is unusually low for Next.js (${MEM_MB}mb)." >&2
-    pm2 logs "$PM2_NAME" --lines 40 --nostream >&2 || true
-  fi
 fi
 
 pm2 save
 
 echo
 echo "OK: staging answers on http://127.0.0.1:${PORT}/api/health"
-echo "Confirm nginx for staging.pakexcise.com proxies to 127.0.0.1:${PORT}"
-echo "Then hard-refresh https://staging.pakexcise.com/admin/dashboard"
+echo "Hard-refresh https://staging.pakexcise.com/admin/dashboard (Ctrl+Shift+R)"

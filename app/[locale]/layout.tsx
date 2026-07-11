@@ -112,10 +112,9 @@ export default async function LocaleLayout({
           <DocumentLocaleSync />
           <ThemeProvider>
             <Suspense fallback={null}>
-              <AnalyticsProvider tracking={trackingRuntime}>
-                {children}
-              </AnalyticsProvider>
+              <AnalyticsProvider tracking={trackingRuntime} />
             </Suspense>
+            {children}
             <WhatsAppFAB
               phoneNumber={
                 features.floatingWhatsappEnabled

@@ -126,10 +126,15 @@ function isAnalyticsEventName(value: string): value is AnalyticsEventName {
 }
 
 type AnalyticsProviderProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   tracking?: TrackingRuntimeConfig;
 };
 
+/**
+ * Must NOT wrap route `children`.
+ * `useSearchParams()` suspends this client boundary; wrapping pages inside it
+ * can leave the App Router stuck on loading.tsx forever.
+ */
 export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -242,5 +247,5 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     return () => document.removeEventListener("click", handleClick, { capture: true });
   }, []);
 
-  return children;
+  return children ?? null;
 }
