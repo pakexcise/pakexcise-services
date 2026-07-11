@@ -60,24 +60,27 @@ export function RedirectEditorForm({
   return (
     <div className="max-w-xl space-y-4 rounded-xl border p-4">
       <p className="text-sm text-muted-foreground">
-        Add a custom rule only when needed. Use a bare service slug, or{" "}
-        <code>blog:old-slug</code> / <code>guide:old-slug</code> for content.
-        Built-in legal, region, and legacy service aliases are already handled by
-        the app and should not be duplicated here.
+        Page redirects use paths: <code>/faqs</code> → <code>/help</code>.
+        Service renames use bare slugs: <code>old-service</code> →{" "}
+        <code>new-service</code>. Content uses <code>blog:old-slug</code> /{" "}
+        <code>guide:old-slug</code>. Built-in legal/region/legacy service aliases
+        are already handled by the app.
       </p>
       <div className="space-y-2">
-        <Label htmlFor="oldSlug">Old slug / key</Label>
+        <Label htmlFor="oldSlug">Old path / slug</Label>
         <Input
           id="oldSlug"
           value={values.oldSlug}
+          placeholder="/faqs or old-service-slug"
           onChange={(e) => setValues((c) => ({ ...c, oldSlug: e.target.value }))}
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="newSlug">New slug / key</Label>
+        <Label htmlFor="newSlug">New path / slug</Label>
         <Input
           id="newSlug"
           value={values.newSlug}
+          placeholder="/help or new-service-slug"
           onChange={(e) => setValues((c) => ({ ...c, newSlug: e.target.value }))}
         />
       </div>

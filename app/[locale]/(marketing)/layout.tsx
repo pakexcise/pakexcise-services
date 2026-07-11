@@ -2,6 +2,7 @@ import { MaintenanceView } from "@/components/marketing/maintenance-view";
 import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
 import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
+import { applyMarketingPathRedirect } from "@/features/redirects/lib/path-redirects";
 import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
 import {
@@ -10,12 +11,16 @@ import {
 } from "@/features/settings/lib/resolve-public-contact";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { siteChromeShellClassName } from "@/lib/styles/site-chrome";
+import { headers } from "next/headers";
 
 export default async function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headerStore = await headers();
+  await applyMarketingPathRedirect(headerStore.get("x-pakexcise-pathname"));
+
   const [locale, publicSettings] = await Promise.all([
     getCurrentLocale(),
     getPublicSettings(),

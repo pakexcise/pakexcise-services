@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 
-import { LEGACY_SERVICE_SLUGS_TO_DEACTIVATE } from "@/config/legacy-url-redirects";
+import {
+  LEGACY_SERVICE_SLUGS_TO_DEACTIVATE,
+} from "@/config/legacy-url-redirects";
+import { normalizeRedirectKey } from "@/features/redirects/lib/path-redirects";
 import {
   createRedirectSchema,
   redirectIdSchema,
@@ -54,7 +57,11 @@ export async function createRedirectAction(
   const parsed = parseInput(createRedirectSchema, input);
   if (!parsed.success) return parsed;
 
-  const data = parsed.data;
+  const data = {
+    ...parsed.data,
+    oldSlug: normalizeRedirectKey(parsed.data.oldSlug),
+    newSlug: normalizeRedirectKey(parsed.data.newSlug),
+  };
 
   if (data.oldSlug === data.newSlug) {
     return errorResult("Old and new slug must be different", {
@@ -92,7 +99,11 @@ export async function updateRedirectAction(
   const parsed = parseInput(updateRedirectSchema, input);
   if (!parsed.success) return parsed;
 
-  const data = parsed.data;
+  const data = {
+    ...parsed.data,
+    oldSlug: normalizeRedirectKey(parsed.data.oldSlug),
+    newSlug: normalizeRedirectKey(parsed.data.newSlug),
+  };
   const existing = await adminRedirectRepository.findById(data.id);
   if (!existing) return errorResult("Redirect not found");
 

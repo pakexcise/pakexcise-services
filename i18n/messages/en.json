@@ -2616,7 +2616,7 @@
         "clearAllConfirm": "Delete ALL custom redirects in this table? Built-in legal, region, and legacy service aliases in the app config are not affected.",
         "clearAllSuccess": "Cleared {count} redirect(s).",
         "clearAllError": "Could not clear redirects.",
-        "setupHint": "Use this table only for custom rules or after renaming content. Prefer bare service slugs, or blog:old-slug / guide:old-slug for content.",
+        "setupHint": "Page redirects: /old-path → /new-path. Service renames: bare-slug → new-slug. Blog/guide: blog:old-slug or guide:old-slug.",
         "setupHintBuiltIn": "Built-in permanent aliases (/privacy, /terms, /refund, region aliases, and old service URLs) are configured in the application — they do not appear here and do not need to be managed manually.",
         "searchPlaceholder": "Search slugs",
         "filter": "Filter",

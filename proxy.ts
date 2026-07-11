@@ -37,6 +37,7 @@ function redirectLegacyLocalePrefix(request: NextRequest): NextResponse | null {
 function withoutAcceptLanguage(request: NextRequest): NextRequest {
   const headers = new Headers(request.headers);
   headers.delete("accept-language");
+  headers.set("x-pakexcise-pathname", request.nextUrl.pathname);
 
   return new NextRequest(request.url, {
     method: request.method,
@@ -137,6 +138,7 @@ function ensureLocaleRewrite(
 
   const headers = new Headers(request.headers);
   headers.set(LOCALE_HEADER_NAME, locale);
+  headers.set("x-pakexcise-pathname", pathname);
 
   const rewriteResponse = NextResponse.rewrite(url, {
     request: { headers },

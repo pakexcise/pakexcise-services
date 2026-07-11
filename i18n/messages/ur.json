@@ -2617,7 +2617,7 @@
         "clearAllConfirm": "اس جدول کی تمام حسبِ ضرورت ری ڈائریکٹس حذف کریں؟ ایپ کنفگ میں قانونی، ریجن اور پرانی سروس aliases متاثر نہیں ہوں گی۔",
         "clearAllSuccess": "{count} ری ڈائریکٹ(س) صاف ہو گئیں۔",
         "clearAllError": "ری ڈائریکٹس صاف نہیں ہو سکیں۔",
-        "setupHint": "یہ جدول صرف حسبِ ضرورت قواعد یا مواد کا نام بدلنے کے بعد استعمال کریں۔ سروس کے لیے سادہ slug، مواد کے لیے blog:old-slug / guide:old-slug۔",
+        "setupHint": "صفحہ ری ڈائریکٹ: /old-path → /new-path۔ سروس: bare-slug → new-slug۔ بلاگ/گائیڈ: blog:old-slug یا guide:old-slug۔",
         "setupHintBuiltIn": "بلٹ اِن مستقل aliases (/privacy، /terms، /refund، ریجن aliases، اور پرانی سروس URLs) ایپلیکیشن میں ترتیب شدہ ہیں — یہاں نظر نہیں آتیں اور دستی انتظام کی ضرورت نہیں۔",
         "searchPlaceholder": "slugs تلاش کریں",
         "filter": "فلٹر",
