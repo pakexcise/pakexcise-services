@@ -11,6 +11,9 @@ type InsightStatCardProps = {
   title: string;
   value: string;
   subtitle?: string;
+  /** Signed percent change vs previous period, e.g. 12.5 or -4. */
+  deltaPercent?: number | null;
+  deltaLabel?: string;
   href?: string;
   accent?: "default" | "primary" | "warning" | "success";
   className?: string;
@@ -30,10 +33,17 @@ export function InsightStatCard({
   title,
   value,
   subtitle,
+  deltaPercent,
+  deltaLabel,
   href,
   accent = "default",
   className,
 }: InsightStatCardProps) {
+  const hasDelta =
+    typeof deltaPercent === "number" && Number.isFinite(deltaPercent);
+  const deltaPositive = hasDelta && deltaPercent > 0;
+  const deltaNegative = hasDelta && deltaPercent < 0;
+
   const card = (
     <Card
       className={cn(
@@ -48,7 +58,27 @@ export function InsightStatCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">
-        <p className="text-xl font-bold leading-tight break-words">{value}</p>
+        <p className="text-2xl font-bold leading-tight tabular-nums break-words tracking-tight">
+          {value}
+        </p>
+        {hasDelta ? (
+          <p
+            className={cn(
+              "text-xs font-medium tabular-nums",
+              deltaPositive && "text-emerald-600 dark:text-emerald-400",
+              deltaNegative && "text-rose-600 dark:text-rose-400",
+              !deltaPositive && !deltaNegative && "text-muted-foreground",
+            )}
+          >
+            {deltaPercent > 0 ? "+" : ""}
+            {deltaPercent}%
+            {deltaLabel ? (
+              <span className="ms-1 font-normal text-muted-foreground">
+                {deltaLabel}
+              </span>
+            ) : null}
+          </p>
+        ) : null}
         {subtitle ? (
           <p className="text-xs text-muted-foreground">{subtitle}</p>
         ) : null}

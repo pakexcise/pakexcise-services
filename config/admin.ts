@@ -51,7 +51,7 @@ export const adminNavItems: AdminNavItem[] = [
     labelKey: "analytics",
     icon: "bar-chart-3",
     section: "overview",
-    permission: "application:read",
+    superAdminOnly: true,
   },
   {
     href: "/admin/applications",

@@ -6,11 +6,9 @@ import { useTranslations } from "next-intl";
 import { AdminSearch } from "@/components/admin/admin-search";
 import { AdminUserMenu, type AdminUserSummary } from "@/components/admin/admin-user-menu";
 import { NotificationBell } from "@/components/notifications/notification-bell";
-import { SiteLogo } from "@/components/shared/SiteLogo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 
 type AdminTopbarProps = {
   user: AdminUserSummary;
@@ -33,15 +31,10 @@ export function AdminTopbar({ user, onMenuClick }: AdminTopbarProps) {
         <Menu className="size-4" aria-hidden="true" />
       </Button>
 
-      <Link href="/admin/dashboard" className="hidden min-w-0 lg:block">
-        <SiteLogo size="portal" />
-        <span className="mt-0.5 block text-xs text-muted-foreground">
-          {user.role === "SUPER_ADMIN" ? t("panelSuperAdmin") : t("panelOperations")}
-        </span>
-      </Link>
-
-      <div className="hidden min-w-0 flex-1 justify-center md:flex">
-        <AdminSearch />
+      <div className="min-w-0 flex-1 justify-center md:flex">
+        <div className="hidden w-full max-w-xl md:block">
+          <AdminSearch />
+        </div>
       </div>
 
       <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-2">

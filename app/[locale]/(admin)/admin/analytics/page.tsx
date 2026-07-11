@@ -12,7 +12,7 @@ import {
   type AdminAnalyticsPeriod,
 } from "@/server/repositories/admin-analytics-repository";
 import { getCurrentLocale } from "@/server/i18n/get-locale";
-import { requireAdminPortal } from "@/server/permissions/guards";
+import { requireSuperAdmin } from "@/server/permissions/guards";
 
 type AdminAnalyticsPageProps = {
   searchParams: Promise<{ days?: string }>;
@@ -21,6 +21,10 @@ type AdminAnalyticsPageProps = {
 function parsePeriod(value: string | undefined): AdminAnalyticsPeriod {
   if (value === "7") {
     return 7;
+  }
+
+  if (value === "90") {
+    return 90;
   }
 
   return 30;
@@ -34,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminAnalyticsPage({
   searchParams,
 }: AdminAnalyticsPageProps) {
-  await requireAdminPortal();
+  await requireSuperAdmin();
 
   const locale = await getCurrentLocale();
   setRequestLocale(locale);
@@ -42,7 +46,22 @@ export default async function AdminAnalyticsPage({
   const t = await getTranslations("admin.analytics");
   const { days: daysParam } = await searchParams;
   const periodDays = parsePeriod(daysParam);
-  const summary = await adminAnalyticsRepository.getSummary(periodDays);
+
+  const [summary, summary30] = await Promise.all([
+    adminAnalyticsRepository.getSummary(periodDays),
+    periodDays === 30
+      ? Promise.resolve(null)
+      : adminAnalyticsRepository.getSummary(30),
+  ]);
+
+  const last30DaysSeries =
+    periodDays === 30 ? summary.dailySeries : (summary30?.dailySeries ?? []);
+
+  const periods: Array<{ days: AdminAnalyticsPeriod; label: string }> = [
+    { days: 7, label: t("last7Days") },
+    { days: 30, label: t("last30Days") },
+    { days: 90, label: t("last90Days") },
+  ];
 
   return (
     <div className="space-y-8">
@@ -50,26 +69,28 @@ export default async function AdminAnalyticsPage({
         title={t("title")}
         description={t("description")}
         actions={
-          <div className="flex flex-wrap gap-2">
-            <Button
-              asChild
-              variant={periodDays === 7 ? "default" : "outline"}
-              size="sm"
-            >
-              <Link href={"/admin/analytics?days=7" as Route}>{t("last7Days")}</Link>
-            </Button>
-            <Button
-              asChild
-              variant={periodDays === 30 ? "default" : "outline"}
-              size="sm"
-            >
-              <Link href={"/admin/analytics?days=30" as Route}>{t("last30Days")}</Link>
-            </Button>
+          <div className="inline-flex rounded-lg border bg-background p-1 shadow-sm">
+            {periods.map((period) => (
+              <Button
+                key={period.days}
+                asChild
+                variant={periodDays === period.days ? "default" : "ghost"}
+                size="sm"
+                className="rounded-md"
+              >
+                <Link href={`/admin/analytics?days=${period.days}` as Route}>
+                  {period.label}
+                </Link>
+              </Button>
+            ))}
           </div>
         }
       />
 
-      <AdminAnalyticsSummaryPanels summary={summary} />
+      <AdminAnalyticsSummaryPanels
+        summary={summary}
+        last30DaysSeries={last30DaysSeries}
+      />
     </div>
   );
 }
