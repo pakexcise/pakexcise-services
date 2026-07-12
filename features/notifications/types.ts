@@ -1,15 +1,13 @@
 import type {
   ApplicationStatus,
   NotificationChannel,
-  NotificationEventType,
-} from "@prisma/client";
+  NotificationEventType} from "@prisma/client";
 
-export type NotificationLocale = "en" | "ur";
+export type NotificationLocale = "en";
 
 export type NotificationPayload = {
   trackingId: string;
   serviceName: string;
-  serviceNameUr?: string;
   invoiceNumber?: string;
   total?: string;
   toStatus?: ApplicationStatus;

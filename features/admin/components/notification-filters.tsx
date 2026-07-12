@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { copy, createT } from "@/messages";
+import { getTranslations } from "@/lib/i18n/t";
 import type {
   NotificationChannel,
   NotificationEventType,
@@ -7,7 +8,8 @@ import type {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type NotificationFiltersProps = {
   currentStatus?: NotificationStatus;
@@ -72,7 +74,7 @@ export async function NotificationFilters({
   currentEventType,
   currentSearch,
 }: NotificationFiltersProps) {
-  const t = await getTranslations("admin.notifications");
+  const t = createT(copy.admin.notifications);
 
   return (
     <form
@@ -110,12 +112,14 @@ export async function NotificationFilters({
             asChild
           >
             <Link
-              href={buildHref({
-                status,
-                channel: currentChannel,
-                eventType: currentEventType,
-                search: currentSearch,
-              })}
+              href={
+                buildHref({
+                  status,
+                  channel: currentChannel,
+                  eventType: currentEventType,
+                  search: currentSearch,
+                }) as Route
+              }
             >
               {t(`status.${status}`)}
             </Link>
@@ -135,12 +139,14 @@ export async function NotificationFilters({
             asChild
           >
             <Link
-              href={buildHref({
-                status: currentStatus,
-                channel,
-                eventType: currentEventType,
-                search: currentSearch,
-              })}
+              href={
+                buildHref({
+                  status: currentStatus,
+                  channel,
+                  eventType: currentEventType,
+                  search: currentSearch,
+                }) as Route
+              }
             >
               {t(`channel.${channel}`)}
             </Link>
@@ -160,12 +166,14 @@ export async function NotificationFilters({
             asChild
           >
             <Link
-              href={buildHref({
-                status: currentStatus,
-                channel: currentChannel,
-                eventType,
-                search: currentSearch,
-              })}
+              href={
+                buildHref({
+                  status: currentStatus,
+                  channel: currentChannel,
+                  eventType,
+                  search: currentSearch,
+                }) as Route
+              }
             >
               {t(`eventType.${eventType}`)}
             </Link>

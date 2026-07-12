@@ -14,16 +14,12 @@ export type SettingsPanelLabels = {
   business: {
     siteName: string;
     addressEn: string;
-    addressUr: string;
     globalSiteNote: string;
   };
   payment: {
     jazzCashInstructionsEn: string;
-    jazzCashInstructionsUr: string;
     easypaisaInstructionsEn: string;
-    easypaisaInstructionsUr: string;
     bankTransferInstructionsEn: string;
-    bankTransferInstructionsUr: string;
     paymentAccountDisplayName: string;
     manualPaymentEnabled: string;
     jazzCashGatewayEnabled: string;
@@ -37,32 +33,26 @@ export type SettingsPanelLabels = {
     removeMethod: string;
     methodLabel: string;
     methodNameEn: string;
-    methodNameUr: string;
     accountTitle: string;
     accountNumber: string;
     iban: string;
     methodInstructionsEn: string;
-    methodInstructionsUr: string;
     methodActive: string;
     displayOrder: string;
   };
   seo: {
     defaultMetaTitleEn: string;
-    defaultMetaTitleUr: string;
     defaultMetaDescriptionEn: string;
-    defaultMetaDescriptionUr: string;
     defaultOgImage: string;
     defaultTwitterImage: string;
     canonicalDomain: string;
     sitemapEnabled: string;
     organizationName: string;
     organizationDescriptionEn: string;
-    organizationDescriptionUr: string;
     organizationLogoPath: string;
     organizationAreaServed: string;
     localBusinessName: string;
     localBusinessDescriptionEn: string;
-    localBusinessDescriptionUr: string;
     localBusinessPriceRange: string;
     localBusinessPriceRangeOptional: string;
     localBusinessAreaServed: string;
@@ -99,6 +89,5 @@ export type SettingsPanelLabels = {
     smsFallbackEnabled: string;
     maintenanceMode: string;
     maintenanceMessageEn: string;
-    maintenanceMessageUr: string;
   };
 };

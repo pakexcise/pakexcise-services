@@ -5,9 +5,9 @@ import { useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
+import Link from "next/link";
 const SEARCH_THRESHOLD = 6;
 
 export type RegionCityLink = {

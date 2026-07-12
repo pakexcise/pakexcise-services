@@ -14,10 +14,7 @@ const customerApplicationListSelect = {
   service: {
     select: {
       slug: true,
-      nameEn: true,
-      nameUr: true,
-    },
-  },
+      nameEn: true}},
   invoices: {
     where: { status: "SENT" },
     orderBy: { sentAt: "desc" },
@@ -26,23 +23,17 @@ const customerApplicationListSelect = {
       id: true,
       invoiceNumber: true,
       total: true,
-      sentAt: true,
-    },
-  },
+      sentAt: true}},
   payments: {
     orderBy: { createdAt: "desc" },
     take: 1,
     select: {
       id: true,
-      status: true,
-    },
-  },
+      status: true}},
   documents: {
     where: { type: COMPLETION_PROOF_DOC_TYPE },
     take: 1,
-    select: { id: true },
-  },
-} as const satisfies Prisma.ApplicationSelect;
+    select: { id: true }}} as const satisfies Prisma.ApplicationSelect;
 
 export type CustomerApplicationListItem = Prisma.ApplicationGetPayload<{
   select: typeof customerApplicationListSelect;
@@ -59,7 +50,6 @@ const customerApplicationDetailSelect = {
   service: {
     select: {
       nameEn: true,
-      nameUr: true,
       slug: true,
       requiresProof: true,
       documentReqs: {
@@ -69,16 +59,10 @@ const customerApplicationDetailSelect = {
           id: true,
           docType: true,
           labelEn: true,
-          labelUr: true,
           instructionsEn: true,
-          instructionsUr: true,
           isRequired: true,
           maxSizeBytes: true,
-          acceptedMimeTypes: true,
-        },
-      },
-    },
-  },
+          acceptedMimeTypes: true}}}},
   fieldValues: {
     orderBy: { createdAt: "asc" },
     select: {
@@ -91,14 +75,9 @@ const customerApplicationDetailSelect = {
         select: {
           fieldKey: true,
           labelEn: true,
-          labelUr: true,
           fieldType: true,
           isEncrypted: true,
-          optionsJson: true,
-        },
-      },
-    },
-  },
+          optionsJson: true}}}},
   documents: {
     orderBy: { createdAt: "asc" },
     select: {
@@ -114,22 +93,14 @@ const customerApplicationDetailSelect = {
       requirement: {
         select: {
           labelEn: true,
-          labelUr: true,
-          isRequired: true,
-        },
-      },
-    },
-  },
+          isRequired: true}}}},
   statusHistory: {
     orderBy: { createdAt: "asc" },
     select: {
       id: true,
       fromStatus: true,
       toStatus: true,
-      createdAt: true,
-    },
-  },
-} as const satisfies Prisma.ApplicationSelect;
+      createdAt: true}}} as const satisfies Prisma.ApplicationSelect;
 
 export type CustomerApplicationDetail = Prisma.ApplicationGetPayload<{
   select: typeof customerApplicationDetailSelect;
@@ -141,11 +112,7 @@ const publicTrackSelect = {
   updatedAt: true,
   service: {
     select: {
-      nameEn: true,
-      nameUr: true,
-    },
-  },
-} as const satisfies Prisma.ApplicationSelect;
+      nameEn: true}}} as const satisfies Prisma.ApplicationSelect;
 
 export type PublicTrackApplication = Prisma.ApplicationGetPayload<{
   select: typeof publicTrackSelect;
@@ -164,11 +131,9 @@ export class CustomerApplicationRepository extends Repository {
     return this.db.application.findMany({
       where: {
         userId,
-        status: { not: "DRAFT" },
-      },
+        status: { not: "DRAFT" }},
       orderBy: { updatedAt: "desc" },
-      select: customerApplicationListSelect,
-    });
+      select: customerApplicationListSelect});
   }
 
   async getStatusCountsForUser(
@@ -177,18 +142,15 @@ export class CustomerApplicationRepository extends Repository {
     const rows = await this.db.application.findMany({
       where: {
         userId,
-        status: { not: "DRAFT" },
-      },
-      select: { status: true },
-    });
+        status: { not: "DRAFT" }},
+      select: { status: true }});
 
     const counts: CustomerApplicationStatusCounts = {
       total: rows.length,
       actionRequired: 0,
       inProgress: 0,
       completed: 0,
-      closed: 0,
-    };
+      closed: 0};
 
     const actionRequired: ApplicationStatus[] = ["DOCS_REQUIRED", "INVOICE_SENT"];
     const inProgress: ApplicationStatus[] = [
@@ -197,8 +159,7 @@ export class CustomerApplicationRepository extends Repository {
       "PAYMENT_UPLOADED",
       "PAYMENT_VERIFIED",
       "IN_PROGRESS",
-      "AT_OFFICE",
-    ];
+      "AT_OFFICE"];
     const closed: ApplicationStatus[] = ["REJECTED", "CANCELLED"];
 
     for (const row of rows) {
@@ -221,10 +182,8 @@ export class CustomerApplicationRepository extends Repository {
       where: {
         id: input.id,
         userId: input.userId,
-        status: { not: "DRAFT" },
-      },
-      select: customerApplicationDetailSelect,
-    });
+        status: { not: "DRAFT" }},
+      select: customerApplicationDetailSelect});
   }
 
   async findPublicByTrackingId(
@@ -233,10 +192,8 @@ export class CustomerApplicationRepository extends Repository {
     return this.db.application.findFirst({
       where: {
         trackingId,
-        status: { not: "DRAFT" },
-      },
-      select: publicTrackSelect,
-    });
+        status: { not: "DRAFT" }},
+      select: publicTrackSelect});
   }
 }
 

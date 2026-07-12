@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { checkEmailAuthEligibility } from "@/features/auth/actions/check-email-auth-eligibility";
@@ -186,7 +187,7 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           }
 
           recordClientActivity({ event: "login_success" });
-          router.push(buildAuthRedirectUrl(callbackUrl));
+          router.push(buildAuthRedirectUrl(callbackUrl) as Route);
           router.refresh();
           return;
         }
@@ -336,7 +337,7 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
           mode === "signup"
             ? buildPostSignupRedirectUrl({ intent, callbackUrl })
             : buildAuthRedirectUrl(callbackUrl);
-        router.push(redirectTarget);
+        router.push(redirectTarget as Route);
         router.refresh();
       } catch (verifyError) {
         setError(
@@ -414,7 +415,7 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
             <p className="text-foreground">
               {labels.signupPrompt}{" "}
               <Link
-                href={buildSignupUrl({ callbackUrl, intent })}
+                href={buildSignupUrl({ callbackUrl, intent }) as Route}
                 className="font-medium text-primary hover:underline"
               >
                 {labels.signupLink}
@@ -425,7 +426,7 @@ export function EmailOtpAuthForm({ mode, labels }: EmailOtpAuthFormProps) {
             <p className="text-foreground">
               {labels.loginPrompt}{" "}
               <Link
-                href={buildLoginUrl({ callbackUrl, intent })}
+                href={buildLoginUrl({ callbackUrl, intent }) as Route}
                 className="font-medium text-primary hover:underline"
               >
                 {labels.loginLink}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
-import { cookies } from "next/headers";
+import { Geist, Geist_Mono } from "next/font/google";
 
 import "@/app/globals.css";
 import {
@@ -15,8 +14,6 @@ import {
   resolveFaviconPath,
 } from "@/features/settings/lib/branding-resolvers";
 import { getBrandingSettings } from "@/features/settings/lib/public-settings-cache";
-import { defaultLocale, LOCALE_COOKIE_NAME } from "@/i18n/config";
-import { isValidLocale } from "@/i18n/locale";
 
 function getGoogleSiteVerification(): string | undefined {
   const token = process.env.GOOGLE_SITE_VERIFICATION?.trim();
@@ -65,12 +62,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const notoNastaliq = Noto_Nastaliq_Urdu({
-  variable: "--font-noto-nastaliq",
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-});
-
 export async function generateMetadata(): Promise<Metadata> {
   const branding = await getBrandingSettings();
   const favicon = resolveFaviconPath(branding);
@@ -104,11 +95,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const cookieLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
-  const locale =
-    cookieLocale && isValidLocale(cookieLocale) ? cookieLocale : defaultLocale;
-  const direction = locale === "ur" ? "rtl" : "ltr";
   const allowIndexing = shouldAllowSearchIndexing();
   const googleVerification = allowIndexing
     ? getGoogleSiteVerification()
@@ -117,15 +103,15 @@ export default async function RootLayout({
 
   return (
     <html
-      lang={locale}
-      dir={direction}
+      lang="en"
+      dir="ltr"
       translate="no"
       data-brand-theme=""
       suppressHydrationWarning
     >
       <head>
         <meta name="google" content="notranslate" />
-        <meta httpEquiv="Content-Language" content={locale} />
+        <meta httpEquiv="Content-Language" content="en" />
         {googleVerification ? (
           <meta
             name="google-site-verification"
@@ -140,8 +126,8 @@ export default async function RootLayout({
         <BrandThemeStyles />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliq.variable} min-h-screen bg-background font-sans text-foreground antialiased ${locale === "ur" ? "font-urdu" : ""}`}
-        data-locale={locale}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
+        data-locale="en"
         suppressHydrationWarning
       >
         <GoogleTagManagerNoScript />

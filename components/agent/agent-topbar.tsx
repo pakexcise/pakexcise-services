@@ -1,16 +1,16 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LogOut, Menu } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n/t";
 import { useTransition } from "react";
 
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth-client";
 
 type AgentTopbarProps = {
@@ -65,7 +65,6 @@ export function AgentTopbar({
             ) : null}
           </div>
         </div>
-        <LanguageSwitcher />
         <NotificationBell applicationBasePath="/agent/applications" />
         <ThemeToggle />
         <Button

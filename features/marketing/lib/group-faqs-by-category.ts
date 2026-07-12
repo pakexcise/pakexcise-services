@@ -1,20 +1,16 @@
 import type { FaqItem } from "@/components/marketing/faq-accordion";
-import { pickLocalized } from "@/lib/i18n/content";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 
 export type PublicFaqRecord = {
   id: string;
   questionEn: string;
-  questionUr: string;
   answerEn: string;
-  answerUr: string;
   displayOrder: number;
   categoryId: string;
   faqCategory: {
     id: string;
     slug: string;
     nameEn: string;
-    nameUr: string;
     displayOrder: number;
   } | null;
 };
@@ -38,10 +34,7 @@ export function groupFaqsByCategory(
     const categoryId = category?.id ?? faq.categoryId;
     const categorySlug = category?.slug ?? "general";
     const categoryName = category
-      ? pickLocalized(locale, {
-          en: category.nameEn,
-          ur: category.nameUr,
-        })
+      ? category.nameEn ?? ""
       : categorySlug;
     const displayOrder = category?.displayOrder ?? 999;
 
@@ -57,8 +50,7 @@ export function groupFaqsByCategory(
       categorySlug,
       categoryName,
       displayOrder,
-      items: mapFaqsForLocale([faq], locale),
-    });
+      items: mapFaqsForLocale([faq], locale)});
   }
 
   return Array.from(grouped.values())
@@ -68,7 +60,6 @@ export function groupFaqsByCategory(
         const faqA = faqs.find((item) => item.id === a.id);
         const faqB = faqs.find((item) => item.id === b.id);
         return (faqA?.displayOrder ?? 0) - (faqB?.displayOrder ?? 0);
-      }),
-    }))
+      })}))
     .sort((a, b) => a.displayOrder - b.displayOrder);
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 
@@ -21,46 +23,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Link, useRouter } from "@/i18n/navigation";
 import type { SeoMetaInput } from "@/lib/validations/admin-seo";
 
 export type BlogEditorValues = {
   slug: string;
   titleEn: string;
-  titleUr: string;
   excerptEn: string;
-  excerptUr: string;
   contentEn: string;
-  contentUr: string;
   categoryEn: string;
-  categoryUr: string;
   categoryId: string;
   subCategoryId: string;
   tags: string[];
   authorNameEn: string;
-  authorNameUr: string;
   readingTimeMinutes: string;
   featuredImagePath: string;
   featuredImageTitleEn: string;
-  featuredImageTitleUr: string;
   featuredImageAltEn: string;
-  featuredImageAltUr: string;
   featuredImageCaptionEn: string;
-  featuredImageCaptionUr: string;
   focusKeywords: string;
   isFeatured: boolean;
   showTableOfContents: boolean;
   contentFaqs: BlogContentFaq[];
   ctaTitleEn: string;
-  ctaTitleUr: string;
   ctaDescriptionEn: string;
-  ctaDescriptionUr: string;
   ctaWhatsappLabelEn: string;
-  ctaWhatsappLabelUr: string;
   ctaRequestLabelEn: string;
-  ctaRequestLabelUr: string;
   ctaAccountLabelEn: string;
-  ctaAccountLabelUr: string;
   relatedServiceIds: string[];
   attachedFaqIds: string[];
   isPublished: boolean;
@@ -82,9 +70,7 @@ type BlogEditorFormProps = {
 function emptyFaq(): BlogContentFaq {
   return {
     questionEn: "",
-    questionUr: "",
     answerEn: "",
-    answerUr: "",
   };
 }
 
@@ -102,9 +88,7 @@ export function BlogEditorForm({
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [isPending, startTransition] = useTransition();
-  const estimatedReadingTime = computeReadingTimeMinutes(
-    values.contentEn || values.contentUr,
-  );
+  const estimatedReadingTime = computeReadingTimeMinutes(values.contentEn);
 
   function toggleId(list: string[], id: string) {
     return list.includes(id) ? list.filter((item) => item !== id) : [...list, id];
@@ -126,32 +110,21 @@ export function BlogEditorForm({
       const payload = {
         ...values,
         excerptEn: values.excerptEn || null,
-        excerptUr: values.excerptUr || null,
         categoryEn: values.categoryEn || null,
-        categoryUr: values.categoryUr || null,
         categoryId: values.categoryId || null,
         subCategoryId: values.subCategoryId || null,
         authorNameEn: values.authorNameEn || null,
-        authorNameUr: values.authorNameUr || null,
         readingTimeMinutes: null,
         featuredImagePath: values.featuredImagePath || null,
         featuredImageTitleEn: values.featuredImageTitleEn || null,
-        featuredImageTitleUr: values.featuredImageTitleUr || null,
         featuredImageAltEn: values.featuredImageAltEn || null,
-        featuredImageAltUr: values.featuredImageAltUr || null,
         featuredImageCaptionEn: values.featuredImageCaptionEn || null,
-        featuredImageCaptionUr: values.featuredImageCaptionUr || null,
         focusKeywords: values.focusKeywords || null,
         ctaTitleEn: values.ctaTitleEn || null,
-        ctaTitleUr: values.ctaTitleUr || null,
         ctaDescriptionEn: values.ctaDescriptionEn || null,
-        ctaDescriptionUr: values.ctaDescriptionUr || null,
         ctaWhatsappLabelEn: values.ctaWhatsappLabelEn || null,
-        ctaWhatsappLabelUr: values.ctaWhatsappLabelUr || null,
         ctaRequestLabelEn: values.ctaRequestLabelEn || null,
-        ctaRequestLabelUr: values.ctaRequestLabelUr || null,
         ctaAccountLabelEn: values.ctaAccountLabelEn || null,
-        ctaAccountLabelUr: values.ctaAccountLabelUr || null,
         seo: values.seo,
         ...(mode === "edit" ? { id: postId } : {}),
       };
@@ -191,15 +164,7 @@ export function BlogEditorForm({
             onChange={(e) => setValues((c) => ({ ...c, titleEn: e.target.value }))}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="titleUr">Title / H1 (Urdu)</Label>
-          <Input
-            id="titleUr"
-            dir="rtl"
-            value={values.titleUr}
-            onChange={(e) => setValues((c) => ({ ...c, titleUr: e.target.value }))}
-          />
-        </div>
+        
         <div className="space-y-2 md:col-span-2">
           <BlogCategoryFields
             categoryId={values.categoryId}
@@ -225,15 +190,7 @@ export function BlogEditorForm({
             onChange={(e) => setValues((c) => ({ ...c, authorNameEn: e.target.value }))}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="authorNameUr">Author (Urdu)</Label>
-          <Input
-            id="authorNameUr"
-            dir="rtl"
-            value={values.authorNameUr}
-            onChange={(e) => setValues((c) => ({ ...c, authorNameUr: e.target.value }))}
-          />
-        </div>
+        
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="tags">Tags (comma separated)</Label>
           <Input
@@ -259,18 +216,9 @@ export function BlogEditorForm({
             onChange={(e) => setValues((c) => ({ ...c, excerptEn: e.target.value }))}
           />
         </div>
+        
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="excerptUr">Excerpt (Urdu)</Label>
-          <Textarea
-            id="excerptUr"
-            rows={2}
-            dir="rtl"
-            value={values.excerptUr}
-            onChange={(e) => setValues((c) => ({ ...c, excerptUr: e.target.value }))}
-          />
-        </div>
-        <div className="space-y-2 md:col-span-2">
-          <BlogContentFormatGuide title="Content formatting guide (English & Urdu)" />
+          <BlogContentFormatGuide title="Content formatting guide" />
         </div>
         <div className="space-y-2 md:col-span-2">
           <BlogMarkdownEditor
@@ -280,15 +228,7 @@ export function BlogEditorForm({
             onChange={(contentEn) => setValues((c) => ({ ...c, contentEn }))}
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <BlogMarkdownEditor
-            id="contentUr"
-            label="Content (Urdu)"
-            value={values.contentUr}
-            onChange={(contentUr) => setValues((c) => ({ ...c, contentUr }))}
-            dir="rtl"
-          />
-        </div>
+        
         <div className="space-y-2 md:col-span-2">
           <p className="text-sm text-muted-foreground">
             Estimated reading time: <strong>{estimatedReadingTime} min</strong> (auto-calculated on save)
@@ -359,17 +299,7 @@ export function BlogEditorForm({
             }
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="featuredImageTitleUr">Image title (UR)</Label>
-          <Input
-            id="featuredImageTitleUr"
-            dir="rtl"
-            value={values.featuredImageTitleUr}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, featuredImageTitleUr: e.target.value }))
-            }
-          />
-        </div>
+        
         <div className="space-y-2">
           <Label htmlFor="featuredImageAltEn">Image alt text (EN)</Label>
           <Input
@@ -380,17 +310,7 @@ export function BlogEditorForm({
             }
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="featuredImageAltUr">Image alt text (UR)</Label>
-          <Input
-            id="featuredImageAltUr"
-            dir="rtl"
-            value={values.featuredImageAltUr}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, featuredImageAltUr: e.target.value }))
-            }
-          />
-        </div>
+        
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="featuredImageCaptionEn">Image caption (EN)</Label>
           <Textarea
@@ -402,18 +322,7 @@ export function BlogEditorForm({
             }
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="featuredImageCaptionUr">Image caption (UR)</Label>
-          <Textarea
-            id="featuredImageCaptionUr"
-            rows={2}
-            dir="rtl"
-            value={values.featuredImageCaptionUr}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, featuredImageCaptionUr: e.target.value }))
-            }
-          />
-        </div>
+        
       </section>
 
       <section className="space-y-4 rounded-xl border p-4">
@@ -461,28 +370,15 @@ export function BlogEditorForm({
                 </Button>
               </div>
               <Input
-                placeholder="Question (EN)"
+                placeholder="Question"
                 value={faq.questionEn}
                 onChange={(e) => updateFaq(index, { questionEn: e.target.value })}
               />
-              <Input
-                dir="rtl"
-                placeholder="Question (UR)"
-                value={faq.questionUr}
-                onChange={(e) => updateFaq(index, { questionUr: e.target.value })}
-              />
               <Textarea
                 rows={3}
-                placeholder="Answer (EN)"
+                placeholder="Answer"
                 value={faq.answerEn}
                 onChange={(e) => updateFaq(index, { answerEn: e.target.value })}
-              />
-              <Textarea
-                rows={3}
-                dir="rtl"
-                placeholder="Answer (UR)"
-                value={faq.answerUr}
-                onChange={(e) => updateFaq(index, { answerUr: e.target.value })}
               />
             </div>
           ))
@@ -502,15 +398,7 @@ export function BlogEditorForm({
             onChange={(e) => setValues((c) => ({ ...c, ctaTitleEn: e.target.value }))}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="ctaTitleUr">CTA heading (UR)</Label>
-          <Input
-            id="ctaTitleUr"
-            dir="rtl"
-            value={values.ctaTitleUr}
-            onChange={(e) => setValues((c) => ({ ...c, ctaTitleUr: e.target.value }))}
-          />
-        </div>
+        
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="ctaDescriptionEn">CTA description (EN)</Label>
           <Textarea
@@ -522,18 +410,7 @@ export function BlogEditorForm({
             }
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="ctaDescriptionUr">CTA description (UR)</Label>
-          <Textarea
-            id="ctaDescriptionUr"
-            rows={3}
-            dir="rtl"
-            value={values.ctaDescriptionUr}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, ctaDescriptionUr: e.target.value }))
-            }
-          />
-        </div>
+        
         <div className="space-y-2">
           <Label htmlFor="ctaWhatsappLabelEn">WhatsApp button (EN)</Label>
           <Input
@@ -544,17 +421,7 @@ export function BlogEditorForm({
             }
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="ctaWhatsappLabelUr">WhatsApp button (UR)</Label>
-          <Input
-            id="ctaWhatsappLabelUr"
-            dir="rtl"
-            value={values.ctaWhatsappLabelUr}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, ctaWhatsappLabelUr: e.target.value }))
-            }
-          />
-        </div>
+        
         <div className="space-y-2">
           <Label htmlFor="ctaRequestLabelEn">Submit request button (EN)</Label>
           <Input
@@ -565,17 +432,7 @@ export function BlogEditorForm({
             }
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="ctaRequestLabelUr">Submit request button (UR)</Label>
-          <Input
-            id="ctaRequestLabelUr"
-            dir="rtl"
-            value={values.ctaRequestLabelUr}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, ctaRequestLabelUr: e.target.value }))
-            }
-          />
-        </div>
+        
         <div className="space-y-2">
           <Label htmlFor="ctaAccountLabelEn">Apply with account button (EN)</Label>
           <Input
@@ -586,17 +443,7 @@ export function BlogEditorForm({
             }
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="ctaAccountLabelUr">Apply with account button (UR)</Label>
-          <Input
-            id="ctaAccountLabelUr"
-            dir="rtl"
-            value={values.ctaAccountLabelUr}
-            onChange={(e) =>
-              setValues((c) => ({ ...c, ctaAccountLabelUr: e.target.value }))
-            }
-          />
-        </div>
+        
       </section>
 
       <section className="space-y-3 rounded-xl border p-4">
@@ -648,16 +495,11 @@ export function BlogEditorForm({
         labels={{
           title: "SEO metadata",
           metaTitleEn: "Meta title (EN)",
-          metaTitleUr: "Meta title (UR)",
           metaDescriptionEn: "Meta description (EN)",
-          metaDescriptionUr: "Meta description (UR)",
           h1En: "H1 (EN)",
-          h1Ur: "H1 (UR)",
           canonicalUrl: "Canonical URL",
           ogTitleEn: "OG title (EN)",
-          ogTitleUr: "OG title (UR)",
           ogDescriptionEn: "OG description (EN)",
-          ogDescriptionUr: "OG description (UR)",
           ogImage: "OG image (uses featured image automatically)",
           twitterCard: "Twitter card",
           robotsIndex: "Allow indexing",

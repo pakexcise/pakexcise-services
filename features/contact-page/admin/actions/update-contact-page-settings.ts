@@ -4,14 +4,12 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 import {
   CONTACT_PAGE_SETTINGS_CACHE_TAG,
-  CONTACT_PAGE_SETTINGS_KEY,
-} from "@/features/contact-page/lib/defaults";
+  CONTACT_PAGE_SETTINGS_KEY} from "@/features/contact-page/lib/defaults";
 import { upsertStaticPageSeo } from "@/features/cms/lib/upsert-seo";
 import {
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { updateContactPageSettingsSchema } from "@/lib/validations/contact-page-settings";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { requirePermission } from "@/server/permissions/guards";
@@ -43,23 +41,17 @@ export async function updateContactPageSettingsAction(
 
   await upsertStaticPageSeo("contact", {
     metaTitleEn: parsed.data.seo.metaTitleEn,
-    metaTitleUr: parsed.data.seo.metaTitleUr,
     metaDescriptionEn: parsed.data.seo.metaDescriptionEn,
-    metaDescriptionUr: parsed.data.seo.metaDescriptionUr,
     h1En: parsed.data.heroTitleEn,
-    h1Ur: parsed.data.heroTitleUr,
     canonicalUrl: null,
     ogTitleEn: parsed.data.seo.metaTitleEn,
-    ogTitleUr: parsed.data.seo.metaTitleUr,
     ogDescriptionEn: parsed.data.seo.metaDescriptionEn,
-    ogDescriptionUr: parsed.data.seo.metaDescriptionUr,
     ogImage: null,
     twitterCard: "summary_large_image",
     robotsIndex: true,
     robotsFollow: true,
     faqSchemaJson: null,
-    breadcrumbJson: null,
-  });
+    breadcrumbJson: null});
 
   await auditAdminAction({
     actorId: user.id,
@@ -69,9 +61,7 @@ export async function updateContactPageSettingsAction(
     before: { isPageActive: before.isPageActive, heroTitleEn: before.heroTitleEn },
     after: {
       isPageActive: parsed.data.isPageActive,
-      heroTitleEn: parsed.data.heroTitleEn,
-    },
-  });
+      heroTitleEn: parsed.data.heroTitleEn}});
 
   revalidateAfterContactPageUpdate();
   return successResult({ ok: true });

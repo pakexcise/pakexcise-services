@@ -1,7 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useRouter } from "@/i18n/navigation";
 import { useMemo, useState, useTransition } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -32,9 +32,7 @@ type RegionPlateFormatsPanelProps = {
 
 type SectionDraft = {
   sectionTitleEn: string;
-  sectionTitleUr: string;
   sectionDescEn: string;
-  sectionDescUr: string;
   faqJson: string;
   isActive: boolean;
   showOnRegionPage: boolean;
@@ -44,15 +42,11 @@ type FormatDraft = {
   id?: string;
   vehicleType: AdminRegionNumberPlateFormat["vehicleType"];
   titleEn: string;
-  titleUr: string;
   formatsText: string;
   descriptionEn: string;
-  descriptionUr: string;
   relatedServiceSlugsText: string;
   imageAltEn: string;
-  imageAltUr: string;
   imageCaptionEn: string;
-  imageCaptionUr: string;
   isActive: boolean;
   isFeatured: boolean;
   showOnRegionPage: boolean;
@@ -90,15 +84,11 @@ function emptyFormatDraft(displayOrder: number): FormatDraft {
   return {
     vehicleType: "CAR",
     titleEn: "",
-    titleUr: "",
     formatsText: "",
     descriptionEn: "",
-    descriptionUr: "",
     relatedServiceSlugsText: "",
     imageAltEn: "",
-    imageAltUr: "",
     imageCaptionEn: "",
-    imageCaptionUr: "",
     isActive: true,
     isFeatured: false,
     showOnRegionPage: true,
@@ -109,9 +99,7 @@ function emptyFormatDraft(displayOrder: number): FormatDraft {
 function sectionToDraft(section: AdminRegionPlateFormatSection | null): SectionDraft {
   return {
     sectionTitleEn: section?.sectionTitleEn ?? "",
-    sectionTitleUr: section?.sectionTitleUr ?? "",
     sectionDescEn: section?.sectionDescEn ?? "",
-    sectionDescUr: section?.sectionDescUr ?? "",
     faqJson: section?.faqJson ? JSON.stringify(section.faqJson, null, 2) : "",
     isActive: section?.isActive ?? true,
     showOnRegionPage: section?.showOnRegionPage ?? true,
@@ -123,15 +111,11 @@ function formatToDraft(format: AdminRegionNumberPlateFormat): FormatDraft {
     id: format.id,
     vehicleType: format.vehicleType,
     titleEn: format.titleEn,
-    titleUr: format.titleUr,
     formatsText: formatsToText(format.formatsJson),
     descriptionEn: format.descriptionEn ?? "",
-    descriptionUr: format.descriptionUr ?? "",
     relatedServiceSlugsText: slugsToText(format.relatedServiceSlugs),
     imageAltEn: format.imageAltEn ?? "",
-    imageAltUr: format.imageAltUr ?? "",
     imageCaptionEn: format.imageCaptionEn ?? "",
-    imageCaptionUr: format.imageCaptionUr ?? "",
     isActive: format.isActive,
     isFeatured: format.isFeatured,
     showOnRegionPage: format.showOnRegionPage,
@@ -183,9 +167,7 @@ export function RegionPlateFormatsPanel({
       const result = await upsertRegionPlateFormatSectionAction({
         regionId,
         sectionTitleEn: sectionDraft.sectionTitleEn || null,
-        sectionTitleUr: sectionDraft.sectionTitleUr || null,
         sectionDescEn: sectionDraft.sectionDescEn || null,
-        sectionDescUr: sectionDraft.sectionDescUr || null,
         faqJson,
         isActive: sectionDraft.isActive,
         showOnRegionPage: sectionDraft.showOnRegionPage,
@@ -215,15 +197,11 @@ export function RegionPlateFormatsPanel({
         regionId,
         vehicleType: formatDraft.vehicleType,
         titleEn: formatDraft.titleEn,
-        titleUr: formatDraft.titleUr,
         formats: formatsList,
         descriptionEn: formatDraft.descriptionEn || null,
-        descriptionUr: formatDraft.descriptionUr || null,
         relatedServiceSlugs: parseLines(formatDraft.relatedServiceSlugsText),
         imageAltEn: formatDraft.imageAltEn || null,
-        imageAltUr: formatDraft.imageAltUr || null,
         imageCaptionEn: formatDraft.imageCaptionEn || null,
-        imageCaptionUr: formatDraft.imageCaptionUr || null,
         isActive: formatDraft.isActive,
         isFeatured: formatDraft.isFeatured,
         showOnRegionPage: formatDraft.showOnRegionPage,
@@ -367,18 +345,6 @@ export function RegionPlateFormatsPanel({
               }
             />
           </div>
-          <div className="space-y-2">
-            <Label>{labels.sectionTitleUr}</Label>
-            <Input
-              value={sectionDraft.sectionTitleUr}
-              onChange={(event) =>
-                setSectionDraft((current) => ({
-                  ...current,
-                  sectionTitleUr: event.target.value,
-                }))
-              }
-            />
-          </div>
           <div className="space-y-2 md:col-span-2">
             <Label>{labels.sectionDescEn}</Label>
             <Textarea
@@ -388,19 +354,6 @@ export function RegionPlateFormatsPanel({
                 setSectionDraft((current) => ({
                   ...current,
                   sectionDescEn: event.target.value,
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label>{labels.sectionDescUr}</Label>
-            <Textarea
-              rows={3}
-              value={sectionDraft.sectionDescUr}
-              onChange={(event) =>
-                setSectionDraft((current) => ({
-                  ...current,
-                  sectionDescUr: event.target.value,
                 }))
               }
             />
@@ -562,18 +515,6 @@ export function RegionPlateFormatsPanel({
               }
             />
           </div>
-          <div className="space-y-2">
-            <Label>{labels.titleUr}</Label>
-            <Input
-              value={formatDraft.titleUr}
-              onChange={(event) =>
-                setFormatDraft((current) => ({
-                  ...current,
-                  titleUr: event.target.value,
-                }))
-              }
-            />
-          </div>
           <div className="space-y-2 md:col-span-2">
             <Label>{labels.formats}</Label>
             <Textarea
@@ -597,19 +538,6 @@ export function RegionPlateFormatsPanel({
                 setFormatDraft((current) => ({
                   ...current,
                   descriptionEn: event.target.value,
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label>{labels.descriptionUr}</Label>
-            <Textarea
-              rows={3}
-              value={formatDraft.descriptionUr}
-              onChange={(event) =>
-                setFormatDraft((current) => ({
-                  ...current,
-                  descriptionUr: event.target.value,
                 }))
               }
             />
@@ -640,18 +568,6 @@ export function RegionPlateFormatsPanel({
             />
           </div>
           <div className="space-y-2">
-            <Label>{labels.imageAltUr}</Label>
-            <Input
-              value={formatDraft.imageAltUr}
-              onChange={(event) =>
-                setFormatDraft((current) => ({
-                  ...current,
-                  imageAltUr: event.target.value,
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
             <Label>{labels.imageCaptionEn}</Label>
             <Input
               value={formatDraft.imageCaptionEn}
@@ -659,18 +575,6 @@ export function RegionPlateFormatsPanel({
                 setFormatDraft((current) => ({
                   ...current,
                   imageCaptionEn: event.target.value,
-                }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>{labels.imageCaptionUr}</Label>
-            <Input
-              value={formatDraft.imageCaptionUr}
-              onChange={(event) =>
-                setFormatDraft((current) => ({
-                  ...current,
-                  imageCaptionUr: event.target.value,
                 }))
               }
             />

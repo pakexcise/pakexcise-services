@@ -1,14 +1,13 @@
+import { copy, createT } from "@/messages";
 import type { ContactInquiryStatus } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type ServiceOption = {
   slug: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type ContactInquiryFiltersProps = {
@@ -28,9 +27,8 @@ export async function ContactInquiryFilters({
   currentDateFrom,
   currentDateTo,
   services,
-  locale,
-}: ContactInquiryFiltersProps) {
-  const t = await getTranslations("admin.contactInquiries");
+  locale}: ContactInquiryFiltersProps) {
+  const t = createT(copy.admin.contactInquiries);
 
   return (
     <form method="get" className="rounded-xl border bg-card p-4">
@@ -80,7 +78,7 @@ export async function ContactInquiryFilters({
             <option value="other">{t("filters.otherService")}</option>
             {services.map((service) => (
               <option key={service.slug} value={service.slug}>
-                {locale === "ur" ? service.nameUr : service.nameEn}
+                {service.nameEn}
               </option>
             ))}
           </select>

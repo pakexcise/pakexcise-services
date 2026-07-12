@@ -1,34 +1,19 @@
 import { Star } from "lucide-react";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { pickLocalized } from "@/lib/i18n/content";
-
-type ReviewCardProps = {
+import { Card, CardContent, CardHeader } from "@/components/ui/card";type ReviewCardProps = {
   review: {
     authorNameEn: string;
-    authorNameUr?: string | null;
     authorRoleEn?: string | null;
-    authorRoleUr?: string | null;
     contentEn: string;
-    contentUr: string;
     rating: number;
   };
   locale: string;
 };
 
 export function ReviewCard({ review, locale }: ReviewCardProps) {
-  const authorName = pickLocalized(locale, {
-    en: review.authorNameEn,
-    ur: review.authorNameUr ?? review.authorNameEn,
-  });
-  const authorRole = pickLocalized(locale, {
-    en: review.authorRoleEn,
-    ur: review.authorRoleUr,
-  });
-  const content = pickLocalized(locale, {
-    en: review.contentEn,
-    ur: review.contentUr,
-  });
+  const authorName = review.authorNameEn ?? "";
+  const authorRole = review.authorRoleEn ?? "";
+  const content = review.contentEn ?? "";
 
   return (
     <Card className="h-full">

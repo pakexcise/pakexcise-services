@@ -3,8 +3,7 @@ import type { PrismaClient } from "@prisma/client";
 import {
   DEPRECATED_FAQ_CATEGORY_SLUGS,
   FAQ_CATEGORY_SEEDS,
-  FAQ_ITEM_SEEDS,
-} from "./seed-data/faqs";
+  FAQ_ITEM_SEEDS} from "./seed-data/faqs";
 
 export async function seedFaqs(prisma: PrismaClient) {
   console.log("Seeding FAQ categories and content...");
@@ -16,28 +15,22 @@ export async function seedFaqs(prisma: PrismaClient) {
       where: { slug: category.slug },
       create: {
         ...category,
-        isActive: true,
-      },
+        isActive: true},
       update: {
         nameEn: category.nameEn,
-        nameUr: category.nameUr,
         displayOrder: category.displayOrder,
-        isActive: true,
-      },
-    });
+        isActive: true}});
     categoryMap[category.slug] = record.id;
   }
 
   if (DEPRECATED_FAQ_CATEGORY_SLUGS.length > 0) {
     await prisma.faqCategory.updateMany({
       where: { slug: { in: [...DEPRECATED_FAQ_CATEGORY_SLUGS] } },
-      data: { isActive: false },
-    });
+      data: { isActive: false }});
   }
 
   const deleted = await prisma.fAQ.deleteMany({
-    where: { serviceId: null },
-  });
+    where: { serviceId: null }});
   console.log(`Removed ${deleted.count} existing global FAQ(s).`);
 
   for (const faq of FAQ_ITEM_SEEDS) {
@@ -52,15 +45,11 @@ export async function seedFaqs(prisma: PrismaClient) {
         categoryId,
         serviceId: null,
         questionEn: faq.questionEn,
-        questionUr: faq.questionUr,
         answerEn: faq.answerEn,
-        answerUr: faq.answerUr,
         displayOrder: faq.displayOrder,
         isActive: true,
         isFeatured: faq.isFeatured ?? false,
-        featuredDisplayOrder: faq.featuredDisplayOrder ?? 0,
-      },
-    });
+        featuredDisplayOrder: faq.featuredDisplayOrder ?? 0}});
   }
 
   console.log(`Seeded ${FAQ_ITEM_SEEDS.length} global FAQs.`);

@@ -284,7 +284,7 @@ export function InvoiceEditor({
                     const Icon = methodIcon(method.type);
                     const selected =
                       selectedPaymentMethodIds?.includes(method.id) ?? false;
-                    const name = getPaymentMethodName(method, invoice.locale);
+                    const name = getPaymentMethodName(method);
 
                     return (
                       <button

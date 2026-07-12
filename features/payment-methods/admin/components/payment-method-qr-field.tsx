@@ -1,7 +1,6 @@
 "use client";
 
 import { ImageIcon, Loader2, Trash2, Upload } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useRef, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import {
 } from "@/features/applications/lib/validate-upload";
 import { resolveClientFileMimeType } from "@/lib/utils/resolve-file-mime";
 
+import { useRouter } from "next/navigation";
 type PaymentMethodQrFieldProps = {
   paymentMethodId: string;
   hasQr: boolean;

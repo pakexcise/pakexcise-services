@@ -1,5 +1,5 @@
+import Link from "next/link";
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { disclaimerCompactClassName } from "@/lib/styles/disclaimer-banner";
 

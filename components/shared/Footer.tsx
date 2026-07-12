@@ -1,5 +1,7 @@
+import type { Route } from "next";
+import Link from "next/link";
 import { Clock, Mail, Phone } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { SocialLinks } from "@/components/marketing/social-links";
 import { FooterProvinceLinks } from "@/components/marketing/footer-province-links";
@@ -20,11 +22,8 @@ import {
   resolveWhatsappDefaultMessage,
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
 import { buildTelHref } from "@/lib/contact/build-tel-href";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
 import {
   getActiveSocialLinks,
   getFooterLegalPages,
@@ -62,7 +61,7 @@ function FooterLink({
   }
 
   return (
-    <Link href={href} className={className} aria-label={ariaLabel}>
+    <Link href={href as Route} className={className} aria-label={ariaLabel}>
       {children}
     </Link>
   );
@@ -90,7 +89,7 @@ function FooterNavSection({
 export async function Footer() {
   const t = await getTranslations("footer");
   const tNav = await getTranslations("nav");
-  const locale = await getCurrentLocale();
+  const locale = "en";
   const year = new Date().getFullYear();
 
   let services: Awaited<ReturnType<typeof getFooterServices>> = [];
@@ -106,7 +105,6 @@ export async function Footer() {
   let whatsappLabel = t("whatsapp");
   let whatsappChannelLabel = t("whatsappChannel");
   let whatsappChannelLabelEn = t("whatsappChannel");
-  let whatsappChannelLabelUr = t("whatsappChannel");
   let showBlog = true;
   let showGuides = true;
   let showWhatsappChannel = true;
@@ -143,13 +141,12 @@ export async function Footer() {
     showGuides = featureFlags.guidesEnabled;
     showWhatsappChannel = featureFlags.whatsappChannelEnabled;
 
-    const localized = localizeGlobalSiteContent(business, locale, publicUi);
+    const localized = localizeGlobalSiteContent(business, publicUi);
     description = localized.footerDescription || description;
     whatsappLabel = localized.footerWhatsappLabel || whatsappLabel;
     whatsappChannelLabel =
       localized.footerWhatsappChannelLabel || whatsappChannelLabel;
     whatsappChannelLabelEn = publicUi.footerWhatsappChannelLabelEn;
-    whatsappChannelLabelUr = publicUi.footerWhatsappChannelLabelUr;
     supportDays = localized.supportDays;
     supportHours = localized.supportHours;
     contactEmail = resolveSupportEmail(business);
@@ -175,7 +172,6 @@ export async function Footer() {
     whatsappChannelUrl,
     showWhatsappChannel,
     channelLabelEn: whatsappChannelLabelEn,
-    channelLabelUr: whatsappChannelLabelUr,
   });
 
   return (
@@ -193,7 +189,6 @@ export async function Footer() {
           {footerSocialLinks.length > 0 ? (
             <SocialLinks
               links={footerSocialLinks}
-              locale={locale}
               title={t("followUs")}
               variant="footer"
             />
@@ -210,10 +205,7 @@ export async function Footer() {
             services.map((service) => (
               <li key={service.id}>
                 <FooterLink href={`/services/${service.slug}`}>
-                  {pickLocalized(locale, {
-                    en: service.nameEn,
-                    ur: service.nameUr,
-                  })}
+                  {service.nameEn ?? ""}
                 </FooterLink>
               </li>
             ))
@@ -227,10 +219,7 @@ export async function Footer() {
           provinces={regions.map((region) => ({
             id: region.id,
             slug: region.slug,
-            name: pickLocalized(locale, {
-              en: region.nameEn,
-              ur: region.nameUr,
-            }),
+            name: region.nameEn ?? "",
           }))}
         />
 
@@ -344,10 +333,7 @@ export async function Footer() {
               {legalPages.map((link) => (
                 <li key={link.slug}>
                   <FooterLink href={`/${link.slug}`}>
-                    {pickLocalized(locale, {
-                      en: link.titleEn,
-                      ur: link.titleUr,
-                    })}
+                    {link.titleEn ?? ""}
                   </FooterLink>
                 </li>
               ))}

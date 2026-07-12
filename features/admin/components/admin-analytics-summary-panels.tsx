@@ -5,7 +5,7 @@ import {
   MousePointerClick,
   UserPlus,
 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 import Link from "next/link";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,24 +8,21 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createServiceAction,
-  updateServiceAction,
-} from "@/features/services/admin/actions/service-actions";
+  updateServiceAction} from "@/features/services/admin/actions/service-actions";
 import {
   editorValuesToPayload,
-  type ServiceEditorValues,
-} from "@/features/services/admin/lib/form-defaults";
+  type ServiceEditorValues} from "@/features/services/admin/lib/form-defaults";
 import type { ServiceEditorLabels } from "@/features/services/admin/lib/labels";
 
+import { useRouter } from "next/navigation";
 type RegionOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type CategoryOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
   isActive: boolean;
 };
 
@@ -34,7 +30,6 @@ type ParentServiceOption = {
   id: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type ServiceEditorFormProps = {
@@ -56,8 +51,7 @@ export function ServiceEditorForm({
   regions,
   categories,
   parentServices,
-  labels,
-}: ServiceEditorFormProps) {
+  labels}: ServiceEditorFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState<TabKey>("general");
@@ -78,8 +72,7 @@ export function ServiceEditorForm({
   ) {
     setValues((current) => ({
       ...current,
-      seo: { ...current.seo, [key]: value },
-    }));
+      seo: { ...current.seo, [key]: value }}));
   }
 
   function handleSubmit() {
@@ -115,8 +108,7 @@ export function ServiceEditorForm({
 
   const tabs: Array<{ key: TabKey; label: string }> = [
     { key: "general", label: labels.tabGeneral },
-    { key: "seo", label: labels.tabSeo },
-  ];
+    { key: "seo", label: labels.tabSeo }];
 
   return (
     <div className="space-y-6">
@@ -220,13 +212,7 @@ export function ServiceEditorForm({
               onChange={(event) => updateField("nameEn", event.target.value)}
             />
           </Field>
-          <Field label={labels.nameUr} error={fieldErrors.nameUr?.[0]}>
-            <Input
-              value={values.nameUr}
-              onChange={(event) => updateField("nameUr", event.target.value)}
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.shortDescriptionEn}>
             <Textarea
               value={values.shortDescriptionEn}
@@ -235,15 +221,7 @@ export function ServiceEditorForm({
               }
             />
           </Field>
-          <Field label={labels.shortDescriptionUr}>
-            <Textarea
-              value={values.shortDescriptionUr}
-              onChange={(event) =>
-                updateField("shortDescriptionUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.contentEn} className="lg:col-span-2">
             <Textarea
               className="min-h-32"
@@ -251,27 +229,14 @@ export function ServiceEditorForm({
               onChange={(event) => updateField("contentEn", event.target.value)}
             />
           </Field>
-          <Field label={labels.contentUr} className="lg:col-span-2">
-            <Textarea
-              className="min-h-32"
-              value={values.contentUr}
-              onChange={(event) => updateField("contentUr", event.target.value)}
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.ctaTextEn}>
             <Input
               value={values.ctaTextEn}
               onChange={(event) => updateField("ctaTextEn", event.target.value)}
             />
           </Field>
-          <Field label={labels.ctaTextUr}>
-            <Input
-              value={values.ctaTextUr}
-              onChange={(event) => updateField("ctaTextUr", event.target.value)}
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.processingNotesEn} className="lg:col-span-2">
             <Textarea
               value={values.processingNotesEn}
@@ -280,15 +245,7 @@ export function ServiceEditorForm({
               }
             />
           </Field>
-          <Field label={labels.processingNotesUr} className="lg:col-span-2">
-            <Textarea
-              value={values.processingNotesUr}
-              onChange={(event) =>
-                updateField("processingNotesUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.internalNotes} className="lg:col-span-2">
             <Textarea
               value={values.internalNotes}
@@ -393,15 +350,7 @@ export function ServiceEditorForm({
               }
             />
           </Field>
-          <Field label={labels.metaTitleUr}>
-            <Input
-              value={values.seo.metaTitleUr}
-              onChange={(event) =>
-                updateSeoField("metaTitleUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.metaDescriptionEn}>
             <Textarea
               value={values.seo.metaDescriptionEn}
@@ -410,28 +359,14 @@ export function ServiceEditorForm({
               }
             />
           </Field>
-          <Field label={labels.metaDescriptionUr}>
-            <Textarea
-              value={values.seo.metaDescriptionUr}
-              onChange={(event) =>
-                updateSeoField("metaDescriptionUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.h1En}>
             <Input
               value={values.seo.h1En}
               onChange={(event) => updateSeoField("h1En", event.target.value)}
             />
           </Field>
-          <Field label={labels.h1Ur}>
-            <Input
-              value={values.seo.h1Ur}
-              onChange={(event) => updateSeoField("h1Ur", event.target.value)}
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.canonicalUrl} className="lg:col-span-2">
             <Input
               value={values.seo.canonicalUrl}
@@ -448,15 +383,7 @@ export function ServiceEditorForm({
               }
             />
           </Field>
-          <Field label={labels.ogTitleUr}>
-            <Input
-              value={values.seo.ogTitleUr}
-              onChange={(event) =>
-                updateSeoField("ogTitleUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.ogDescriptionEn}>
             <Textarea
               value={values.seo.ogDescriptionEn}
@@ -465,15 +392,7 @@ export function ServiceEditorForm({
               }
             />
           </Field>
-          <Field label={labels.ogDescriptionUr}>
-            <Textarea
-              value={values.seo.ogDescriptionUr}
-              onChange={(event) =>
-                updateSeoField("ogDescriptionUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </Field>
+          
           <Field label={labels.ogImage} className="lg:col-span-2">
             <Input
               value={values.seo.ogImage}
@@ -545,8 +464,7 @@ function Field({
   label,
   error,
   className,
-  children,
-}: {
+  children}: {
   label: string;
   error?: string;
   className?: string;

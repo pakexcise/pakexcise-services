@@ -12,9 +12,7 @@ export const adminServiceCategoryDetailSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   descriptionEn: true,
-  descriptionUr: true,
   isActive: true,
   displayOrder: true,
   createdAt: true,
@@ -34,7 +32,6 @@ export const adminServiceCategoryListSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   isActive: true,
   displayOrder: true,
   updatedAt: true,
@@ -71,7 +68,7 @@ export class AdminServiceCategoryRepository extends Repository {
     if (filters.q) {
       where.OR = [
         { nameEn: { contains: filters.q, mode: "insensitive" } },
-        { nameUr: { contains: filters.q, mode: "insensitive" } },
+
         { slug: { contains: filters.q, mode: "insensitive" } },
       ];
     }

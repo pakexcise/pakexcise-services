@@ -1,11 +1,14 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { copy, createT } from "@/messages";
+
+import { useTranslations } from "@/lib/i18n/t";
 
 import { Button } from "@/components/ui/button";
-import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/customer/dashboard", key: "dashboard" },
   { href: "/customer/profile", key: "profile" },
@@ -13,7 +16,7 @@ const navItems = [
 
 export function CustomerPortalNav() {
   const pathname = usePathname();
-  const t = useTranslations("customer.nav");
+  const t = createT(copy.customer.nav);
 
   return (
     <nav

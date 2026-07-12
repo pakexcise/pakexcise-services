@@ -13,9 +13,7 @@ export function parseBlogContentFaqs(value: unknown): BlogContentFaq[] {
 
       const record = item as Record<string, unknown>;
       const questionEn = String(record.questionEn ?? "").trim();
-      const questionUr = String(record.questionUr ?? "").trim();
       const answerEn = String(record.answerEn ?? "").trim();
-      const answerUr = String(record.answerUr ?? "").trim();
 
       if (!questionEn || !answerEn) {
         return null;
@@ -23,9 +21,7 @@ export function parseBlogContentFaqs(value: unknown): BlogContentFaq[] {
 
       return {
         questionEn,
-        questionUr: questionUr || questionEn,
         answerEn,
-        answerUr: answerUr || answerEn,
       };
     })
     .filter((item): item is BlogContentFaq => item !== null);
@@ -36,8 +32,8 @@ export function mapBlogContentFaqsForLocale(
   locale: string,
 ): Array<{ question: string; answer: string }> {
   return faqs.map((faq) => ({
-    question: locale === "ur" ? faq.questionUr : faq.questionEn,
-    answer: locale === "ur" ? faq.answerUr : faq.answerEn,
+    question: faq.questionEn,
+    answer: faq.answerEn,
   }));
 }
 

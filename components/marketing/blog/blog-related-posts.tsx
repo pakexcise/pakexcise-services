@@ -4,17 +4,12 @@ type BlogRelatedPostsProps = {
   posts: Array<{
     slug: string;
     titleEn: string;
-    titleUr: string;
     excerptEn?: string | null;
-    excerptUr?: string | null;
     categoryEn?: string | null;
-    categoryUr?: string | null;
     authorNameEn?: string | null;
-    authorNameUr?: string | null;
     readingTimeMinutes?: number | null;
     featuredImagePath?: string | null;
     featuredImageAltEn?: string | null;
-    featuredImageAltUr?: string | null;
     publishedAt?: Date | null;
     seoMeta?: {
       ogImage?: string | null;

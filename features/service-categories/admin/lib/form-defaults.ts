@@ -1,9 +1,7 @@
 export type ServiceCategoryEditorValues = {
   slug: string;
   nameEn: string;
-  nameUr: string;
   descriptionEn: string;
-  descriptionUr: string;
   isActive: boolean;
   displayOrder: number;
 };
@@ -14,21 +12,16 @@ export function emptyServiceCategoryEditorValues(
   return {
     slug: "",
     nameEn: "",
-    nameUr: "",
     descriptionEn: "",
-    descriptionUr: "",
     isActive: true,
-    displayOrder,
-  };
+    displayOrder};
 }
 
 export function categoryToEditorValues(
   category: {
     slug: string;
     nameEn: string;
-    nameUr: string;
     descriptionEn: string | null;
-    descriptionUr: string | null;
     isActive: boolean;
     displayOrder: number;
   },
@@ -36,18 +29,13 @@ export function categoryToEditorValues(
   return {
     slug: category.slug,
     nameEn: category.nameEn,
-    nameUr: category.nameUr,
     descriptionEn: category.descriptionEn ?? "",
-    descriptionUr: category.descriptionUr ?? "",
     isActive: category.isActive,
-    displayOrder: category.displayOrder,
-  };
+    displayOrder: category.displayOrder};
 }
 
 export function editorValuesToPayload(values: ServiceCategoryEditorValues) {
   return {
     ...values,
-    descriptionEn: values.descriptionEn || null,
-    descriptionUr: values.descriptionUr || null,
-  };
+    descriptionEn: values.descriptionEn || null};
 }

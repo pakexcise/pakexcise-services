@@ -13,12 +13,10 @@ export type AdminDashboardInsights = {
   paymentUploadedQueue: number;
   mostRequestedService: {
     nameEn: string;
-    nameUr: string;
     count: number;
   } | null;
   topProvince: {
     nameEn: string;
-    nameUr: string;
     count: number;
   } | null;
 };
@@ -82,13 +80,12 @@ export class AdminDashboardRepository extends Repository {
       if (topService) {
         const service = await this.db.service.findUnique({
           where: { id: topService.serviceId },
-          select: { nameEn: true, nameUr: true },
+          select: { nameEn: true },
         });
 
         if (service) {
           mostRequestedService = {
             nameEn: service.nameEn,
-            nameUr: service.nameUr,
             count: topService._count._all,
           };
         }
@@ -137,13 +134,12 @@ export class AdminDashboardRepository extends Repository {
       if (topRegionEntry) {
         const region = await this.db.region.findUnique({
           where: { id: topRegionEntry[0] },
-          select: { nameEn: true, nameUr: true },
+          select: { nameEn: true },
         });
 
         if (region) {
           topProvince = {
             nameEn: region.nameEn,
-            nameUr: region.nameUr,
             count: topRegionEntry[1],
           };
         }

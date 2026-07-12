@@ -23,21 +23,15 @@ export const adminServiceDetailSelect = {
           id: true,
           slug: true,
           nameEn: true,
-          nameUr: true,
         },
       },
     },
   },
   nameEn: true,
-  nameUr: true,
   shortDescriptionEn: true,
-  shortDescriptionUr: true,
   contentEn: true,
-  contentUr: true,
   ctaTextEn: true,
-  ctaTextUr: true,
   processingNotesEn: true,
-  processingNotesUr: true,
   internalNotes: true,
   referenceLinksJson: true,
   requiresProof: true,
@@ -55,7 +49,6 @@ export const adminServiceDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   category: {
@@ -63,7 +56,6 @@ export const adminServiceDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   parentService: {
@@ -71,7 +63,6 @@ export const adminServiceDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   seoMeta: true,
@@ -82,9 +73,7 @@ export const adminServiceDetailSelect = {
       regionId: true,
       docType: true,
       labelEn: true,
-      labelUr: true,
       instructionsEn: true,
-      instructionsUr: true,
       isRequired: true,
       maxSizeBytes: true,
       acceptedMimeTypes: true,
@@ -95,7 +84,6 @@ export const adminServiceDetailSelect = {
           id: true,
           slug: true,
           nameEn: true,
-          nameUr: true,
         },
       },
     },
@@ -106,11 +94,8 @@ export const adminServiceDetailSelect = {
       id: true,
       fieldKey: true,
       labelEn: true,
-      labelUr: true,
       placeholderEn: true,
-      placeholderUr: true,
       helpTextEn: true,
-      helpTextUr: true,
       fieldType: true,
       isRequired: true,
       isEncrypted: true,
@@ -131,7 +116,6 @@ export const adminServiceListSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   isActive: true,
   displayOrder: true,
   updatedAt: true,
@@ -139,13 +123,11 @@ export const adminServiceListSelect = {
   category: {
     select: {
       nameEn: true,
-      nameUr: true,
     },
   },
   parentService: {
     select: {
       nameEn: true,
-      nameUr: true,
     },
   },
   serviceRegions: {
@@ -155,7 +137,6 @@ export const adminServiceListSelect = {
         select: {
           id: true,
           nameEn: true,
-          nameUr: true,
         },
       },
     },
@@ -200,7 +181,7 @@ export class AdminServiceRepository extends Repository {
       where.OR = [
         { slug: { contains: query, mode: "insensitive" } },
         { nameEn: { contains: query, mode: "insensitive" } },
-        { nameUr: { contains: query, mode: "insensitive" } },
+
       ];
     }
 
@@ -249,7 +230,6 @@ export class AdminServiceRepository extends Repository {
         id: true,
         slug: true,
         nameEn: true,
-        nameUr: true,
       },
     });
   }
@@ -265,12 +245,12 @@ export class AdminServiceRepository extends Repository {
   }
 
   async listOptions(): Promise<
-    Array<{ id: string; nameEn: string; nameUr: string; slug: string }>
+    Array<{ id: string; nameEn: string; slug: string }>
   > {
     return this.db.service.findMany({
       where: { deletedAt: null },
       orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-      select: { id: true, nameEn: true, nameUr: true, slug: true },
+      select: { id: true, nameEn: true, slug: true },
     });
   }
 }

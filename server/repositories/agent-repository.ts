@@ -4,8 +4,7 @@ import type { AgentApprovalStatus, AgentPayoutStatus, AgentReceiptStatus, Prisma
 
 import {
   Repository,
-  type PaginatedResult,
-} from "@/server/repositories/base/repository";
+  type PaginatedResult} from "@/server/repositories/base/repository";
 
 const adminAgentListSelect = {
   id: true,
@@ -31,15 +30,10 @@ const adminAgentListSelect = {
       email: true,
       phone: true,
       status: true,
-      createdAt: true,
-    },
-  },
+      createdAt: true}},
   _count: {
     select: {
-      commissions: true,
-    },
-  },
-} as const satisfies Prisma.AgentProfileSelect;
+      commissions: true}}} as const satisfies Prisma.AgentProfileSelect;
 
 export type AdminAgentListItem = Prisma.AgentProfileGetPayload<{
   select: typeof adminAgentListSelect;
@@ -72,13 +66,7 @@ const agentCommissionListSelect = {
       trackingId: true,
       service: {
         select: {
-          nameEn: true,
-          nameUr: true,
-        },
-      },
-    },
-  },
-} as const satisfies Prisma.AgentCommissionSelect;
+          nameEn: true}}}}} as const satisfies Prisma.AgentCommissionSelect;
 
 export type AgentCommissionListItem = Prisma.AgentCommissionGetPayload<{
   select: typeof agentCommissionListSelect;
@@ -93,12 +81,7 @@ const agentCommissionSelect = {
         select: {
           id: true,
           name: true,
-          email: true,
-        },
-      },
-    },
-  },
-} as const satisfies Prisma.AgentCommissionSelect;
+          email: true}}}}} as const satisfies Prisma.AgentCommissionSelect;
 
 export type AgentCommissionItem = Prisma.AgentCommissionGetPayload<{
   select: typeof agentCommissionSelect;
@@ -106,8 +89,7 @@ export type AgentCommissionItem = Prisma.AgentCommissionGetPayload<{
 
 const activeAgentUserWhere = {
   role: "AGENT",
-  deletedAt: null,
-} as const satisfies Prisma.UserWhereInput;
+  deletedAt: null} as const satisfies Prisma.UserWhereInput;
 
 function buildAdminAgentWhere(input?: {
   status?: AgentApprovalStatus;
@@ -126,9 +108,7 @@ function buildAdminAgentWhere(input?: {
       OR: [
         { name: { contains: q, mode: "insensitive" } },
         { email: { contains: q, mode: "insensitive" } },
-        { phone: { contains: q, mode: "insensitive" } },
-      ],
-    };
+        { phone: { contains: q, mode: "insensitive" } }]};
   } else {
     where.user = activeAgentUserWhere;
   }
@@ -154,8 +134,7 @@ export class AgentRepository extends Repository {
           take,
           where,
           orderBy: { createdAt: "desc" },
-          select: adminAgentListSelect,
-        }),
+          select: adminAgentListSelect}),
       () => this.db.agentProfile.count({ where }),
       { page, pageSize },
     );
@@ -165,22 +144,17 @@ export class AgentRepository extends Repository {
     return this.db.agentProfile.findFirst({
       where: {
         id,
-        user: activeAgentUserWhere,
-      },
+        user: activeAgentUserWhere},
       select: {
         ...adminAgentListSelect,
         commissions: {
           orderBy: { createdAt: "desc" },
-          select: agentCommissionListSelect,
-        },
-      },
-    });
+          select: agentCommissionListSelect}}});
   }
 
   async findByUserId(userId: string) {
     return this.db.agentProfile.findUnique({
-      where: { userId },
-    });
+      where: { userId }});
   }
 
   async listCommissionsForAgent(
@@ -189,8 +163,7 @@ export class AgentRepository extends Repository {
     return this.db.agentCommission.findMany({
       where: { agentProfileId },
       orderBy: { createdAt: "desc" },
-      select: agentCommissionListSelect,
-    });
+      select: agentCommissionListSelect});
   }
 
   async listCommissionsByAgentProfileIds(
@@ -203,8 +176,7 @@ export class AgentRepository extends Repository {
     const rows = await this.db.agentCommission.findMany({
       where: { agentProfileId: { in: agentProfileIds } },
       orderBy: { createdAt: "desc" },
-      select: agentCommissionListSelect,
-    });
+      select: agentCommissionListSelect});
 
     const grouped: Record<string, AgentCommissionListItem[]> = {};
 
@@ -229,9 +201,7 @@ export class AgentRepository extends Repository {
 
     const where: Prisma.AgentCommissionWhereInput = {
       agentProfile: {
-        user: activeAgentUserWhere,
-      },
-    };
+        user: activeAgentUserWhere}};
 
     if (input?.status) {
       where.payoutStatus = input.status;
@@ -255,12 +225,7 @@ export class AgentRepository extends Repository {
               ...activeAgentUserWhere,
               OR: [
                 { name: { contains: q, mode: "insensitive" } },
-                { email: { contains: q, mode: "insensitive" } },
-              ],
-            },
-          },
-        },
-      ];
+                { email: { contains: q, mode: "insensitive" } }]}}}];
     }
 
     return this.paginateQuery(
@@ -270,8 +235,7 @@ export class AgentRepository extends Repository {
           take,
           where,
           orderBy: { createdAt: "desc" },
-          select: agentCommissionSelect,
-        }),
+          select: agentCommissionSelect}),
       () => this.db.agentCommission.count({ where }),
       { page, pageSize },
     );
@@ -281,9 +245,7 @@ export class AgentRepository extends Repository {
     return this.db.application.count({
       where: {
         agentId: agentUserId,
-        status: { not: "DRAFT" },
-      },
-    });
+        status: { not: "DRAFT" }}});
   }
 
   async countApplicationsByAgentUserIds(
@@ -297,10 +259,8 @@ export class AgentRepository extends Repository {
       by: ["agentId"],
       where: {
         agentId: { in: agentUserIds },
-        status: { not: "DRAFT" },
-      },
-      _count: { _all: true },
-    });
+        status: { not: "DRAFT" }},
+      _count: { _all: true }});
 
     return Object.fromEntries(
       rows
@@ -325,29 +285,21 @@ export class AgentRepository extends Repository {
       await Promise.all([
         this.db.agentProfile.count({ where: baseWhere }),
         this.db.agentProfile.count({
-          where: { ...baseWhere, approvalStatus: "PENDING" },
-        }),
+          where: { ...baseWhere, approvalStatus: "PENDING" }}),
         this.db.agentProfile.count({
-          where: { ...baseWhere, approvalStatus: "APPROVED" },
-        }),
+          where: { ...baseWhere, approvalStatus: "APPROVED" }}),
         this.db.agentProfile.count({
-          where: { ...baseWhere, approvalStatus: "REJECTED" },
-        }),
+          where: { ...baseWhere, approvalStatus: "REJECTED" }}),
         this.db.agentProfile.count({
           where: {
             ...baseWhere,
             approvalStatus: "APPROVED",
-            isActive: true,
-          },
-        }),
+            isActive: true}}),
         this.db.agentProfile.count({
           where: {
             ...baseWhere,
             approvalStatus: "APPROVED",
-            isActive: false,
-          },
-        }),
-      ]);
+            isActive: false}})]);
 
     return { total, pending, approved, rejected, active, inactive };
   }
@@ -364,17 +316,13 @@ export class AgentRepository extends Repository {
         ...activeAgentUserWhere,
         agentProfile: {
           approvalStatus: "APPROVED",
-          isActive: true,
-        },
-      },
+          isActive: true}},
       orderBy: [{ name: "asc" }, { email: "asc" }],
       take: 200,
       select: {
         id: true,
         name: true,
-        email: true,
-      },
-    });
+        email: true}});
   }
 }
 

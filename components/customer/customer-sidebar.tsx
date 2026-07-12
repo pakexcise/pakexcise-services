@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   ClipboardList,
   ExternalLink,
@@ -13,8 +15,6 @@ import { CustomerAccountAvatar } from "@/components/customer/customer-account-av
 import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-import { useAppPathname } from "@/i18n/use-app-pathname";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -42,7 +42,7 @@ export function CustomerSidebar({
   onNavigate,
   className,
 }: CustomerSidebarProps) {
-  const pathname = useAppPathname();
+  const pathname = usePathname();
   const t = labels.nav;
   const tShell = labels.shell;
 

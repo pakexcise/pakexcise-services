@@ -4,8 +4,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type StatCardProps = {
   title: string;
@@ -30,7 +32,7 @@ export function StatCard({ title, value, href, className }: StatCardProps) {
 
   if (href) {
     return (
-      <Link href={href} className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <Link href={href as Route} className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
         {card}
       </Link>
     );

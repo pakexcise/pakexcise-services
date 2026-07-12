@@ -15,9 +15,9 @@ import type {
   LocalizedHomeContent,
   LocalizedTextPair,
 } from "@/features/home-page/types";
-import { pickLocalized } from "@/lib/i18n/content";
-import type { Locale } from "@/i18n/config";
 import { settingsRepository } from "@/server/repositories/settings-repository";
+
+type Locale = "en";
 
 async function loadHomePageSettings(): Promise<HomePageSettings> {
   const stored = await settingsRepository.getValue<Partial<HomePageSettings>>(
@@ -39,18 +39,15 @@ export async function getHomePageSettings(): Promise<HomePageSettings> {
   return getCachedHomePageSettings();
 }
 
-function localizeBlock(block: HomeContentBlock, locale: Locale) {
+function localizeBlock(block: HomeContentBlock, _locale: Locale) {
   return {
-    title: pickLocalized(locale, { en: block.titleEn, ur: block.titleUr }),
-    description: pickLocalized(locale, {
-      en: block.descriptionEn,
-      ur: block.descriptionUr,
-    }),
+    title: block.titleEn ?? "",
+    description: block.descriptionEn ?? "",
   };
 }
 
-function localizePair(pair: LocalizedTextPair, locale: Locale) {
-  return pickLocalized(locale, { en: pair.en, ur: pair.ur });
+function localizePair(pair: LocalizedTextPair, _locale: Locale) {
+  return pair.en ?? "";
 }
 
 export function localizeHomePageSettings(
@@ -65,14 +62,8 @@ export function localizeHomePageSettings(
         {
           isActive: section.isActive,
           displayOrder: section.displayOrder,
-          title: pickLocalized(locale, {
-            en: section.titleEn,
-            ur: section.titleUr,
-          }),
-          description: pickLocalized(locale, {
-            en: section.descriptionEn,
-            ur: section.descriptionUr,
-          }),
+          title: section.titleEn ?? "",
+          description: section.descriptionEn ?? "",
         },
       ];
     }),
@@ -100,85 +91,37 @@ export function localizeHomePageSettings(
 
   return {
     hero: {
-      badge: pickLocalized(locale, {
-        en: settings.hero.badgeEn,
-        ur: settings.hero.badgeUr,
-      }),
-      title: pickLocalized(locale, {
-        en: settings.hero.titleEn,
-        ur: settings.hero.titleUr,
-      }),
-      description: pickLocalized(locale, {
-        en: settings.hero.descriptionEn,
-        ur: settings.hero.descriptionUr,
-      }),
-      browseCta: pickLocalized(locale, {
-        en: settings.hero.browseCtaEn,
-        ur: settings.hero.browseCtaUr,
-      }),
-      whatsappCta: pickLocalized(locale, {
-        en: settings.hero.whatsappCtaEn,
-        ur: settings.hero.whatsappCtaUr,
-      }),
-      requestCta: pickLocalized(locale, {
-        en: settings.hero.requestCtaEn,
-        ur: settings.hero.requestCtaUr,
-      }),
+      badge: settings.hero.badgeEn ?? "",
+      title: settings.hero.titleEn ?? "",
+      description: settings.hero.descriptionEn ?? "",
+      browseCta: settings.hero.browseCtaEn ?? "",
+      whatsappCta: settings.hero.whatsappCtaEn ?? "",
+      requestCta: settings.hero.requestCtaEn ?? "",
       trustBadges: trustBadges.map((badge) => localizePair(badge, locale)),
       processCards: processCards.map((card) => localizeBlock(card, locale)),
     },
     sections,
-    optionsNote: pickLocalized(locale, {
-      en: settings.optionsNoteEn,
-      ur: settings.optionsNoteUr,
-    }),
+    optionsNote: settings.optionsNoteEn ?? "",
     howItWorksSteps: howItWorksSteps.map((step) => localizeBlock(step, locale)),
     whyChooseItems: whyChooseItems.map((item) => localizeBlock(item, locale)),
     vehicleVisual: {
       imagePath:
         vehicleVisual.imagePath?.trim() ||
         defaultVehicleVisualSettings().imagePath,
-      imageAlt: pickLocalized(locale, {
-        en: vehicleVisual.imageAltEn,
-        ur: vehicleVisual.imageAltUr,
-      }),
+      imageAlt: vehicleVisual.imageAltEn ?? "",
       featurePoints: featurePoints.map((item) => localizeBlock(item, locale)),
-      browseCta: pickLocalized(locale, {
-        en: vehicleVisual.browseCtaEn,
-        ur: vehicleVisual.browseCtaUr,
-      }),
-      whatsappCta: pickLocalized(locale, {
-        en: vehicleVisual.whatsappCtaEn,
-        ur: vehicleVisual.whatsappCtaUr,
-      }),
-      requestCta: pickLocalized(locale, {
-        en: vehicleVisual.requestCtaEn,
-        ur: vehicleVisual.requestCtaUr,
-      }),
+      browseCta: vehicleVisual.browseCtaEn ?? "",
+      whatsappCta: vehicleVisual.whatsappCtaEn ?? "",
+      requestCta: vehicleVisual.requestCtaEn ?? "",
     },
     about: {
-      title: pickLocalized(locale, {
-        en: settings.about.titleEn,
-        ur: settings.about.titleUr,
-      }),
-      description: pickLocalized(locale, {
-        en: settings.about.descriptionEn,
-        ur: settings.about.descriptionUr,
-      }),
-      additional: pickLocalized(locale, {
-        en: settings.about.additionalEn,
-        ur: settings.about.additionalUr,
-      }),
-      cta: pickLocalized(locale, {
-        en: settings.about.ctaEn,
-        ur: settings.about.ctaUr,
-      }),
+      title: settings.about.titleEn ?? "",
+      description: settings.about.descriptionEn ?? "",
+      additional: settings.about.additionalEn ?? "",
+      cta: settings.about.ctaEn ?? "",
       trustCards: trustCards.map((card) => localizeBlock(card, locale)),
     },
-    footerDescription: pickLocalized(locale, {
-      en: settings.footerDescriptionEn,
-      ur: settings.footerDescriptionUr,
-    }),
+    footerDescription: settings.footerDescriptionEn ?? "",
   };
 }
 

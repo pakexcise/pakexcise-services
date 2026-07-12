@@ -6,15 +6,12 @@ import { isFooterNavigationSchemaReady } from "@/server/db/is-footer-navigation-
 const footerRegionSelect = {
   id: true,
   slug: true,
-  nameEn: true,
-  nameUr: true,
-} as const;
+  nameEn: true} as const;
 
 export type FooterRegionLink = {
   id: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
 };
 
 export class RegionRepository extends Repository {
@@ -27,9 +24,7 @@ export class RegionRepository extends Repository {
           id: true,
           slug: true,
           nameEn: true,
-          nameUr: true,
           descriptionEn: true,
-          descriptionUr: true,
           displayOrder: true,
           updatedAt: true,
           _count: {
@@ -40,19 +35,11 @@ export class RegionRepository extends Repository {
                   service: {
                     isActive: true,
                     deletedAt: null,
-                    parentServiceId: null,
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
+                    parentServiceId: null}}}}}}});
 
       return regions.map(({ _count, ...region }) => ({
         ...region,
-        activeServiceCount: _count.serviceRegions,
-      }));
+        activeServiceCount: _count.serviceRegions}));
     }, []);
   }
 
@@ -66,13 +53,9 @@ export class RegionRepository extends Repository {
             id: true,
             slug: true,
             nameEn: true,
-            nameUr: true,
             descriptionEn: true,
-            descriptionUr: true,
             displayOrder: true,
-            updatedAt: true,
-          },
-        }),
+            updatedAt: true}}),
       [],
     );
   }
@@ -87,11 +70,9 @@ export class RegionRepository extends Repository {
         this.db.region.findMany({
           where: {
             ...activeOnly(),
-            showInFooter: true,
-          },
+            showInFooter: true},
           orderBy: [{ footerDisplayOrder: "asc" }, { displayOrder: "asc" }],
-          select: footerRegionSelect,
-        }),
+          select: footerRegionSelect}),
       [],
     );
 
@@ -108,8 +89,7 @@ export class RegionRepository extends Repository {
         this.db.region.findMany({
           where: activeOnly(),
           orderBy: { displayOrder: "asc" },
-          select: footerRegionSelect,
-        }),
+          select: footerRegionSelect}),
       [],
     );
   }
@@ -120,20 +100,15 @@ export class RegionRepository extends Repository {
         this.db.region.findFirst({
           where: {
             slug,
-            ...activeOnly(),
-          },
+            ...activeOnly()},
           select: {
             id: true,
             slug: true,
             nameEn: true,
-            nameUr: true,
             descriptionEn: true,
-            descriptionUr: true,
             displayOrder: true,
             updatedAt: true,
-            seoMeta: true,
-          },
-        }),
+            seoMeta: true}}),
       null,
     );
   }
@@ -146,10 +121,7 @@ export class RegionRepository extends Repository {
         id: true,
         slug: true,
         nameEn: true,
-        nameUr: true,
-        isActive: true,
-      },
-    });
+        isActive: true}});
   }
 
   async listActiveSlugs(): Promise<Array<{ slug: string; updatedAt: Date }>> {
@@ -159,10 +131,8 @@ export class RegionRepository extends Repository {
           where: activeOnly(),
           select: {
             slug: true,
-            updatedAt: true,
-          },
-          orderBy: { updatedAt: "desc" },
-        }),
+            updatedAt: true},
+          orderBy: { updatedAt: "desc" }}),
       [],
     );
   }

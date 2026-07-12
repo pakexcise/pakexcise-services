@@ -1,8 +1,10 @@
 import { Headphones, UserRound, Wallet, type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type QuickAction = {
   key: string;
@@ -54,7 +56,7 @@ export function AgentQuickActions({ actions }: AgentQuickActionsProps) {
               variant="outline"
               className="mt-5 w-full group-hover:border-primary/40"
             >
-              <Link href={action.href}>{action.cta}</Link>
+              <Link href={action.href as Route}>{action.cta}</Link>
             </Button>
           </article>
         );

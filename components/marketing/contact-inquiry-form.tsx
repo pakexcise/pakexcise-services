@@ -16,7 +16,8 @@ import {
   type ContactInquiryFormValues,
 } from "@/lib/validations/contact-inquiry";
 import { formatPakistanPhoneInput } from "@/lib/validations/phone";
-import type { Locale } from "@/i18n/config";
+type Locale = "en";
+
 import { cn } from "@/lib/utils";
 
 export type ContactInquiryFormLabels = {

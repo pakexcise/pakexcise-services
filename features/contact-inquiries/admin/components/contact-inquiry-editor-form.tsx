@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,14 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createContactInquiryAdminAction,
-  updateContactInquiryAdminAction,
-} from "@/features/contact-inquiries/actions/admin-contact-inquiry-actions";
+  updateContactInquiryAdminAction} from "@/features/contact-inquiries/actions/admin-contact-inquiry-actions";
 import type { ContactInquiryStatus } from "@prisma/client";
 
+import { useRouter } from "next/navigation";
 type ServiceOption = {
   slug: string;
   nameEn: string;
-  nameUr: string;
 };
 
 export type ContactInquiryEditorValues = {
@@ -29,7 +27,7 @@ export type ContactInquiryEditorValues = {
   cityName: string;
   message: string;
   adminNotes: string;
-  locale: "en" | "ur";
+  locale: "en";
 };
 
 type ContactInquiryEditorFormProps = {
@@ -37,7 +35,7 @@ type ContactInquiryEditorFormProps = {
   inquiryId?: string;
   initialValues: ContactInquiryEditorValues;
   services: ServiceOption[];
-  locale: "en" | "ur";
+  locale: "en";
   labels: {
     sectionCustomer: string;
     sectionInquiry: string;
@@ -68,8 +66,7 @@ const statusOptions: ContactInquiryStatus[] = [
   "NEW",
   "CONTACTED",
   "CLOSED",
-  "SPAM",
-];
+  "SPAM"];
 
 export function ContactInquiryEditorForm({
   mode,
@@ -77,8 +74,7 @@ export function ContactInquiryEditorForm({
   initialValues,
   services,
   locale,
-  labels,
-}: ContactInquiryEditorFormProps) {
+  labels}: ContactInquiryEditorFormProps) {
   const router = useRouter();
   const [values, setValues] = useState(initialValues);
   const [error, setError] = useState<string | null>(null);
@@ -126,8 +122,7 @@ export function ContactInquiryEditorForm({
         message: values.message || null,
         adminNotes: values.adminNotes || null,
         locale: values.locale,
-        status: values.status,
-      };
+        status: values.status};
 
       const result =
         mode === "create"
@@ -188,12 +183,11 @@ export function ContactInquiryEditorForm({
               id="ci-locale"
               value={values.locale}
               onChange={(event) =>
-                updateField("locale", event.target.value as "en" | "ur")
+                updateField("locale", event.target.value as "en")
               }
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
             >
               <option value="en">English</option>
-              <option value="ur">Urdu</option>
             </select>
           </div>
         </div>
@@ -217,7 +211,7 @@ export function ContactInquiryEditorForm({
               <option value="other">{labels.otherService}</option>
               {services.map((service) => (
                 <option key={service.slug} value={service.slug}>
-                  {locale === "ur" ? service.nameUr : service.nameEn}
+                  {service.nameEn}
                 </option>
               ))}
             </select>

@@ -5,55 +5,39 @@ export type BusinessSettings = {
   phoneNumber?: string;
   /** @deprecated Use whatsappLinkNumber */
   whatsappNumber?: string;
-  /** @deprecated Use whatsappDefaultMessageEn/Ur */
+  /** @deprecated Use whatsappDefaultMessageEn */
   whatsappDefaultMessage?: string;
   phoneDisplayNumber: string;
   whatsappLinkNumber: string;
   whatsappDefaultMessageEn: string;
-  whatsappDefaultMessageUr: string;
   supportDaysEn: string;
-  supportDaysUr: string;
   supportHoursEn: string;
-  supportHoursUr: string;
   whatsappChannelUrl: string;
   businessHoursEn: string;
-  businessHoursUr: string;
   addressEn: string;
-  addressUr: string;
   disclaimerEn: string;
-  disclaimerUr: string;
   footerDescriptionEn: string;
-  footerDescriptionUr: string;
 };
 
 export type PublicUiSettings = {
   headerWhatsappEnabled: boolean;
   headerWhatsappLabelEn: string;
-  headerWhatsappLabelUr: string;
   footerWhatsappLabelEn: string;
-  footerWhatsappLabelUr: string;
   footerWhatsappChannelLabelEn: string;
-  footerWhatsappChannelLabelUr: string;
   announcementBarEnabled: boolean;
   announcementBarTextEn: string;
-  announcementBarTextUr: string;
   defaultApplyCtaTextEn: string;
-  defaultApplyCtaTextUr: string;
   defaultSubmitRequestCtaTextEn: string;
-  defaultSubmitRequestCtaTextUr: string;
   floatingWhatsappMessageEn: string;
-  floatingWhatsappMessageUr: string;
   floatingWhatsappPosition: "bottom-right" | "bottom-left";
 };
 
 export type FormsSettings = {
   contactRecipientEmail: string;
   contactSuccessMessageEn: string;
-  contactSuccessMessageUr: string;
   contactAdminNotificationEnabled: boolean;
   contactAutoReplyEnabled: boolean;
   submitRequestSuccessMessageEn: string;
-  submitRequestSuccessMessageUr: string;
   submitRequestSaveToSupportRequests: boolean;
   submitRequestNotifyAdminEnabled: boolean;
 };
@@ -66,7 +50,6 @@ export type BrandingSettings = {
   faviconPath: string;
   appleIconPath: string;
   defaultOgImagePath: string;
-  defaultOgImagePathUr: string;
   defaultTwitterImagePath: string;
   defaultBlogFallbackImagePath: string;
   defaultGuideFallbackImagePath: string;
@@ -79,12 +62,10 @@ export type BrandingSettings = {
 export type StructuredPaymentMethodSettings = {
   id: string;
   nameEn: string;
-  nameUr: string;
   accountTitle: string;
   accountNumber: string;
   iban: string;
   instructionsEn: string;
-  instructionsUr: string;
   isActive: boolean;
   displayOrder: number;
 };
@@ -98,11 +79,8 @@ export type GlobalSiteSettingsSnapshot = {
 
 export type PaymentSettings = {
   jazzCashInstructionsEn: string;
-  jazzCashInstructionsUr: string;
   easypaisaInstructionsEn: string;
-  easypaisaInstructionsUr: string;
   bankTransferInstructionsEn: string;
-  bankTransferInstructionsUr: string;
   paymentAccountDisplayName: string;
   manualPaymentEnabled: boolean;
   jazzCashGatewayEnabled: boolean;
@@ -114,21 +92,17 @@ export type PaymentSettings = {
 
 export type SeoSettings = {
   defaultMetaTitleEn: string;
-  defaultMetaTitleUr: string;
   defaultMetaDescriptionEn: string;
-  defaultMetaDescriptionUr: string;
   defaultOgImage: string;
   defaultTwitterImage: string;
   canonicalDomain: string;
   sitemapEnabled: boolean;
   organizationName: string;
   organizationDescriptionEn: string;
-  organizationDescriptionUr: string;
   organizationLogoPath: string;
   organizationAreaServed: string;
   localBusinessName: string;
   localBusinessDescriptionEn: string;
-  localBusinessDescriptionUr: string;
   localBusinessPriceRange: string;
   localBusinessAreaServed: string;
   localBusinessTelephone: string;
@@ -163,7 +137,6 @@ export type FeatureFlagSettings = {
   smsFallbackEnabled: boolean;
   maintenanceMode: boolean;
   maintenanceMessageEn: string;
-  maintenanceMessageUr: string;
 };
 
 export type PublicSettingsSnapshot = {

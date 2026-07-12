@@ -1,11 +1,13 @@
 "use client";
 
+import type { Route } from "next";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { deleteRedirectAction } from "@/features/redirects/admin/actions/redirect-actions";
-import { Link, useRouter } from "@/i18n/navigation";
 
 type RedirectRowActionsProps = {
   id: string;
@@ -50,7 +52,7 @@ export function RedirectRowActions({
     <div className="flex flex-col items-end gap-1">
       <div className="flex items-center justify-end gap-1">
         <Button size="sm" variant="outline" asChild>
-          <Link href={editHref}>{labels.edit}</Link>
+          <Link href={editHref as Route}>{labels.edit}</Link>
         </Button>
         <Button
           type="button"

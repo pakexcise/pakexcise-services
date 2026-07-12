@@ -1,8 +1,6 @@
 "use client";
 
 import { LogOut, User } from "lucide-react";
-import { useTranslations } from "next-intl";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,8 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 export type AdminUserSummary = {
   id: string;
   name: string | null;
@@ -27,13 +24,11 @@ type AdminUserMenuProps = {
 };
 
 export function AdminUserMenu({ user }: AdminUserMenuProps) {
-  const t = useTranslations("admin");
-
-  const roleLabel =
+    const roleLabel =
     user.role === "SUPER_ADMIN"
-      ? t("roles.superAdmin")
+      ? "Super Admin"
       : user.role === "ADMIN"
-        ? t("roles.admin")
+        ? "Admin"
         : user.role;
 
   async function handleSignOut() {
@@ -61,12 +56,12 @@ export function AdminUserMenu({ user }: AdminUserMenuProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/">{t("userMenu.publicSite")}</Link>
+          <Link href="/">{"View public site"}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="size-4" aria-hidden="true" />
-          {t("userMenu.signOut")}
+          {"Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

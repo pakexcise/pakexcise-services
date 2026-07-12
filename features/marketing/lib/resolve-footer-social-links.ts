@@ -9,7 +9,6 @@ type ResolveFooterSocialLinksInput = {
   whatsappChannelUrl: string;
   showWhatsappChannel: boolean;
   channelLabelEn: string;
-  channelLabelUr: string;
 };
 
 function isWhatsappPlatform(platform: string): boolean {
@@ -26,7 +25,6 @@ export function resolveFooterSocialLinks({
   whatsappChannelUrl,
   showWhatsappChannel,
   channelLabelEn,
-  channelLabelUr,
 }: ResolveFooterSocialLinksInput): PublicSocialLink[] {
   const useChannelOnWhatsappIcon =
     showWhatsappChannel && whatsappChannelUrl.trim().length > 0;
@@ -41,7 +39,6 @@ export function resolveFooterSocialLinks({
         ...link,
         url: whatsappChannelUrl,
         labelEn: channelLabelEn || link.labelEn,
-        labelUr: channelLabelUr || link.labelUr,
       };
     }
 
@@ -52,7 +49,6 @@ export function resolveFooterSocialLinks({
           ...link,
           url: whatsappChannelUrl,
           labelEn: channelLabelEn || link.labelEn,
-          labelUr: channelLabelUr || link.labelUr,
         };
       }
 
@@ -71,7 +67,6 @@ export function resolveFooterSocialLinks({
       id: "footer-whatsapp-channel",
       platform: "whatsapp-channel",
       labelEn: channelLabelEn,
-      labelUr: channelLabelUr,
       url: whatsappChannelUrl,
       iconName: "MessageCircle",
     });

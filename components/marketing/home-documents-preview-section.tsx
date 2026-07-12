@@ -5,11 +5,10 @@ import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 import type { PublicDocumentPreview } from "@/server/repositories/document-requirement-repository";
 
+import Link from "next/link";
 type HomeDocumentsPreviewSectionProps = {
   title: string;
   description: string;
@@ -33,8 +32,7 @@ export function HomeDocumentsPreviewSection({
   viewAllLabel,
   emptyMessage,
   tone = "muted",
-  className,
-}: HomeDocumentsPreviewSectionProps) {
+  className}: HomeDocumentsPreviewSectionProps) {
   return (
     <HomeSectionShell tone={tone} className={className}>
       <SectionHeader
@@ -55,14 +53,8 @@ export function HomeDocumentsPreviewSection({
       ) : (
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {documents.map((document) => {
-            const label = pickLocalized(locale, {
-              en: document.labelEn,
-              ur: document.labelUr,
-            });
-            const serviceName = pickLocalized(locale, {
-              en: document.service.nameEn,
-              ur: document.service.nameUr,
-            });
+            const label = document.labelEn ?? "";
+            const serviceName = document.service.nameEn ?? "";
 
             return (
               <Link

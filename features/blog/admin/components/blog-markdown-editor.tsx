@@ -31,7 +31,6 @@ type BlogMarkdownEditorProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  dir?: "ltr" | "rtl";
   rows?: number;
 };
 
@@ -71,7 +70,6 @@ export function BlogMarkdownEditor({
   label,
   value,
   onChange,
-  dir = "ltr",
   rows = 16,
 }: BlogMarkdownEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -275,7 +273,7 @@ export function BlogMarkdownEditor({
             ref={textareaRef}
             id={id}
             rows={rows}
-            dir={dir}
+            dir="ltr"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={cn("font-mono text-sm")}

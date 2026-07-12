@@ -12,7 +12,6 @@ export const adminLegalPageListSelect = {
   id: true,
   slug: true,
   titleEn: true,
-  titleUr: true,
   isPublished: true,
   isActive: true,
   displayOrder: true,
@@ -24,11 +23,8 @@ export const adminLegalPageDetailSelect = {
   id: true,
   slug: true,
   titleEn: true,
-  titleUr: true,
   excerptEn: true,
-  excerptUr: true,
   contentEn: true,
-  contentUr: true,
   isPublished: true,
   isActive: true,
   displayOrder: true,
@@ -74,7 +70,7 @@ export class AdminLegalPageRepository extends Repository {
       const q = filters.q.trim();
       where.OR = [
         { titleEn: { contains: q, mode: "insensitive" } },
-        { titleUr: { contains: q, mode: "insensitive" } },
+
         { slug: { contains: q, mode: "insensitive" } },
       ];
     }

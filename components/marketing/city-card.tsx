@@ -1,17 +1,12 @@
 import { Building2 } from "lucide-react";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
-
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";import Link from "next/link";
 type CityCardProps = {
   city: {
     slug: string;
     nameEn: string;
-    nameUr: string;
     descriptionEn?: string | null;
-    descriptionUr?: string | null;
   };
   regionSlug: string;
   locale: string;
@@ -22,9 +17,8 @@ export function CityCard({
   city,
   regionSlug,
   locale,
-  viewLabel,
-}: CityCardProps) {
-  const name = pickLocalized(locale, { en: city.nameEn, ur: city.nameUr });
+  viewLabel}: CityCardProps) {
+  const name = city.nameEn ?? "";
 
   return (
     <Card className="h-full transition-shadow hover:shadow-md">

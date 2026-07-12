@@ -12,7 +12,6 @@ export const adminBlogCategoryDetailSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   parentId: true,
   isActive: true,
   displayOrder: true,
@@ -22,7 +21,6 @@ export const adminBlogCategoryDetailSelect = {
     select: {
       id: true,
       nameEn: true,
-      nameUr: true,
       slug: true,
     },
   },
@@ -43,7 +41,6 @@ export const adminBlogCategoryListSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   parentId: true,
   isActive: true,
   displayOrder: true,
@@ -52,7 +49,6 @@ export const adminBlogCategoryListSelect = {
     select: {
       id: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   _count: {
@@ -98,7 +94,6 @@ export class AdminBlogCategoryRepository extends Repository {
       const query = filters.q.trim();
       where.OR = [
         { nameEn: { contains: query, mode: "insensitive" } },
-        { nameUr: { contains: query, mode: "insensitive" } },
         { slug: { contains: query, mode: "insensitive" } },
       ];
     }

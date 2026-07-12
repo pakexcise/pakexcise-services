@@ -2,8 +2,7 @@ import { Coins } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type AgentCommissionStatusCardProps = {
   commission: {
     id: string;
@@ -12,7 +11,7 @@ type AgentCommissionStatusCardProps = {
     payoutStatus: string;
     agentReceiptStatus: string;
   };
-  locale: "en" | "ur";
+  locale: "en";
   labels: {
     title: string;
     amount: string;
@@ -62,7 +61,7 @@ export function AgentCommissionStatusCard({
   labels,
 }: AgentCommissionStatusCardProps) {
   const formattedAmount = new Intl.NumberFormat(
-    locale === "ur" ? "ur-PK" : "en-PK",
+    "en-PK",
     { style: "currency", currency: "PKR" },
   ).format(Number(commission.amount));
 

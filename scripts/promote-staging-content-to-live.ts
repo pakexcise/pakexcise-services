@@ -145,9 +145,7 @@ async function main() {
         const existing = await target.region.findUnique({ where: { slug: row.slug } });
         const data = {
           nameEn: row.nameEn,
-          nameUr: row.nameUr,
           descriptionEn: row.descriptionEn,
-          descriptionUr: row.descriptionUr,
           isActive: row.isActive,
           showInFooter: row.showInFooter,
           footerDisplayOrder: row.footerDisplayOrder,
@@ -192,9 +190,7 @@ async function main() {
         });
         const data = {
           nameEn: row.nameEn,
-          nameUr: row.nameUr,
           descriptionEn: row.descriptionEn,
-          descriptionUr: row.descriptionUr,
           isActive: row.isActive,
           displayOrder: row.displayOrder,
           deletedAt: row.deletedAt,
@@ -230,9 +226,7 @@ async function main() {
         });
         const data = {
           nameEn: row.nameEn,
-          nameUr: row.nameUr,
           descriptionEn: row.descriptionEn,
-          descriptionUr: row.descriptionUr,
           isActive: row.isActive,
           displayOrder: row.displayOrder,
         };
@@ -279,15 +273,10 @@ async function main() {
             ? (serviceIdMap.get(row.parentServiceId) ?? null)
             : null,
           nameEn: row.nameEn,
-          nameUr: row.nameUr,
           shortDescriptionEn: row.shortDescriptionEn,
-          shortDescriptionUr: row.shortDescriptionUr,
           contentEn: row.contentEn,
-          contentUr: row.contentUr,
           ctaTextEn: row.ctaTextEn,
-          ctaTextUr: row.ctaTextUr,
           processingNotesEn: row.processingNotesEn,
-          processingNotesUr: row.processingNotesUr,
           internalNotes: row.internalNotes,
           referenceLinksJson: row.referenceLinksJson ?? Prisma.JsonNull,
           requiresProof: row.requiresProof,
@@ -356,7 +345,6 @@ async function main() {
         });
         const data = {
           supportNotesEn: row.supportNotesEn,
-          supportNotesUr: row.supportNotesUr,
           isActive: row.isActive,
           displayOrder: row.displayOrder,
         };
@@ -388,9 +376,7 @@ async function main() {
         });
         const data = {
           nameEn: row.nameEn,
-          nameUr: row.nameUr,
           descriptionEn: row.descriptionEn,
-          descriptionUr: row.descriptionUr,
           itemType: row.itemType,
           defaultMaxSizeBytes: row.defaultMaxSizeBytes,
           defaultAcceptedMimeTypes: row.defaultAcceptedMimeTypes ?? Prisma.JsonNull,
@@ -442,9 +428,7 @@ async function main() {
             : null,
           kind: row.kind,
           labelEn: row.labelEn,
-          labelUr: row.labelUr,
           instructionsEn: row.instructionsEn,
-          instructionsUr: row.instructionsUr,
           isRequired: row.isRequired,
           maxSizeBytes: row.maxSizeBytes,
           acceptedMimeTypes: row.acceptedMimeTypes ?? Prisma.JsonNull,
@@ -502,11 +486,8 @@ async function main() {
             const data = {
               regionId: row.regionId ? (regionIdMap.get(row.regionId) ?? null) : null,
               labelEn: row.labelEn,
-              labelUr: row.labelUr,
               placeholderEn: row.placeholderEn,
-              placeholderUr: row.placeholderUr,
               helpTextEn: row.helpTextEn,
-              helpTextUr: row.helpTextUr,
               fieldType: row.fieldType,
               isRequired: row.isRequired,
               isEncrypted: row.isEncrypted,
@@ -553,9 +534,7 @@ async function main() {
         }
         const data = {
           sectionTitleEn: row.sectionTitleEn,
-          sectionTitleUr: row.sectionTitleUr,
           sectionDescEn: row.sectionDescEn,
-          sectionDescUr: row.sectionDescUr,
           faqJson: row.faqJson ?? Prisma.JsonNull,
           isActive: row.isActive,
           showOnRegionPage: row.showOnRegionPage,
@@ -600,17 +579,13 @@ async function main() {
           },
         });
         const data = {
-          titleUr: row.titleUr,
           formatsJson: row.formatsJson ?? Prisma.JsonNull,
           descriptionEn: row.descriptionEn,
-          descriptionUr: row.descriptionUr,
           relatedServiceSlugs: row.relatedServiceSlugs ?? Prisma.JsonNull,
           imageR2Key: row.imageR2Key,
           imageMimeType: row.imageMimeType,
           imageAltEn: row.imageAltEn,
-          imageAltUr: row.imageAltUr,
           imageCaptionEn: row.imageCaptionEn,
-          imageCaptionUr: row.imageCaptionUr,
           isActive: row.isActive,
           isFeatured: row.isFeatured,
           showOnRegionPage: row.showOnRegionPage,
@@ -656,7 +631,6 @@ async function main() {
         });
         const data = {
           nameEn: row.nameEn,
-          nameUr: row.nameUr,
           parentId: row.parentId ? (blogCategoryIdMap.get(row.parentId) ?? null) : null,
           isActive: row.isActive,
           displayOrder: row.displayOrder,
@@ -697,13 +671,9 @@ async function main() {
         const existing = await target.blogPost.findUnique({ where: { slug: row.slug } });
         const data = {
           titleEn: row.titleEn,
-          titleUr: row.titleUr,
           excerptEn: row.excerptEn,
-          excerptUr: row.excerptUr,
           contentEn: row.contentEn,
-          contentUr: row.contentUr,
           categoryEn: row.categoryEn,
-          categoryUr: row.categoryUr,
           categoryId: row.categoryId
             ? (blogCategoryIdMap.get(row.categoryId) ?? null)
             : null,
@@ -712,29 +682,20 @@ async function main() {
             : null,
           tags: row.tags,
           authorNameEn: row.authorNameEn,
-          authorNameUr: row.authorNameUr,
           readingTimeMinutes: row.readingTimeMinutes,
           featuredImagePath: row.featuredImagePath,
           featuredImageTitleEn: row.featuredImageTitleEn,
-          featuredImageTitleUr: row.featuredImageTitleUr,
           featuredImageAltEn: row.featuredImageAltEn,
-          featuredImageAltUr: row.featuredImageAltUr,
           featuredImageCaptionEn: row.featuredImageCaptionEn,
-          featuredImageCaptionUr: row.featuredImageCaptionUr,
           focusKeywords: row.focusKeywords,
           isFeatured: row.isFeatured,
           showTableOfContents: row.showTableOfContents,
           contentFaqs: row.contentFaqs ?? Prisma.JsonNull,
           ctaTitleEn: row.ctaTitleEn,
-          ctaTitleUr: row.ctaTitleUr,
           ctaDescriptionEn: row.ctaDescriptionEn,
-          ctaDescriptionUr: row.ctaDescriptionUr,
           ctaWhatsappLabelEn: row.ctaWhatsappLabelEn,
-          ctaWhatsappLabelUr: row.ctaWhatsappLabelUr,
           ctaRequestLabelEn: row.ctaRequestLabelEn,
-          ctaRequestLabelUr: row.ctaRequestLabelUr,
           ctaAccountLabelEn: row.ctaAccountLabelEn,
-          ctaAccountLabelUr: row.ctaAccountLabelUr,
           relatedServiceIds: remapIds(row.relatedServiceIds),
           // FAQ ids remapped in a second pass after FAQs sync
           attachedFaqIds: row.attachedFaqIds,
@@ -782,11 +743,8 @@ async function main() {
         const existing = await target.guide.findUnique({ where: { slug: row.slug } });
         const data = {
           titleEn: row.titleEn,
-          titleUr: row.titleUr,
           excerptEn: row.excerptEn,
-          excerptUr: row.excerptUr,
           contentEn: row.contentEn,
-          contentUr: row.contentUr,
           relatedServiceIds: row.relatedServiceIds
             .map((id) => serviceIdMap.get(id))
             .filter((id): id is string => typeof id === "string" && !id.startsWith("dry-")),
@@ -832,11 +790,8 @@ async function main() {
         const existing = await target.legalPage.findUnique({ where: { slug: row.slug } });
         const data = {
           titleEn: row.titleEn,
-          titleUr: row.titleUr,
           excerptEn: row.excerptEn,
-          excerptUr: row.excerptUr,
           contentEn: row.contentEn,
-          contentUr: row.contentUr,
           isPublished: row.isPublished,
           isActive: row.isActive,
           displayOrder: row.displayOrder,
@@ -873,9 +828,7 @@ async function main() {
         });
         const data = {
           nameEn: row.nameEn,
-          nameUr: row.nameUr,
           descriptionEn: row.descriptionEn,
-          descriptionUr: row.descriptionUr,
           isActive: row.isActive,
           displayOrder: row.displayOrder,
         };
@@ -910,11 +863,8 @@ async function main() {
         const data = {
           serviceId: row.serviceId ? (serviceIdMap.get(row.serviceId) ?? null) : null,
           regionId: row.regionId ? (regionIdMap.get(row.regionId) ?? null) : null,
-          questionUr: row.questionUr,
           answerEn: row.answerEn,
-          answerUr: row.answerUr,
           seoKeywordsEn: row.seoKeywordsEn,
-          seoKeywordsUr: row.seoKeywordsUr,
           isActive: row.isActive,
           isFeatured: row.isFeatured,
           displayOrder: row.displayOrder,
@@ -993,7 +943,6 @@ async function main() {
         });
         const data = {
           labelEn: row.labelEn,
-          labelUr: row.labelUr,
           url: rewriteStagingUrls(row.url),
           iconName: row.iconName,
           isActive: row.isActive,
@@ -1029,10 +978,7 @@ async function main() {
           },
         });
         const data = {
-          authorNameUr: row.authorNameUr,
           authorRoleEn: row.authorRoleEn,
-          authorRoleUr: row.authorRoleUr,
-          contentUr: row.contentUr,
           rating: row.rating,
           isActive: row.isActive,
           displayOrder: row.displayOrder,
@@ -1097,16 +1043,11 @@ async function main() {
       for (const row of rows) {
         const seoFields = rewriteStagingUrls({
           metaTitleEn: row.metaTitleEn,
-          metaTitleUr: row.metaTitleUr,
           metaDescriptionEn: row.metaDescriptionEn,
-          metaDescriptionUr: row.metaDescriptionUr,
           h1En: row.h1En,
-          h1Ur: row.h1Ur,
           canonicalUrl: row.canonicalUrl,
           ogTitleEn: row.ogTitleEn,
-          ogTitleUr: row.ogTitleUr,
           ogDescriptionEn: row.ogDescriptionEn,
-          ogDescriptionUr: row.ogDescriptionUr,
           ogImage: row.ogImage,
           twitterCard: row.twitterCard,
           robotsIndex: row.robotsIndex,

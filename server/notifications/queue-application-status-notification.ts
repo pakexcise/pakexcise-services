@@ -11,7 +11,6 @@ type QueueStatusChangeInput = {
   userId: string;
   trackingId: string;
   serviceName: string;
-  serviceNameUr?: string;
   locale?: string;
   toStatus: ApplicationStatus;
   note: string;
@@ -41,9 +40,6 @@ export async function queueApplicationStatusNotifications(
     payload: {
       trackingId: input.trackingId,
       serviceName: input.serviceName,
-      serviceNameUr: input.serviceNameUr,
       toStatus: input.toStatus,
-      note: input.note,
-    },
-  });
+      note: input.note}});
 }

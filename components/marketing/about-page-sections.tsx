@@ -22,10 +22,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import type { PublicServiceCategoryGroup } from "@/server/repositories/service-category-repository";
 
+import Link from "next/link";
 type AboutDisclaimerBoxProps = {
   title: string;
   body: string;
@@ -258,7 +258,6 @@ export function AboutConnectSection({
       <SectionHeader title={title} description={description} />
       <SocialLinks
         links={links}
-        locale={locale}
         variant="cards"
         emptyMessage={emptyMessage}
       />

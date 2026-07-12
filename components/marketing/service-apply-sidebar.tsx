@@ -3,7 +3,8 @@ import { FileCheck, MapPin } from "lucide-react";
 import { WhatsAppCTA } from "@/components/marketing/whatsapp-cta";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type ServiceApplySidebarProps = {
   serviceName: string;
@@ -45,7 +46,7 @@ export function ServiceApplySidebar({
         </CardHeader>
         <CardContent className="space-y-3">
           <Button asChild size="lg" className="w-full">
-            <Link href={applyHref}>{applyLabel}</Link>
+            <Link href={applyHref as Route}>{applyLabel}</Link>
           </Button>
           <WhatsAppCTA
             phoneNumber={whatsappPhone}

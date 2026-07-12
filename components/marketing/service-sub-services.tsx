@@ -1,8 +1,7 @@
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
 import type { PublicServiceDetail } from "@/server/repositories/service-repository";
 
+import Link from "next/link";
 type ServiceSubServicesProps = {
   title: string;
   description: string;
@@ -16,8 +15,7 @@ export function ServiceSubServices({
   description,
   services,
   locale,
-  applyLabel,
-}: ServiceSubServicesProps) {
+  applyLabel}: ServiceSubServicesProps) {
   if (services.length === 0) {
     return null;
   }
@@ -30,14 +28,8 @@ export function ServiceSubServices({
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         {services.map((service) => {
-          const name = pickLocalized(locale, {
-            en: service.nameEn,
-            ur: service.nameUr,
-          });
-          const summary = pickLocalized(locale, {
-            en: service.shortDescriptionEn,
-            ur: service.shortDescriptionUr,
-          });
+          const name = service.nameEn ?? "";
+          const summary = service.shortDescriptionEn ?? "";
 
           return (
             <article

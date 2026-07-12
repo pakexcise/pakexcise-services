@@ -7,20 +7,17 @@ import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { getRequestMetaFromHeaders } from "@/server/auth/session";
 import { customerApplicationRepository } from "@/server/repositories/customer-application-repository";
 import {
   enforceRateLimit,
-  trackLookupRateLimit,
-} from "@/server/security/rate-limit";
+  trackLookupRateLimit} from "@/server/security/rate-limit";
 
 export type PublicTrackResult = {
   trackingId: string;
   status: string;
   serviceNameEn: string;
-  serviceNameUr: string;
   updatedAt: string;
 };
 
@@ -58,7 +55,5 @@ export async function trackApplicationAction(
     trackingId: application.trackingId,
     status: application.status,
     serviceNameEn: application.service.nameEn,
-    serviceNameUr: application.service.nameUr,
-    updatedAt: application.updatedAt.toISOString(),
-  });
+    updatedAt: application.updatedAt.toISOString()});
 }

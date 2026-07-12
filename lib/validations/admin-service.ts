@@ -13,12 +13,10 @@ export const serviceSlugSchema = z
 
 export const localizedTextSchema = z.object({
   en: z.string().trim().min(1, "English value is required"),
-  ur: z.string().trim().min(1, "Urdu value is required"),
 });
 
 export const optionalLocalizedTextSchema = z.object({
   en: z.string().trim().optional().default(""),
-  ur: z.string().trim().optional().default(""),
 });
 
 export const jsonObjectSchema = z
@@ -28,23 +26,17 @@ export const jsonObjectSchema = z
 
 export const serviceSeoSchema = z.object({
   metaTitleEn: z.string().trim().optional().nullable(),
-  metaTitleUr: z.string().trim().optional().nullable(),
   metaDescriptionEn: z.string().trim().optional().nullable(),
-  metaDescriptionUr: z.string().trim().optional().nullable(),
   h1En: z.string().trim().optional().nullable(),
-  h1Ur: z.string().trim().optional().nullable(),
   canonicalUrl: z.string().trim().url().optional().nullable().or(z.literal("")),
   ogTitleEn: z.string().trim().optional().nullable(),
-  ogTitleUr: z.string().trim().optional().nullable(),
   ogDescriptionEn: z.string().trim().optional().nullable(),
-  ogDescriptionUr: z.string().trim().optional().nullable(),
   ogImage: z.string().trim().url().optional().nullable().or(z.literal("")),
   twitterCard: z.enum(["summary", "summary_large_image"]).optional().nullable(),
   robotsIndex: z.boolean().default(true),
   robotsFollow: z.boolean().default(true),
   faqSchemaJson: jsonObjectSchema,
-  breadcrumbJson: jsonObjectSchema,
-});
+  breadcrumbJson: jsonObjectSchema});
 
 export const serviceCoreSchema = z.object({
   slug: serviceSlugSchema,
@@ -52,15 +44,10 @@ export const serviceCoreSchema = z.object({
   parentServiceId: z.string().cuid().optional().nullable(),
   regionIds: z.array(z.string().cuid()).min(1, "Select at least one province"),
   nameEn: z.string().trim().min(2).max(200),
-  nameUr: z.string().trim().min(2).max(200),
   shortDescriptionEn: z.string().trim().max(5000).optional().nullable(),
-  shortDescriptionUr: z.string().trim().max(5000).optional().nullable(),
   contentEn: z.string().trim().max(50000).optional().nullable(),
-  contentUr: z.string().trim().max(50000).optional().nullable(),
   ctaTextEn: z.string().trim().max(200).optional().nullable(),
-  ctaTextUr: z.string().trim().max(200).optional().nullable(),
   processingNotesEn: z.string().trim().max(10000).optional().nullable(),
-  processingNotesUr: z.string().trim().max(10000).optional().nullable(),
   internalNotes: z.string().trim().max(10000).optional().nullable(),
   referenceLinksJson: jsonObjectSchema,
   requiresProof: z.boolean().default(true),
@@ -69,44 +56,36 @@ export const serviceCoreSchema = z.object({
   featuredDisplayOrder: z.coerce.number().int().min(0).max(9999).default(0),
   showInFooter: z.boolean().default(false),
   footerDisplayOrder: z.coerce.number().int().min(0).max(9999).default(0),
-  displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
-});
+  displayOrder: z.coerce.number().int().min(0).max(9999).default(0)});
 
 export const createServiceSchema = serviceCoreSchema.extend({
-  seo: serviceSeoSchema.optional(),
-});
+  seo: serviceSeoSchema.optional()});
 
 export const updateServiceSchema = serviceCoreSchema.extend({
   id: z.string().cuid(),
-  seo: serviceSeoSchema.optional(),
-});
+  seo: serviceSeoSchema.optional()});
 
 export const serviceListFiltersSchema = paginationSchema.extend({
   q: z.string().trim().optional(),
   regionId: z.string().cuid().optional(),
-  active: z.enum(["true", "false", "all"]).optional().default("all"),
-});
+  active: z.enum(["true", "false", "all"]).optional().default("all")});
 
 export const serviceIdSchema = z.object({
-  id: z.string().cuid(),
-});
+  id: z.string().cuid()});
 
 export const reorderServicesSchema = z.object({
   items: z
     .array(
       z.object({
         id: z.string().cuid(),
-        displayOrder: z.number().int().min(0).max(9999),
-      }),
+        displayOrder: z.number().int().min(0).max(9999)}),
     )
     .min(1)
-    .max(200),
-});
+    .max(200)});
 
 export const toggleServiceSchema = z.object({
   id: z.string().cuid(),
-  isActive: z.boolean(),
-});
+  isActive: z.boolean()});
 
 export const fieldTypeSchema = z.enum([
   "TEXT",
@@ -120,8 +99,7 @@ export const fieldTypeSchema = z.enum([
   "FILE",
   "EMAIL",
   "PHONE",
-  "CNIC",
-]);
+  "CNIC"]);
 
 export const documentRequirementSchema = z.object({
   id: z.string().cuid().optional(),
@@ -138,22 +116,18 @@ export const documentRequirementSchema = z.object({
     .enum(["FILE", "NOTE", "BIOMETRIC", "INSPECTION", "DELIVERY"])
     .default("FILE"),
   labelEn: z.string().trim().min(2).max(200),
-  labelUr: z.string().trim().min(2).max(200),
   instructionsEn: z.string().trim().max(5000).optional().nullable(),
-  instructionsUr: z.string().trim().max(5000).optional().nullable(),
   isRequired: z.boolean().default(true),
   maxSizeBytes: z.coerce.number().int().min(1024).max(52428800).default(5242880),
   acceptedMimeTypes: z
     .array(z.string().trim().min(3))
     .min(1, "At least one MIME type is required"),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
-  isActive: z.boolean().default(true),
-});
+  isActive: z.boolean().default(true)});
 
 export const deleteDocumentRequirementSchema = z.object({
   id: z.string().cuid(),
-  serviceId: z.string().cuid(),
-});
+  serviceId: z.string().cuid()});
 
 export const serviceFormFieldSchema = z.object({
   id: z.string().cuid().optional(),
@@ -166,11 +140,8 @@ export const serviceFormFieldSchema = z.object({
     .max(80)
     .regex(/^[a-z0-9_]+$/, "Use lowercase letters, numbers, and underscores"),
   labelEn: z.string().trim().min(2).max(200),
-  labelUr: z.string().trim().min(2).max(200),
   placeholderEn: z.string().trim().max(200).optional().nullable(),
-  placeholderUr: z.string().trim().max(200).optional().nullable(),
   helpTextEn: z.string().trim().max(2000).optional().nullable(),
-  helpTextUr: z.string().trim().max(2000).optional().nullable(),
   fieldType: fieldTypeSchema,
   isRequired: z.boolean().default(false),
   isEncrypted: z.boolean().default(false),
@@ -178,13 +149,11 @@ export const serviceFormFieldSchema = z.object({
   validationJson: jsonObjectSchema,
   conditionalJson: jsonObjectSchema,
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
-  isActive: z.boolean().default(true),
-});
+  isActive: z.boolean().default(true)});
 
 export const deleteServiceFormFieldSchema = z.object({
   id: z.string().cuid(),
-  serviceId: z.string().cuid(),
-});
+  serviceId: z.string().cuid()});
 
 export type CreateServiceInput = z.infer<typeof createServiceSchema>;
 export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;

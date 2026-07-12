@@ -2,13 +2,14 @@ import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import {
   buildServiceWhatsAppMessage,
   buildWhatsAppUrl,
 } from "@/lib/whatsapp/build-service-message";
-import type { Locale } from "@/i18n/config";
+type Locale = "en";
 
+
+import Link from "next/link";
 type RegionHelpSectionProps = {
   regionName: string;
   whatsappPhone: string;

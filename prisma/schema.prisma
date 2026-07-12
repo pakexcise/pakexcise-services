@@ -216,6 +216,9 @@ model User {
   status            UserStatus @default(ACTIVE)
   twoFactorEnabled  Boolean    @default(false)
   twoFactorSecret   String?
+  banned            Boolean?   @default(false)
+  banReason         String?
+  banExpires        DateTime?
   createdAt         DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   deletedAt     DateTime?
@@ -288,6 +291,7 @@ model Session {
   ipAddress           String?
   userAgent           String?
   twoFactorVerifiedAt DateTime?
+  impersonatedBy      String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
@@ -376,9 +380,7 @@ model Region {
   id            String    @id @default(cuid())
   slug          String    @unique
   nameEn        String
-  nameUr        String
   descriptionEn String?   @db.Text
-  descriptionUr String?   @db.Text
   isActive      Boolean   @default(true)
   showInFooter  Boolean   @default(false)
   footerDisplayOrder Int  @default(0)
@@ -406,9 +408,7 @@ model RegionPlateFormatSection {
   id               String   @id @default(cuid())
   regionId         String   @unique
   sectionTitleEn   String?
-  sectionTitleUr   String?
   sectionDescEn    String?  @db.Text
-  sectionDescUr    String?  @db.Text
   faqJson          Json?
   isActive         Boolean  @default(true)
   showOnRegionPage Boolean  @default(true)
@@ -425,17 +425,13 @@ model RegionNumberPlateFormat {
   regionId            String
   vehicleType         VehiclePlateType @default(CAR)
   titleEn             String
-  titleUr             String
   formatsJson         Json
   descriptionEn       String?          @db.Text
-  descriptionUr       String?          @db.Text
   relatedServiceSlugs Json?
   imageR2Key          String?
   imageMimeType       String?
   imageAltEn          String?
-  imageAltUr          String?
   imageCaptionEn      String?
-  imageCaptionUr      String?
   isActive            Boolean          @default(true)
   isFeatured          Boolean          @default(false)
   showOnRegionPage    Boolean          @default(true)
@@ -455,9 +451,7 @@ model City {
   regionId      String
   slug          String
   nameEn        String
-  nameUr        String
   descriptionEn String?   @db.Text
-  descriptionUr String?   @db.Text
   isActive      Boolean   @default(true)
   displayOrder  Int       @default(0)
   createdAt     DateTime  @default(now())
@@ -476,9 +470,7 @@ model ServiceCategory {
   id            String   @id @default(cuid())
   slug          String   @unique
   nameEn        String
-  nameUr        String
   descriptionEn String?  @db.Text
-  descriptionUr String?  @db.Text
   isActive      Boolean  @default(true)
   displayOrder  Int      @default(0)
   createdAt     DateTime @default(now())
@@ -493,11 +485,8 @@ model ServiceCategory {
 model Review {
   id           String   @id @default(cuid())
   authorNameEn String
-  authorNameUr String?
   authorRoleEn String?
-  authorRoleUr String?
   contentEn    String   @db.Text
-  contentUr    String   @db.Text
   rating       Int      @default(5)
   isActive     Boolean  @default(true)
   displayOrder Int      @default(0)
@@ -513,7 +502,6 @@ model ServiceRegion {
   serviceId      String
   regionId       String
   supportNotesEn String?  @db.Text
-  supportNotesUr String?  @db.Text
   isActive       Boolean  @default(true)
   displayOrder   Int      @default(0)
   createdAt      DateTime @default(now())
@@ -535,15 +523,10 @@ model Service {
   categoryId          String?
   parentServiceId     String?
   nameEn              String
-  nameUr              String
   shortDescriptionEn  String?   @db.Text
-  shortDescriptionUr  String?   @db.Text
   contentEn           String?   @db.Text
-  contentUr           String?   @db.Text
   ctaTextEn           String?
-  ctaTextUr           String?
   processingNotesEn   String?   @db.Text
-  processingNotesUr   String?   @db.Text
   internalNotes       String?   @db.Text
   referenceLinksJson  Json?
   requiresProof       Boolean   @default(true)
@@ -601,11 +584,8 @@ model ServiceFormField {
   regionId         String?
   fieldKey         String
   labelEn          String
-  labelUr          String
   placeholderEn    String?
-  placeholderUr    String?
   helpTextEn       String?   @db.Text
-  helpTextUr       String?   @db.Text
   fieldType        FieldType
   isRequired       Boolean   @default(false)
   isEncrypted      Boolean   @default(false)
@@ -631,9 +611,7 @@ model ChecklistItem {
   id                       String            @id @default(cuid())
   slug                     String            @unique
   nameEn                   String
-  nameUr                   String
   descriptionEn            String?           @db.Text
-  descriptionUr            String?           @db.Text
   itemType                 ChecklistItemType @default(DOCUMENT)
   defaultMaxSizeBytes      Int               @default(5242880)
   defaultAcceptedMimeTypes Json
@@ -656,9 +634,7 @@ model DocumentRequirement {
   docType           String
   kind              DocumentRequirementKind @default(FILE)
   labelEn           String
-  labelUr           String
   instructionsEn    String?                 @db.Text
-  instructionsUr    String?                 @db.Text
   isRequired        Boolean                 @default(true)
   maxSizeBytes      Int                     @default(5242880)
   acceptedMimeTypes Json
@@ -802,15 +778,11 @@ model PaymentMethod {
   code             String            @unique
   type             PaymentMethodType
   nameEn           String
-  nameUr           String
   accountTitleEn   String?
-  accountTitleUr   String?
   accountNumber    String?
   iban             String?
   bankNameEn       String?
-  bankNameUr       String?
   instructionsEn   String?           @db.Text
-  instructionsUr   String?           @db.Text
   qrCodeR2Key      String?
   qrCodeMimeType   String?
   isActive         Boolean           @default(true)
@@ -831,15 +803,11 @@ model InvoicePaymentMethod {
   code             String
   type             PaymentMethodType
   nameEn           String
-  nameUr           String
   accountTitleEn   String?
-  accountTitleUr   String?
   accountNumber    String?
   iban             String?
   bankNameEn       String?
-  bankNameUr       String?
   instructionsEn   String?           @db.Text
-  instructionsUr   String?           @db.Text
   qrCodeR2Key      String?
   qrCodeMimeType   String?
   displayOrder     Int               @default(0)
@@ -1004,9 +972,7 @@ model FaqCategory {
   id            String   @id @default(cuid())
   slug          String   @unique
   nameEn        String
-  nameUr        String
   descriptionEn String?  @db.Text
-  descriptionUr String?  @db.Text
   isActive      Boolean  @default(true)
   displayOrder  Int      @default(0)
   createdAt     DateTime @default(now())
@@ -1024,11 +990,8 @@ model FAQ {
   regionId             String?
   categoryId           String
   questionEn           String
-  questionUr           String
   answerEn             String   @db.Text
-  answerUr             String   @db.Text
   seoKeywordsEn        String?  @db.Text
-  seoKeywordsUr        String?  @db.Text
   isActive             Boolean  @default(true)
   isFeatured           Boolean  @default(false)
   displayOrder         Int      @default(0)
@@ -1052,7 +1015,6 @@ model SocialLink {
   id           String   @id @default(cuid())
   platform     String
   labelEn      String
-  labelUr      String
   url          String
   iconName     String   @default("Link")
   isActive     Boolean  @default(true)
@@ -1084,16 +1046,11 @@ model SeoMeta {
   guideId           String?  @unique
   legalPageId       String?  @unique
   metaTitleEn       String?
-  metaTitleUr       String?
   metaDescriptionEn String?  @db.Text
-  metaDescriptionUr String?  @db.Text
   h1En              String?
-  h1Ur              String?
   canonicalUrl      String?
   ogTitleEn         String?
-  ogTitleUr         String?
   ogDescriptionEn   String?  @db.Text
-  ogDescriptionUr   String?  @db.Text
   ogImage           String?
   twitterCard       String?  @default("summary_large_image")
   robotsIndex       Boolean  @default(true)
@@ -1130,40 +1087,27 @@ model BlogPost {
   id                     String    @id @default(cuid())
   slug                   String    @unique
   titleEn                String
-  titleUr                String
   excerptEn              String?   @db.Text
-  excerptUr              String?   @db.Text
   contentEn              String    @db.Text
-  contentUr              String    @db.Text
   categoryEn             String?
-  categoryUr             String?
   categoryId             String?
   subCategoryId          String?
   tags                   String[]  @default([])
   authorNameEn           String?
-  authorNameUr           String?
   readingTimeMinutes     Int?
   featuredImagePath      String?
   featuredImageTitleEn   String?
-  featuredImageTitleUr   String?
   featuredImageAltEn     String?
-  featuredImageAltUr     String?
   featuredImageCaptionEn String?   @db.Text
-  featuredImageCaptionUr String?   @db.Text
   focusKeywords          String?
   isFeatured             Boolean   @default(false)
   showTableOfContents    Boolean   @default(true)
   contentFaqs            Json?
   ctaTitleEn             String?
-  ctaTitleUr             String?
   ctaDescriptionEn       String?   @db.Text
-  ctaDescriptionUr       String?   @db.Text
   ctaWhatsappLabelEn     String?
-  ctaWhatsappLabelUr     String?
   ctaRequestLabelEn      String?
-  ctaRequestLabelUr      String?
   ctaAccountLabelEn      String?
-  ctaAccountLabelUr      String?
   relatedServiceIds      String[]  @default([])
   attachedFaqIds         String[]  @default([])
   isPublished            Boolean   @default(false)
@@ -1186,7 +1130,6 @@ model BlogCategory {
   id           String   @id @default(cuid())
   slug         String   @unique
   nameEn       String
-  nameUr       String
   parentId     String?
   isActive     Boolean  @default(true)
   displayOrder Int      @default(0)
@@ -1206,11 +1149,8 @@ model Guide {
   id                String    @id @default(cuid())
   slug              String    @unique
   titleEn           String
-  titleUr           String
   excerptEn         String?   @db.Text
-  excerptUr         String?   @db.Text
   contentEn         String    @db.Text
-  contentUr         String    @db.Text
   relatedServiceIds String[]  @default([])
   attachedFaqIds    String[]  @default([])
   isPublished       Boolean   @default(false)
@@ -1228,11 +1168,8 @@ model LegalPage {
   id           String    @id @default(cuid())
   slug         String    @unique
   titleEn      String
-  titleUr      String
   excerptEn    String?   @db.Text
-  excerptUr    String?   @db.Text
   contentEn    String    @db.Text
-  contentUr    String    @db.Text
   isPublished  Boolean   @default(false)
   isActive     Boolean   @default(true)
   displayOrder Int       @default(0)
@@ -1254,9 +1191,7 @@ model GuestLead {
   status          GuestLeadStatus @default(NEW)
   serviceId       String?
   serviceNameEn   String
-  serviceNameUr   String
   regionNameEn    String?
-  regionNameUr    String?
   cityName        String?
   fullName        String
   phone           String

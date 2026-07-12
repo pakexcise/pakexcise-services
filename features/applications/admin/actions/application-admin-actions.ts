@@ -7,14 +7,12 @@ import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { formatFirstFieldError } from "@/lib/validations/format-field-errors";
 import {
   adminCreateApplicationSchema,
   adminUpdateApplicationSchema,
-  deleteApplicationSchema,
-} from "@/lib/validations/admin-application";
+  deleteApplicationSchema} from "@/lib/validations/admin-application";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { applicationRepository } from "@/server/repositories/application-repository";
 import { prisma } from "@/server/db/client";
@@ -41,28 +39,21 @@ async function validateApplicationRelations(input: {
       where: {
         id: input.userId,
         role: "CUSTOMER",
-        deletedAt: null,
-      },
-      select: { id: true },
-    }),
+        deletedAt: null},
+      select: { id: true }}),
     prisma.service.findFirst({
       where: {
         id: input.serviceId,
-        deletedAt: null,
-      },
-      select: { id: true },
-    }),
+        deletedAt: null},
+      select: { id: true }}),
     input.agentId
       ? prisma.user.findFirst({
           where: {
             id: input.agentId,
             role: "AGENT",
-            deletedAt: null,
-          },
-          select: { id: true },
-        })
-      : Promise.resolve(null),
-  ]);
+            deletedAt: null},
+          select: { id: true }})
+      : Promise.resolve(null)]);
 
   if (!customer) {
     return "Customer not found.";
@@ -118,16 +109,14 @@ export async function createApplicationAdminAction(
     status: data.status,
     adminNotes: data.adminNotes?.trim() || null,
     statusChangeNote: data.statusChangeNote.trim(),
-    actorId: actor.id,
-  });
+    actorId: actor.id});
 
   await auditAdminAction({
     actorId: actor.id,
     action: "CREATE",
     entityType: "application",
     entityId: application.id,
-    after: { trackingId: application.trackingId, status: data.status },
-  });
+    after: { trackingId: application.trackingId, status: data.status }});
 
   revalidateApplicationPaths(application.id);
 
@@ -161,7 +150,7 @@ export async function updateApplicationAdminAction(
       ? data.agentId
       : (existing.agent?.id ?? null);
   const resolvedLocale =
-    data.locale ?? (existing.locale === "ur" ? "ur" : "en");
+    data.locale ?? ("en");
 
   const assignmentChanged =
     (data.userId !== undefined && data.userId !== existing.user.id) ||
@@ -173,8 +162,7 @@ export async function updateApplicationAdminAction(
     const relationError = await validateApplicationRelations({
       userId: resolvedUserId,
       serviceId: resolvedServiceId,
-      agentId: resolvedAgentId,
-    });
+      agentId: resolvedAgentId});
 
     if (relationError) {
       let fieldErrors: Record<string, string[]> | undefined;
@@ -196,8 +184,7 @@ export async function updateApplicationAdminAction(
 
   if (statusChanged && statusChangeNote.length < 3) {
     return errorResult("A status change note is required when changing status.", {
-      statusChangeNote: ["A status change note is required when changing status."],
-    });
+      statusChangeNote: ["A status change note is required when changing status."]});
   }
 
   const updated = await applicationRepository.updateAdmin({
@@ -209,8 +196,7 @@ export async function updateApplicationAdminAction(
     status: data.status,
     adminNotes: data.adminNotes?.trim() || null,
     statusChangeNote: statusChanged ? statusChangeNote : undefined,
-    actorId: actor.id,
-  });
+    actorId: actor.id});
 
   if (!updated) {
     return errorResult("Application not found.");
@@ -225,34 +211,28 @@ export async function updateApplicationAdminAction(
       trackingId: existing.trackingId,
       status: existing.status,
       userId: existing.user.id,
-      serviceId: existing.service.id,
-    },
+      serviceId: existing.service.id},
     after: {
       trackingId: updated.trackingId,
       status: updated.status,
       userId: resolvedUserId,
-      serviceId: resolvedServiceId,
-    },
-  });
+      serviceId: resolvedServiceId}});
 
   if (statusChanged) {
     const customer = await prisma.user.findUnique({
       where: { id: resolvedUserId },
-      select: { email: true, phone: true },
-    });
+      select: { email: true, phone: true }});
 
     await queueApplicationStatusNotifications({
       applicationId: updated.id,
       userId: resolvedUserId,
       trackingId: updated.trackingId,
       serviceName: existing.service.nameEn,
-      serviceNameUr: existing.service.nameUr,
       locale: resolvedLocale,
       toStatus: updated.status,
       note: statusChangeNote,
       userEmail: customer?.email ?? "",
-      userPhone: customer?.phone,
-    });
+      userPhone: customer?.phone});
 
     await emitApplicationChange({
       applicationId: updated.id,
@@ -264,12 +244,9 @@ export async function updateApplicationAdminAction(
       changeType: "status",
       notificationPayload: {
         serviceName: existing.service.nameEn,
-        serviceNameUr: existing.service.nameUr,
         note: statusChangeNote,
         fromStatus: existing.status,
-        toStatus: updated.status,
-      },
-    });
+        toStatus: updated.status}});
   }
 
   revalidateApplicationPaths(updated.id);
@@ -307,8 +284,7 @@ export async function deleteApplicationAdminAction(
     action: "DELETE",
     entityType: "application",
     entityId: parsed.data.id,
-    before: { trackingId: existing.trackingId },
-  });
+    before: { trackingId: existing.trackingId }});
 
   revalidateApplicationPaths();
 

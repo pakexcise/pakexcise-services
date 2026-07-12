@@ -19,71 +19,55 @@ const DEFAULT_MIME_TYPES = [
 
 const PRIVATE_DISCLAIMER_EN =
   "PakExcise.com is a private facilitation service and is not affiliated with Excise & Taxation, MTMIS, NADRA, ICT Excise, or any Government of Pakistan body.";
-const PRIVATE_DISCLAIMER_UR =
-  "PakExcise.com ایک نجی سہولت سروس ہے اور ایکسائز و ٹیکسیشن، MTMIS، NADRA، ICT Excise یا حکومت پاکستان کے کسی بھی ادارے سے وابستہ نہیں ہے۔";
 
 export const REGION_SEED = [
   {
     slug: "punjab",
     nameEn: "Punjab",
-    nameUr: "پنجاب",
     descriptionEn:
       "Private excise facilitation support for vehicle and license services across Punjab province.",
-    descriptionUr: "پنجاب صوبے میں گاڑی اور لائسنس سروسز کے لیے نجی ایکسائز سہولت۔",
     displayOrder: 1,
   },
   {
     slug: "sindh",
     nameEn: "Sindh",
-    nameUr: "سندھ",
     descriptionEn:
       "Private facilitation guidance for excise-related processes in Sindh province.",
-    descriptionUr: "سندھ صوبے میں ایکسائز سے متعلق عمل کے لیے نجی رہنمائی۔",
     displayOrder: 2,
   },
   {
     slug: "kpk",
     nameEn: "Khyber Pakhtunkhwa",
-    nameUr: "خیبر پختونخوا",
     descriptionEn:
       "Private facilitation support for excise services in Khyber Pakhtunkhwa.",
-    descriptionUr: "خیبر پختونخوا میں ایکسائز سروسز کے لیے نجی سہولت۔",
     displayOrder: 3,
   },
   {
     slug: "balochistan",
     nameEn: "Balochistan",
-    nameUr: "بلوچستان",
     descriptionEn:
       "Private facilitation support for excise services in Balochistan.",
-    descriptionUr: "بلوچستان میں ایکسائز سروسز کے لیے نجی سہولت۔",
     displayOrder: 4,
   },
   {
     slug: "islamabad",
     nameEn: "Islamabad ICT",
-    nameUr: "اسلام آباد ICT",
     descriptionEn:
       "Private excise facilitation for Islamabad Capital Territory services.",
-    descriptionUr: "اسلام آباد دارالحکومت کی ایکسائز سروسز کے لیے نجی سہولت۔",
     displayOrder: 5,
   },
   {
     slug: "gilgit-baltistan",
     nameEn: "Gilgit-Baltistan",
-    nameUr: "گلگت بلتستان",
     descriptionEn:
       "Private facilitation guidance for excise-related processes in Gilgit-Baltistan.",
-    descriptionUr: "گلگت بلتستان میں ایکسائز سے متعلق عمل کے لیے نجی رہنمائی۔",
     displayOrder: 6,
   },
   {
     slug: "ajk",
     nameEn: "Azad Jammu & Kashmir",
-    nameUr: "آزاد جموں و کشمیر",
     descriptionEn:
       "Private facilitation guidance for excise-related processes in Azad Kashmir.",
-    descriptionUr: "آزاد کشمیر میں ایکسائز سے متعلق عمل کے لیے نجی رہنمائی۔",
     displayOrder: 7,
   },
 ] as const;
@@ -168,31 +152,22 @@ export const CATEGORY_SEED = [
   {
     slug: "vehicle-services",
     nameEn: "Vehicle Services",
-    nameUr: "گاڑی کی خدمات",
     descriptionEn:
       "Private facilitation for vehicle transfer, registration, token tax, route permits, and related excise support.",
-    descriptionUr:
-      "گاڑی منتقلی، رجسٹریشن، ٹوکن ٹیکس، راؤٹ پرمٹ اور متعلقہ ایکسائز سہولت۔",
     displayOrder: 1,
   },
   {
     slug: "license-services",
     nameEn: "License Services",
-    nameUr: "لائسنس کی خدمات",
     descriptionEn:
       "Private facilitation for driving license renewal and learner license applications.",
-    descriptionUr:
-      "ڈرائیونگ لائسنس تجدید اور لرنر لائسنس درخواستوں کے لیے نجی سہولت۔",
     displayOrder: 2,
   },
   {
     slug: "e-challan-safe-city",
     nameEn: "E-Challan / Safe City",
-    nameUr: "ای چالان / سیف سٹی",
     descriptionEn:
       "Private guidance for e-challan and Safe City-related facilitation across Pakistan.",
-    descriptionUr:
-      "پاکستان بھر میں ای چالان اور سیف سٹی سے متعلق نجی رہنمائی۔",
     displayOrder: 3,
   },
 ] as const;
@@ -231,11 +206,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab", "islamabad"],
     categorySlug: "vehicle-services",
     nameEn: "Vehicle Transfer",
-    nameUr: "گاڑی منتقلی",
     shortDescriptionEn:
       "Private facilitation for vehicle ownership transfer in Punjab and Islamabad ICT.",
-    shortDescriptionUr:
-      "پنجاب اور اسلام آباد ICT میں گاڑی کی ملکیت منتقلی کے لیے نجی سہولت۔",
     displayOrder: 1,
   },
   {
@@ -243,11 +215,8 @@ export const SERVICE_SEED = [
     regionSlugs: TOKEN_TAX_REGION_SLUGS,
     categorySlug: "vehicle-services",
     nameEn: "Token Tax Payment",
-    nameUr: "ٹوکن ٹیکس ادائیگی",
     shortDescriptionEn:
       "Private facilitation support for token tax payment across supported provinces.",
-    shortDescriptionUr:
-      "معاون صوبوں میں ٹوکن ٹیکس ادائیگی کے لیے نجی سہولت سپورٹ۔",
     displayOrder: 2,
   },
   {
@@ -255,11 +224,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab", "islamabad"],
     categorySlug: "vehicle-services",
     nameEn: "New Vehicle Registration",
-    nameUr: "نئی گاڑی رجسٹریشن",
     shortDescriptionEn:
       "Private facilitation for new vehicle registration in Punjab and Islamabad ICT.",
-    shortDescriptionUr:
-      "پنجاب اور اسلام آباد ICT میں نئی گاڑی رجسٹریشن کے لیے نجی سہولت۔",
     displayOrder: 3,
   },
   {
@@ -267,11 +233,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["islamabad"],
     categorySlug: "vehicle-services",
     nameEn: "Vehicle Passing / Fitness",
-    nameUr: "گاڑی پاسنگ / فٹنس",
     shortDescriptionEn:
       "Private facilitation for vehicle passing and fitness processes in Islamabad ICT.",
-    shortDescriptionUr:
-      "اسلام آباد ICT میں گاڑی پاسنگ اور فٹنس کے عمل کے لیے نجی سہولت۔",
     displayOrder: 4,
   },
   {
@@ -279,11 +242,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab", "islamabad"],
     categorySlug: "vehicle-services",
     nameEn: "Route Permit",
-    nameUr: "راؤٹ پرمٹ",
     shortDescriptionEn:
       "Private facilitation for route permit services in Punjab and Islamabad ICT.",
-    shortDescriptionUr:
-      "پنجاب اور اسلام آباد ICT میں راؤٹ پرمٹ سروسز کے لیے نجی سہولت۔",
     displayOrder: 5,
   },
   {
@@ -292,9 +252,7 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab"],
     categorySlug: "vehicle-services",
     nameEn: "New Route Permit",
-    nameUr: "نیا راؤٹ پرمٹ",
     shortDescriptionEn: "Private facilitation for new route permit applications.",
-    shortDescriptionUr: "نئے راؤٹ پرمٹ درخواستوں کے لیے نجی سہولت۔",
     displayOrder: 1,
   },
   {
@@ -303,9 +261,7 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab"],
     categorySlug: "vehicle-services",
     nameEn: "Route Permit NOC",
-    nameUr: "راؤٹ پرمٹ NOC",
     shortDescriptionEn: "Private facilitation for route permit NOC requests.",
-    shortDescriptionUr: "راؤٹ پرمٹ NOC درخواستوں کے لیے نجی سہولت۔",
     displayOrder: 2,
   },
   {
@@ -314,10 +270,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab"],
     categorySlug: "vehicle-services",
     nameEn: "Route Permit Duplicate",
-    nameUr: "راؤٹ پرمٹ ڈپلیکیٹ",
     shortDescriptionEn:
       "Private facilitation for duplicate route permit applications.",
-    shortDescriptionUr: "ڈپلیکیٹ راؤٹ پرمٹ درخواستوں کے لیے نجی سہولت۔",
     displayOrder: 3,
   },
   {
@@ -325,11 +279,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab", "islamabad"],
     categorySlug: "vehicle-services",
     nameEn: "Data Correction",
-    nameUr: "ڈیٹا تصحیح",
     shortDescriptionEn:
       "Private facilitation for excise record data correction in Punjab and Islamabad ICT.",
-    shortDescriptionUr:
-      "پنجاب اور اسلام آباد ICT میں ایکسائز ریکارڈ تصحیح کے لیے نجی سہولت۔",
     displayOrder: 6,
   },
   {
@@ -337,10 +288,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab"],
     categorySlug: "license-services",
     nameEn: "Driving License Renewal",
-    nameUr: "ڈرائیونگ لائسنس تجدید",
     shortDescriptionEn:
       "Private facilitation for driving license renewal in Punjab.",
-    shortDescriptionUr: "پنجاب میں ڈرائیونگ لائسنس تجدید کے لیے نجی سہولت۔",
     displayOrder: 1,
   },
   {
@@ -348,11 +297,8 @@ export const SERVICE_SEED = [
     regionSlugs: ["punjab", "islamabad"],
     categorySlug: "license-services",
     nameEn: "Learner's License",
-    nameUr: "لرنر لائسنس",
     shortDescriptionEn:
       "Private facilitation for learner license applications in Punjab and Islamabad ICT.",
-    shortDescriptionUr:
-      "پنجاب اور اسلام آباد ICT میں لرنر لائسنس درخواستوں کے لیے نجی سہولت۔",
     displayOrder: 2,
   },
   {
@@ -360,11 +306,8 @@ export const SERVICE_SEED = [
     regionSlugs: ALL_REGION_SLUGS,
     categorySlug: "e-challan-safe-city",
     nameEn: "E-Challan",
-    nameUr: "ای چالان",
     shortDescriptionEn:
       "Private facilitation guidance for e-challan support across Pakistan provinces.",
-    shortDescriptionUr:
-      "پاکستان کے صوبوں میں ای چالان سپورٹ کے لیے نجی سہولت رہنمائی۔",
     displayOrder: 1,
   },
 ] as const;
@@ -376,30 +319,22 @@ export const PAYMENT_METHOD_SEED = [
     code: "meezan-bank",
     type: "BANK_TRANSFER" as const,
     nameEn: "Meezan Bank",
-    nameUr: "میزان بینک",
     accountTitleEn: "RASHID SHAHBAZ SHARIF",
-    accountTitleUr: "راشد شہباز شریف",
     accountNumber: "03300111833629",
     iban: "PK30MEZN0003300111833629",
     bankNameEn: "Meezan Bank",
-    bankNameUr: "میزان بینک",
     instructionsEn: null,
-    instructionsUr: null,
     displayOrder: 1,
   },
   {
     code: "easypaisa",
     type: "EASYPAISA" as const,
     nameEn: "Easypaisa",
-    nameUr: "ایزی پیسہ",
     accountTitleEn: "Rashid Shahbaz Sharif",
-    accountTitleUr: "راشد شہباز شریف",
     accountNumber: "03413110094",
     iban: null,
     bankNameEn: null,
-    bankNameUr: null,
     instructionsEn: null,
-    instructionsUr: null,
     displayOrder: 2,
   },
 ] as const;
@@ -408,7 +343,6 @@ export const SOCIAL_SEED = [
   {
     platform: "facebook",
     labelEn: "Facebook",
-    labelUr: "فیس بک",
     url: "https://www.facebook.com/pakexcise/",
     iconName: "facebook",
     displayOrder: 1,
@@ -416,7 +350,6 @@ export const SOCIAL_SEED = [
   {
     platform: "instagram",
     labelEn: "Instagram",
-    labelUr: "انسٹاگرام",
     url: "https://www.instagram.com/pakexcise/",
     iconName: "instagram",
     displayOrder: 2,
@@ -424,7 +357,6 @@ export const SOCIAL_SEED = [
   {
     platform: "tiktok",
     labelEn: "TikTok",
-    labelUr: "ٹک ٹاک",
     url: "https://www.tiktok.com/@pakexcise",
     iconName: "tiktok",
     displayOrder: 3,
@@ -432,7 +364,6 @@ export const SOCIAL_SEED = [
   {
     platform: "youtube",
     labelEn: "YouTube",
-    labelUr: "یوٹیوب",
     url: "https://www.youtube.com/@PakExcise",
     iconName: "youtube",
     displayOrder: 4,
@@ -440,7 +371,6 @@ export const SOCIAL_SEED = [
   {
     platform: "linkedin",
     labelEn: "LinkedIn",
-    labelUr: "لنکڈ ان",
     url: "https://www.linkedin.com/in/pakexcise/",
     iconName: "linkedin",
     displayOrder: 5,
@@ -448,7 +378,6 @@ export const SOCIAL_SEED = [
   {
     platform: "x",
     labelEn: "X (Twitter)",
-    labelUr: "ایکس (ٹویٹر)",
     url: "https://x.com/pakexcise",
     iconName: "x",
     displayOrder: 6,
@@ -458,48 +387,34 @@ export const SOCIAL_SEED = [
 export const REVIEW_SEED = [
   {
     authorNameEn: "Ahmed R.",
-    authorNameUr: "احمد ر.",
     authorRoleEn: "Vehicle transfer customer",
-    authorRoleUr: "گاڑی منتقلی گاہک",
     contentEn:
       "PakExcise helped me organize documents and track my application without confusion. Clear private service — not government.",
-    contentUr:
-      "PakExcise نے دستاویزات منظم کرنے اور درخواست ٹریک کرنے میں مدد کی۔ واضح نجی سروس — سرکاری نہیں۔",
     rating: 5,
     displayOrder: 1,
   },
   {
     authorNameEn: "Sana K.",
-    authorNameUr: "ثنا ک.",
     authorRoleEn: "Token tax facilitation",
-    authorRoleUr: "ٹوکن ٹیکس سہولت",
     contentEn:
       "Responsive WhatsApp support and step-by-step guidance. Fees were only shared on invoice after review.",
-    contentUr:
-      "فوری واٹس ایپ سپورٹ اور مرحلہ وار رہنمائی۔ فیس صرف جائزے کے بعد انوائس پر شیئر ہوئی۔",
     rating: 5,
     displayOrder: 2,
   },
   {
     authorNameEn: "Bilal H.",
-    authorNameUr: "بلال ح.",
     authorRoleEn: "New registration customer",
-    authorRoleUr: "نئی رجسٹریشن گاہک",
     contentEn:
       "Professional experience from application to completion proof download.",
-    contentUr:
-      "درخواست سے لے کر تکمیل ثبوت ڈاؤن لوڈ تک پیشہ ورانہ تجربہ۔",
     rating: 5,
     displayOrder: 3,
   },
 ] as const;
 
-function serviceContent(shortEn: string, shortUr: string) {
+function serviceContent(shortEn: string) {
   return {
     contentEn: `${shortEn}\n\n## Overview\nOur team helps you prepare documents, submit your application, and track progress through a private facilitation service.\n\n## Why choose PakExcise\n- Dedicated support via WhatsApp and dashboard\n- Document checklist guidance\n- Status tracking with notes on every update`,
-    contentUr: `${shortUr}\n\n## جائزہ\nہماری ٹیم دستاویزات تیار کرنے، درخواست جمع کرانے اور پیش رفت ٹریک کرنے میں مدد کرتی ہے۔\n\n## PakExcise کیوں\n- واٹس ایپ اور ڈیش بورڈ کے ذریعے سپورٹ\n- دستاویزات چیک لسٹ رہنمائی\n- ہر اپڈیٹ پر نوٹس کے ساتھ ٹریکنگ`,
     processingNotesEn: null,
-    processingNotesUr: null,
   };
 }
 
@@ -512,9 +427,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       where: { slug: region.slug },
       update: {
         nameEn: region.nameEn,
-        nameUr: region.nameUr,
         descriptionEn: region.descriptionEn,
-        descriptionUr: region.descriptionUr,
         displayOrder: region.displayOrder,
         footerDisplayOrder: region.displayOrder,
         showInFooter: true,
@@ -541,9 +454,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         where: { regionId_slug: { regionId, slug: city.slug } },
         update: {
           nameEn: city.nameEn,
-          nameUr: city.nameUr,
           descriptionEn: city.descriptionEn,
-          descriptionUr: city.descriptionUr,
           displayOrder: city.displayOrder,
           isActive: true,
         },
@@ -555,21 +466,15 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         update: {
           cityId: created.id,
           metaTitleEn: `${city.nameEn} Excise Services | PakExcise.com`,
-          metaTitleUr: `${city.nameUr} ایکسائز خدمات | PakExcise.com`,
           metaDescriptionEn: city.descriptionEn,
-          metaDescriptionUr: city.descriptionUr,
           h1En: city.nameEn,
-          h1Ur: city.nameUr,
         },
         create: {
           pageKey: `city:${regionSlug}:${city.slug}`,
           cityId: created.id,
           metaTitleEn: `${city.nameEn} Excise Services | PakExcise.com`,
-          metaTitleUr: `${city.nameUr} ایکسائز خدمات | PakExcise.com`,
           metaDescriptionEn: city.descriptionEn,
-          metaDescriptionUr: city.descriptionUr,
           h1En: city.nameEn,
-          h1Ur: city.nameUr,
         },
       });
     }
@@ -584,21 +489,15 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       update: {
         regionId,
         metaTitleEn: `${region.nameEn} Services | PakExcise.com`,
-        metaTitleUr: `${region.nameUr} خدمات | PakExcise.com`,
         metaDescriptionEn: region.descriptionEn,
-        metaDescriptionUr: region.descriptionUr,
         h1En: region.nameEn,
-        h1Ur: region.nameUr,
       },
       create: {
         pageKey: `region:${region.slug}`,
         regionId,
         metaTitleEn: `${region.nameEn} Services | PakExcise.com`,
-        metaTitleUr: `${region.nameUr} خدمات | PakExcise.com`,
         metaDescriptionEn: region.descriptionEn,
-        metaDescriptionUr: region.descriptionUr,
         h1En: region.nameEn,
-        h1Ur: region.nameUr,
       },
     });
   }
@@ -609,9 +508,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       where: { slug: category.slug },
       update: {
         nameEn: category.nameEn,
-        nameUr: category.nameUr,
         descriptionEn: category.descriptionEn,
-        descriptionUr: category.descriptionUr,
         displayOrder: category.displayOrder,
         isActive: true,
       },
@@ -642,7 +539,6 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     const primaryRegionId = assignedRegionIds[0];
     const content = serviceContent(
       service.shortDescriptionEn,
-      service.shortDescriptionUr,
     );
 
     const created = await prisma.service.upsert({
@@ -652,9 +548,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         categoryId,
         parentServiceId,
         nameEn: service.nameEn,
-        nameUr: service.nameUr,
         shortDescriptionEn: service.shortDescriptionEn,
-        shortDescriptionUr: service.shortDescriptionUr,
         ...content,
         displayOrder: service.displayOrder,
         isActive: true,
@@ -665,9 +559,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         categoryId,
         parentServiceId,
         nameEn: service.nameEn,
-        nameUr: service.nameUr,
         shortDescriptionEn: service.shortDescriptionEn,
-        shortDescriptionUr: service.shortDescriptionUr,
         ...content,
         displayOrder: service.displayOrder,
         isActive: true,
@@ -701,7 +593,6 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
         serviceId: created.id,
         fieldKey: "applicant_name",
         labelEn: "Applicant full name",
-        labelUr: "درخواست دہندہ کا مکمل نام",
         fieldType: "TEXT",
         isRequired: true,
         displayOrder: 1,
@@ -727,9 +618,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
           serviceId: created.id,
           docType: "cnic_copy",
           labelEn: "CNIC copy",
-          labelUr: "شناختی کارڈ کی نقول",
           instructionsEn: "Upload a clear CNIC copy.",
-          instructionsUr: "شناختی کارڈ کی واضح نقول اپ لوڈ کریں۔",
           isRequired: true,
           maxSizeBytes: 5242880,
           acceptedMimeTypes: DEFAULT_MIME_TYPES,
@@ -743,21 +632,15 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       update: {
         serviceId: created.id,
         metaTitleEn: `${service.nameEn} | PakExcise.com`,
-        metaTitleUr: `${service.nameUr} | PakExcise.com`,
         metaDescriptionEn: service.shortDescriptionEn,
-        metaDescriptionUr: service.shortDescriptionUr,
         h1En: service.nameEn,
-        h1Ur: service.nameUr,
       },
       create: {
         pageKey: `service:${service.slug}`,
         serviceId: created.id,
         metaTitleEn: `${service.nameEn} | PakExcise.com`,
-        metaTitleUr: `${service.nameUr} | PakExcise.com`,
         metaDescriptionEn: service.shortDescriptionEn,
-        metaDescriptionUr: service.shortDescriptionUr,
         h1En: service.nameEn,
-        h1Ur: service.nameUr,
       },
     });
   }
@@ -823,119 +706,77 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   const staticPages: Array<{
     key: string;
     titleEn: string;
-    titleUr: string;
     contentEn: string;
-    contentUr: string;
   }> = [
     {
       key: "how-it-works",
       titleEn: "How It Works",
-      titleUr: "یہ کیسے کام کرتا ہے",
       contentEn:
         "## Choose a service\nBrowse services by region and select the facilitation you need.\n\n## Submit your application\nComplete the dynamic form and upload required documents securely.\n\n## Track and complete\nTrack status updates, receive invoices after review, and download completion proof when ready.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "## سروس منتخب کریں\nعلاقے کے مطابق سروسز دیکھیں اور مطلوبہ سہولت منتخب کریں۔\n\n## درخواست جمع کرائیں\nڈائنامک فارم مکمل کریں اور دستاویزات محفوظ طریقے سے اپ لوڈ کریں۔\n\n## ٹریک کریں اور مکمل کریں\nاسٹیٹس اپڈیٹس دیکھیں، جائزے کے بعد انوائس حاصل کریں، اور تکمیل ثبوت ڈاؤن لوڈ کریں۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "documents",
       titleEn: "Required Documents",
-      titleUr: "ضروری دستاویزات",
       contentEn:
         "Document requirements vary by service. Each service page lists required and optional documents managed by admin.\n\nStart by opening a service, review the checklist, then apply when ready.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "دستاویزات کی ضروریات سروس کے مطابق مختلف ہوتی ہیں۔ ہر سروس صفحے پر ایڈمن کے ذریعے منظم چیک لسٹ موجود ہے۔\n\nسروس کھولیں، چیک لسٹ دیکھیں، پھر درخواست دیں۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "agents",
       titleEn: "Agent Program",
-      titleUr: "ایجنٹ پروگرام",
       contentEn:
         "PakExcise agents help customers submit applications through a private facilitation platform.\n\nAgents can track assigned applications and view commissions after approval.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "PakExcise ایجنٹس نجی سہولت پلیٹ فارم کے ذریعے گاہکوں کی درخواستیں جمع کرانے میں مدد کرتے ہیں۔\n\nایجنٹس منظوری کے بعد تفویض شدہ درخواستیں اور کمیشن دیکھ سکتے ہیں۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "agent-register",
       titleEn: "Become an Agent",
-      titleUr: "ایجنٹ بنیں",
       contentEn:
         "Register for the PakExcise agent program. Applications are reviewed by admin before approval.\n\nCreate an account, select agent signup, and complete verification.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "PakExcise ایجنٹ پروگرام کے لیے رجسٹر کریں۔ منظوری سے پہلے ایڈمن جائزہ لیتا ہے۔\n\nاکاؤنٹ بنائیں، ایجنٹ سائن اپ منتخب کریں، اور تصدیق مکمل کریں۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "payment-policy",
       titleEn: "Payment Policy",
-      titleUr: "ادائیگی کی پالیسی",
       contentEn:
         "PakExcise facilitation fees are shared only through invoices after application review. Government official fees are listed separately when applicable.\n\nNo service fees are displayed on public pages.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "PakExcise سہولت فیس صرف درخواست جائزے کے بعد انوائس کے ذریعے شیئر کی جاتی ہے۔ سرکاری فیس الگ دکھائی جاتی ہے۔\n\nعوامی صفحات پر کوئی فیس نہیں۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "cookie-policy",
       titleEn: "Cookie Policy",
-      titleUr: "کوکی پالیسی",
       contentEn:
         "PakExcise uses essential cookies for authentication, locale, and theme preferences. Analytics cookies may be used according to consent settings.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "PakExcise تصدیق، زبان اور تھیم کے لیے ضروری کوکیز استعمال کرتا ہے۔ تجزیاتی کوکیز رضامندی کے مطابق۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "reviews",
       titleEn: "Customer Reviews",
-      titleUr: "گاہکوں کی رائے",
       contentEn:
         "Read what customers say about PakExcise private facilitation support.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "PakExcise نجی سہولت سپورٹ کے بارے میں گاہکوں کی رائے پڑھیں۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "privacy-policy",
       titleEn: "Privacy Policy",
-      titleUr: "رازداری کی پالیسی",
       contentEn:
         "PakExcise.com protects your personal data using encryption for sensitive fields, secure document storage, and server-side access controls.\n\nWe do not sell your data.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "PakExcise.com حساس فیلڈز کی خفیہ کاری اور محفوظ اسٹوریج کے ذریعے ڈیٹا کی حفاظت کرتا ہے۔\n\nہم ڈیٹا فروخت نہیں کرتے۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "terms-and-conditions",
       titleEn: "Terms and Conditions",
-      titleUr: "شرائط و ضوابط",
       contentEn:
         "By using PakExcise.com, you agree that this is a private facilitation service and not a government portal.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "PakExcise.com استعمال کر کے آپ تسلیم کرتے ہیں کہ یہ نجی سہولت سروس ہے۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
     {
       key: "refund-policy",
       titleEn: "Refund Policy",
-      titleUr: "واپسی کی پالیسی",
       contentEn:
         "Refund eligibility depends on application status and work completed. Contact support with your tracking ID.\n\n" +
         PRIVATE_DISCLAIMER_EN,
-      contentUr:
-        "واپسی کی اہلیت درخواست کی حیثیت پر منحصر ہے۔ ٹریکنگ ID کے ساتھ سپورٹ سے رابطہ کریں۔\n\n" +
-        PRIVATE_DISCLAIMER_UR,
     },
   ];
 
@@ -945,18 +786,14 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       update: {
         value: {
           titleEn: page.titleEn,
-          titleUr: page.titleUr,
           contentEn: page.contentEn,
-          contentUr: page.contentUr,
         },
       },
       create: {
         key: `page:${page.key}`,
         value: {
           titleEn: page.titleEn,
-          titleUr: page.titleUr,
           contentEn: page.contentEn,
-          contentUr: page.contentUr,
         },
       },
     });
@@ -965,16 +802,12 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       where: { pageKey: `page:${page.key}` },
       update: {
         metaTitleEn: `${page.titleEn} | PakExcise.com`,
-        metaTitleUr: `${page.titleUr} | PakExcise.com`,
         h1En: page.titleEn,
-        h1Ur: page.titleUr,
       },
       create: {
         pageKey: `page:${page.key}`,
         metaTitleEn: `${page.titleEn} | PakExcise.com`,
-        metaTitleUr: `${page.titleUr} | PakExcise.com`,
         h1En: page.titleEn,
-        h1Ur: page.titleUr,
       },
     });
   }

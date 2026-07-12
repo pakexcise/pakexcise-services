@@ -13,9 +13,7 @@ export const adminRegionDetailSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   descriptionEn: true,
-  descriptionUr: true,
   isActive: true,
   showInFooter: true,
   footerDisplayOrder: true,
@@ -40,7 +38,6 @@ export const adminRegionListSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   isActive: true,
   showInFooter: true,
   footerDisplayOrder: true,
@@ -81,7 +78,7 @@ export class AdminRegionRepository extends Repository {
     if (filters.q) {
       where.OR = [
         { nameEn: { contains: filters.q, mode: "insensitive" } },
-        { nameUr: { contains: filters.q, mode: "insensitive" } },
+
         { slug: { contains: filters.q, mode: "insensitive" } },
       ];
     }
@@ -122,14 +119,13 @@ export class AdminRegionRepository extends Repository {
     });
   }
 
-  listOptions(): Promise<Array<{ id: string; nameEn: string; nameUr: string }>> {
+  listOptions(): Promise<Array<{ id: string; nameEn: string }>> {
     return this.db.region.findMany({
       where: activeOnly(),
       orderBy: { displayOrder: "asc" },
       select: {
         id: true,
         nameEn: true,
-        nameUr: true,
       },
     });
   }
@@ -141,7 +137,6 @@ export class AdminRegionRepository extends Repository {
         id: true,
         slug: true,
         nameEn: true,
-        nameUr: true,
       },
     });
   }

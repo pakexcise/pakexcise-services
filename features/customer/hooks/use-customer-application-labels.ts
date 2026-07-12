@@ -1,16 +1,17 @@
 "use client";
 
-import type { ApplicationStatus } from "@prisma/client";
-import { useLocale, useTranslations } from "next-intl";
+import { copy, createT } from "@/messages";
 
+import type { ApplicationStatus } from "@prisma/client";
+
+import { useTranslations } from "@/lib/i18n/t";
 import { getApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import type { CustomerNextAction } from "@/features/customer/lib/next-action";
 import { formatDateTime } from "@/lib/utils";
 
 export function useCustomerApplicationLabels() {
-  const locale = useLocale();
-  const tStatus = useTranslations("admin.statuses");
-  const tNextAction = useTranslations("customer.nextAction");
+  const tStatus = createT(copy.admin.statuses);
+  const tNextAction = createT(copy.customer.nextAction);
 
   const resolveStatusLabel = (status: ApplicationStatus | string): string => {
     try {
@@ -30,14 +31,14 @@ export function useCustomerApplicationLabels() {
 
   const formatUpdatedAt = (iso: string): string => {
     try {
-      return formatDateTime(iso, locale);
+      return formatDateTime(iso, "en");
     } catch {
       return iso;
     }
   };
 
   return {
-    locale,
+    locale: "en" as const,
     resolveStatusLabel,
     resolveNextActionLabel,
     formatUpdatedAt,

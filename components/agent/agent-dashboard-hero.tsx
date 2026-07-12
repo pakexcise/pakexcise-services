@@ -3,8 +3,7 @@ import { ArrowRight, Briefcase, Sparkles } from "lucide-react";
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type AgentDashboardHeroProps = {
   name: string;
   contactLine: string;

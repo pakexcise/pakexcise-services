@@ -11,7 +11,7 @@ import type {
 
 type WizardInitInput = {
   service: ApplyServiceConfig;
-  locale: "en" | "ur";
+  locale: "en";
   applicationId?: string | null;
   trackingId?: string | null;
   currentStep?: WizardStep;
@@ -24,7 +24,7 @@ type WizardInitInput = {
 
 type WizardState = {
   service: ApplyServiceConfig | null;
-  locale: "en" | "ur";
+  locale: "en";
   applicationId: string | null;
   trackingId: string | null;
   currentStep: WizardStep;

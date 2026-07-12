@@ -1,8 +1,8 @@
 const SENSITIVE_FIELD_PATTERN =
-  /^(cnic|phone|email|password|otp|token|secret|valueEncrypted|r2Key|fileName|objectKey|accessToken|refreshToken|idToken|twoFactorSecret)$/i;
+  /^(cnic|phone|email|password|otp|token|secret|valueEncrypted|r2Key|fileName|objectKey|accessToken|refreshToken|idToken || twoFactorSecret)$/i;
 
 const SENSITIVE_PARTIAL_PATTERN =
-  /cnic|phone|email|password|encrypted|r2key|filename|document/i;
+  /cnic|phone|email|password|encrypted|r2key|filename || document/i;
 
 export function isSensitiveFieldKey(key: string): boolean {
   return (

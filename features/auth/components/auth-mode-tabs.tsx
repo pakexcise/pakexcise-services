@@ -8,8 +8,10 @@ import {
   parseAuthIntent,
   type AuthMode,
 } from "@/features/auth/lib/auth-url";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type AuthModeTabsProps = {
   mode: AuthMode;
@@ -29,7 +31,7 @@ export function AuthModeTabs({ mode, loginLabel, signupLabel }: AuthModeTabsProp
   return (
     <div className="grid grid-cols-2 gap-1 rounded-lg border bg-muted/40 p-1">
       <Link
-        href={loginHref}
+        href={loginHref as Route}
         className={cn(
           "rounded-md px-3 py-2 text-center text-sm font-medium transition-colors",
           mode === "login"
@@ -40,7 +42,7 @@ export function AuthModeTabs({ mode, loginLabel, signupLabel }: AuthModeTabsProp
         {loginLabel}
       </Link>
       <Link
-        href={signupHref}
+        href={signupHref as Route}
         className={cn(
           "rounded-md px-3 py-2 text-center text-sm font-medium transition-colors",
           mode === "signup"

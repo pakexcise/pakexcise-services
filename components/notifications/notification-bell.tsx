@@ -1,7 +1,9 @@
 "use client";
 
+import { copy, createT } from "@/messages";
+
 import { Bell, CheckCheck } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n/t";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -14,8 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRealtimeNotifications } from "@/features/realtime/hooks/use-realtime-notifications";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type NotificationBellProps = {
   applicationBasePath:
@@ -29,7 +33,7 @@ export function NotificationBell({
   applicationBasePath,
   className,
 }: NotificationBellProps) {
-  const t = useTranslations("realtime.notifications");
+  const t = createT(copy.realtime.notifications);
   const [open, setOpen] = useState(false);
   const {
     unreadCount,
@@ -111,7 +115,9 @@ export function NotificationBell({
               </p>
               {notification.applicationId ? (
                 <Link
-                  href={`${applicationBasePath}/${notification.applicationId}`}
+                  href={
+                    `${applicationBasePath}/${notification.applicationId}` as Route
+                  }
                   className="text-xs font-medium text-primary hover:underline"
                   onClick={() => {
                     if (!notification.isRead) {

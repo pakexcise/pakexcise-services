@@ -1,14 +1,15 @@
+import { copy, createT } from "@/messages";
 import type { GuestLeadStatus } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type ServiceOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type SupportRequestFiltersProps = {
@@ -51,17 +52,15 @@ export async function SupportRequestFilters({
   currentDateFrom,
   currentDateTo,
   services,
-  locale,
-}: SupportRequestFiltersProps) {
-  const t = await getTranslations("admin.guestLeads");
+  locale}: SupportRequestFiltersProps) {
+  const t = createT(copy.admin.guestLeads);
 
   const shared = {
     status: currentStatus,
     serviceId: currentServiceId,
     source: currentSource,
     dateFrom: currentDateFrom,
-    dateTo: currentDateTo,
-  };
+    dateTo: currentDateTo};
 
   return (
     <form
@@ -99,8 +98,7 @@ export async function SupportRequestFilters({
                 "IN_PROGRESS",
                 "CONVERTED",
                 "CLOSED",
-                "SPAM",
-              ] as const
+                "SPAM"] as const
             ).map((value) => (
               <option key={value} value={value}>
                 {t(`status.${value}`)}
@@ -122,7 +120,7 @@ export async function SupportRequestFilters({
             <option value="">{t("filters.allServices")}</option>
             {services.map((service) => (
               <option key={service.id} value={service.id}>
-                {locale === "ur" ? service.nameUr : service.nameEn}
+                {service.nameEn}
               </option>
             ))}
           </select>
@@ -176,7 +174,7 @@ export async function SupportRequestFilters({
         </Button>
         {currentStatus ? (
           <Button asChild type="button" variant="ghost" size="sm">
-            <Link href={buildFilterHref({ ...shared })}>
+            <Link href={buildFilterHref({ ...shared }) as Route}>
               {t("filters.clearStatus")}
             </Link>
           </Button>

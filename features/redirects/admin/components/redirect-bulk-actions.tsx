@@ -1,12 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { deleteAllRedirectsAction } from "@/features/redirects/admin/actions/redirect-actions";
-import { useRouter } from "@/i18n/navigation";
-
 type RedirectBulkActionsProps = {
   labels: {
     clearAll: string;

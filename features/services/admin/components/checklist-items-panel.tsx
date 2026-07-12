@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -10,10 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   deleteChecklistItemAction,
-  upsertChecklistItemAction,
-} from "@/features/services/admin/actions/checklist-item-actions";
+  upsertChecklistItemAction} from "@/features/services/admin/actions/checklist-item-actions";
 import type { AdminChecklistItem } from "@/server/repositories/checklist-item-repository";
 
+import { useRouter } from "next/navigation";
 type ChecklistItemsPanelProps = {
   items: AdminChecklistItem[];
   labels: Record<string, string>;
@@ -23,9 +22,7 @@ type ItemDraft = {
   id?: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
   descriptionEn: string;
-  descriptionUr: string;
   itemType: AdminChecklistItem["itemType"];
   displayOrder: number;
   isActive: boolean;
@@ -35,24 +32,19 @@ function emptyDraft(displayOrder: number): ItemDraft {
   return {
     slug: "",
     nameEn: "",
-    nameUr: "",
     descriptionEn: "",
-    descriptionUr: "",
     itemType: "DOCUMENT",
     displayOrder,
-    isActive: true,
-  };
+    isActive: true};
 }
 
 export function ChecklistItemsPanel({
   items,
-  labels,
-}: ChecklistItemsPanelProps) {
+  labels}: ChecklistItemsPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [draft, setDraft] = useState<ItemDraft>(
-    emptyDraft(items.length + 1),
-  );
+    emptyDraft(items.length + 1));
   const [error, setError] = useState<string | null>(null);
 
   function loadItem(item: AdminChecklistItem) {
@@ -60,13 +52,10 @@ export function ChecklistItemsPanel({
       id: item.id,
       slug: item.slug,
       nameEn: item.nameEn,
-      nameUr: item.nameUr,
       descriptionEn: item.descriptionEn ?? "",
-      descriptionUr: item.descriptionUr ?? "",
       itemType: item.itemType,
       displayOrder: item.displayOrder,
-      isActive: item.isActive,
-    });
+      isActive: item.isActive});
     setError(null);
   }
 
@@ -168,16 +157,6 @@ export function ChecklistItemsPanel({
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="nameUr">{labels.nameUr}</Label>
-            <Input
-              id="nameUr"
-              value={draft.nameUr}
-              onChange={(event) =>
-                setDraft((current) => ({ ...current, nameUr: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-1">
             <Label htmlFor="itemType">{labels.itemType}</Label>
             <select
               id="itemType"
@@ -186,8 +165,7 @@ export function ChecklistItemsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  itemType: event.target.value as ItemDraft["itemType"],
-                }))
+                  itemType: event.target.value as ItemDraft["itemType"]}))
               }
             >
               {[
@@ -197,8 +175,7 @@ export function ChecklistItemsPanel({
                 "NOTE",
                 "BIOMETRIC",
                 "INSPECTION",
-                "DELIVERY_INSTRUCTION",
-              ].map((type) => (
+                "DELIVERY_INSTRUCTION"].map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -213,8 +190,7 @@ export function ChecklistItemsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  descriptionEn: event.target.value,
-                }))
+                  descriptionEn: event.target.value}))
               }
             />
           </div>
@@ -227,8 +203,7 @@ export function ChecklistItemsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  displayOrder: Number(event.target.value),
-                }))
+                  displayOrder: Number(event.target.value)}))
               }
             />
           </div>
@@ -239,8 +214,7 @@ export function ChecklistItemsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  isActive: event.target.checked,
-                }))
+                  isActive: event.target.checked}))
               }
             />
             {labels.active}

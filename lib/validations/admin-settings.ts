@@ -5,29 +5,23 @@ const optionalTrackingId = z.string().trim().max(64).default("");
 const businessSettingsSchema = z.object({
   siteName: z.string().trim().min(1).max(120),
   addressEn: z.string().trim().min(1).max(500),
-  addressUr: z.string().trim().min(1).max(500),
 });
 
 const paymentMethodSchema = z.object({
   id: z.string().trim().min(1).max(64),
   nameEn: z.string().trim().min(1).max(120),
-  nameUr: z.string().trim().min(1).max(120),
   accountTitle: z.string().trim().max(160),
   accountNumber: z.string().trim().max(80),
   iban: z.string().trim().max(80),
   instructionsEn: z.string().trim().max(2000),
-  instructionsUr: z.string().trim().max(2000),
   isActive: z.boolean(),
   displayOrder: z.number().int().min(0).max(9999),
 });
 
 const paymentSettingsSchema = z.object({
   jazzCashInstructionsEn: z.string().trim().min(1).max(2000),
-  jazzCashInstructionsUr: z.string().trim().min(1).max(2000),
   easypaisaInstructionsEn: z.string().trim().min(1).max(2000),
-  easypaisaInstructionsUr: z.string().trim().min(1).max(2000),
   bankTransferInstructionsEn: z.string().trim().min(1).max(2000),
-  bankTransferInstructionsUr: z.string().trim().min(1).max(2000),
   paymentAccountDisplayName: z.string().trim().min(1).max(120),
   manualPaymentEnabled: z.boolean(),
   jazzCashGatewayEnabled: z.boolean(),
@@ -39,9 +33,7 @@ const paymentSettingsSchema = z.object({
 
 const seoSettingsSchema = z.object({
   defaultMetaTitleEn: z.string().trim().min(1).max(120),
-  defaultMetaTitleUr: z.string().trim().min(1).max(120),
   defaultMetaDescriptionEn: z.string().trim().min(1).max(320),
-  defaultMetaDescriptionUr: z.string().trim().min(1).max(320),
   defaultOgImage: z
     .string()
     .trim()
@@ -71,12 +63,10 @@ const seoSettingsSchema = z.object({
   sitemapEnabled: z.boolean(),
   organizationName: z.string().trim().min(1).max(120),
   organizationDescriptionEn: z.string().trim().min(1).max(500),
-  organizationDescriptionUr: z.string().trim().min(1).max(500),
   organizationLogoPath: z.string().trim().min(1).max(500),
   organizationAreaServed: z.string().trim().min(1).max(120),
   localBusinessName: z.string().trim().min(1).max(120),
   localBusinessDescriptionEn: z.string().trim().min(1).max(500),
-  localBusinessDescriptionUr: z.string().trim().min(1).max(500),
   localBusinessPriceRange: z.string().trim().max(20),
   localBusinessAreaServed: z.string().trim().min(1).max(120),
   localBusinessTelephone: z.string().trim().min(7).max(40),
@@ -109,7 +99,6 @@ const featureFlagSettingsSchema = z.object({
   smsFallbackEnabled: z.boolean(),
   maintenanceMode: z.boolean(),
   maintenanceMessageEn: z.string().trim().min(5).max(500),
-  maintenanceMessageUr: z.string().trim().min(5).max(500),
 });
 
 export const updateBusinessSettingsSchema = businessSettingsSchema;

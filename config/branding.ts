@@ -9,12 +9,11 @@ export const brandingAssets = {
   favicon: "/branding/favicon.png",
   appleIcon: "/branding/apple-icon.png",
   ogEn: "/branding/og-en.png",
-  ogUr: "/branding/og-ur.png",
 } as const;
 
 /** @deprecated Use resolveDefaultOgImagePath from branding-resolvers with DB settings */
-export function getDefaultOgImagePath(locale: string): string {
-  return locale === "ur" ? brandingAssets.ogUr : brandingAssets.ogEn;
+export function getDefaultOgImagePath(_locale?: string): string {
+  return brandingAssets.ogEn;
 }
 
 export function getBrandDisplayName(siteName?: string | null): string {

@@ -10,14 +10,12 @@ export function emptySupportRequestEditorValues(): SupportRequestEditorValues {
     phone: "",
     email: "",
     regionNameEn: "",
-    regionNameUr: "",
     cityName: "",
     vehicleInfo: "",
     licenseInfo: "",
     message: "",
     adminNotes: "",
-    locale: "en",
-  };
+    locale: "en"};
 }
 
 export function leadToEditorValues(lead: GuestLeadDetail): SupportRequestEditorValues {
@@ -29,12 +27,10 @@ export function leadToEditorValues(lead: GuestLeadDetail): SupportRequestEditorV
     phone: lead.phone,
     email: lead.email ?? "",
     regionNameEn: lead.regionNameEn ?? "",
-    regionNameUr: lead.regionNameUr ?? "",
     cityName: lead.cityName ?? "",
     vehicleInfo: lead.vehicleInfo ?? "",
     licenseInfo: lead.licenseInfo ?? "",
     message: lead.message ?? "",
     adminNotes: lead.adminNotes ?? "",
-    locale: lead.locale === "ur" ? "ur" : "en",
-  };
+    locale: "en"};
 }

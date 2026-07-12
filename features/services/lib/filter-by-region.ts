@@ -6,8 +6,7 @@ type RegionScoped = {
 
 export function matchesRegionScope(
   item: RegionScoped,
-  selectedRegionId: string | null,
-): boolean {
+  selectedRegionId: string | null): boolean {
   if (!item.regionId) {
     return true;
   }
@@ -21,8 +20,7 @@ export function matchesRegionScope(
 
 export function filterByRegion<T extends RegionScoped>(
   items: T[],
-  selectedRegionId: string | null,
-): T[] {
+  selectedRegionId: string | null): T[] {
   return items.filter((item) => matchesRegionScope(item, selectedRegionId));
 }
 
@@ -32,12 +30,11 @@ export function isUploadRequirement(kind: DocumentRequirementKind): boolean {
 
 export function groupItemsByRegion<
   T extends RegionScoped & {
-    region?: { slug: string; nameEn: string; nameUr: string } | null;
+    region?: { slug: string; nameEn: string} | null;
   },
 >(
   items: T[],
-  allRegionsLabel: string,
-): Array<{
+  allRegionsLabel: string): Array<{
   regionKey: string;
   regionLabel: string;
   items: T[];
@@ -62,6 +59,5 @@ export function groupItemsByRegion<
   return [...groups.entries()].map(([regionKey, group]) => ({
     regionKey,
     regionLabel: group.regionLabel,
-    items: group.items,
-  }));
+    items: group.items}));
 }

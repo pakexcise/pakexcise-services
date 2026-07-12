@@ -7,14 +7,12 @@ export class ServiceRegionRepository extends Repository {
     const uniqueRegionIds = [...new Set(regionIds)];
 
     await this.db.serviceRegion.deleteMany({
-      where: { serviceId },
-    });
+      where: { serviceId }});
 
     if (uniqueRegionIds.length === 0) {
       await this.db.service.update({
         where: { id: serviceId },
-        data: { regionId: null },
-      });
+        data: { regionId: null }});
       return;
     }
 
@@ -23,22 +21,18 @@ export class ServiceRegionRepository extends Repository {
         serviceId,
         regionId,
         displayOrder: index,
-        isActive: true,
-      })),
-    });
+        isActive: true}))});
 
     await this.db.service.update({
       where: { id: serviceId },
-      data: { regionId: uniqueRegionIds[0] },
-    });
+      data: { regionId: uniqueRegionIds[0] }});
   }
 
   async listRegionIdsForService(serviceId: string): Promise<string[]> {
     const rows = await this.db.serviceRegion.findMany({
       where: { serviceId, isActive: true },
       orderBy: { displayOrder: "asc" },
-      select: { regionId: true },
-    });
+      select: { regionId: true }});
 
     return rows.map((row) => row.regionId);
   }
@@ -47,10 +41,8 @@ export class ServiceRegionRepository extends Repository {
     const services = await this.db.service.findMany({
       where: {
         regionId: { not: null },
-        serviceRegions: { none: {} },
-      },
-      select: { id: true, regionId: true },
-    });
+        serviceRegions: { none: {} }},
+      select: { id: true, regionId: true }});
 
     for (const service of services) {
       if (!service.regionId) {
@@ -61,26 +53,22 @@ export class ServiceRegionRepository extends Repository {
     }
   }
   async listMatrixData(): Promise<{
-    services: Array<{ id: string; nameEn: string; nameUr: string; slug: string }>;
-    regions: Array<{ id: string; nameEn: string; nameUr: string; slug: string }>;
+    services: Array<{ id: string; nameEn: string; slug: string }>;
+    regions: Array<{ id: string; nameEn: string; slug: string }>;
     assignments: Record<string, string[]>;
   }> {
     const [services, regions, serviceRegions] = await Promise.all([
       this.db.service.findMany({
         where: { deletedAt: null, isActive: true },
         orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-        select: { id: true, nameEn: true, nameUr: true, slug: true },
-      }),
+        select: { id: true, nameEn: true, slug: true }}),
       this.db.region.findMany({
         where: { deletedAt: null, isActive: true },
         orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-        select: { id: true, nameEn: true, nameUr: true, slug: true },
-      }),
+        select: { id: true, nameEn: true, slug: true }}),
       this.db.serviceRegion.findMany({
         where: { isActive: true },
-        select: { serviceId: true, regionId: true },
-      }),
-    ]);
+        select: { serviceId: true, regionId: true }})]);
 
     const assignments: Record<string, string[]> = {};
 

@@ -11,16 +11,14 @@ import { canCreateInvoiceForStatus } from "@/features/invoices/lib/invoice-eligi
 import { persistInvoicePdf } from "@/features/invoices/lib/persist-invoice-pdf";
 import {
   buildPaymentMethodSnapshot,
-  formatPaymentMethodsSummary,
-} from "@/features/payment-methods/lib/format-payment-method";
+  formatPaymentMethodsSummary} from "@/features/payment-methods/lib/format-payment-method";
 import { createInvoiceSchema, updateInvoiceSchema } from "@/features/invoices/validators";
 import { applicationIdParamSchema } from "@/lib/validations/route-params";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { emitApplicationChange } from "@/server/realtime/application-events";
 import { prisma } from "@/server/db/client";
@@ -52,9 +50,7 @@ export async function createAndSendInvoiceAction(
     where: { id: parsed.data.applicationId },
     include: {
       user: { select: { id: true, name: true, email: true, phone: true } },
-      service: { select: { nameEn: true, nameUr: true } },
-    },
-  });
+      service: { select: { nameEn: true} }}});
 
   if (!application) {
     return errorResult("Application not found");
@@ -83,8 +79,7 @@ export async function createAndSendInvoiceAction(
     locale,
     serviceFee: parsed.data.serviceFee,
     lineItems: parsed.data.lineItems,
-    taxTotal: parsed.data.taxTotal,
-  });
+    taxTotal: parsed.data.taxTotal});
 
   if (total <= 0) {
     return errorResult("Invoice total must be greater than zero");
@@ -102,7 +97,7 @@ export async function createAndSendInvoiceAction(
     .map((id) => selectedMethods.find((method) => method.id === id))
     .filter((method): method is NonNullable<typeof method> => Boolean(method));
 
-  const paymentMethodSummary = formatPaymentMethodsSummary(orderedMethods, locale);
+  const paymentMethodSummary = formatPaymentMethodsSummary(orderedMethods);
   const paymentInstructions = parsed.data.paymentInstructions ?? null;
   const officialFeeNote = parsed.data.officialFeeNote ?? null;
   const invoiceNotes = parsed.data.notes ?? null;
@@ -110,7 +105,7 @@ export async function createAndSendInvoiceAction(
   const invoiceNumber = generateInvoiceNumber();
   const dueAt = parsed.data.dueAt ? new Date(parsed.data.dueAt) : null;
   const serviceName =
-    locale === "ur" ? application.service.nameUr : application.service.nameEn;
+    application.service.nameEn;
 
   const invoice = await prisma.invoice.create({
     data: {
@@ -133,21 +128,14 @@ export async function createAndSendInvoiceAction(
           description: item.description ?? null,
           amount: item.amount,
           isOfficialFee: item.isOfficialFee,
-          displayOrder: index,
-        })),
-      },
+          displayOrder: index}))},
       paymentMethods: {
         create: orderedMethods.map((method, index) =>
           buildPaymentMethodSnapshot(method, index),
-        ),
-      },
-    },
+        )}},
     include: {
       lineItems: {
-        orderBy: { displayOrder: "asc" },
-      },
-    },
-  });
+        orderBy: { displayOrder: "asc" }}}});
 
   try {
     const pdfR2Key = await persistInvoicePdf({
@@ -164,30 +152,23 @@ export async function createAndSendInvoiceAction(
         label: item.label,
         description: item.description,
         amount: Number(item.amount),
-        isOfficialFee: item.isOfficialFee,
-      })),
+        isOfficialFee: item.isOfficialFee})),
       subtotal,
       taxTotal,
       total,
       paymentMethods: orderedMethods.map((method) => ({
         type: method.type,
         nameEn: method.nameEn,
-        nameUr: method.nameUr,
         accountTitleEn: method.accountTitleEn,
-        accountTitleUr: method.accountTitleUr,
         accountNumber: method.accountNumber,
         iban: method.iban,
         bankNameEn: method.bankNameEn,
-        bankNameUr: method.bankNameUr,
         instructionsEn: method.instructionsEn,
-        instructionsUr: method.instructionsUr,
         qrCodeR2Key: method.qrCodeR2Key,
-        qrCodeMimeType: method.qrCodeMimeType,
-      })),
+        qrCodeMimeType: method.qrCodeMimeType})),
       paymentInstructions,
       officialFeeNote,
-      notes: invoiceNotes,
-    });
+      notes: invoiceNotes});
 
     await prisma.$transaction(async (tx) => {
       await tx.invoice.update({
@@ -195,23 +176,18 @@ export async function createAndSendInvoiceAction(
         data: {
           status: "SENT",
           pdfR2Key,
-          sentAt: new Date(),
-        },
-      });
+          sentAt: new Date()}});
 
       await tx.payment.create({
         data: {
           applicationId: application.id,
           invoiceId: invoice.id,
           amount: total,
-          status: "PENDING",
-        },
-      });
+          status: "PENDING"}});
 
       await tx.application.update({
         where: { id: application.id },
-        data: { status: "INVOICE_SENT" },
-      });
+        data: { status: "INVOICE_SENT" }});
 
       await tx.statusHistory.create({
         data: {
@@ -219,9 +195,7 @@ export async function createAndSendInvoiceAction(
           fromStatus: application.status,
           toStatus: "INVOICE_SENT",
           note: parsed.data.statusNote,
-          actorId: user.id,
-        },
-      });
+          actorId: user.id}});
     });
 
     await auditAdminAction({
@@ -232,9 +206,7 @@ export async function createAndSendInvoiceAction(
       after: {
         invoiceNumber,
         total,
-        applicationId: application.id,
-      },
-    });
+        applicationId: application.id}});
 
     await auditAdminAction({
       actorId: user.id,
@@ -242,8 +214,7 @@ export async function createAndSendInvoiceAction(
       entityType: "application",
       entityId: application.id,
       before: { status: application.status },
-      after: { status: "INVOICE_SENT", note: parsed.data.statusNote },
-    });
+      after: { status: "INVOICE_SENT", note: parsed.data.statusNote }});
 
     await queueInvoiceSentNotifications({
       applicationId: application.id,
@@ -251,26 +222,22 @@ export async function createAndSendInvoiceAction(
       trackingId: application.trackingId,
       invoiceNumber,
       serviceName: application.service.nameEn,
-      serviceNameUr: application.service.nameUr,
       locale: application.locale,
       total: formatPkr(total, locale),
       userEmail: application.user.email,
-      userPhone: application.user.phone,
-    });
+      userPhone: application.user.phone});
 
     await emitApplicationChange({
       applicationId: application.id,
       userId: application.userId,
       agentId: application.agentId,
       status: "INVOICE_SENT",
-      changeType: "invoice",
-    });
+      changeType: "invoice"});
 
     return successResult({
       invoiceId: invoice.id,
       invoiceNumber,
-      applicationStatus: "INVOICE_SENT",
-    });
+      applicationStatus: "INVOICE_SENT"});
   } catch {
     await prisma.invoice.delete({ where: { id: invoice.id } });
     return errorResult("Could not generate or store invoice PDF");
@@ -301,15 +268,10 @@ export async function updateSentInvoiceAction(
       application: {
         include: {
           user: { select: { id: true, name: true, email: true, phone: true } },
-          service: { select: { nameEn: true, nameUr: true } },
-        },
-      },
+          service: { select: { nameEn: true} }}},
       payments: {
         orderBy: { createdAt: "desc" },
-        take: 1,
-      },
-    },
-  });
+        take: 1}}});
 
   if (!invoice) {
     return errorResult("Invoice not found");
@@ -320,8 +282,7 @@ export async function updateSentInvoiceAction(
   if (
     !canEditSentInvoice({
       invoiceStatus: invoice.status,
-      paymentStatus: latestPayment?.status,
-    })
+      paymentStatus: latestPayment?.status})
   ) {
     if (latestPayment?.status === "UPLOADED") {
       return errorResult(
@@ -341,8 +302,7 @@ export async function updateSentInvoiceAction(
     locale,
     serviceFee: parsed.data.serviceFee,
     lineItems: parsed.data.lineItems,
-    taxTotal: parsed.data.taxTotal,
-  });
+    taxTotal: parsed.data.taxTotal});
 
   if (total <= 0) {
     return errorResult("Invoice total must be greater than zero");
@@ -360,15 +320,13 @@ export async function updateSentInvoiceAction(
     .map((id) => selectedMethods.find((method) => method.id === id))
     .filter((method): method is NonNullable<typeof method> => Boolean(method));
 
-  const paymentMethodSummary = formatPaymentMethodsSummary(orderedMethods, locale);
+  const paymentMethodSummary = formatPaymentMethodsSummary(orderedMethods);
   const paymentInstructions = parsed.data.paymentInstructions ?? null;
   const officialFeeNote = parsed.data.officialFeeNote ?? null;
   const invoiceNotes = parsed.data.notes ?? null;
   const dueAt = parsed.data.dueAt ? new Date(parsed.data.dueAt) : null;
   const serviceName =
-    locale === "ur"
-      ? invoice.application.service.nameUr
-      : invoice.application.service.nameEn;
+    invoice.application.service.nameEn;
 
   const beforeSnapshot = {
     subtotal: Number(invoice.subtotal),
@@ -378,17 +336,14 @@ export async function updateSentInvoiceAction(
     officialFeeNote: invoice.officialFeeNote,
     paymentMethod: invoice.paymentMethod,
     paymentInstructions: invoice.paymentInstructions,
-    dueAt: invoice.dueAt?.toISOString() ?? null,
-  };
+    dueAt: invoice.dueAt?.toISOString() ?? null};
 
   try {
     await prisma.$transaction(async (tx) => {
       await tx.invoiceLineItem.deleteMany({
-        where: { invoiceId: invoice.id },
-      });
+        where: { invoiceId: invoice.id }});
       await tx.invoicePaymentMethod.deleteMany({
-        where: { invoiceId: invoice.id },
-      });
+        where: { invoiceId: invoice.id }});
 
       await tx.invoice.update({
         where: { id: invoice.id },
@@ -408,16 +363,11 @@ export async function updateSentInvoiceAction(
               description: item.description ?? null,
               amount: item.amount,
               isOfficialFee: item.isOfficialFee,
-              displayOrder: index,
-            })),
-          },
+              displayOrder: index}))},
           paymentMethods: {
             create: orderedMethods.map((method, index) =>
               buildPaymentMethodSnapshot(method, index),
-            ),
-          },
-        },
-      });
+            )}}});
 
       if (latestPayment) {
         await tx.payment.update({
@@ -433,11 +383,8 @@ export async function updateSentInvoiceAction(
                   screenshotFileSize: null,
                   rejectionReason: null,
                   verifiedById: null,
-                  verifiedAt: null,
-                }
-              : {}),
-          },
-        });
+                  verifiedAt: null}
+              : {})}});
       }
     });
 
@@ -459,27 +406,20 @@ export async function updateSentInvoiceAction(
       paymentMethods: orderedMethods.map((method) => ({
         type: method.type,
         nameEn: method.nameEn,
-        nameUr: method.nameUr,
         accountTitleEn: method.accountTitleEn,
-        accountTitleUr: method.accountTitleUr,
         accountNumber: method.accountNumber,
         iban: method.iban,
         bankNameEn: method.bankNameEn,
-        bankNameUr: method.bankNameUr,
         instructionsEn: method.instructionsEn,
-        instructionsUr: method.instructionsUr,
         qrCodeR2Key: method.qrCodeR2Key,
-        qrCodeMimeType: method.qrCodeMimeType,
-      })),
+        qrCodeMimeType: method.qrCodeMimeType})),
       paymentInstructions,
       officialFeeNote,
-      notes: invoiceNotes,
-    });
+      notes: invoiceNotes});
 
     await prisma.invoice.update({
       where: { id: invoice.id },
-      data: { pdfR2Key },
-    });
+      data: { pdfR2Key }});
 
     await auditAdminAction({
       actorId: user.id,
@@ -496,23 +436,19 @@ export async function updateSentInvoiceAction(
         paymentMethod: paymentMethodSummary,
         paymentInstructions,
         dueAt: dueAt?.toISOString() ?? null,
-        editNote: parsed.data.editNote,
-      },
-    });
+        editNote: parsed.data.editNote}});
 
     await emitApplicationChange({
       applicationId: invoice.applicationId,
       userId: invoice.application.userId,
       agentId: invoice.application.agentId,
       status: invoice.application.status,
-      changeType: "invoice",
-    });
+      changeType: "invoice"});
 
     return successResult({
       invoiceId: invoice.id,
       invoiceNumber: invoice.invoiceNumber,
-      total,
-    });
+      total});
   } catch {
     return errorResult("Could not update invoice PDF or invoice data");
   }
@@ -545,8 +481,7 @@ export async function getCustomerInvoiceAction(
 
   const application = await prisma.application.findFirst({
     where: { id: applicationId, userId: user.id },
-    select: { id: true },
-  });
+    select: { id: true }});
 
   if (!application) {
     return errorResult("Application not found");
@@ -554,8 +489,7 @@ export async function getCustomerInvoiceAction(
 
   const invoice = await invoiceRepository.findCustomerInvoiceByApplication({
     applicationId,
-    userId: user.id,
-  });
+    userId: user.id});
 
   if (!invoice) {
     return errorResult("Invoice not found");

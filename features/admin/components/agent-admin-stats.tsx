@@ -1,5 +1,4 @@
 import type { ComponentType } from "react";
-import { getTranslations } from "next-intl/server";
 import {
   BadgeCheck,
   Ban,
@@ -9,8 +8,10 @@ import {
   UserX,
 } from "lucide-react";
 
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type AgentAdminStatsProps = {
   stats: {
@@ -74,7 +75,7 @@ function StatCard({
 
   if (href) {
     return (
-      <Link href={href} className={className}>
+      <Link href={href as Route} className={className}>
         {content}
       </Link>
     );
@@ -87,11 +88,9 @@ export async function AgentAdminStats({
   stats,
   currentStatus,
 }: AgentAdminStatsProps) {
-  const t = await getTranslations("admin.agents");
-
-  const items: StatCardProps[] = [
+    const items: StatCardProps[] = [
     {
-      label: t("stats.total"),
+      label: "Total agents",
       value: stats.total,
       href: buildHref(),
       icon: Users,
@@ -100,7 +99,7 @@ export async function AgentAdminStats({
       active: !currentStatus,
     },
     {
-      label: t("stats.pending"),
+      label: "Pending approval",
       value: stats.pending,
       href: buildHref("PENDING"),
       icon: Clock3,
@@ -109,7 +108,7 @@ export async function AgentAdminStats({
       active: currentStatus === "PENDING",
     },
     {
-      label: t("stats.approved"),
+      label: "Approved",
       value: stats.approved,
       href: buildHref("APPROVED"),
       icon: BadgeCheck,
@@ -118,7 +117,7 @@ export async function AgentAdminStats({
       active: currentStatus === "APPROVED",
     },
     {
-      label: t("stats.rejected"),
+      label: "Rejected",
       value: stats.rejected,
       href: buildHref("REJECTED"),
       icon: Ban,
@@ -127,14 +126,14 @@ export async function AgentAdminStats({
       active: currentStatus === "REJECTED",
     },
     {
-      label: t("stats.active"),
+      label: "Active accounts",
       value: stats.active,
       icon: UserCheck,
       accent: "border-s-blue-500",
       iconTone: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
     },
     {
-      label: t("stats.inactive"),
+      label: "Inactive accounts",
       value: stats.inactive,
       icon: UserX,
       accent: "border-s-muted-foreground/40",

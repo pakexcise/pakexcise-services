@@ -50,7 +50,7 @@ export function serializeInvoiceForEditor(
   return {
     id: invoice.id,
     invoiceNumber: invoice.invoiceNumber,
-    locale: invoice.locale === "ur" ? "ur" : "en",
+    locale: "en",
     notes: invoice.notes,
     officialFeeNote: invoice.officialFeeNote,
     paymentInstructions: invoice.paymentInstructions,

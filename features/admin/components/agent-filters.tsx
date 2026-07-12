@@ -1,10 +1,10 @@
+import { copy, createT } from "@/messages";
 import type { AgentApprovalStatus } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type AgentFiltersProps = {
   currentStatus?: AgentApprovalStatus;
   currentSearch?: string;
@@ -34,7 +34,7 @@ export async function AgentFilters({
   currentStatus,
   currentSearch,
 }: AgentFiltersProps) {
-  const t = await getTranslations("admin.agents");
+  const t = createT(copy.admin.agents);
 
   return (
     <form

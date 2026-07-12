@@ -1,6 +1,5 @@
-import { Link } from "@/i18n/navigation";
 
-export type FooterProvinceLink = {
+import Link from "next/link";export type FooterProvinceLink = {
   id: string;
   slug: string;
   name: string;

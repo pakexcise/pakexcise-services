@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type HomeHeroSectionProps = {

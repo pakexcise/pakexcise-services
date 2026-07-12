@@ -1,9 +1,9 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useTranslations } from "@/lib/i18n/t";
 
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type AdminSidebarBrandProps = {

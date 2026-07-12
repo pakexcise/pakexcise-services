@@ -21,7 +21,7 @@ export function applicationToEditorValues(
     serviceId: application.service.id,
     agentId: application.agent?.id ?? "",
     status: application.status,
-    locale: application.locale === "ur" ? "ur" : "en",
+    locale: "en",
     adminNotes: application.adminNotes ?? "",
     statusChangeNote: "",
   };

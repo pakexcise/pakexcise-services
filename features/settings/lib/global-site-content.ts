@@ -6,8 +6,6 @@ import type {
   GlobalSiteSettingsSnapshot,
   PublicUiSettings,
 } from "@/features/settings/types";
-import { pickLocalized } from "@/lib/i18n/content";
-import type { Locale } from "@/i18n/config";
 import {
   resolvePhoneDisplayNumber,
   resolveSupportEmail,
@@ -26,9 +24,7 @@ export function overlayGlobalContactOnContactPage(
     whatsappNumber: resolveWhatsappLinkNumber(business),
     supportEmail: resolveSupportEmail(business),
     supportDaysEn: business.supportDaysEn,
-    supportDaysUr: business.supportDaysUr,
     supportHoursEn: business.supportHoursEn,
-    supportHoursUr: business.supportHoursUr,
     whatsappChannelUrl: resolveWhatsappChannelUrl(business),
     whatsappPrefillMessage: business.whatsappDefaultMessageEn,
   };
@@ -36,64 +32,30 @@ export function overlayGlobalContactOnContactPage(
 
 export function localizeGlobalSiteContent(
   business: BusinessSettings,
-  locale: Locale,
   publicUi?: PublicUiSettings,
 ) {
   return {
-    footerDescription: pickLocalized(locale, {
-      en: business.footerDescriptionEn,
-      ur: business.footerDescriptionUr,
-    }),
-    disclaimer: pickLocalized(locale, {
-      en: business.disclaimerEn,
-      ur: business.disclaimerUr,
-    }),
-    supportDays: pickLocalized(locale, {
-      en: business.supportDaysEn,
-      ur: business.supportDaysUr,
-    }),
-    supportHours: pickLocalized(locale, {
-      en: business.supportHoursEn,
-      ur: business.supportHoursUr,
-    }),
-    businessHours: pickLocalized(locale, {
-      en: business.businessHoursEn,
-      ur: business.businessHoursUr,
-    }),
-    whatsappMessage: resolveWhatsappDefaultMessage(business, locale),
+    footerDescription: business.footerDescriptionEn ?? "",
+    disclaimer: business.disclaimerEn ?? "",
+    supportDays: business.supportDaysEn ?? "",
+    supportHours: business.supportHoursEn ?? "",
+    businessHours: business.businessHoursEn ?? "",
+    whatsappMessage: resolveWhatsappDefaultMessage(business),
     announcementText: publicUi
-      ? pickLocalized(locale, {
-          en: publicUi.announcementBarTextEn,
-          ur: publicUi.announcementBarTextUr,
-        })
-      : pickLocalized(locale, {
-          en: business.disclaimerEn,
-          ur: business.disclaimerUr,
-        }),
+      ? publicUi.announcementBarTextEn ?? ""
+      : business.disclaimerEn ?? "",
     headerWhatsappLabel: publicUi
-      ? pickLocalized(locale, {
-          en: publicUi.headerWhatsappLabelEn,
-          ur: publicUi.headerWhatsappLabelUr,
-        })
+      ? publicUi.headerWhatsappLabelEn ?? ""
       : undefined,
     footerWhatsappLabel: publicUi
-      ? pickLocalized(locale, {
-          en: publicUi.footerWhatsappLabelEn,
-          ur: publicUi.footerWhatsappLabelUr,
-        })
+      ? publicUi.footerWhatsappLabelEn ?? ""
       : undefined,
     footerWhatsappChannelLabel: publicUi
-      ? pickLocalized(locale, {
-          en: publicUi.footerWhatsappChannelLabelEn,
-          ur: publicUi.footerWhatsappChannelLabelUr,
-        })
+      ? publicUi.footerWhatsappChannelLabelEn ?? ""
       : undefined,
     floatingWhatsappMessage: publicUi
-      ? pickLocalized(locale, {
-          en: publicUi.floatingWhatsappMessageEn,
-          ur: publicUi.floatingWhatsappMessageUr,
-        })
-      : resolveWhatsappDefaultMessage(business, locale),
+      ? publicUi.floatingWhatsappMessageEn ?? ""
+      : resolveWhatsappDefaultMessage(business),
   };
 }
 

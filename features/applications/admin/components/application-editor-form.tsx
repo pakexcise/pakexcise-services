@@ -1,7 +1,6 @@
 "use client";
 
 import type { ApplicationStatus } from "@prisma/client";
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { applicationStatuses } from "@/config/app";
 import {
   createApplicationAdminAction,
-  updateApplicationAdminAction,
-} from "@/features/applications/admin/actions/application-admin-actions";
+  updateApplicationAdminAction} from "@/features/applications/admin/actions/application-admin-actions";
 import { formatFirstFieldError } from "@/lib/validations/format-field-errors";
 
+import { useRouter } from "next/navigation";
 type CustomerOption = {
   id: string;
   name: string | null;
@@ -25,7 +24,6 @@ type CustomerOption = {
 type ServiceOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type AgentOption = {
@@ -39,7 +37,7 @@ export type ApplicationEditorValues = {
   serviceId: string;
   agentId: string;
   status: ApplicationStatus;
-  locale: "en" | "ur";
+  locale: "en";
   adminNotes: string;
   statusChangeNote: string;
 };
@@ -53,7 +51,7 @@ type ApplicationEditorFormProps = {
   customers: CustomerOption[];
   services: ServiceOption[];
   agents: AgentOption[];
-  locale: "en" | "ur";
+  locale: "en";
   labels: {
     sectionAssignment: string;
     sectionStatus: string;
@@ -99,8 +97,7 @@ export function ApplicationEditorForm({
   services,
   agents,
   locale,
-  labels,
-}: ApplicationEditorFormProps) {
+  labels}: ApplicationEditorFormProps) {
   const router = useRouter();
   const [values, setValues] = useState(initialValues);
   const [error, setError] = useState<string | null>(null);
@@ -127,24 +124,21 @@ export function ApplicationEditorForm({
       setError(labels.saveFailed);
       setFieldErrors({
         ...(!values.userId.trim() ? { userId: [labels.saveFailed] } : {}),
-        ...(!values.serviceId.trim() ? { serviceId: [labels.saveFailed] } : {}),
-      });
+        ...(!values.serviceId.trim() ? { serviceId: [labels.saveFailed] } : {})});
       return;
     }
 
     if (statusChanged && !values.statusChangeNote.trim()) {
       setError(labels.statusChangeNoteRequired);
       setFieldErrors({
-        statusChangeNote: [labels.statusChangeNoteRequired],
-      });
+        statusChangeNote: [labels.statusChangeNoteRequired]});
       return;
     }
 
     if (statusChanged && values.statusChangeNote.trim().length < 3) {
       setError(labels.statusChangeNoteRequired);
       setFieldErrors({
-        statusChangeNote: [labels.statusChangeNoteRequired],
-      });
+        statusChangeNote: [labels.statusChangeNoteRequired]});
       return;
     }
 
@@ -155,8 +149,7 @@ export function ApplicationEditorForm({
               id: applicationId!,
               status: values.status,
               adminNotes: values.adminNotes.trim() || null,
-              statusChangeNote: values.statusChangeNote.trim(),
-            }
+              statusChangeNote: values.statusChangeNote.trim()}
           : {
               userId: values.userId.trim(),
               serviceId: values.serviceId.trim(),
@@ -164,8 +157,7 @@ export function ApplicationEditorForm({
               locale: values.locale,
               status: values.status,
               adminNotes: values.adminNotes.trim() || null,
-              statusChangeNote: values.statusChangeNote.trim(),
-            };
+              statusChangeNote: values.statusChangeNote.trim()};
 
       const result =
         mode === "create"
@@ -226,9 +218,7 @@ export function ApplicationEditorForm({
               <dt className="text-sm text-muted-foreground">{labels.service}</dt>
               <dd className="text-sm font-medium">
                 {selectedService
-                  ? locale === "ur"
-                    ? selectedService.nameUr
-                    : selectedService.nameEn
+                  ? selectedService.nameEn
                   : initialValues.serviceId}
               </dd>
             </div>
@@ -245,7 +235,7 @@ export function ApplicationEditorForm({
                 {labels.preferredLocale}
               </dt>
               <dd className="text-sm font-medium">
-                {initialValues.locale === "ur" ? "Urdu" : "English"}
+                {"English"}
               </dd>
             </div>
           </dl>
@@ -285,7 +275,7 @@ export function ApplicationEditorForm({
                 <option value="">{labels.selectService}</option>
                 {services.map((service) => (
                   <option key={service.id} value={service.id}>
-                    {locale === "ur" ? service.nameUr : service.nameEn}
+                    {service.nameEn}
                   </option>
                 ))}
               </select>
@@ -312,12 +302,11 @@ export function ApplicationEditorForm({
                 id="app-locale"
                 value={values.locale}
                 onChange={(event) =>
-                  updateField("locale", event.target.value as "en" | "ur")
+                  updateField("locale", event.target.value as "en")
                 }
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               >
                 <option value="en">English</option>
-                <option value="ur">Urdu</option>
               </select>
             </div>
           </div>

@@ -1,8 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "@/i18n/navigation";
-
 import { changeApplicationServiceAction } from "@/features/applications/actions/change-application-service";
 import { saveApplicationDraftAction } from "@/features/applications/actions/save-application-draft";
 import { submitApplicationAction } from "@/features/applications/actions/submit-application";
@@ -140,7 +139,7 @@ type DraftSnapshot = {
 type ApplicationWizardProps = {
   service: ApplyServiceConfig;
   availableServices: ApplyServiceOption[];
-  locale: "en" | "ur";
+  locale: "en";
   labels: ApplicationWizardLabels;
   initialDraft?: {
     applicationId: string;

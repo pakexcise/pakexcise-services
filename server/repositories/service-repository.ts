@@ -19,11 +19,8 @@ const publicFormFieldSelect = {
   regionId: true,
   fieldKey: true,
   labelEn: true,
-  labelUr: true,
   placeholderEn: true,
-  placeholderUr: true,
   helpTextEn: true,
-  helpTextUr: true,
   fieldType: true,
   isRequired: true,
   isEncrypted: true,
@@ -35,7 +32,6 @@ const publicFormFieldSelect = {
     select: {
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
 } as const;
@@ -46,9 +42,7 @@ const publicDocumentRequirementSelect = {
   kind: true,
   regionId: true,
   labelEn: true,
-  labelUr: true,
   instructionsEn: true,
-  instructionsUr: true,
   isRequired: true,
   maxSizeBytes: true,
   acceptedMimeTypes: true,
@@ -57,7 +51,6 @@ const publicDocumentRequirementSelect = {
     select: {
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
 } as const;
@@ -67,13 +60,11 @@ const publicAssignedRegionsSelect = {
   orderBy: { displayOrder: "asc" },
   select: {
     supportNotesEn: true,
-    supportNotesUr: true,
     region: {
       select: {
         id: true,
         slug: true,
         nameEn: true,
-        nameUr: true,
       },
     },
   },
@@ -82,16 +73,13 @@ const publicAssignedRegionsSelect = {
 const publicCategorySelect = {
   slug: true,
   nameEn: true,
-  nameUr: true,
 } as const;
 
 const publicSubServiceSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   shortDescriptionEn: true,
-  shortDescriptionUr: true,
   displayOrder: true,
 } as const;
 
@@ -99,14 +87,12 @@ const footerServiceSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
 } as const;
 
 export type FooterServiceLink = {
   id: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
 };
 
 export const publicServiceWhere = {
@@ -128,13 +114,9 @@ export const publicServiceDetailSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   shortDescriptionEn: true,
-  shortDescriptionUr: true,
   contentEn: true,
-  contentUr: true,
   processingNotesEn: true,
-  processingNotesUr: true,
   requiresProof: true,
   displayOrder: true,
   updatedAt: true,
@@ -147,7 +129,6 @@ export const publicServiceDetailSelect = {
     select: {
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   subServices: {
@@ -185,9 +166,7 @@ export const publicServiceApplySelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   shortDescriptionEn: true,
-  shortDescriptionUr: true,
   requiresProof: true,
   serviceRegions: publicAssignedRegionsSelect,
   formFields: {
@@ -288,20 +267,18 @@ export class ServiceRepository extends Repository {
     const featured = await this.listFeatured(12);
 
     if (featured.length > 0) {
-      return featured.map(({ id, slug, nameEn, nameUr }) => ({
+      return featured.map(({ id, slug, nameEn }) => ({
         id,
         slug,
         nameEn,
-        nameUr,
       }));
     }
 
     const services = await this.listPublic(12);
-    return services.map(({ id, slug, nameEn, nameUr }) => ({
+    return services.map(({ id, slug, nameEn }) => ({
       id,
       slug,
       nameEn,
-      nameUr,
     }));
   }
 
@@ -477,7 +454,7 @@ export class ServiceRepository extends Repository {
   }
 
   async listParentOptions(): Promise<
-    Array<{ id: string; slug: string; nameEn: string; nameUr: string }>
+    Array<{ id: string; slug: string; nameEn: string }>
   > {
     return this.query(
       () =>
@@ -491,7 +468,6 @@ export class ServiceRepository extends Repository {
             id: true,
             slug: true,
             nameEn: true,
-            nameUr: true,
           },
         }),
       [],

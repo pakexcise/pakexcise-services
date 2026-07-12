@@ -1,8 +1,8 @@
-import type { Locale } from "@/i18n/config";
 import { getServiceRegionLabel } from "@/features/services/lib/service-regions";
 import type { ApplyServiceOption } from "@/features/applications/types";
-import { pickLocalized } from "@/lib/i18n/content";
 import type { PublicServiceSelect } from "@/server/repositories";
+
+type Locale = "en";
 
 export function mapServiceApplyOption(
   service: PublicServiceSelect,
@@ -12,22 +12,15 @@ export function mapServiceApplyOption(
   return {
     id: service.id,
     slug: service.slug,
-    name: pickLocalized(locale, {
-      en: service.nameEn,
-      ur: service.nameUr,
-    }),
+    name: service.nameEn ?? "",
     region: getServiceRegionLabel(
       service,
       locale,
       regionLabels.multiple,
       regionLabels.allProvinces,
     ),
-    shortDescription:
-      service.shortDescriptionEn || service.shortDescriptionUr
-        ? pickLocalized(locale, {
-            en: service.shortDescriptionEn ?? "",
-            ur: service.shortDescriptionUr ?? service.shortDescriptionEn ?? "",
-          })
-        : null,
+    shortDescription: service.shortDescriptionEn
+      ? service.shortDescriptionEn
+      : null,
   };
 }

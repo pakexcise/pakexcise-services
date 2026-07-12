@@ -9,8 +9,8 @@ import {
 } from "@/features/legal-pages/admin/actions/legal-page-actions";
 import { isCanonicalLegalPageSlug } from "@/features/legal-pages/lib/constants";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/navigation";
-
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 type LegalPageListActionsProps = {
   id: string;
   slug: string;

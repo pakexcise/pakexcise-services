@@ -16,10 +16,11 @@ import {
   type GuestRequestFormValues,
 } from "@/lib/validations/guest-lead";
 import { formatPakistanPhoneInput } from "@/lib/validations/phone";
-import { Link } from "@/i18n/navigation";
-import type { Locale } from "@/i18n/config";
+type Locale = "en";
+
 import { cn } from "@/lib/utils";
 
+import Link from "next/link";
 export type GuestRequestFormLabels = {
   formIntro: string;
   contactSection: string;

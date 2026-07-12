@@ -1,51 +1,40 @@
-import { getTranslations } from "next-intl/server";
-
 export type FaqEditorLabels = Awaited<ReturnType<typeof getFaqEditorLabels>>;
 export type FaqListLabels = Awaited<ReturnType<typeof getFaqListLabels>>;
 
 export async function getFaqEditorLabels() {
-  const t = await getTranslations("admin.faqs.form");
-
-  return {
-    questionEn: t("questionEn"),
-    questionUr: t("questionUr"),
-    answerEn: t("answerEn"),
-    answerUr: t("answerUr"),
-    category: t("category"),
-    selectCategory: t("selectCategory"),
-    unknownCategory: t("unknownCategory"),
-    inactiveCategory: t("inactiveCategory"),
-    service: t("service"),
-    noService: t("noService"),
-    serviceHint: t("serviceHint"),
-    region: t("region"),
-    noRegion: t("noRegion"),
-    regionHint: t("regionHint"),
-    seoKeywordsEn: t("seoKeywordsEn"),
-    seoKeywordsUr: t("seoKeywordsUr"),
-    seoKeywordsPlaceholder: t("seoKeywordsPlaceholder"),
-    isActive: t("isActive"),
-    isFeatured: t("isFeatured"),
-    featuredHint: t("featuredHint"),
-    featuredDisplayOrder: t("featuredDisplayOrder"),
-    displayOrder: t("displayOrder"),
-    save: t("save"),
-    saving: t("saving"),
-    saveFailed: t("saveFailed"),
-    cancel: t("cancel"),
-  };
+    return {
+    questionEn: "Question (English)",
+    answerEn: "Answer (English)",
+    category: "Category",
+    selectCategory: "Select a category",
+    unknownCategory: "Unknown category",
+    inactiveCategory: "inactive",
+    service: "Linked service (optional)",
+    noService: "Global FAQ (main /faqs page)",
+    serviceHint: "Assign to a service page to show only on that service. Leave empty for global FAQs.",
+    region: "Linked province/region (optional)",
+    noRegion: "All regions",
+    regionHint: "Optional. Limit this FAQ to a specific province when relevant.",
+    seoKeywordsEn: "SEO keywords (English)",
+    seoKeywordsPlaceholder: "Comma-separated keywords",
+    isActive: "Active",
+    isFeatured: "Show on homepage",
+    featuredHint: "Homepage featured FAQs must be global (no linked service).",
+    featuredDisplayOrder: "Homepage order",
+    displayOrder: "Display order",
+    save: "Save FAQ",
+    saving: "Saving...",
+    saveFailed: "Could not save FAQ",
+    cancel: "Cancel"};
 }
 
 export async function getFaqListLabels() {
-  const t = await getTranslations("admin.faqs");
-
-  return {
-    edit: t("actions.edit"),
-    delete: t("actions.delete"),
-    confirmDelete: t("actions.confirmDelete"),
-    active: t("status.active"),
-    inactive: t("status.inactive"),
-    moveUp: t("actions.moveUp"),
-    moveDown: t("actions.moveDown"),
-  };
+    return {
+    edit: "Edit",
+    delete: "Delete",
+    confirmDelete: "Delete this FAQ?",
+    active: "Active",
+    inactive: "Inactive",
+    moveUp: "Move up",
+    moveDown: "Move down"};
 }

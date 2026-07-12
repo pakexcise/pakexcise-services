@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,6 @@ import {
 } from "@/features/settings/admin/actions/settings-actions";
 import type { SettingsPanelLabels } from "@/features/settings/admin/lib/labels";
 import type { AdminSettingsSnapshot } from "@/features/settings/types";
-import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type SettingsTab = keyof SettingsPanelLabels["tabs"];
@@ -162,24 +162,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                 }
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="addressUr">{labels.business.addressUr}</Label>
-              <Textarea
-                id="addressUr"
-                dir="rtl"
-                rows={2}
-                value={values.business.addressUr}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    business: {
-                      ...current.business,
-                      addressUr: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </div>
+            
           </div>
         </div>
       ) : null}
@@ -241,26 +224,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                 }
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="jazzCashInstructionsUr">
-                {labels.payment.jazzCashInstructionsUr}
-              </Label>
-              <Textarea
-                id="jazzCashInstructionsUr"
-                dir="rtl"
-                rows={3}
-                value={values.payment.jazzCashInstructionsUr}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    payment: {
-                      ...current.payment,
-                      jazzCashInstructionsUr: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </div>
+            
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="easypaisaInstructionsEn">
                 {labels.payment.easypaisaInstructionsEn}
@@ -280,26 +244,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                 }
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="easypaisaInstructionsUr">
-                {labels.payment.easypaisaInstructionsUr}
-              </Label>
-              <Textarea
-                id="easypaisaInstructionsUr"
-                dir="rtl"
-                rows={3}
-                value={values.payment.easypaisaInstructionsUr}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    payment: {
-                      ...current.payment,
-                      easypaisaInstructionsUr: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </div>
+            
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="bankTransferInstructionsEn">
                 {labels.payment.bankTransferInstructionsEn}
@@ -319,26 +264,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                 }
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="bankTransferInstructionsUr">
-                {labels.payment.bankTransferInstructionsUr}
-              </Label>
-              <Textarea
-                id="bankTransferInstructionsUr"
-                dir="rtl"
-                rows={3}
-                value={values.payment.bankTransferInstructionsUr}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    payment: {
-                      ...current.payment,
-                      bankTransferInstructionsUr: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </div>
+            
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="gatewayPhase2Note">
                 {labels.payment.gatewayPhase2Note}
@@ -419,12 +345,10 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                         {
                           id: crypto.randomUUID(),
                           nameEn: "",
-                          nameUr: "",
                           accountTitle: "",
                           accountNumber: "",
                           iban: "",
                           instructionsEn: "",
-                          instructionsUr: "",
                           isActive: true,
                           displayOrder: current.payment.paymentMethods.length,
                         },
@@ -487,26 +411,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                         }
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label>{labels.payment.methodNameUr}</Label>
-                      <Input
-                        dir="rtl"
-                        value={method.nameUr}
-                        onChange={(event) =>
-                          setValues((current) => ({
-                            ...current,
-                            payment: {
-                              ...current.payment,
-                              paymentMethods: current.payment.paymentMethods.map((item) =>
-                                item.id === method.id
-                                  ? { ...item, nameUr: event.target.value }
-                                  : item,
-                              ),
-                            },
-                          }))
-                        }
-                      />
-                    </div>
+                    
                     <div className="space-y-2">
                       <Label>{labels.payment.accountTitle}</Label>
                       <Input
@@ -584,27 +489,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                         }
                       />
                     </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label>{labels.payment.methodInstructionsUr}</Label>
-                      <Textarea
-                        dir="rtl"
-                        rows={2}
-                        value={method.instructionsUr}
-                        onChange={(event) =>
-                          setValues((current) => ({
-                            ...current,
-                            payment: {
-                              ...current.payment,
-                              paymentMethods: current.payment.paymentMethods.map((item) =>
-                                item.id === method.id
-                                  ? { ...item, instructionsUr: event.target.value }
-                                  : item,
-                              ),
-                            },
-                          }))
-                        }
-                      />
-                    </div>
+                    
                     <div className="space-y-2">
                       <Label>{labels.payment.displayOrder}</Label>
                       <Input
@@ -672,22 +557,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               }
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="defaultMetaTitleUr">
-              {labels.seo.defaultMetaTitleUr}
-            </Label>
-            <Input
-              id="defaultMetaTitleUr"
-              dir="rtl"
-              value={values.seo.defaultMetaTitleUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  seo: { ...current.seo, defaultMetaTitleUr: event.target.value },
-                }))
-              }
-            />
-          </div>
+          
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="defaultMetaDescriptionEn">
               {labels.seo.defaultMetaDescriptionEn}
@@ -707,26 +577,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               }
             />
           </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="defaultMetaDescriptionUr">
-              {labels.seo.defaultMetaDescriptionUr}
-            </Label>
-            <Textarea
-              id="defaultMetaDescriptionUr"
-              dir="rtl"
-              rows={2}
-              value={values.seo.defaultMetaDescriptionUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  seo: {
-                    ...current.seo,
-                    defaultMetaDescriptionUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
+          
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="defaultOgImage">{labels.seo.defaultOgImage}</Label>
             <Input
@@ -835,26 +686,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               }
             />
           </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="organizationDescriptionUr">
-              {labels.seo.organizationDescriptionUr}
-            </Label>
-            <Textarea
-              id="organizationDescriptionUr"
-              dir="rtl"
-              rows={2}
-              value={values.seo.organizationDescriptionUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  seo: {
-                    ...current.seo,
-                    organizationDescriptionUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
+          
           <div className="space-y-2">
             <Label htmlFor="organizationAreaServed">
               {labels.seo.organizationAreaServed}
@@ -929,26 +761,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               }
             />
           </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="localBusinessDescriptionUr">
-              {labels.seo.localBusinessDescriptionUr}
-            </Label>
-            <Textarea
-              id="localBusinessDescriptionUr"
-              dir="rtl"
-              rows={2}
-              value={values.seo.localBusinessDescriptionUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  seo: {
-                    ...current.seo,
-                    localBusinessDescriptionUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
+          
           <div className="space-y-2">
             <Label htmlFor="localBusinessTelephone">
               {labels.seo.localBusinessTelephone}
@@ -1316,26 +1129,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
               }
             />
           </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="maintenanceMessageUr">
-              {labels.features.maintenanceMessageUr}
-            </Label>
-            <Textarea
-              id="maintenanceMessageUr"
-              dir="rtl"
-              rows={2}
-              value={values.features.maintenanceMessageUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  features: {
-                    ...current.features,
-                    maintenanceMessageUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </div>
+          
         </div>
       ) : null}
 

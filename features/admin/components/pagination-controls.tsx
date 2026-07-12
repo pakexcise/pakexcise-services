@@ -1,7 +1,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type PaginationControlsProps = {
   page: number;
@@ -58,7 +59,9 @@ export function PaginationControls({
           disabled={page <= 1}
         >
           <Link
-            href={buildPageHref(basePath, Math.max(1, page - 1), searchParams)}
+            href={
+              buildPageHref(basePath, Math.max(1, page - 1), searchParams) as Route
+            }
             aria-disabled={page <= 1}
             className={page <= 1 ? "pointer-events-none opacity-50" : undefined}
           >
@@ -73,11 +76,13 @@ export function PaginationControls({
           disabled={page >= totalPages}
         >
           <Link
-            href={buildPageHref(
-              basePath,
-              Math.min(totalPages, page + 1),
-              searchParams,
-            )}
+            href={
+              buildPageHref(
+                basePath,
+                Math.min(totalPages, page + 1),
+                searchParams,
+              ) as Route
+            }
             aria-disabled={page >= totalPages}
             className={
               page >= totalPages ? "pointer-events-none opacity-50" : undefined

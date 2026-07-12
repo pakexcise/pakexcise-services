@@ -17,7 +17,7 @@ import type { CustomerInvoiceViewData } from "@/features/invoices/lib/serialize-
 type InvoiceViewProps = {
   applicationId: string;
   invoice: CustomerInvoiceViewData;
-  locale: "en" | "ur";
+  locale: "en";
   labels: {
     title: string;
     invoiceNumber: string;
@@ -109,7 +109,7 @@ export function InvoiceView({
   }, [invoice.id, labels.pdfError]);
 
   const dateFormatter = new Intl.DateTimeFormat(
-    locale === "ur" ? "ur-PK" : "en-PK",
+    "en-PK",
     { dateStyle: "medium" },
   );
 

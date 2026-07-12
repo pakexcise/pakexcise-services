@@ -1,16 +1,21 @@
 "use client";
 
+import { copy, createT } from "@/messages";
+
 import {
   FileStack,
   Headphones,
   LayoutDashboard,
   type LucideIcon,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n/t";
 
-import { Link, usePathname } from "@/i18n/navigation";
 import type { SupportNavItem } from "@/config/support";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const iconMap: Record<string, LucideIcon> = {
   "layout-dashboard": LayoutDashboard,
@@ -30,7 +35,7 @@ export function SupportSidebar({
   className,
 }: SupportSidebarProps) {
   const pathname = usePathname();
-  const t = useTranslations("support.nav");
+  const t = createT(copy.support.nav);
 
   return (
     <nav
@@ -48,7 +53,7 @@ export function SupportSidebar({
         return (
           <Link
             key={item.href}
-            href={item.href}
+            href={item.href as Route}
             onClick={onNavigate}
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",

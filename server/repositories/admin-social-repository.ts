@@ -8,14 +8,12 @@ export const adminSocialLinkSelect = {
   id: true,
   platform: true,
   labelEn: true,
-  labelUr: true,
   url: true,
   iconName: true,
   isActive: true,
   displayOrder: true,
   createdAt: true,
-  updatedAt: true,
-} as const satisfies Prisma.SocialLinkSelect;
+  updatedAt: true} as const satisfies Prisma.SocialLinkSelect;
 
 export type AdminSocialLinkItem = Prisma.SocialLinkGetPayload<{
   select: typeof adminSocialLinkSelect;
@@ -25,22 +23,19 @@ export class AdminSocialRepository extends Repository {
   async listAll(): Promise<AdminSocialLinkItem[]> {
     return this.db.socialLink.findMany({
       orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
-      select: adminSocialLinkSelect,
-    });
+      select: adminSocialLinkSelect});
   }
 
   async findById(id: string): Promise<AdminSocialLinkItem | null> {
     return this.db.socialLink.findUnique({
       where: { id },
-      select: adminSocialLinkSelect,
-    });
+      select: adminSocialLinkSelect});
   }
 
   async getNextDisplayOrder(): Promise<number> {
     const last = await this.db.socialLink.findFirst({
       orderBy: { displayOrder: "desc" },
-      select: { displayOrder: true },
-    });
+      select: { displayOrder: true }});
 
     return (last?.displayOrder ?? 0) + 1;
   }

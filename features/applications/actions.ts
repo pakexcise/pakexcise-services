@@ -90,7 +90,7 @@ export async function transitionApplicationStatusAction(
   const application = await prisma.application.findUnique({
     where: { id: parsed.data.applicationId },
     include: {
-      service: { select: { requiresProof: true, nameEn: true, nameUr: true } },
+      service: { select: { requiresProof: true, nameEn: true } },
       user: { select: { id: true, email: true, phone: true } },
     },
   });
@@ -162,7 +162,6 @@ export async function transitionApplicationStatusAction(
       userId: application.user.id,
       trackingId: application.trackingId,
       serviceName: application.service.nameEn,
-      serviceNameUr: application.service.nameUr,
       locale: application.locale,
       toStatus: parsed.data.toStatus,
       note: parsed.data.note,
@@ -181,7 +180,6 @@ export async function transitionApplicationStatusAction(
     changeType: "status",
     notificationPayload: {
       serviceName: application.service.nameEn,
-      serviceNameUr: application.service.nameUr,
       note: parsed.data.note,
       fromStatus,
       toStatus: parsed.data.toStatus,

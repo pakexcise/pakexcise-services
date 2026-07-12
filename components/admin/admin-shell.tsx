@@ -9,6 +9,7 @@ import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { ApplicationRealtimeSync } from "@/components/shared/application-realtime-sync";
 import type { AdminUserSummary } from "@/components/admin/admin-user-menu";
 import type { AdminNavItem } from "@/config/admin";
+import { ImpersonationBanner } from "@/features/admin/impersonation/components/impersonation-banner";
 import { RealtimeProvider } from "@/features/realtime/context/realtime-provider";
 import type { AdminNavBadgeCounts } from "@/features/admin/types/nav-badges";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -19,6 +20,8 @@ type AdminShellProps = {
   navItems: AdminNavItem[];
   user: AdminUserSummary;
   badgeCounts: AdminNavBadgeCounts;
+  isImpersonating?: boolean;
+  impersonationTargetLabel?: string;
 };
 
 export function AdminShell({
@@ -26,6 +29,8 @@ export function AdminShell({
   navItems,
   user,
   badgeCounts,
+  isImpersonating = false,
+  impersonationTargetLabel,
 }: AdminShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isSuperAdmin = user.role === "SUPER_ADMIN";
@@ -67,6 +72,9 @@ export function AdminShell({
           </Sheet>
 
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            {isImpersonating && impersonationTargetLabel ? (
+              <ImpersonationBanner targetLabel={impersonationTargetLabel} />
+            ) : null}
             <AdminTopbar user={user} onMenuClick={() => setMobileOpen(true)} />
             <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6">
               {children}

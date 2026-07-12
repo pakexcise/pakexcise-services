@@ -28,9 +28,7 @@ const customerInvoiceSelect = {
       label: true,
       description: true,
       amount: true,
-      isOfficialFee: true,
-    },
-  },
+      isOfficialFee: true}},
   paymentMethods: {
     orderBy: { displayOrder: "asc" },
     select: {
@@ -39,20 +37,14 @@ const customerInvoiceSelect = {
       code: true,
       type: true,
       nameEn: true,
-      nameUr: true,
       accountTitleEn: true,
-      accountTitleUr: true,
       accountNumber: true,
       iban: true,
       bankNameEn: true,
-      bankNameUr: true,
       instructionsEn: true,
-      instructionsUr: true,
       qrCodeR2Key: true,
       qrCodeMimeType: true,
-      displayOrder: true,
-    },
-  },
+      displayOrder: true}},
   payments: {
     orderBy: { createdAt: "desc" },
     take: 1,
@@ -63,10 +55,7 @@ const customerInvoiceSelect = {
       rejectionReason: true,
       screenshotFileName: true,
       createdAt: true,
-      updatedAt: true,
-    },
-  },
-} as const satisfies Prisma.InvoiceSelect;
+      updatedAt: true}}} as const satisfies Prisma.InvoiceSelect;
 
 export type CustomerInvoiceDetail = Prisma.InvoiceGetPayload<{
   select: typeof customerInvoiceSelect;
@@ -81,11 +70,9 @@ export class InvoiceRepository extends Repository {
       where: {
         applicationId: input.applicationId,
         status: "SENT",
-        application: { userId: input.userId },
-      },
+        application: { userId: input.userId }},
       orderBy: { sentAt: "desc" },
-      select: customerInvoiceSelect,
-    });
+      select: customerInvoiceSelect});
   }
 
   async findAgentInvoiceByApplication(input: {
@@ -96,11 +83,9 @@ export class InvoiceRepository extends Repository {
       where: {
         applicationId: input.applicationId,
         status: "SENT",
-        application: { agentId: input.agentId },
-      },
+        application: { agentId: input.agentId }},
       orderBy: { sentAt: "desc" },
-      select: customerInvoiceSelect,
-    });
+      select: customerInvoiceSelect});
   }
 
   async findByIdForAccess(invoiceId: string) {
@@ -116,20 +101,14 @@ export class InvoiceRepository extends Repository {
           select: {
             userId: true,
             agentId: true,
-            trackingId: true,
-          },
-        },
-      },
-    });
+            trackingId: true}}}});
   }
 
   async hasActiveSentInvoice(applicationId: string): Promise<boolean> {
     const count = await this.db.invoice.count({
       where: {
         applicationId,
-        status: "SENT",
-      },
-    });
+        status: "SENT"}});
     return count > 0;
   }
 }

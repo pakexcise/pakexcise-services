@@ -10,17 +10,16 @@ import {
 import type { ContactPageSettings } from "@/features/contact-page/types";
 import { overlayGlobalContactOnContactPage } from "@/features/settings/lib/global-site-content";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
-import { pickLocalized } from "@/lib/i18n/content";
-import type { Locale } from "@/i18n/config";
 import { settingsRepository } from "@/server/repositories/settings-repository";
+
+type Locale = "en";
 
 async function loadContactPageSettings(): Promise<ContactPageSettings> {
   const [stored, business] = await Promise.all([
     settingsRepository.getValue<Partial<ContactPageSettings>>(
       CONTACT_PAGE_SETTINGS_KEY,
     ),
-    getBusinessSettings(),
-  ]);
+    getBusinessSettings()]);
   const merged = mergeContactPageSettings(stored);
   return overlayGlobalContactOnContactPage(merged, business);
 }
@@ -30,8 +29,7 @@ const getCachedContactPageSettings = unstable_cache(
   ["contact-page-settings-snapshot"],
   {
     tags: [CONTACT_PAGE_SETTINGS_CACHE_TAG],
-    revalidate: 300,
-  },
+    revalidate: 300},
 );
 
 export async function getContactPageSettings(): Promise<ContactPageSettings> {
@@ -40,130 +38,45 @@ export async function getContactPageSettings(): Promise<ContactPageSettings> {
 
 export function localizeContactPageSettings(
   settings: ContactPageSettings,
-  locale: Locale,
+  _locale: Locale,
 ) {
   return {
-    heroTitle: pickLocalized(locale, {
-      en: settings.heroTitleEn,
-      ur: settings.heroTitleUr,
-    }),
-    heroDescription: pickLocalized(locale, {
-      en: settings.heroDescriptionEn,
-      ur: settings.heroDescriptionUr,
-    }),
-    supportHours: pickLocalized(locale, {
-      en: settings.supportHoursEn,
-      ur: settings.supportHoursUr,
-    }),
-    supportDays: pickLocalized(locale, {
-      en: settings.supportDaysEn,
-      ur: settings.supportDaysUr,
-    }),
-    formHeading: pickLocalized(locale, {
-      en: settings.formHeadingEn,
-      ur: settings.formHeadingUr,
-    }),
-    formDescription: pickLocalized(locale, {
-      en: settings.formDescriptionEn,
-      ur: settings.formDescriptionUr,
-    }),
-    socialHeading: pickLocalized(locale, {
-      en: settings.socialHeadingEn,
-      ur: settings.socialHeadingUr,
-    }),
-    socialDescription: pickLocalized(locale, {
-      en: settings.socialDescriptionEn,
-      ur: settings.socialDescriptionUr,
-    }),
-    ctaTitle: pickLocalized(locale, {
-      en: settings.ctaTitleEn,
-      ur: settings.ctaTitleUr,
-    }),
-    ctaDescription: pickLocalized(locale, {
-      en: settings.ctaDescriptionEn,
-      ur: settings.ctaDescriptionUr,
-    }),
-    ctaViewServicesLabel: pickLocalized(locale, {
-      en: settings.ctaViewServicesLabelEn,
-      ur: settings.ctaViewServicesLabelUr,
-    }),
-    ctaWhatsappLabel: pickLocalized(locale, {
-      en: settings.ctaWhatsappLabelEn,
-      ur: settings.ctaWhatsappLabelUr,
-    }),
+    heroTitle: settings.heroTitleEn ?? "",
+    heroDescription: settings.heroDescriptionEn ?? "",
+    supportHours: settings.supportHoursEn ?? "",
+    supportDays: settings.supportDaysEn ?? "",
+    formHeading: settings.formHeadingEn ?? "",
+    formDescription: settings.formDescriptionEn ?? "",
+    socialHeading: settings.socialHeadingEn ?? "",
+    socialDescription: settings.socialDescriptionEn ?? "",
+    ctaTitle: settings.ctaTitleEn ?? "",
+    ctaDescription: settings.ctaDescriptionEn ?? "",
+    ctaViewServicesLabel: settings.ctaViewServicesLabelEn ?? "",
+    ctaWhatsappLabel: settings.ctaWhatsappLabelEn ?? "",
     serviceInterestOptions: settings.serviceInterestOptions.map((option) => ({
       value: option.value,
-      label: pickLocalized(locale, {
-        en: option.labelEn,
-        ur: option.labelUr,
-      }),
-    })),
+      label: option.labelEn ?? ""})),
     whatsappCard: {
-      title: pickLocalized(locale, {
-        en: settings.whatsappCard.titleEn,
-        ur: settings.whatsappCard.titleUr,
-      }),
-      description: pickLocalized(locale, {
-        en: settings.whatsappCard.descriptionEn,
-        ur: settings.whatsappCard.descriptionUr,
-      }),
-      buttonLabel: pickLocalized(locale, {
-        en: settings.whatsappCard.buttonLabelEn,
-        ur: settings.whatsappCard.buttonLabelUr,
-      }),
-      isActive: settings.whatsappCard.isActive,
-    },
+      title: settings.whatsappCard.titleEn ?? "",
+      description: settings.whatsappCard.descriptionEn ?? "",
+      buttonLabel: settings.whatsappCard.buttonLabelEn ?? "",
+      isActive: settings.whatsappCard.isActive},
     callCard: {
-      title: pickLocalized(locale, {
-        en: settings.callCard.titleEn,
-        ur: settings.callCard.titleUr,
-      }),
-      description: pickLocalized(locale, {
-        en: settings.callCard.descriptionEn,
-        ur: settings.callCard.descriptionUr,
-      }),
-      buttonLabel: pickLocalized(locale, {
-        en: settings.callCard.buttonLabelEn,
-        ur: settings.callCard.buttonLabelUr,
-      }),
-      isActive: settings.callCard.isActive,
-    },
+      title: settings.callCard.titleEn ?? "",
+      description: settings.callCard.descriptionEn ?? "",
+      buttonLabel: settings.callCard.buttonLabelEn ?? "",
+      isActive: settings.callCard.isActive},
     emailCard: {
-      title: pickLocalized(locale, {
-        en: settings.emailCard.titleEn,
-        ur: settings.emailCard.titleUr,
-      }),
-      description: pickLocalized(locale, {
-        en: settings.emailCard.descriptionEn,
-        ur: settings.emailCard.descriptionUr,
-      }),
-      buttonLabel: pickLocalized(locale, {
-        en: settings.emailCard.buttonLabelEn,
-        ur: settings.emailCard.buttonLabelUr,
-      }),
-      isActive: settings.emailCard.isActive,
-    },
+      title: settings.emailCard.titleEn ?? "",
+      description: settings.emailCard.descriptionEn ?? "",
+      buttonLabel: settings.emailCard.buttonLabelEn ?? "",
+      isActive: settings.emailCard.isActive},
     whatsappChannelCard: {
-      title: pickLocalized(locale, {
-        en: settings.whatsappChannelCard.titleEn,
-        ur: settings.whatsappChannelCard.titleUr,
-      }),
-      description: pickLocalized(locale, {
-        en: settings.whatsappChannelCard.descriptionEn,
-        ur: settings.whatsappChannelCard.descriptionUr,
-      }),
-      buttonLabel: pickLocalized(locale, {
-        en: settings.whatsappChannelCard.buttonLabelEn,
-        ur: settings.whatsappChannelCard.buttonLabelUr,
-      }),
-      isActive: settings.whatsappChannelCard.isActive,
-    },
+      title: settings.whatsappChannelCard.titleEn ?? "",
+      description: settings.whatsappChannelCard.descriptionEn ?? "",
+      buttonLabel: settings.whatsappChannelCard.buttonLabelEn ?? "",
+      isActive: settings.whatsappChannelCard.isActive},
     supportHoursCard: {
-      title: pickLocalized(locale, {
-        en: settings.supportHoursCard.titleEn,
-        ur: settings.supportHoursCard.titleUr,
-      }),
-      isActive: settings.supportHoursCard.isActive,
-    },
-  };
+      title: settings.supportHoursCard.titleEn ?? "",
+      isActive: settings.supportHoursCard.isActive}};
 }

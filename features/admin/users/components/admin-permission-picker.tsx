@@ -1,6 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { copy, createT } from "@/messages";
+
+import { useTranslations } from "@/lib/i18n/t";
 
 import {
   grantableAdminPermissions,
@@ -36,7 +38,7 @@ export function AdminPermissionPicker({
   onChange,
   disabled = false,
 }: AdminPermissionPickerProps) {
-  const t = useTranslations("admin.users.permissions");
+  const t = createT(copy.admin.users.permissions);
 
   function togglePermission(permission: Permission, checked: boolean) {
     if (checked) {

@@ -7,7 +7,7 @@ export const siteConfig = {
     "Private excise facilitation service for Pakistan. Not affiliated with any government body.",
   url: getPublicAppUrl(),
   defaultLocale: "en" as const,
-  locales: ["en", "ur"] as const,
+  locales: ["en"] as const,
   defaultTheme: "system" as const,
   colors: {
     primary: "#2159BA",

@@ -1,7 +1,6 @@
 import {
   defaultBusinessSettings,
   DEFAULT_DISCLAIMER_EN,
-  DEFAULT_DISCLAIMER_UR,
 } from "@/features/settings/lib/defaults";
 import { normalizeBusinessSettings } from "@/features/settings/lib/resolve-public-contact";
 import type { BusinessSettings } from "@/features/settings/types";
@@ -10,7 +9,6 @@ type LegacySiteSettings = {
   supportEmail?: string;
   supportPhone?: string;
   businessHoursEn?: string;
-  businessHoursUr?: string;
 };
 
 type LegacyWhatsappSettings = {
@@ -50,12 +48,7 @@ export function mergeLegacyBusinessSettings(input: {
       input.stored?.businessHoursEn ??
       input.legacySite?.businessHoursEn ??
       defaults.businessHoursEn,
-    businessHoursUr:
-      input.stored?.businessHoursUr ??
-      input.legacySite?.businessHoursUr ??
-      defaults.businessHoursUr,
     disclaimerEn: input.stored?.disclaimerEn ?? DEFAULT_DISCLAIMER_EN,
-    disclaimerUr: input.stored?.disclaimerUr ?? DEFAULT_DISCLAIMER_UR,
   };
 
   return normalizeBusinessSettings(merged);

@@ -12,7 +12,6 @@ export const adminGuideListSelect = {
   id: true,
   slug: true,
   titleEn: true,
-  titleUr: true,
   isPublished: true,
   publishedAt: true,
   updatedAt: true,
@@ -22,11 +21,8 @@ export const adminGuideDetailSelect = {
   id: true,
   slug: true,
   titleEn: true,
-  titleUr: true,
   excerptEn: true,
-  excerptUr: true,
   contentEn: true,
-  contentUr: true,
   relatedServiceIds: true,
   attachedFaqIds: true,
   isPublished: true,
@@ -65,7 +61,7 @@ export class AdminGuideRepository extends Repository {
       const q = filters.q.trim();
       where.OR = [
         { titleEn: { contains: q, mode: "insensitive" } },
-        { titleUr: { contains: q, mode: "insensitive" } },
+
         { slug: { contains: q, mode: "insensitive" } },
       ];
     }

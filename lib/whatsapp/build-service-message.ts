@@ -1,4 +1,5 @@
-import type { Locale } from "@/i18n/config";
+
+type Locale = "en";
 
 type BuildServiceWhatsAppMessageInput = {
   serviceName: string;
@@ -34,21 +35,14 @@ export function buildServiceWhatsAppMessage({
   serviceName,
   regionLabel,
   defaultMessage,
-  locale,
 }: BuildServiceWhatsAppMessageInput): string {
   const intro =
-    locale === "ur"
-      ? `السلام علیکم، میں PakExcise کے ذریعے "${serviceName}" سروس کے بارے میں معلومات چاہتا/چاہتی ہوں۔`
-      : `Hello, I would like help with "${serviceName}" through PakExcise private facilitation.`;
+    `Hello, I would like help with "${serviceName}" through PakExcise private facilitation.`;
 
   const lines = [intro];
 
   if (regionLabel?.trim()) {
-    lines.push(
-      locale === "ur"
-        ? `صوبہ/علاقہ: ${regionLabel.trim()}`
-        : `Province/Region: ${regionLabel.trim()}`,
-    );
+    lines.push(`Province/Region: ${regionLabel.trim()}`);
   }
 
   if (defaultMessage.trim()) {

@@ -1,5 +1,7 @@
 "use client";
 
+import type { Route } from "next";
+import Link from "next/link";
 import type { AgentApprovalStatus } from "@prisma/client";
 import { useMemo, useState } from "react";
 import { Settings2 } from "lucide-react";
@@ -22,9 +24,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { AdminAgentWorkspaceItem } from "@/features/admin/lib/serialize-admin-agent";
+import { LoginAsUserButton } from "@/features/admin/impersonation/components/login-as-user-button";
 import type { AdminCommissionLedgerLabels } from "@/components/admin/AdminCommissionLedger";
-import { Link } from "@/i18n/navigation";
-
 type AdminAgentsWorkspaceLabels = {
   columns: {
     agent: string;
@@ -57,8 +58,9 @@ type AdminAgentsWorkspaceLabels = {
 
 type AdminAgentsWorkspaceProps = {
   agents: AdminAgentWorkspaceItem[];
-  locale: "en" | "ur";
+  locale: "en";
   labels: AdminAgentsWorkspaceLabels;
+  canImpersonate?: boolean;
 };
 
 function approvalBadgeVariant(
@@ -80,6 +82,7 @@ export function AdminAgentsWorkspace({
   agents,
   locale,
   labels,
+  canImpersonate = false,
 }: AdminAgentsWorkspaceProps) {
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
 
@@ -142,15 +145,29 @@ export function AdminAgentsWorkspace({
                   {agent.commissionCount}
                 </TableCell>
                 <TableCell className="text-end">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedAgentId(agent.id)}
-                  >
-                    <Settings2 className="size-4" />
-                    {labels.manage}
-                  </Button>
+                  <div className="flex flex-wrap items-center justify-end gap-2">
+                    {canImpersonate &&
+                    agent.isActive &&
+                    agent.user.status === "ACTIVE" ? (
+                      <LoginAsUserButton
+                        userId={agent.user.id}
+                        userLabel={
+                          agent.user.name?.trim() ||
+                          agent.user.displayEmail ||
+                          agent.user.email
+                        }
+                      />
+                    ) : null}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedAgentId(agent.id)}
+                    >
+                      <Settings2 className="size-4" />
+                      {labels.manage}
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -215,9 +232,11 @@ export function AdminAgentsWorkspace({
                     </h3>
                     <Button asChild variant="outline" size="sm">
                       <Link
-                        href={`/admin/applications?q=${encodeURIComponent(
-                          selectedAgent.user.email,
-                        )}`}
+                        href={
+                          `/admin/applications?q=${encodeURIComponent(
+                            selectedAgent.user.email,
+                          )}` as Route
+                        }
                       >
                         {labels.viewApplications}
                       </Link>
@@ -247,16 +266,14 @@ export function AdminAgentsWorkspace({
                                 </Link>
                               </TableCell>
                               <TableCell className="text-sm">
-                                {locale === "ur"
-                                  ? application.serviceNameUr
-                                  : application.serviceNameEn}
+                                {application.serviceNameEn}
                               </TableCell>
                               <TableCell>
                                 <Badge variant="outline">{application.status}</Badge>
                               </TableCell>
                               <TableCell className="text-sm text-muted-foreground">
                                 {new Intl.DateTimeFormat(
-                                  locale === "ur" ? "ur-PK" : "en-PK",
+                                  "en-PK",
                                   { dateStyle: "medium" },
                                 ).format(new Date(application.createdAt))}
                               </TableCell>

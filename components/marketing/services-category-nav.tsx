@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-
-import { pickLocalized } from "@/lib/i18n/content";
 import type { PublicServiceCategoryGroup } from "@/server/repositories/service-category-repository";
 import { cn } from "@/lib/utils";
 
@@ -69,8 +67,7 @@ function CategoryNavLink({ slug, className, children }: CategoryNavLinkProps) {
 export function ServicesCategoryNav({
   groups,
   locale,
-  label,
-}: ServicesCategoryNavProps) {
+  label}: ServicesCategoryNavProps) {
   useEffect(() => {
     const normalized = normalizeCategoryHash(window.location.hash);
 
@@ -97,10 +94,7 @@ export function ServicesCategoryNav({
     >
       <ul className="flex min-w-max gap-2 px-1">
         {groups.map((group) => {
-          const name = pickLocalized(locale, {
-            en: group.nameEn,
-            ur: group.nameUr,
-          });
+          const name = group.nameEn ?? "";
 
           return (
             <li key={group.id}>

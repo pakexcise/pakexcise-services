@@ -3,21 +3,18 @@ import * as LucideIcons from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { BrandSocialIcon } from "@/components/shared/brand-social-icon";
-import { pickLocalized } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 
 export type PublicSocialLink = {
   id: string;
   platform: string;
   labelEn: string;
-  labelUr: string;
   url: string;
   iconName: string;
 };
 
 type SocialLinksProps = {
   links: PublicSocialLink[];
-  locale: string;
   title?: string;
   emptyMessage?: string;
   variant?: "inline" | "cards" | "icons" | "footer";
@@ -86,7 +83,6 @@ function footerPlatformStyle(platform: string): string {
 
 export function SocialLinks({
   links,
-  locale,
   title,
   emptyMessage,
   variant = "inline",
@@ -114,36 +110,29 @@ export function SocialLinks({
           </p>
         ) : null}
         <ul className="flex flex-wrap gap-2.5">
-          {links.map((link) => {
-            const label = pickLocalized(locale, {
-              en: link.labelEn,
-              ur: link.labelUr,
-            });
-
-            return (
-              <li key={link.id}>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  title={label}
-                  className={cn(
-                    "group flex size-10 items-center justify-center rounded-xl border border-border/80 bg-background/80 text-muted-foreground shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
-                    footerPlatformStyle(link.platform),
-                  )}
-                  data-analytics-event="click_social_link"
-                  data-platform={link.platform}
-                >
-                  <SocialIcon
-                    platform={link.platform}
-                    iconName={link.iconName}
-                    className="size-[18px] transition-transform duration-200 group-hover:scale-110"
-                  />
-                </a>
-              </li>
-            );
-          })}
+          {links.map((link) => (
+            <li key={link.id}>
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.labelEn}
+                title={link.labelEn}
+                className={cn(
+                  "group flex size-10 items-center justify-center rounded-xl border border-border/80 bg-background/80 text-muted-foreground shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
+                  footerPlatformStyle(link.platform),
+                )}
+                data-analytics-event="click_social_link"
+                data-platform={link.platform}
+              >
+                <SocialIcon
+                  platform={link.platform}
+                  iconName={link.iconName}
+                  className="size-[18px] transition-transform duration-200 group-hover:scale-110"
+                />
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
     );
@@ -157,33 +146,26 @@ export function SocialLinks({
           <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         ) : (
           <ul className="flex flex-wrap gap-3">
-            {links.map((link) => {
-              const label = pickLocalized(locale, {
-                en: link.labelEn,
-                ur: link.labelUr,
-              });
-
-              return (
-                <li key={link.id}>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    title={label}
-                    className="flex size-11 items-center justify-center rounded-full border bg-background text-primary transition-colors hover:border-primary/40 hover:bg-primary/5"
-                    data-analytics-event="click_social_link"
-                    data-platform={link.platform}
-                  >
-                    <SocialIcon
-                      platform={link.platform}
-                      iconName={link.iconName}
-                      className="size-5"
-                    />
-                  </a>
-                </li>
-              );
-            })}
+            {links.map((link) => (
+              <li key={link.id}>
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.labelEn}
+                  title={link.labelEn}
+                  className="flex size-11 items-center justify-center rounded-full border bg-background text-primary transition-colors hover:border-primary/40 hover:bg-primary/5"
+                  data-analytics-event="click_social_link"
+                  data-platform={link.platform}
+                >
+                  <SocialIcon
+                    platform={link.platform}
+                    iconName={link.iconName}
+                    className="size-5"
+                  />
+                </a>
+              </li>
+            ))}
           </ul>
         )}
       </section>
@@ -195,30 +177,23 @@ export function SocialLinks({
       <section className={className}>
         {title ? <h2 className="mb-4 text-lg font-semibold">{title}</h2> : null}
         <ul className="grid gap-3 sm:grid-cols-2">
-          {links.map((link) => {
-            const label = pickLocalized(locale, {
-              en: link.labelEn,
-              ur: link.labelUr,
-            });
-
-            return (
-              <li key={link.id}>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  title={label}
-                  className="flex items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-                  data-analytics-event="click_social_link"
-                  data-platform={link.platform}
-                >
-                  <SocialIcon platform={link.platform} iconName={link.iconName} />
-                  <span>{label}</span>
-                </a>
-              </li>
-            );
-          })}
+          {links.map((link) => (
+            <li key={link.id}>
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.labelEn}
+                title={link.labelEn}
+                className="flex items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                data-analytics-event="click_social_link"
+                data-platform={link.platform}
+              >
+                <SocialIcon platform={link.platform} iconName={link.iconName} />
+                <span>{link.labelEn}</span>
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
     );
@@ -228,29 +203,22 @@ export function SocialLinks({
     <section className={className}>
       {title ? <h2 className="mb-2 text-sm font-semibold">{title}</h2> : null}
       <ul className="flex flex-wrap gap-3 text-sm">
-        {links.map((link) => {
-          const label = pickLocalized(locale, {
-            en: link.labelEn,
-            ur: link.labelUr,
-          });
-
-          return (
-            <li key={link.id}>
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                title={label}
-                className="text-primary transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"
-                data-analytics-event="click_social_link"
-                data-platform={link.platform}
-              >
-                {label}
-              </a>
-            </li>
-          );
-        })}
+        {links.map((link) => (
+          <li key={link.id}>
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={link.labelEn}
+              title={link.labelEn}
+              className="text-primary transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"
+              data-analytics-event="click_social_link"
+              data-platform={link.platform}
+            >
+              {link.labelEn}
+            </a>
+          </li>
+        ))}
       </ul>
     </section>
   );

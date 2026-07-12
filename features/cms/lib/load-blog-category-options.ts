@@ -18,7 +18,7 @@ export async function loadBlogCategoryOptions(locale = "en") {
   }
 
   const labelFor = (category: (typeof categories)[number]) =>
-    locale === "ur" ? category.nameUr : category.nameEn;
+    category.nameEn;
 
   return {
     parents: parents.map((category) => ({

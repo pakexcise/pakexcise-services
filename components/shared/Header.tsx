@@ -1,17 +1,17 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n/t";
 import { useState } from "react";
 
 import { AuthHeaderActions } from "@/components/shared/auth-header-actions";
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { disclaimerBannerClassName } from "@/lib/styles/disclaimer-banner";
 
@@ -152,7 +152,6 @@ export function Header({
             </Button>
           ) : null}
 
-          <LanguageSwitcher />
           <ThemeToggle />
 
           <AuthHeaderActions

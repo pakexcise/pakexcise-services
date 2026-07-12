@@ -1,16 +1,13 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "@/i18n/navigation";
-
+import { useRouter } from "next/navigation";
 export function AdminSearch() {
-  const t = useTranslations("admin");
-  const router = useRouter();
+    const router = useRouter();
   const [query, setQuery] = useState("");
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -21,10 +18,7 @@ export function AdminSearch() {
       return;
     }
 
-    router.push({
-      pathname: "/admin/applications",
-      query: { q: trimmed },
-    });
+    router.push(`/admin/applications?q=${encodeURIComponent(trimmed)}`);
   }
 
   return (
@@ -37,13 +31,13 @@ export function AdminSearch() {
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder={t("searchPlaceholder")}
+          placeholder={"Search applications by tracking ID, customer, or service"}
           className="pl-9"
-          aria-label={t("searchPlaceholder")}
+          aria-label={"Search applications by tracking ID, customer, or service"}
         />
       </div>
       <Button type="submit" variant="secondary" size="sm" className="shrink-0">
-        {t("search")}
+        {"Search"}
       </Button>
     </form>
   );

@@ -12,8 +12,6 @@ export function paymentMethodAuditSnapshot(
     code: method.code,
     type: method.type,
     nameEn: method.nameEn,
-    nameUr: method.nameUr,
     isActive: method.isActive,
-    displayOrder: method.displayOrder,
-  };
+    displayOrder: method.displayOrder};
 }

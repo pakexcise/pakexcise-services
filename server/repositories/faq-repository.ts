@@ -5,9 +5,7 @@ import { paginate, Repository } from "@/server/repositories/base/repository";
 const publicFaqSelect = {
   id: true,
   questionEn: true,
-  questionUr: true,
   answerEn: true,
-  answerUr: true,
   displayOrder: true,
   serviceId: true,
   categoryId: true,
@@ -18,7 +16,6 @@ const publicFaqSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
       displayOrder: true,
     },
   },

@@ -7,11 +7,8 @@ import {
 
 type LegacyPageContent = {
   titleEn?: string;
-  titleUr?: string;
   excerptEn?: string;
-  excerptUr?: string;
   contentEn?: string;
-  contentUr?: string;
 };
 
 function readLegacyContent(value: unknown): LegacyPageContent | null {
@@ -33,12 +30,7 @@ async function readLegacySettingContent(
     });
 
     const content = readLegacyContent(setting?.value);
-    if (
-      content?.titleEn &&
-      content.titleUr &&
-      content.contentEn &&
-      content.contentUr
-    ) {
+    if (content?.titleEn && content.contentEn) {
       return content;
     }
   }
@@ -63,17 +55,14 @@ export async function seedLegalPages(prisma: PrismaClient) {
       create: {
         slug: definition.slug,
         titleEn: legacyContent?.titleEn ?? definition.titleEn,
-        titleUr: legacyContent?.titleUr ?? definition.titleUr,
         excerptEn: legacyContent?.excerptEn ?? definition.excerptEn,
-        excerptUr: legacyContent?.excerptUr ?? definition.excerptUr,
         contentEn: legacyContent?.contentEn ?? definition.contentEn,
-        contentUr: legacyContent?.contentUr ?? definition.contentUr,
         isPublished: true,
         isActive: true,
         displayOrder: definition.displayOrder,
         publishedAt: new Date(),
       },
-      select: { id: true, slug: true, titleEn: true, titleUr: true },
+      select: { id: true, slug: true, titleEn: true },
     });
 
     const existingSeo =
@@ -86,28 +75,17 @@ export async function seedLegalPages(prisma: PrismaClient) {
 
     const seoData = {
       metaTitleEn: existingSeo?.metaTitleEn ?? `${page.titleEn} | PakExcise.com`,
-      metaTitleUr: existingSeo?.metaTitleUr ?? `${page.titleUr} | PakExcise.com`,
       metaDescriptionEn:
         existingSeo?.metaDescriptionEn ??
         legacyContent?.excerptEn ??
         definition.excerptEn,
-      metaDescriptionUr:
-        existingSeo?.metaDescriptionUr ??
-        legacyContent?.excerptUr ??
-        definition.excerptUr,
       h1En: existingSeo?.h1En ?? page.titleEn,
-      h1Ur: existingSeo?.h1Ur ?? page.titleUr,
       canonicalUrl: existingSeo?.canonicalUrl ?? `/${definition.slug}`,
       ogTitleEn: existingSeo?.ogTitleEn ?? page.titleEn,
-      ogTitleUr: existingSeo?.ogTitleUr ?? page.titleUr,
       ogDescriptionEn:
         existingSeo?.ogDescriptionEn ??
         legacyContent?.excerptEn ??
         definition.excerptEn,
-      ogDescriptionUr:
-        existingSeo?.ogDescriptionUr ??
-        legacyContent?.excerptUr ??
-        definition.excerptUr,
       ogImage: existingSeo?.ogImage ?? null,
       twitterCard: existingSeo?.twitterCard ?? "summary_large_image",
       robotsIndex: existingSeo?.robotsIndex ?? true,

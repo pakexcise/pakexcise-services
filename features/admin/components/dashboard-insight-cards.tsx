@@ -1,8 +1,7 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { InsightStatCard } from "@/features/admin/components/insight-stat-card";
 import type { AdminDashboardInsights } from "@/server/repositories/admin-dashboard-repository";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 type DashboardInsightCardsProps = {
   insights: AdminDashboardInsights;
@@ -11,19 +10,15 @@ type DashboardInsightCardsProps = {
 export async function DashboardInsightCards({
   insights,
 }: DashboardInsightCardsProps) {
-  const locale = await getCurrentLocale();
+  const locale = "en";
   const t = await getTranslations("admin.dashboard.insights");
 
   const topServiceName = insights.mostRequestedService
-    ? locale === "ur"
-      ? insights.mostRequestedService.nameUr
-      : insights.mostRequestedService.nameEn
+    ? insights.mostRequestedService.nameEn
     : "—";
 
   const topProvinceName = insights.topProvince
-    ? locale === "ur"
-      ? insights.topProvince.nameUr
-      : insights.topProvince.nameEn
+    ? insights.topProvince.nameEn
     : "—";
 
   return (

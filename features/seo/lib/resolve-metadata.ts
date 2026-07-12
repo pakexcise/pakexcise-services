@@ -2,18 +2,17 @@ import type { Metadata } from "next";
 import type { SeoMeta } from "@prisma/client";
 
 import { buildMetadata, resolveBrandingMetadataDefaults } from "@/features/seo/lib/metadata";
-import { buildHreflangAlternates } from "@/features/seo/lib/hreflang";
 import {
   getBrandingSettings,
   getBusinessSettings,
 } from "@/features/settings/lib/public-settings-cache";
-import type { Locale } from "@/i18n/config";
-import { pickLocalized } from "@/lib/i18n/content";
+
+type Locale = "en";
 
 export type SeoFallbacks = {
-  title: { en: string; ur: string };
-  description: { en: string; ur: string };
-  h1?: { en: string; ur: string };
+  title: { en: string };
+  description: { en: string };
+  h1?: { en: string };
 };
 
 export type ResolvedPageSeo = {
@@ -23,23 +22,14 @@ export type ResolvedPageSeo = {
 };
 
 export function resolvePageSeo(
-  locale: Locale | string,
+  _locale: Locale | string,
   seo: SeoMeta | null,
   fallbacks: SeoFallbacks,
 ): ResolvedPageSeo {
   return {
-    title: pickLocalized(locale, {
-      en: seo?.metaTitleEn ?? fallbacks.title.en,
-      ur: seo?.metaTitleUr ?? fallbacks.title.ur,
-    }),
-    description: pickLocalized(locale, {
-      en: seo?.metaDescriptionEn ?? fallbacks.description.en,
-      ur: seo?.metaDescriptionUr ?? fallbacks.description.ur,
-    }),
-    h1: pickLocalized(locale, {
-      en: seo?.h1En ?? fallbacks.h1?.en ?? fallbacks.title.en,
-      ur: seo?.h1Ur ?? fallbacks.h1?.ur ?? fallbacks.title.ur,
-    }),
+    title: seo?.metaTitleEn ?? fallbacks.title.en,
+    description: seo?.metaDescriptionEn ?? fallbacks.description.en,
+    h1: seo?.h1En ?? fallbacks.h1?.en ?? fallbacks.title.en,
   };
 }
 
@@ -68,14 +58,8 @@ export async function resolveMetadataFromSeo(input: {
     locale: input.locale,
     path: input.path,
     canonical: input.seo?.canonicalUrl ?? undefined,
-    ogTitle: pickLocalized(input.locale, {
-      en: input.seo?.ogTitleEn ?? resolved.title,
-      ur: input.seo?.ogTitleUr ?? resolved.title,
-    }),
-    ogDescription: pickLocalized(input.locale, {
-      en: input.seo?.ogDescriptionEn ?? resolved.description,
-      ur: input.seo?.ogDescriptionUr ?? resolved.description,
-    }),
+    ogTitle: input.seo?.ogTitleEn ?? resolved.title,
+    ogDescription: input.seo?.ogDescriptionEn ?? resolved.description,
     ogImage: input.ogImage ?? input.seo?.ogImage ?? brandingDefaults.ogImage,
     twitterImage: brandingDefaults.twitterImage,
     siteName: brandingDefaults.siteName,
@@ -85,6 +69,5 @@ export async function resolveMetadataFromSeo(input: {
       index: input.seo?.robotsIndex ?? true,
       follow: input.seo?.robotsFollow ?? true,
     },
-    alternates: buildHreflangAlternates(input.path),
   });
 }

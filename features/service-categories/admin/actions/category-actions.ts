@@ -6,14 +6,12 @@ import {
   createServiceCategorySchema,
   reorderServiceCategoriesSchema,
   toggleServiceCategorySchema,
-  updateServiceCategorySchema,
-} from "@/lib/validations/admin-service-category";
+  updateServiceCategorySchema} from "@/lib/validations/admin-service-category";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { requirePermission } from "@/server/permissions/guards";
@@ -41,8 +39,7 @@ export async function createServiceCategoryAction(
 
   if (existing) {
     return errorResult("Slug is already in use", {
-      slug: ["Slug already exists"],
-    });
+      slug: ["Slug already exists"]});
   }
 
   const displayOrder =
@@ -53,21 +50,16 @@ export async function createServiceCategoryAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
-      displayOrder,
-    },
-  });
+      displayOrder}});
 
   await auditAdminAction({
     actorId: user.id,
     action: "CREATE",
     entityType: "service_category",
     entityId: category.id,
-    after: category,
-  });
+    after: category});
 
   revalidateCategoryPaths();
   return successResult({ id: category.id });
@@ -95,8 +87,7 @@ export async function updateServiceCategoryAction(
 
     if (slugTaken && slugTaken.id !== data.id) {
       return errorResult("Slug is already in use", {
-        slug: ["Slug already exists"],
-      });
+        slug: ["Slug already exists"]});
     }
   }
 
@@ -105,13 +96,9 @@ export async function updateServiceCategoryAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
-      displayOrder: data.displayOrder,
-    },
-  });
+      displayOrder: data.displayOrder}});
 
   await auditAdminAction({
     actorId: user.id,
@@ -119,8 +106,7 @@ export async function updateServiceCategoryAction(
     entityType: "service_category",
     entityId: category.id,
     before: existing,
-    after: category,
-  });
+    after: category});
 
   revalidateCategoryPaths();
   return successResult({ id: category.id });
@@ -144,8 +130,7 @@ export async function toggleServiceCategoryAction(
 
   const category = await prisma.serviceCategory.update({
     where: { id: parsed.data.id },
-    data: { isActive: parsed.data.isActive },
-  });
+    data: { isActive: parsed.data.isActive }});
 
   await auditAdminAction({
     actorId: user.id,
@@ -153,8 +138,7 @@ export async function toggleServiceCategoryAction(
     entityType: "service_category",
     entityId: category.id,
     before: { isActive: existing.isActive },
-    after: { isActive: category.isActive },
-  });
+    after: { isActive: category.isActive }});
 
   revalidateCategoryPaths();
   return successResult({ id: category.id });
@@ -174,8 +158,7 @@ export async function reorderServiceCategoriesAction(
     parsed.data.orderedIds.map((id, index) =>
       prisma.serviceCategory.update({
         where: { id },
-        data: { displayOrder: index },
-      }),
+        data: { displayOrder: index }}),
     ),
   );
 
@@ -184,8 +167,7 @@ export async function reorderServiceCategoriesAction(
     action: "UPDATE",
     entityType: "service_category",
     entityId: "reorder",
-    after: { orderedIds: parsed.data.orderedIds },
-  });
+    after: { orderedIds: parsed.data.orderedIds }});
 
   revalidateCategoryPaths();
   return successResult({ count: parsed.data.orderedIds.length });

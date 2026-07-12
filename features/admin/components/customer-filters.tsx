@@ -1,10 +1,10 @@
+import { copy, createT } from "@/messages";
 import type { UserStatus } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type CustomerFiltersProps = {
   currentStatus?: UserStatus;
   currentSearch?: string;
@@ -34,7 +34,7 @@ export async function CustomerFilters({
   currentStatus,
   currentSearch,
 }: CustomerFiltersProps) {
-  const t = await getTranslations("admin.customers");
+  const t = createT(copy.admin.customers);
 
   return (
     <form

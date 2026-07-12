@@ -7,24 +7,20 @@ import { MarkdownContentEditor } from "@/features/cms/components/markdown-conten
 import type { MarkdownContentEditorLabels } from "@/features/cms/components/markdown-content-editor";
 import {
   createLegalPageAction,
-  updateLegalPageAction,
-} from "@/features/legal-pages/admin/actions/legal-page-actions";
+  updateLegalPageAction} from "@/features/legal-pages/admin/actions/legal-page-actions";
 import { isCanonicalLegalPageSlug } from "@/features/legal-pages/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "@/i18n/navigation";
 import type { SeoMetaInput } from "@/lib/validations/admin-seo";
 
+import { useRouter } from "next/navigation";
 export type LegalPageEditorValues = {
   slug: string;
   titleEn: string;
-  titleUr: string;
   excerptEn: string;
-  excerptUr: string;
   contentEn: string;
-  contentUr: string;
   isPublished: boolean;
   isActive: boolean;
   displayOrder: number;
@@ -39,11 +35,8 @@ type LegalPageEditorFormProps = {
     slug: string;
     slugLockedNote: string;
     titleEn: string;
-    titleUr: string;
     excerptEn: string;
-    excerptUr: string;
     contentEn: string;
-    contentUr: string;
     contentHint: string;
     contentEditor: MarkdownContentEditorLabels;
     published: string;
@@ -55,16 +48,11 @@ type LegalPageEditorFormProps = {
     cancel: string;
     seoTitle: string;
     metaTitleEn: string;
-    metaTitleUr: string;
     metaDescriptionEn: string;
-    metaDescriptionUr: string;
     h1En: string;
-    h1Ur: string;
     canonicalUrl: string;
     ogTitleEn: string;
-    ogTitleUr: string;
     ogDescriptionEn: string;
-    ogDescriptionUr: string;
     ogImage: string;
     twitterCard: string;
     robotsIndex: string;
@@ -76,8 +64,7 @@ export function LegalPageEditorForm({
   mode,
   pageId,
   initialValues,
-  labels,
-}: LegalPageEditorFormProps) {
+  labels}: LegalPageEditorFormProps) {
   const router = useRouter();
   const [values, setValues] = useState(initialValues);
   const [error, setError] = useState<string | null>(null);
@@ -93,10 +80,8 @@ export function LegalPageEditorForm({
       const payload = {
         ...values,
         excerptEn: values.excerptEn || null,
-        excerptUr: values.excerptUr || null,
         seo: values.seo,
-        ...(mode === "edit" ? { id: pageId } : {}),
-      };
+        ...(mode === "edit" ? { id: pageId } : {})};
 
       const result =
         mode === "create"
@@ -143,15 +128,7 @@ export function LegalPageEditorForm({
             onChange={(e) => setValues((current) => ({ ...current, titleEn: e.target.value }))}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="titleUr">{labels.titleUr}</Label>
-          <Input
-            id="titleUr"
-            dir="rtl"
-            value={values.titleUr}
-            onChange={(e) => setValues((current) => ({ ...current, titleUr: e.target.value }))}
-          />
-        </div>
+        
 
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="excerptEn">{labels.excerptEn}</Label>
@@ -162,16 +139,7 @@ export function LegalPageEditorForm({
             onChange={(e) => setValues((current) => ({ ...current, excerptEn: e.target.value }))}
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="excerptUr">{labels.excerptUr}</Label>
-          <Textarea
-            id="excerptUr"
-            rows={3}
-            dir="rtl"
-            value={values.excerptUr}
-            onChange={(e) => setValues((current) => ({ ...current, excerptUr: e.target.value }))}
-          />
-        </div>
+        
 
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="contentEn">{labels.contentEn}</Label>
@@ -182,16 +150,7 @@ export function LegalPageEditorForm({
             labels={{ ...labels.contentEditor, hint: labels.contentHint }}
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="contentUr">{labels.contentUr}</Label>
-          <MarkdownContentEditor
-            id="contentUr"
-            value={values.contentUr}
-            onChange={(contentUr) => setValues((current) => ({ ...current, contentUr }))}
-            dir="rtl"
-            labels={{ ...labels.contentEditor, hint: labels.contentHint }}
-          />
-        </div>
+        
 
         <div className="flex items-center gap-2 md:col-span-2">
           <input
@@ -229,8 +188,7 @@ export function LegalPageEditorForm({
             onChange={(e) =>
               setValues((current) => ({
                 ...current,
-                displayOrder: Number(e.target.value) || 0,
-              }))
+                displayOrder: Number(e.target.value) || 0}))
             }
           />
         </div>
@@ -242,21 +200,15 @@ export function LegalPageEditorForm({
         labels={{
           title: labels.seoTitle,
           metaTitleEn: labels.metaTitleEn,
-          metaTitleUr: labels.metaTitleUr,
           metaDescriptionEn: labels.metaDescriptionEn,
-          metaDescriptionUr: labels.metaDescriptionUr,
           h1En: labels.h1En,
-          h1Ur: labels.h1Ur,
           canonicalUrl: labels.canonicalUrl,
           ogTitleEn: labels.ogTitleEn,
-          ogTitleUr: labels.ogTitleUr,
           ogDescriptionEn: labels.ogDescriptionEn,
-          ogDescriptionUr: labels.ogDescriptionUr,
           ogImage: labels.ogImage,
           twitterCard: labels.twitterCard,
           robotsIndex: labels.robotsIndex,
-          robotsFollow: labels.robotsFollow,
-        }}
+          robotsFollow: labels.robotsFollow}}
       />
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}

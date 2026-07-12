@@ -1,8 +1,10 @@
 import { AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import type { ApplyAccessResult } from "@/server/permissions/apply-access";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type ApplyAccessDeniedProps = {
   access: Extract<ApplyAccessResult, { allowed: false }>;
@@ -51,10 +53,10 @@ export function ApplyAccessDenied({
 
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <Button asChild variant="outline">
-          <Link href={serviceHref}>{labels.viewService}</Link>
+          <Link href={serviceHref as Route}>{labels.viewService}</Link>
         </Button>
         <Button asChild>
-          <Link href={dashboardHref}>{labels.goToDashboard}</Link>
+          <Link href={dashboardHref as Route}>{labels.goToDashboard}</Link>
         </Button>
       </div>
     </div>

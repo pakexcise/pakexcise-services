@@ -11,40 +11,27 @@ const defaultCategories = [
   {
     slug: "general",
     nameEn: "General",
-    nameUr: "عام",
-    displayOrder: 1,
-  },
+    displayOrder: 1},
   {
     slug: "support",
     nameEn: "Support",
-    nameUr: "سپورٹ",
-    displayOrder: 2,
-  },
+    displayOrder: 2},
   {
     slug: "account",
     nameEn: "Account",
-    nameUr: "اکاؤنٹ",
-    displayOrder: 3,
-  },
+    displayOrder: 3},
   {
     slug: "billing",
     nameEn: "Billing & fees",
-    nameUr: "بلنگ اور فیس",
-    displayOrder: 4,
-  },
+    displayOrder: 4},
   {
     slug: "regions",
     nameEn: "Regions",
-    nameUr: "علاقے",
-    displayOrder: 5,
-  },
+    displayOrder: 5},
   {
     slug: "documents",
     nameEn: "Documents",
-    nameUr: "دستاویزات",
-    displayOrder: 6,
-  },
-] as const;
+    displayOrder: 6}] as const;
 
 function titleCaseSlug(slug: string) {
   return slug
@@ -86,8 +73,7 @@ async function ensureDefaultCategories() {
     await prisma.faqCategory.upsert({
       where: { slug: category.slug },
       create: category,
-      update: {},
-    });
+      update: {}});
   }
 }
 
@@ -108,11 +94,8 @@ async function migrateLegacyCategories() {
       create: {
         slug,
         nameEn: titleCaseSlug(slug),
-        nameUr: titleCaseSlug(slug),
-        displayOrder: 99,
-      },
-      update: {},
-    });
+        displayOrder: 99},
+      update: {}});
   }
 }
 
@@ -125,8 +108,7 @@ async function backfillCategoryIds() {
     const slug = faq.category?.trim().toLowerCase() || "general";
     const category = await prisma.faqCategory.findUnique({
       where: { slug },
-      select: { id: true },
-    });
+      select: { id: true }});
 
     if (!category) {
       throw new Error(`Missing FAQ category for slug "${slug}"`);
@@ -155,9 +137,7 @@ async function main() {
         id TEXT PRIMARY KEY,
         slug TEXT NOT NULL UNIQUE,
         "nameEn" TEXT NOT NULL,
-        "nameUr" TEXT NOT NULL,
         "descriptionEn" TEXT,
-        "descriptionUr" TEXT,
         "isActive" BOOLEAN NOT NULL DEFAULT true,
         "displayOrder" INTEGER NOT NULL DEFAULT 0,
         "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -190,8 +170,7 @@ async function main() {
 
   const general = await prisma.faqCategory.findUnique({
     where: { slug: "general" },
-    select: { id: true },
-  });
+    select: { id: true }});
 
   if (general) {
     await prisma.$executeRaw`

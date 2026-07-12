@@ -29,15 +29,11 @@ type PersistInvoicePdfInput = {
   paymentMethods: Array<{
     type: PaymentMethodType;
     nameEn: string;
-    nameUr: string;
     accountTitleEn: string | null;
-    accountTitleUr: string | null;
     accountNumber: string | null;
     iban: string | null;
     bankNameEn: string | null;
-    bankNameUr: string | null;
     instructionsEn: string | null;
-    instructionsUr: string | null;
     qrCodeR2Key?: string | null;
     qrCodeMimeType?: string | null;
   }>;
@@ -64,19 +60,16 @@ export async function persistInvoicePdf(
     paymentMethods: input.paymentMethods,
     paymentInstructions: input.paymentInstructions,
     officialFeeNote: input.officialFeeNote,
-    notes: input.notes,
-  });
+    notes: input.notes});
 
   const pdfR2Key = buildInvoicePdfKey({
     trackingId: input.trackingId,
-    invoiceId: input.invoiceId,
-  });
+    invoiceId: input.invoiceId});
 
   await putR2Object({
     key: pdfR2Key,
     body: pdfBuffer,
-    contentType: "application/pdf",
-  });
+    contentType: "application/pdf"});
 
   return pdfR2Key;
 }

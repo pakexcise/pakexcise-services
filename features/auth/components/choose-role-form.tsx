@@ -1,8 +1,8 @@
 "use client";
 
 import { Briefcase, UserRound } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation";
+import type { Route } from "next";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { selectAccountRole } from "@/features/auth/actions/select-role";
@@ -55,7 +55,7 @@ export function ChooseRoleForm({ labels }: ChooseRoleFormProps) {
         return;
       }
 
-      router.push(result.redirectTo);
+      router.push(result.redirectTo as Route);
       router.refresh();
     });
   }

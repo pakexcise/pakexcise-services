@@ -8,14 +8,12 @@ import {
   paymentMethodIdSchema,
   reorderPaymentMethodsSchema,
   togglePaymentMethodSchema,
-  updatePaymentMethodSchema,
-} from "@/lib/validations/admin-payment-method";
+  updatePaymentMethodSchema} from "@/lib/validations/admin-payment-method";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { adminPaymentMethodRepository } from "@/server/repositories/admin-payment-method-repository";
@@ -53,19 +51,13 @@ export async function createPaymentMethodAction(
       code: data.code,
       type: data.type,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       accountTitleEn: normalizeOptional(data.accountTitleEn),
-      accountTitleUr: normalizeOptional(data.accountTitleUr),
       accountNumber: normalizeOptional(data.accountNumber),
       iban: normalizeOptional(data.iban),
       bankNameEn: normalizeOptional(data.bankNameEn),
-      bankNameUr: normalizeOptional(data.bankNameUr),
       instructionsEn: normalizeOptional(data.instructionsEn),
-      instructionsUr: normalizeOptional(data.instructionsUr),
       isActive: data.isActive,
-      displayOrder,
-    },
-  });
+      displayOrder}});
 
   const created = await adminPaymentMethodRepository.findById(method.id);
 
@@ -74,8 +66,7 @@ export async function createPaymentMethodAction(
     action: "CREATE",
     entityType: "payment_method",
     entityId: method.id,
-    after: paymentMethodAuditSnapshot(created),
-  });
+    after: paymentMethodAuditSnapshot(created)});
 
   revalidatePaymentMethodPaths();
   return successResult({ id: method.id });
@@ -106,19 +97,13 @@ export async function updatePaymentMethodAction(
       code: data.code,
       type: data.type,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       accountTitleEn: normalizeOptional(data.accountTitleEn),
-      accountTitleUr: normalizeOptional(data.accountTitleUr),
       accountNumber: normalizeOptional(data.accountNumber),
       iban: normalizeOptional(data.iban),
       bankNameEn: normalizeOptional(data.bankNameEn),
-      bankNameUr: normalizeOptional(data.bankNameUr),
       instructionsEn: normalizeOptional(data.instructionsEn),
-      instructionsUr: normalizeOptional(data.instructionsUr),
       isActive: data.isActive,
-      displayOrder: data.displayOrder,
-    },
-  });
+      displayOrder: data.displayOrder}});
 
   const updated = await adminPaymentMethodRepository.findById(data.id);
 
@@ -128,8 +113,7 @@ export async function updatePaymentMethodAction(
     entityType: "payment_method",
     entityId: data.id,
     before,
-    after: paymentMethodAuditSnapshot(updated),
-  });
+    after: paymentMethodAuditSnapshot(updated)});
 
   revalidatePaymentMethodPaths();
   return successResult({ id: data.id });
@@ -158,16 +142,14 @@ export async function deletePaymentMethodAction(
   }
 
   await prisma.paymentMethod.delete({
-    where: { id: parsed.data.id },
-  });
+    where: { id: parsed.data.id }});
 
   await auditAdminAction({
     actorId: user.id,
     action: "DELETE",
     entityType: "payment_method",
     entityId: parsed.data.id,
-    before,
-  });
+    before});
 
   revalidatePaymentMethodPaths();
   return successResult({ id: parsed.data.id });
@@ -193,8 +175,7 @@ export async function togglePaymentMethodActiveAction(
 
   await prisma.paymentMethod.update({
     where: { id: parsed.data.id },
-    data: { isActive: parsed.data.isActive },
-  });
+    data: { isActive: parsed.data.isActive }});
 
   const updated = await adminPaymentMethodRepository.findById(parsed.data.id);
 
@@ -204,14 +185,12 @@ export async function togglePaymentMethodActiveAction(
     entityType: "payment_method",
     entityId: parsed.data.id,
     before,
-    after: paymentMethodAuditSnapshot(updated),
-  });
+    after: paymentMethodAuditSnapshot(updated)});
 
   revalidatePaymentMethodPaths();
   return successResult({
     id: parsed.data.id,
-    isActive: parsed.data.isActive,
-  });
+    isActive: parsed.data.isActive});
 }
 
 export async function reorderPaymentMethodsAction(
@@ -232,8 +211,7 @@ export async function reorderPaymentMethodsAction(
     parsed.data.items.map((item) =>
       prisma.paymentMethod.update({
         where: { id: item.id },
-        data: { displayOrder: item.displayOrder },
-      }),
+        data: { displayOrder: item.displayOrder }}),
     ),
   );
 
@@ -243,12 +221,9 @@ export async function reorderPaymentMethodsAction(
     entityType: "payment_method",
     entityId: "reorder",
     before: {
-      items: beforeItems.map((method) => paymentMethodAuditSnapshot(method)),
-    },
+      items: beforeItems.map((method) => paymentMethodAuditSnapshot(method))},
     after: {
-      items: parsed.data.items,
-    },
-  });
+      items: parsed.data.items}});
 
   revalidatePaymentMethodPaths();
   return successResult({ count: parsed.data.items.length });

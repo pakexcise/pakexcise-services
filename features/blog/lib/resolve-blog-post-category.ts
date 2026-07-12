@@ -1,37 +1,24 @@
-import { pickLocalized } from "@/lib/i18n/content";
-
 type CategoryRelation = {
   nameEn: string;
-  nameUr: string;
   slug?: string;
 } | null | undefined;
 
 type BlogPostCategorySource = {
   categoryEn?: string | null;
-  categoryUr?: string | null;
   category?: CategoryRelation;
   subCategory?: CategoryRelation;
 };
 
 export function resolveBlogPostCategoryLabel(
-  locale: string,
+  _locale: string,
   post: BlogPostCategorySource,
 ): string | null {
   const category = post.category
-    ? pickLocalized(locale, {
-        en: post.category.nameEn,
-        ur: post.category.nameUr,
-      })
-    : pickLocalized(locale, {
-        en: post.categoryEn,
-        ur: post.categoryUr,
-      });
+    ? post.category.nameEn ?? ""
+    : post.categoryEn ?? "";
 
   const subCategory = post.subCategory
-    ? pickLocalized(locale, {
-        en: post.subCategory.nameEn,
-        ur: post.subCategory.nameUr,
-      })
+    ? post.subCategory.nameEn ?? ""
     : null;
 
   if (category && subCategory) {
@@ -42,32 +29,23 @@ export function resolveBlogPostCategoryLabel(
 }
 
 export function resolveBlogPostPrimaryCategoryLabel(
-  locale: string,
+  _locale: string,
   post: BlogPostCategorySource,
 ): string | null {
   const category = post.category
-    ? pickLocalized(locale, {
-        en: post.category.nameEn,
-        ur: post.category.nameUr,
-      })
-    : pickLocalized(locale, {
-        en: post.categoryEn,
-        ur: post.categoryUr,
-      });
+    ? post.category.nameEn ?? ""
+    : post.categoryEn ?? "";
 
   return category ?? null;
 }
 
 export function resolveBlogPostSubCategoryLabel(
-  locale: string,
+  _locale: string,
   post: BlogPostCategorySource,
 ): string | null {
   if (!post.subCategory) {
     return null;
   }
 
-  return pickLocalized(locale, {
-    en: post.subCategory.nameEn,
-    ur: post.subCategory.nameUr,
-  });
+  return post.subCategory.nameEn ?? "";
 }

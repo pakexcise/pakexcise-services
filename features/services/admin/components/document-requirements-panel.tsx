@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,17 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   deleteDocumentRequirementAction,
-  upsertDocumentRequirementAction,
-} from "@/features/services/admin/actions/service-actions";
+  upsertDocumentRequirementAction} from "@/features/services/admin/actions/service-actions";
 import type { DocumentPanelLabels } from "@/features/services/admin/lib/labels";
 import type { AdminServiceDetail } from "@/server/repositories/admin-service-repository";
 
+import { useRouter } from "next/navigation";
 const DEFAULT_MIME = "image/jpeg, image/png, image/webp, application/pdf";
 
 type DocumentRequirementsPanelProps = {
   serviceId: string;
   documents: AdminServiceDetail["documentReqs"];
-  regions: Array<{ id: string; nameEn: string; nameUr: string }>;
+  regions: Array<{ id: string; nameEn: string}>;
   labels: DocumentPanelLabels;
 };
 
@@ -28,9 +27,7 @@ type DocumentDraft = {
   regionId: string;
   docType: string;
   labelEn: string;
-  labelUr: string;
   instructionsEn: string;
-  instructionsUr: string;
   isRequired: boolean;
   maxSizeBytes: number;
   acceptedMimeTypes: string;
@@ -43,20 +40,16 @@ function emptyDraft(displayOrder: number): DocumentDraft {
     regionId: "",
     docType: "",
     labelEn: "",
-    labelUr: "",
     instructionsEn: "",
-    instructionsUr: "",
     isRequired: true,
     maxSizeBytes: 5242880,
     acceptedMimeTypes: DEFAULT_MIME,
     displayOrder,
-    isActive: true,
-  };
+    isActive: true};
 }
 
 function toDraft(
-  doc: AdminServiceDetail["documentReqs"][number],
-): DocumentDraft {
+  doc: AdminServiceDetail["documentReqs"][number]): DocumentDraft {
   const mimeTypes = Array.isArray(doc.acceptedMimeTypes)
     ? (doc.acceptedMimeTypes as string[]).join(", ")
     : DEFAULT_MIME;
@@ -66,28 +59,23 @@ function toDraft(
     regionId: doc.regionId ?? "",
     docType: doc.docType,
     labelEn: doc.labelEn,
-    labelUr: doc.labelUr,
     instructionsEn: doc.instructionsEn ?? "",
-    instructionsUr: doc.instructionsUr ?? "",
     isRequired: doc.isRequired,
     maxSizeBytes: doc.maxSizeBytes,
     acceptedMimeTypes: mimeTypes,
     displayOrder: doc.displayOrder,
-    isActive: doc.isActive,
-  };
+    isActive: doc.isActive};
 }
 
 export function DocumentRequirementsPanel({
   serviceId,
   documents,
   regions,
-  labels,
-}: DocumentRequirementsPanelProps) {
+  labels}: DocumentRequirementsPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [draft, setDraft] = useState<DocumentDraft>(
-    emptyDraft(documents.length + 1),
-  );
+    emptyDraft(documents.length + 1));
   const [error, setError] = useState<string | null>(null);
 
   function saveDocument() {
@@ -101,8 +89,7 @@ export function DocumentRequirementsPanel({
         acceptedMimeTypes: draft.acceptedMimeTypes
           .split(",")
           .map((item) => item.trim())
-          .filter(Boolean),
-      });
+          .filter(Boolean)});
 
       if (!result.success) {
         setError(result.error);
@@ -198,8 +185,7 @@ export function DocumentRequirementsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                regionId: event.target.value,
-              }))
+                regionId: event.target.value}))
             }
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
           >
@@ -228,8 +214,7 @@ export function DocumentRequirementsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                displayOrder: Number(event.target.value),
-              }))
+                displayOrder: Number(event.target.value)}))
             }
           />
         </div>
@@ -242,16 +227,6 @@ export function DocumentRequirementsPanel({
             }
           />
         </div>
-        <div>
-          <Label className="mb-2 block">{labels.labelUr}</Label>
-          <Input
-            value={draft.labelUr}
-            onChange={(event) =>
-              setDraft((current) => ({ ...current, labelUr: event.target.value }))
-            }
-            dir="rtl"
-          />
-        </div>
         <div className="lg:col-span-2">
           <Label className="mb-2 block">{labels.instructionsEn}</Label>
           <Textarea
@@ -259,22 +234,8 @@ export function DocumentRequirementsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                instructionsEn: event.target.value,
-              }))
+                instructionsEn: event.target.value}))
             }
-          />
-        </div>
-        <div className="lg:col-span-2">
-          <Label className="mb-2 block">{labels.instructionsUr}</Label>
-          <Textarea
-            value={draft.instructionsUr}
-            onChange={(event) =>
-              setDraft((current) => ({
-                ...current,
-                instructionsUr: event.target.value,
-              }))
-            }
-            dir="rtl"
           />
         </div>
         <div>
@@ -285,8 +246,7 @@ export function DocumentRequirementsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                maxSizeBytes: Number(event.target.value),
-              }))
+                maxSizeBytes: Number(event.target.value)}))
             }
           />
         </div>
@@ -297,8 +257,7 @@ export function DocumentRequirementsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                acceptedMimeTypes: event.target.value,
-              }))
+                acceptedMimeTypes: event.target.value}))
             }
           />
         </div>
@@ -310,8 +269,7 @@ export function DocumentRequirementsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  isRequired: event.target.checked,
-                }))
+                  isRequired: event.target.checked}))
               }
             />
             {labels.required}
@@ -323,8 +281,7 @@ export function DocumentRequirementsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  isActive: event.target.checked,
-                }))
+                  isActive: event.target.checked}))
               }
             />
             {labels.isActive}

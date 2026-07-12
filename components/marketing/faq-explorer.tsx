@@ -1,7 +1,6 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 import { FaqCollapsibleList } from "@/components/marketing/faq-collapsible-item";
@@ -25,8 +24,7 @@ function normalizeQuery(value: string) {
 }
 
 export function FaqExplorer({ groups, labels }: FaqExplorerProps) {
-  const t = useTranslations("marketing.faqs");
-  const [query, setQuery] = useState("");
+    const [query, setQuery] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
 
   const normalizedQuery = normalizeQuery(query);
@@ -107,7 +105,7 @@ export function FaqExplorer({ groups, labels }: FaqExplorerProps) {
         </div>
 
         <p className="text-bidi-auto text-sm leading-relaxed text-muted-foreground">
-          {t("resultsCount", { count: visibleCount })}
+          {`${visibleCount} questions shown`}
         </p>
       </div>
 

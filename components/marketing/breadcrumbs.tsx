@@ -1,7 +1,9 @@
 import { ChevronRight } from "lucide-react";
 
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 export type BreadcrumbItem = {
   label: string;
@@ -30,7 +32,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
               ) : null}
               {item.href && !isLast ? (
                 <Link
-                  href={item.href}
+                  href={item.href as Route}
                   className="text-bidi-auto transition-colors hover:text-foreground"
                 >
                   {item.label}

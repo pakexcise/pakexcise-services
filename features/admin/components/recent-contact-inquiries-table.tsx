@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { copy, createT } from "@/messages";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,12 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import type { ContactInquiryListItem } from "@/server/repositories/contact-inquiry-repository";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
+
 import { Badge } from "@/components/ui/badge";
 
+import Link from "next/link";
 type RecentContactInquiriesTableProps = {
   inquiries: ContactInquiryListItem[];
   title: string;
@@ -48,8 +49,8 @@ export async function RecentContactInquiriesTable({
   emptyMessage,
   viewLabel,
 }: RecentContactInquiriesTableProps) {
-  const locale = await getCurrentLocale();
-  const t = await getTranslations("admin.contactInquiries");
+  const locale = "en";
+  const t = createT(copy.admin.contactInquiries);
 
   return (
     <Card>

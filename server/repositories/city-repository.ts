@@ -7,21 +7,15 @@ const publicCitySelect = {
   slug: true,
   regionId: true,
   nameEn: true,
-  nameUr: true,
   descriptionEn: true,
-  descriptionUr: true,
   displayOrder: true,
   updatedAt: true,
   region: {
     select: {
       id: true,
       slug: true,
-      nameEn: true,
-      nameUr: true,
-    },
-  },
-  seoMeta: true,
-} as const;
+      nameEn: true}},
+  seoMeta: true} as const;
 
 export class CityRepository extends Repository {
   async listPublic() {
@@ -34,10 +28,7 @@ export class CityRepository extends Repository {
             id: true,
             regionId: true,
             slug: true,
-            nameEn: true,
-            nameUr: true,
-          },
-        }),
+            nameEn: true}}),
       [],
     );
   }
@@ -52,13 +43,9 @@ export class CityRepository extends Repository {
             id: true,
             slug: true,
             nameEn: true,
-            nameUr: true,
             descriptionEn: true,
-            descriptionUr: true,
             displayOrder: true,
-            updatedAt: true,
-          },
-        }),
+            updatedAt: true}}),
       [],
     );
   }
@@ -70,10 +57,8 @@ export class CityRepository extends Repository {
           where: {
             regionId,
             slug,
-            ...activeOnly(),
-          },
-          select: publicCitySelect,
-        }),
+            ...activeOnly()},
+          select: publicCitySelect}),
       null,
     );
   }
@@ -90,11 +75,8 @@ export class CityRepository extends Repository {
             ...activeOnly(),
             region: {
               slug: regionSlug,
-              ...activeOnly(),
-            },
-          },
-          select: publicCitySelect,
-        }),
+              ...activeOnly()}},
+          select: publicCitySelect}),
       null,
     );
   }
@@ -110,10 +92,8 @@ export class CityRepository extends Repository {
             select: {
               slug: true,
               updatedAt: true,
-              region: { select: { slug: true, isActive: true, deletedAt: true } },
-            },
-            orderBy: { updatedAt: "desc" },
-          })
+              region: { select: { slug: true, isActive: true, deletedAt: true } }},
+            orderBy: { updatedAt: "desc" }})
           .then((cities) =>
             cities
               .filter(
@@ -123,8 +103,7 @@ export class CityRepository extends Repository {
               .map((entry) => ({
                 regionSlug: entry.region.slug,
                 citySlug: entry.slug,
-                updatedAt: entry.updatedAt,
-              })),
+                updatedAt: entry.updatedAt})),
           ),
       [],
     );

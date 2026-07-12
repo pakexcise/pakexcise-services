@@ -1,15 +1,16 @@
 export function formatPkr(
   amount: number | string,
-  locale: "en" | "ur" = "en",
+  _locale: "en" = "en",
 ): string {
+  void _locale;
   const numeric =
     typeof amount === "string" ? Number.parseFloat(amount) : amount;
 
   if (!Number.isFinite(numeric)) {
-    return locale === "ur" ? "PKR 0" : "PKR 0.00";
+    return "PKR 0.00";
   }
 
-  return new Intl.NumberFormat(locale === "ur" ? "ur-PK" : "en-PK", {
+  return new Intl.NumberFormat("en-PK", {
     style: "currency",
     currency: "PKR",
     minimumFractionDigits: 2,

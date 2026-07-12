@@ -8,14 +8,12 @@ import {
   reorderSocialLinksSchema,
   socialLinkIdSchema,
   toggleSocialLinkSchema,
-  updateSocialLinkSchema,
-} from "@/lib/validations/admin-social";
+  updateSocialLinkSchema} from "@/lib/validations/admin-social";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { adminSocialRepository } from "@/server/repositories/admin-social-repository";
@@ -50,11 +48,8 @@ export async function createSocialLinkAction(
       url: data.url,
       iconName: data.iconName,
       labelEn: data.labelEn,
-      labelUr: data.labelUr,
       isActive: data.isActive,
-      displayOrder,
-    },
-  });
+      displayOrder}});
 
   const created = await adminSocialRepository.findById(link.id);
 
@@ -63,8 +58,7 @@ export async function createSocialLinkAction(
     action: "CREATE",
     entityType: "social_link",
     entityId: link.id,
-    after: socialLinkAuditSnapshot(created),
-  });
+    after: socialLinkAuditSnapshot(created)});
 
   revalidateSocialPaths();
   return successResult({ id: link.id });
@@ -96,11 +90,8 @@ export async function updateSocialLinkAction(
       url: data.url,
       iconName: data.iconName,
       labelEn: data.labelEn,
-      labelUr: data.labelUr,
       isActive: data.isActive,
-      displayOrder: data.displayOrder,
-    },
-  });
+      displayOrder: data.displayOrder}});
 
   const updated = await adminSocialRepository.findById(data.id);
 
@@ -110,8 +101,7 @@ export async function updateSocialLinkAction(
     entityType: "social_link",
     entityId: data.id,
     before,
-    after: socialLinkAuditSnapshot(updated),
-  });
+    after: socialLinkAuditSnapshot(updated)});
 
   revalidateSocialPaths();
   return successResult({ id: data.id });
@@ -136,16 +126,14 @@ export async function deleteSocialLinkAction(
   const before = socialLinkAuditSnapshot(existing);
 
   await prisma.socialLink.delete({
-    where: { id: parsed.data.id },
-  });
+    where: { id: parsed.data.id }});
 
   await auditAdminAction({
     actorId: user.id,
     action: "DELETE",
     entityType: "social_link",
     entityId: parsed.data.id,
-    before,
-  });
+    before});
 
   revalidateSocialPaths();
   return successResult({ id: parsed.data.id });
@@ -171,8 +159,7 @@ export async function toggleSocialLinkActiveAction(
 
   await prisma.socialLink.update({
     where: { id: parsed.data.id },
-    data: { isActive: parsed.data.isActive },
-  });
+    data: { isActive: parsed.data.isActive }});
 
   const updated = await adminSocialRepository.findById(parsed.data.id);
 
@@ -182,14 +169,12 @@ export async function toggleSocialLinkActiveAction(
     entityType: "social_link",
     entityId: parsed.data.id,
     before,
-    after: socialLinkAuditSnapshot(updated),
-  });
+    after: socialLinkAuditSnapshot(updated)});
 
   revalidateSocialPaths();
   return successResult({
     id: parsed.data.id,
-    isActive: parsed.data.isActive,
-  });
+    isActive: parsed.data.isActive});
 }
 
 export async function reorderSocialLinksAction(
@@ -210,8 +195,7 @@ export async function reorderSocialLinksAction(
     parsed.data.items.map((item) =>
       prisma.socialLink.update({
         where: { id: item.id },
-        data: { displayOrder: item.displayOrder },
-      }),
+        data: { displayOrder: item.displayOrder }}),
     ),
   );
 
@@ -221,12 +205,9 @@ export async function reorderSocialLinksAction(
     entityType: "social_link",
     entityId: "reorder",
     before: {
-      items: beforeItems.map((link) => socialLinkAuditSnapshot(link)),
-    },
+      items: beforeItems.map((link) => socialLinkAuditSnapshot(link))},
     after: {
-      items: parsed.data.items,
-    },
-  });
+      items: parsed.data.items}});
 
   revalidateSocialPaths();
   return successResult({ count: parsed.data.items.length });

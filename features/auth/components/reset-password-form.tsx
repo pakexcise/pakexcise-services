@@ -1,15 +1,14 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "@/i18n/navigation";
 import { resetPassword } from "@/lib/auth-client";
 
+import Link from "next/link";
 type ResetPasswordFormLabels = {
   newPassword: string;
   confirmPassword: string;

@@ -1,9 +1,11 @@
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { getServiceCardDisplayText } from "@/features/services/lib/service-regions";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 import type { PublicServiceSelect } from "@/server/repositories";
+
+import Link from "next/link";
+
+type Locale = "en";
 
 export type ServiceCardLabels = {
   learnMoreLabel: string;
@@ -26,28 +28,20 @@ export function ServiceCard({
   locale,
   labels,
   useDynamicSummary = true,
-  variant = "elevated",
-}: ServiceCardProps) {
-  const name = pickLocalized(locale, {
-    en: service.nameEn,
-    ur: service.nameUr,
-  });
+  variant = "elevated"}: ServiceCardProps) {
+  const name = service.nameEn ?? "";
 
   const { availabilityLine, summary: dynamicSummary } = getServiceCardDisplayText(
     service,
-    locale as "en" | "ur",
+    locale as Locale,
     {
       allProvincesLabel: labels.allProvincesLabel,
       conjunction: labels.conjunction,
       availableInTemplate: labels.availableInTemplate,
-      summaryTemplate: labels.summaryTemplate,
-    },
+      summaryTemplate: labels.summaryTemplate},
   );
 
-  const fallbackSummary = pickLocalized(locale, {
-    en: service.shortDescriptionEn,
-    ur: service.shortDescriptionUr,
-  });
+  const fallbackSummary = service.shortDescriptionEn ?? "";
   const summary = useDynamicSummary && dynamicSummary ? dynamicSummary : fallbackSummary;
 
   return (
@@ -70,10 +64,7 @@ export function ServiceCard({
         ) : null}
         {service.category ? (
           <p className="mb-2 text-bidi-auto text-xs leading-relaxed text-muted-foreground">
-            {pickLocalized(locale, {
-              en: service.category.nameEn,
-              ur: service.category.nameUr,
-            })}
+            {service.category.nameEn ?? ""}
           </p>
         ) : null}
         <h3 className="text-bidi-auto text-lg font-semibold leading-relaxed tracking-normal transition-colors group-hover:text-primary">

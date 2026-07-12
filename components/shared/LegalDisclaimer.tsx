@@ -1,5 +1,3 @@
-import { getTranslations } from "next-intl/server";
-
 import { disclaimerBannerClassName } from "@/lib/styles/disclaimer-banner";
 import { cn } from "@/lib/utils";
 
@@ -12,8 +10,7 @@ export async function LegalDisclaimer({
   bannerText,
   embedded = false,
 }: LegalDisclaimerProps) {
-  const t = await getTranslations("disclaimer");
-  const text = bannerText?.trim() || t("banner");
+    const text = bannerText?.trim() || "PakExcise.com is a private facilitation service and is not affiliated with any government department.";
 
   return (
     <div

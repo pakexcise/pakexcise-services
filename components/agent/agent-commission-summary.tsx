@@ -1,9 +1,9 @@
 import { ArrowRight, CircleDollarSign, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
+import Link from "next/link";
 type AgentCommissionSummaryProps = {
   pendingTotal: string;
   paidTotal: string;

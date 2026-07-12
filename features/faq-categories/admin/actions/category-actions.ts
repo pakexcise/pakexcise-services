@@ -6,14 +6,12 @@ import {
   createFaqCategorySchema,
   faqCategoryIdSchema,
   toggleFaqCategorySchema,
-  updateFaqCategorySchema,
-} from "@/lib/validations/admin-faq-category";
+  updateFaqCategorySchema} from "@/lib/validations/admin-faq-category";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { requirePermission } from "@/server/permissions/guards";
@@ -42,8 +40,7 @@ export async function createFaqCategoryAction(
 
   if (existing) {
     return errorResult("Slug is already in use", {
-      slug: ["Slug already exists"],
-    });
+      slug: ["Slug already exists"]});
   }
 
   const displayOrder =
@@ -54,21 +51,16 @@ export async function createFaqCategoryAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
-      displayOrder,
-    },
-  });
+      displayOrder}});
 
   await auditAdminAction({
     actorId: user.id,
     action: "CREATE",
     entityType: "faq_category",
     entityId: category.id,
-    after: category,
-  });
+    after: category});
 
   revalidateFaqCategoryPaths();
   return successResult({ id: category.id });
@@ -96,8 +88,7 @@ export async function updateFaqCategoryAction(
 
     if (slugTaken && slugTaken.id !== data.id) {
       return errorResult("Slug is already in use", {
-        slug: ["Slug already exists"],
-      });
+        slug: ["Slug already exists"]});
     }
   }
 
@@ -106,13 +97,9 @@ export async function updateFaqCategoryAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
-      displayOrder: data.displayOrder,
-    },
-  });
+      displayOrder: data.displayOrder}});
 
   await auditAdminAction({
     actorId: user.id,
@@ -120,8 +107,7 @@ export async function updateFaqCategoryAction(
     entityType: "faq_category",
     entityId: category.id,
     before: existing,
-    after: category,
-  });
+    after: category});
 
   revalidateFaqCategoryPaths();
   return successResult({ id: category.id });
@@ -145,8 +131,7 @@ export async function toggleFaqCategoryAction(
 
   const category = await prisma.faqCategory.update({
     where: { id: parsed.data.id },
-    data: { isActive: parsed.data.isActive },
-  });
+    data: { isActive: parsed.data.isActive }});
 
   await auditAdminAction({
     actorId: user.id,
@@ -154,8 +139,7 @@ export async function toggleFaqCategoryAction(
     entityType: "faq_category",
     entityId: category.id,
     before: { isActive: existing.isActive },
-    after: { isActive: category.isActive },
-  });
+    after: { isActive: category.isActive }});
 
   revalidateFaqCategoryPaths();
   return successResult({ id: category.id });
@@ -184,16 +168,14 @@ export async function deleteFaqCategoryAction(
   }
 
   await prisma.faqCategory.delete({
-    where: { id: parsed.data.id },
-  });
+    where: { id: parsed.data.id }});
 
   await auditAdminAction({
     actorId: user.id,
     action: "DELETE",
     entityType: "faq_category",
     entityId: parsed.data.id,
-    before: existing,
-  });
+    before: existing});
 
   revalidateFaqCategoryPaths();
   return successResult({ id: parsed.data.id });

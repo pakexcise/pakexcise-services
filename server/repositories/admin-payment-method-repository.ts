@@ -9,22 +9,17 @@ export const adminPaymentMethodSelect = {
   code: true,
   type: true,
   nameEn: true,
-  nameUr: true,
   accountTitleEn: true,
-  accountTitleUr: true,
   accountNumber: true,
   iban: true,
   bankNameEn: true,
-  bankNameUr: true,
   instructionsEn: true,
-  instructionsUr: true,
   qrCodeR2Key: true,
   qrCodeMimeType: true,
   isActive: true,
   displayOrder: true,
   createdAt: true,
-  updatedAt: true,
-} as const satisfies Prisma.PaymentMethodSelect;
+  updatedAt: true} as const satisfies Prisma.PaymentMethodSelect;
 
 export type AdminPaymentMethodItem = Prisma.PaymentMethodGetPayload<{
   select: typeof adminPaymentMethodSelect;
@@ -34,23 +29,20 @@ export class AdminPaymentMethodRepository extends Repository {
   async listAll(): Promise<AdminPaymentMethodItem[]> {
     return this.db.paymentMethod.findMany({
       orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
-      select: adminPaymentMethodSelect,
-    });
+      select: adminPaymentMethodSelect});
   }
 
   async listActive(): Promise<AdminPaymentMethodItem[]> {
     return this.db.paymentMethod.findMany({
       where: { isActive: true },
       orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
-      select: adminPaymentMethodSelect,
-    });
+      select: adminPaymentMethodSelect});
   }
 
   async findById(id: string): Promise<AdminPaymentMethodItem | null> {
     return this.db.paymentMethod.findUnique({
       where: { id },
-      select: adminPaymentMethodSelect,
-    });
+      select: adminPaymentMethodSelect});
   }
 
   async findActiveByIds(ids: string[]): Promise<AdminPaymentMethodItem[]> {
@@ -61,17 +53,14 @@ export class AdminPaymentMethodRepository extends Repository {
     return this.db.paymentMethod.findMany({
       where: {
         id: { in: ids },
-        isActive: true,
-      },
-      select: adminPaymentMethodSelect,
-    });
+        isActive: true},
+      select: adminPaymentMethodSelect});
   }
 
   async getNextDisplayOrder(): Promise<number> {
     const last = await this.db.paymentMethod.findFirst({
       orderBy: { displayOrder: "desc" },
-      select: { displayOrder: true },
-    });
+      select: { displayOrder: true }});
 
     return (last?.displayOrder ?? 0) + 1;
   }

@@ -35,6 +35,19 @@ export async function getSessionTwoFactorVerifiedAt(
   return record?.twoFactorVerifiedAt ?? null;
 }
 
+export async function getSessionImpersonationMeta(sessionId: string): Promise<{
+  impersonatedBy: string | null;
+}> {
+  const record = await prisma.session.findUnique({
+    where: { id: sessionId },
+    select: { impersonatedBy: true },
+  });
+
+  return {
+    impersonatedBy: record?.impersonatedBy ?? null,
+  };
+}
+
 export async function markSessionTwoFactorVerified(sessionId: string): Promise<void> {
   await prisma.session.update({
     where: { id: sessionId },

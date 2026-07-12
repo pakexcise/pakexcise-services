@@ -1,6 +1,5 @@
 export type LocalizedTextPair = {
   en: string;
-  ur: string;
 };
 
 export type HomeSectionKey =
@@ -22,54 +21,37 @@ export type HomeSectionConfig = {
   isActive: boolean;
   displayOrder: number;
   titleEn: string;
-  titleUr: string;
   descriptionEn: string;
-  descriptionUr: string;
 };
 
 export type HomeContentBlock = {
   titleEn: string;
-  titleUr: string;
   descriptionEn: string;
-  descriptionUr: string;
 };
 
 export type HomeHeroSettings = {
   badgeEn: string;
-  badgeUr: string;
   titleEn: string;
-  titleUr: string;
   descriptionEn: string;
-  descriptionUr: string;
   browseCtaEn: string;
-  browseCtaUr: string;
   whatsappCtaEn: string;
-  whatsappCtaUr: string;
   requestCtaEn: string;
-  requestCtaUr: string;
   trustBadges: LocalizedTextPair[];
   processCards: HomeContentBlock[];
 };
 
 export type HomeAboutSettings = {
   titleEn: string;
-  titleUr: string;
   descriptionEn: string;
-  descriptionUr: string;
   additionalEn: string;
-  additionalUr: string;
   ctaEn: string;
-  ctaUr: string;
   trustCards: HomeContentBlock[];
 };
 
 export type HomePageSeoSettings = {
   metaTitleEn: string;
-  metaTitleUr: string;
   metaDescriptionEn: string;
-  metaDescriptionUr: string;
   h1En: string;
-  h1Ur: string;
 };
 
 export type HomePageLimits = {
@@ -83,14 +65,10 @@ export type HomePageLimits = {
 export type HomeVehicleVisualSettings = {
   imagePath: string;
   imageAltEn: string;
-  imageAltUr: string;
   featurePoints: HomeContentBlock[];
   browseCtaEn: string;
-  browseCtaUr: string;
   whatsappCtaEn: string;
-  whatsappCtaUr: string;
   requestCtaEn: string;
-  requestCtaUr: string;
 };
 
 export type HomePageSettings = {
@@ -98,14 +76,12 @@ export type HomePageSettings = {
   hero: HomeHeroSettings;
   sections: Record<HomeSectionKey, HomeSectionConfig>;
   optionsNoteEn: string;
-  optionsNoteUr: string;
   howItWorksSteps: HomeContentBlock[];
   whyChooseItems: HomeContentBlock[];
   vehicleVisual: HomeVehicleVisualSettings;
   about: HomeAboutSettings;
   limits: HomePageLimits;
   footerDescriptionEn: string;
-  footerDescriptionUr: string;
   seo: HomePageSeoSettings;
 };
 

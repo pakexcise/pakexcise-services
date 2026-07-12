@@ -1,12 +1,12 @@
 import type { VehiclePlateType } from "@prisma/client";
 
-import type { Locale } from "@/i18n/config";
 import { getPublicPlateFormatImagePath } from "@/features/regions/lib/plate-format-image-paths";
-import { pickLocalized } from "@/lib/i18n/content";
 import type {
   PublicRegionPlateFormat,
   PublicRegionPlateFormatSection,
 } from "@/server/repositories/region-plate-format-repository";
+
+type Locale = "en";
 
 export type MappedRegionPlateFormat = {
   id: string;
@@ -38,7 +38,7 @@ function parseStringArray(value: unknown): string[] {
 
 function parseFaqItems(
   value: unknown,
-  locale: Locale,
+  _locale: Locale,
 ): Array<{ question: string; answer: string }> {
   if (!Array.isArray(value)) {
     return [];
@@ -51,14 +51,10 @@ function parseFaqItems(
       }
 
       const record = item as Record<string, unknown>;
-      const question = pickLocalized(locale, {
-        en: typeof record.questionEn === "string" ? record.questionEn : "",
-        ur: typeof record.questionUr === "string" ? record.questionUr : "",
-      });
-      const answer = pickLocalized(locale, {
-        en: typeof record.answerEn === "string" ? record.answerEn : "",
-        ur: typeof record.answerUr === "string" ? record.answerUr : "",
-      });
+      const question =
+        typeof record.questionEn === "string" ? record.questionEn : "";
+      const answer =
+        typeof record.answerEn === "string" ? record.answerEn : "";
 
       if (!question || !answer) {
         return null;
@@ -71,32 +67,18 @@ function parseFaqItems(
 
 export function mapRegionPlateFormat(
   format: PublicRegionPlateFormat,
-  locale: Locale,
+  _locale: Locale,
 ): MappedRegionPlateFormat {
   return {
     id: format.id,
     vehicleType: format.vehicleType,
-    title: pickLocalized(locale, {
-      en: format.titleEn,
-      ur: format.titleUr,
-    }),
+    title: format.titleEn ?? "",
     formats: parseStringArray(format.formatsJson),
-    description: pickLocalized(locale, {
-      en: format.descriptionEn,
-      ur: format.descriptionUr,
-    }) || null,
+    description: (format.descriptionEn ?? "") || null,
     relatedServiceSlugs: parseStringArray(format.relatedServiceSlugs),
     imageUrl: format.imageR2Key ? getPublicPlateFormatImagePath(format.id) : null,
-    imageAlt:
-      pickLocalized(locale, {
-        en: format.imageAltEn,
-        ur: format.imageAltUr,
-      }) || null,
-    imageCaption:
-      pickLocalized(locale, {
-        en: format.imageCaptionEn,
-        ur: format.imageCaptionUr,
-      }) || null,
+    imageAlt: (format.imageAltEn ?? "") || null,
+    imageCaption: (format.imageCaptionEn ?? "") || null,
     isFeatured: format.isFeatured,
   };
 }
@@ -116,22 +98,19 @@ export function mapRegionPlateFormatsSection(input: {
   }
 
   const title =
-    pickLocalized(input.locale, {
-      en: input.section?.sectionTitleEn,
-      ur: input.section?.sectionTitleUr,
-    }) || input.fallbacks.sectionTitle.replace("__REGION__", input.regionName);
+    (input.section?.sectionTitleEn ?? "") ||
+    input.fallbacks.sectionTitle.replace("__REGION__", input.regionName);
 
   const description =
-    pickLocalized(input.locale, {
-      en: input.section?.sectionDescEn,
-      ur: input.section?.sectionDescUr,
-    }) ||
+    (input.section?.sectionDescEn ?? "") ||
     input.fallbacks.sectionDescription.replace("__REGION__", input.regionName);
 
   return {
     title,
     description,
     faqItems: parseFaqItems(input.section?.faqJson, input.locale),
-    formats: input.formats.map((format) => mapRegionPlateFormat(format, input.locale)),
+    formats: input.formats.map((format) =>
+      mapRegionPlateFormat(format, input.locale),
+    ),
   };
 }

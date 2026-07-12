@@ -1,23 +1,21 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { syncServiceAvailabilityAction } from "@/features/services/admin/actions/service-availability-actions";
 import { cn } from "@/lib/utils";
 
+import { useRouter } from "next/navigation";
 type ServiceOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
   slug: string;
 };
 
 type RegionOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
   slug: string;
 };
 
@@ -25,7 +23,7 @@ type ServiceAvailabilityMatrixProps = {
   services: ServiceOption[];
   regions: RegionOption[];
   initialAssignments: Record<string, string[]>;
-  locale: "en" | "ur";
+  locale: "en";
   labels: {
     service: string;
     save: string;
@@ -43,8 +41,7 @@ export function ServiceAvailabilityMatrix({
   regions,
   initialAssignments,
   locale,
-  labels,
-}: ServiceAvailabilityMatrixProps) {
+  labels}: ServiceAvailabilityMatrixProps) {
   const router = useRouter();
   const [assignments, setAssignments] =
     useState<Record<string, string[]>>(initialAssignments);
@@ -89,8 +86,7 @@ export function ServiceAvailabilityMatrix({
     startTransition(async () => {
       const result = await syncServiceAvailabilityAction({
         serviceId,
-        regionIds: assignments[serviceId] ?? [],
-      });
+        regionIds: assignments[serviceId] ?? []});
 
       setPendingServiceId(null);
 
@@ -138,7 +134,7 @@ export function ServiceAvailabilityMatrix({
                   key={region.id}
                   className="px-3 py-3 text-center font-medium whitespace-nowrap"
                 >
-                  {locale === "ur" ? region.nameUr : region.nameEn}
+                  {region.nameEn}
                 </th>
               ))}
               <th className="px-4 py-3 text-end font-medium"> </th>
@@ -153,7 +149,7 @@ export function ServiceAvailabilityMatrix({
               return (
                 <tr key={service.id} className="border-b last:border-b-0">
                   <td className="sticky start-0 z-10 bg-background px-4 py-3 font-medium">
-                    {locale === "ur" ? service.nameUr : service.nameEn}
+                    {service.nameEn}
                   </td>
                   {regions.map((region) => {
                     const checked = (assignments[service.id] ?? []).includes(

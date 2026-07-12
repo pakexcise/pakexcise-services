@@ -7,23 +7,17 @@ import { prisma } from "@/server/db/client";
 function normalizeSeoInput(seo: SeoMetaInput) {
   return {
     metaTitleEn: seo.metaTitleEn || null,
-    metaTitleUr: seo.metaTitleUr || null,
     metaDescriptionEn: seo.metaDescriptionEn || null,
-    metaDescriptionUr: seo.metaDescriptionUr || null,
     h1En: seo.h1En || null,
-    h1Ur: seo.h1Ur || null,
     canonicalUrl: seo.canonicalUrl || null,
     ogTitleEn: seo.ogTitleEn || null,
-    ogTitleUr: seo.ogTitleUr || null,
     ogDescriptionEn: seo.ogDescriptionEn || null,
-    ogDescriptionUr: seo.ogDescriptionUr || null,
     ogImage: seo.ogImage || null,
     twitterCard: seo.twitterCard ?? "summary_large_image",
     robotsIndex: seo.robotsIndex,
     robotsFollow: seo.robotsFollow,
     faqSchemaJson: toPrismaNullableJson(seo.faqSchemaJson),
-    breadcrumbJson: toPrismaNullableJson(seo.breadcrumbJson),
-  };
+    breadcrumbJson: toPrismaNullableJson(seo.breadcrumbJson)};
 }
 
 export async function upsertBlogSeo(
@@ -43,9 +37,7 @@ export async function upsertBlogSeo(
     create: {
       pageKey: `blog:${slug}`,
       blogPostId,
-      ...data,
-    },
-  });
+      ...data}});
 }
 
 export async function upsertGuideSeo(
@@ -65,9 +57,7 @@ export async function upsertGuideSeo(
     create: {
       pageKey: `guide:${slug}`,
       guideId,
-      ...data,
-    },
-  });
+      ...data}});
 }
 
 export async function upsertLegalPageSeo(
@@ -87,9 +77,7 @@ export async function upsertLegalPageSeo(
     create: {
       pageKey: `legal:${slug}`,
       legalPageId,
-      ...data,
-    },
-  });
+      ...data}});
 }
 
 export async function upsertStaticPageSeo(
@@ -107,9 +95,7 @@ export async function upsertStaticPageSeo(
     update: data,
     create: {
       pageKey,
-      ...data,
-    },
-  });
+      ...data}});
 }
 
 export async function upsertStandaloneSeo(
@@ -123,7 +109,5 @@ export async function upsertStandaloneSeo(
     where: { id },
     data: {
       pageKey,
-      ...data,
-    },
-  });
+      ...data}});
 }

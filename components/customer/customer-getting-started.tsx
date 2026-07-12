@@ -1,7 +1,8 @@
 import { ArrowRight, FileSearch, FileText, Upload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type CustomerGettingStartedProps = {
   title: string;
@@ -61,7 +62,7 @@ export function CustomerGettingStarted({
 
       <div className="mt-8 flex justify-center">
         <Button asChild size="lg">
-          <Link href={ctaHref}>
+          <Link href={ctaHref as Route}>
             {cta}
             <ArrowRight className="size-4" aria-hidden="true" />
           </Link>

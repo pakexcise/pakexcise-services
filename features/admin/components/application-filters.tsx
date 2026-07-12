@@ -1,16 +1,17 @@
-import { getTranslations } from "next-intl/server";
+import { copy, createT } from "@/messages";
+import { getTranslations } from "@/lib/i18n/t";
 import type { ApplicationStatus } from "@prisma/client";
 
 import { applicationStatusOrder } from "@/features/admin/lib/application-status";
 import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type ServiceOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type ApplicationFiltersProps = {
@@ -70,16 +71,14 @@ export async function ApplicationFilters({
   currentDateTo,
   services,
   locale,
-  applicationsBasePath = "/admin/applications",
-}: ApplicationFiltersProps) {
-  const t = await getTranslations("admin");
+  applicationsBasePath = "/admin/applications"}: ApplicationFiltersProps) {
+  const t = createT(copy.admin);
 
   const sharedParams = {
     search: currentSearch,
     serviceId: currentServiceId,
     dateFrom: currentDateFrom,
-    dateTo: currentDateTo,
-  };
+    dateTo: currentDateTo};
 
   return (
     <div className="space-y-4">
@@ -97,7 +96,7 @@ export async function ApplicationFilters({
           <option value="">{t("applications.filters.allServices")}</option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
-              {locale === "ur" ? service.nameUr : service.nameEn}
+              {service.nameEn}
             </option>
           ))}
         </select>
@@ -121,7 +120,9 @@ export async function ApplicationFilters({
             {t("search")}
           </Button>
           <Button asChild variant="outline">
-            <Link href={applicationsBasePath}>{t("applications.filters.reset")}</Link>
+            <Link href={applicationsBasePath as Route}>
+              {t("applications.filters.reset")}
+            </Link>
           </Button>
         </div>
       </form>
@@ -132,7 +133,9 @@ export async function ApplicationFilters({
           size="sm"
           variant={currentStatus ? "outline" : "default"}
         >
-          <Link href={buildFilterHref(sharedParams, applicationsBasePath)}>
+          <Link
+            href={buildFilterHref(sharedParams, applicationsBasePath) as Route}
+          >
             {t("applications.filters.all")}
           </Link>
         </Button>
@@ -144,13 +147,14 @@ export async function ApplicationFilters({
             variant={currentStatus === status ? "default" : "outline"}
           >
             <Link
-              href={buildFilterHref(
-                {
-                  ...sharedParams,
-                  status,
-                },
-                applicationsBasePath,
-              )}
+              href={
+                buildFilterHref(
+                  {
+                    ...sharedParams,
+                    status},
+                  applicationsBasePath,
+                ) as Route
+              }
             >
               {t(getAdminApplicationStatusLabelKey(status))}
             </Link>

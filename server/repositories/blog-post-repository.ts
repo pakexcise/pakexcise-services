@@ -7,50 +7,37 @@ const publishedPostSelect = {
   id: true,
   slug: true,
   titleEn: true,
-  titleUr: true,
   excerptEn: true,
-  excerptUr: true,
   contentEn: true,
-  contentUr: true,
   categoryEn: true,
-  categoryUr: true,
   categoryId: true,
   subCategoryId: true,
   tags: true,
   authorNameEn: true,
-  authorNameUr: true,
   readingTimeMinutes: true,
   featuredImagePath: true,
   featuredImageTitleEn: true,
-  featuredImageTitleUr: true,
   featuredImageAltEn: true,
-  featuredImageAltUr: true,
   featuredImageCaptionEn: true,
-  featuredImageCaptionUr: true,
   focusKeywords: true,
   isFeatured: true,
   showTableOfContents: true,
   contentFaqs: true,
   ctaTitleEn: true,
-  ctaTitleUr: true,
   ctaDescriptionEn: true,
-  ctaDescriptionUr: true,
   ctaWhatsappLabelEn: true,
-  ctaWhatsappLabelUr: true,
   ctaRequestLabelEn: true,
-  ctaRequestLabelUr: true,
   ctaAccountLabelEn: true,
-  ctaAccountLabelUr: true,
   relatedServiceIds: true,
   attachedFaqIds: true,
   publishedAt: true,
   updatedAt: true,
   seoMeta: true,
   category: {
-    select: { id: true, nameEn: true, nameUr: true, slug: true },
+    select: { id: true, nameEn: true, slug: true },
   },
   subCategory: {
-    select: { id: true, nameEn: true, nameUr: true, slug: true },
+    select: { id: true, nameEn: true, slug: true },
   },
 } as const;
 
@@ -58,29 +45,24 @@ const publishedCardSelect = {
   id: true,
   slug: true,
   titleEn: true,
-  titleUr: true,
   excerptEn: true,
-  excerptUr: true,
   categoryEn: true,
-  categoryUr: true,
   categoryId: true,
   subCategoryId: true,
   authorNameEn: true,
-  authorNameUr: true,
   readingTimeMinutes: true,
   featuredImagePath: true,
   featuredImageAltEn: true,
-  featuredImageAltUr: true,
   isFeatured: true,
   tags: true,
   publishedAt: true,
   updatedAt: true,
   seoMeta: true,
   category: {
-    select: { id: true, slug: true, nameEn: true, nameUr: true },
+    select: { id: true, slug: true, nameEn: true },
   },
   subCategory: {
-    select: { id: true, slug: true, nameEn: true, nameUr: true },
+    select: { id: true, slug: true, nameEn: true },
   },
 } as const;
 
@@ -114,9 +96,7 @@ export class BlogPostRepository extends Repository {
       const q = filters.q.trim();
       where.OR = [
         { titleEn: { contains: q, mode: "insensitive" } },
-        { titleUr: { contains: q, mode: "insensitive" } },
         { excerptEn: { contains: q, mode: "insensitive" } },
-        { excerptUr: { contains: q, mode: "insensitive" } },
       ];
     }
 
@@ -192,7 +172,6 @@ export class BlogPostRepository extends Repository {
       select: {
         slug: true,
         nameEn: true,
-        nameUr: true,
       },
     });
   }

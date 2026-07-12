@@ -11,9 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 export type ContactSupportOptionsLabels = {
   sectionTitle: string;
@@ -109,7 +111,7 @@ export function ContactSupportOptionsSection({
           </CardHeader>
           <CardContent className="pt-0">
             <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href={requestHref}>{labels.requestCta}</Link>
+              <Link href={requestHref as Route}>{labels.requestCta}</Link>
             </Button>
           </CardContent>
         </Card>

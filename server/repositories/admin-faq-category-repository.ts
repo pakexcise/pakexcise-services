@@ -12,9 +12,7 @@ export const adminFaqCategoryDetailSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   descriptionEn: true,
-  descriptionUr: true,
   isActive: true,
   displayOrder: true,
   createdAt: true,
@@ -34,7 +32,6 @@ export const adminFaqCategoryListSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   isActive: true,
   displayOrder: true,
   updatedAt: true,
@@ -72,7 +69,7 @@ export class AdminFaqCategoryRepository extends Repository {
       const query = filters.q.trim();
       where.OR = [
         { nameEn: { contains: query, mode: "insensitive" } },
-        { nameUr: { contains: query, mode: "insensitive" } },
+
         { slug: { contains: query, mode: "insensitive" } },
       ];
     }

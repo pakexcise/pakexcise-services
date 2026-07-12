@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Car,
   CreditCard,
@@ -9,7 +10,6 @@ import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import {
   DEFAULT_HOME_VEHICLE_VISUAL_IMAGE,
   HOME_VEHICLE_VISUAL_IMAGE_HEIGHT,

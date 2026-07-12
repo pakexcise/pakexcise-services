@@ -7,8 +7,8 @@ import {
   toggleGuideAction,
 } from "@/features/guides/admin/actions/guide-actions";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/navigation";
-
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 type GuideListActionsProps = {
   id: string;
   isPublished: boolean;

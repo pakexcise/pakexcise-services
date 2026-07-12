@@ -7,14 +7,12 @@ import {
   deleteRegionNumberPlateFormatSchema,
   reorderRegionNumberPlateFormatsSchema,
   upsertRegionNumberPlateFormatSchema,
-  upsertRegionPlateFormatSectionSchema,
-} from "@/lib/validations/admin-region-plate-format";
+  upsertRegionPlateFormatSectionSchema} from "@/lib/validations/admin-region-plate-format";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
 import { adminRegionRepository } from "@/server/repositories/admin-region-repository";
@@ -49,32 +47,24 @@ export async function upsertRegionPlateFormatSectionAction(
     where: { regionId: parsed.data.regionId },
     update: {
       sectionTitleEn: parsed.data.sectionTitleEn ?? null,
-      sectionTitleUr: parsed.data.sectionTitleUr ?? null,
       sectionDescEn: parsed.data.sectionDescEn ?? null,
-      sectionDescUr: parsed.data.sectionDescUr ?? null,
       faqJson: toPrismaNullableJson(parsed.data.faqJson),
       isActive: parsed.data.isActive,
-      showOnRegionPage: parsed.data.showOnRegionPage,
-    },
+      showOnRegionPage: parsed.data.showOnRegionPage},
     create: {
       regionId: parsed.data.regionId,
       sectionTitleEn: parsed.data.sectionTitleEn ?? null,
-      sectionTitleUr: parsed.data.sectionTitleUr ?? null,
       sectionDescEn: parsed.data.sectionDescEn ?? null,
-      sectionDescUr: parsed.data.sectionDescUr ?? null,
       faqJson: toPrismaNullableJson(parsed.data.faqJson),
       isActive: parsed.data.isActive,
-      showOnRegionPage: parsed.data.showOnRegionPage,
-    },
-  });
+      showOnRegionPage: parsed.data.showOnRegionPage}});
 
   await auditAdminAction({
     actorId: user.id,
     action: "UPDATE",
     entityType: "region_plate_format_section",
     entityId: section.id,
-    after: parsed.data,
-  });
+    after: parsed.data});
 
   revalidateRegionPlatePaths(region.slug);
 
@@ -101,26 +91,20 @@ export async function upsertRegionNumberPlateFormatAction(
     regionId: parsed.data.regionId,
     vehicleType: parsed.data.vehicleType as VehiclePlateType,
     titleEn: parsed.data.titleEn,
-    titleUr: parsed.data.titleUr,
     formatsJson: parsed.data.formats,
     descriptionEn: parsed.data.descriptionEn ?? null,
-    descriptionUr: parsed.data.descriptionUr ?? null,
     relatedServiceSlugs: toPrismaNullableJson(parsed.data.relatedServiceSlugs),
     imageAltEn: parsed.data.imageAltEn ?? null,
-    imageAltUr: parsed.data.imageAltUr ?? null,
     imageCaptionEn: parsed.data.imageCaptionEn ?? null,
-    imageCaptionUr: parsed.data.imageCaptionUr ?? null,
     isActive: parsed.data.isActive,
     isFeatured: parsed.data.isFeatured,
     showOnRegionPage: parsed.data.showOnRegionPage,
-    displayOrder: parsed.data.displayOrder,
-  };
+    displayOrder: parsed.data.displayOrder};
 
   const format = parsed.data.id
     ? await prisma.regionNumberPlateFormat.update({
         where: { id: parsed.data.id },
-        data,
-      })
+        data})
     : await prisma.regionNumberPlateFormat.create({ data });
 
   await auditAdminAction({
@@ -128,8 +112,7 @@ export async function upsertRegionNumberPlateFormatAction(
     action: parsed.data.id ? "UPDATE" : "CREATE",
     entityType: "region_number_plate_format",
     entityId: format.id,
-    after: parsed.data,
-  });
+    after: parsed.data});
 
   revalidateRegionPlatePaths(region.slug);
 
@@ -152,9 +135,7 @@ export async function deleteRegionNumberPlateFormatAction(
       id: true,
       regionId: true,
       imageR2Key: true,
-      region: { select: { slug: true } },
-    },
-  });
+      region: { select: { slug: true } }}});
 
   if (!existing) {
     return errorResult("Number plate format not found");
@@ -162,8 +143,7 @@ export async function deleteRegionNumberPlateFormatAction(
 
   await prisma.regionNumberPlateFormat.update({
     where: { id: existing.id },
-    data: { deletedAt: new Date(), isActive: false },
-  });
+    data: { deletedAt: new Date(), isActive: false }});
 
   if (existing.imageR2Key) {
     const { deleteStoredObject } = await import("@/server/storage/object-storage");
@@ -174,8 +154,7 @@ export async function deleteRegionNumberPlateFormatAction(
     actorId: user.id,
     action: "DELETE",
     entityType: "region_number_plate_format",
-    entityId: existing.id,
-  });
+    entityId: existing.id});
 
   revalidateRegionPlatePaths(existing.region.slug);
 
@@ -202,8 +181,7 @@ export async function reorderRegionNumberPlateFormatsAction(
     parsed.data.orderedIds.map((id, index) =>
       prisma.regionNumberPlateFormat.updateMany({
         where: { id, regionId: parsed.data.regionId, deletedAt: null },
-        data: { displayOrder: index + 1 },
-      }),
+        data: { displayOrder: index + 1 }}),
     ),
   );
 
@@ -212,8 +190,7 @@ export async function reorderRegionNumberPlateFormatsAction(
     action: "UPDATE",
     entityType: "region_number_plate_format",
     entityId: parsed.data.regionId,
-    after: { orderedIds: parsed.data.orderedIds },
-  });
+    after: { orderedIds: parsed.data.orderedIds }});
 
   revalidateRegionPlatePaths(region.slug);
 

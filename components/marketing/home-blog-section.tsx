@@ -3,17 +3,14 @@ import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type HomeBlogSectionProps = {
   title: string;
   description: string;
   posts: Array<{
     slug: string;
     titleEn: string;
-    titleUr: string;
     excerptEn?: string | null;
-    excerptUr?: string | null;
     publishedAt?: Date | null;
     seoMeta?: { ogImage?: string | null } | null;
   }>;
@@ -34,8 +31,7 @@ export function HomeBlogSection({
   viewAllLabel,
   emptyMessage,
   tone = "default",
-  className,
-}: HomeBlogSectionProps) {
+  className}: HomeBlogSectionProps) {
   return (
     <HomeSectionShell tone={tone} className={className}>
       <SectionHeader

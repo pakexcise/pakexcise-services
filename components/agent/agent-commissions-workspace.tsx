@@ -85,7 +85,7 @@ type AgentCommissionsWorkspaceLabels = {
 type AgentCommissionsWorkspaceProps = {
   commissions: AgentCommissionRow[];
   commissionSummary: string;
-  locale: "en" | "ur";
+  locale: "en";
   labels: AgentCommissionsWorkspaceLabels;
   payoutMethod: AgentPayoutMethodValues;
   hasPayoutMethod: boolean;
@@ -96,8 +96,8 @@ type StatusFilter = "all" | "PENDING" | "PAID" | "CANCELLED";
 
 const STATUS_FILTERS: StatusFilter[] = ["all", "PENDING", "PAID", "CANCELLED"];
 
-function formatAmount(locale: "en" | "ur", amount: string) {
-  return new Intl.NumberFormat(locale === "ur" ? "ur-PK" : "en-PK", {
+function formatAmount(locale: "en", amount: string) {
+  return new Intl.NumberFormat("en-PK", {
     style: "currency",
     currency: "PKR",
   }).format(Number(amount));
@@ -210,7 +210,7 @@ export function AgentCommissionsWorkspace({
     });
   }
 
-  const dateFormatter = new Intl.DateTimeFormat(locale === "ur" ? "ur-PK" : "en-PK", {
+  const dateFormatter = new Intl.DateTimeFormat("en-PK", {
     dateStyle: "medium",
   });
 

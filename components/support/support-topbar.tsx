@@ -1,14 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LogOut, Menu } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n/t";
 import { useTransition } from "react";
 
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth-client";
 
 type SupportTopbarProps = {
@@ -59,7 +59,6 @@ export function SupportTopbar({
           <p className="truncate text-sm font-medium">{userName}</p>
           <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
         </div>
-        <LanguageSwitcher />
         <ThemeToggle />
         <Button
           type="button"

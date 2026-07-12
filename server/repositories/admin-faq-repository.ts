@@ -12,14 +12,12 @@ const faqCategorySelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
 } as const;
 
 export const adminFaqListSelect = {
   id: true,
   categoryId: true,
   questionEn: true,
-  questionUr: true,
   isActive: true,
   isFeatured: true,
   displayOrder: true,
@@ -35,7 +33,6 @@ export const adminFaqListSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   region: {
@@ -43,7 +40,6 @@ export const adminFaqListSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
 } as const satisfies Prisma.FAQSelect;
@@ -52,11 +48,8 @@ export const adminFaqDetailSelect = {
   id: true,
   categoryId: true,
   questionEn: true,
-  questionUr: true,
   answerEn: true,
-  answerUr: true,
   seoKeywordsEn: true,
-  seoKeywordsUr: true,
   isActive: true,
   isFeatured: true,
   displayOrder: true,
@@ -73,7 +66,6 @@ export const adminFaqDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   region: {
@@ -81,7 +73,6 @@ export const adminFaqDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
 } as const satisfies Prisma.FAQSelect;
@@ -137,13 +128,13 @@ export class AdminFaqRepository extends Repository {
       const query = filters.q.trim();
       where.OR = [
         { questionEn: { contains: query, mode: "insensitive" } },
-        { questionUr: { contains: query, mode: "insensitive" } },
+
         { answerEn: { contains: query, mode: "insensitive" } },
-        { answerUr: { contains: query, mode: "insensitive" } },
+
         { seoKeywordsEn: { contains: query, mode: "insensitive" } },
-        { seoKeywordsUr: { contains: query, mode: "insensitive" } },
+
         { faqCategory: { nameEn: { contains: query, mode: "insensitive" } } },
-        { faqCategory: { nameUr: { contains: query, mode: "insensitive" } } },
+        { faqCategory: { nameEn: { contains: query, mode: "insensitive" } } },
         { faqCategory: { slug: { contains: query, mode: "insensitive" } } },
       ];
     }

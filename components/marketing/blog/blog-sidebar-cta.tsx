@@ -1,7 +1,7 @@
+import Link from "next/link";
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
-import { Link } from "@/i18n/navigation";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { cn } from "@/lib/utils";
 

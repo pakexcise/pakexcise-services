@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
-import { Link } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { checkPhoneOrCnicLoginEligibility } from "@/features/auth/actions/check-phone-or-cnic-login-eligibility";
@@ -30,10 +28,13 @@ import {
   isValidCnicInput,
   isValidLoginIdentifier,
 } from "@/lib/validations/cnic";
+import type { Route } from "next";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   formatPakistanPhoneInput,
   isValidPakistanPhone,
-  normalizePakistanPhone,
+  normalizePakistanPhone
 } from "@/lib/validations/phone";
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -188,7 +189,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             return;
           }
 
-          router.push(buildAuthRedirectUrl(callbackUrl));
+          router.push(buildAuthRedirectUrl(callbackUrl) as Route);
           router.refresh();
           return;
         }
@@ -275,7 +276,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
           return;
         }
 
-        router.push(buildPostSignupRedirectUrl({ intent, callbackUrl }));
+        router.push(buildPostSignupRedirectUrl({ intent, callbackUrl }) as Route);
         router.refresh();
       } catch (submitError) {
         setError(
@@ -304,7 +305,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             <p className="text-foreground">
               {labels.signupPrompt}{" "}
               <Link
-                href={buildSignupUrl({ callbackUrl, intent })}
+                href={buildSignupUrl({ callbackUrl, intent }) as Route}
                 className="font-medium text-primary hover:underline"
               >
                 {labels.signupLink}
@@ -315,7 +316,7 @@ export function PhoneOtpAuthForm({ mode, labels }: PhoneOtpAuthFormProps) {
             <p className="text-foreground">
               {labels.loginPrompt}{" "}
               <Link
-                href={buildLoginUrl({ callbackUrl, intent })}
+                href={buildLoginUrl({ callbackUrl, intent }) as Route}
                 className="font-medium text-primary hover:underline"
               >
                 {labels.loginLink}

@@ -1,7 +1,5 @@
-import type { Locale } from "@/i18n/config";
 import { parseFieldConditional } from "@/features/applications/lib/evaluate-conditional-fields";
 import { getServiceRegionLabel } from "@/features/services/lib/service-regions";
-import { pickLocalized } from "@/lib/i18n/content";
 import type {
   ApplyDocumentRequirement,
   ApplyFormFieldConfig,
@@ -9,9 +7,11 @@ import type {
 } from "@/features/applications/types";
 import type { PublicServiceApplyConfig } from "@/server/repositories/service-repository";
 
+type Locale = "en";
+
 function parseOptions(
   optionsJson: unknown,
-  locale: Locale,
+  _locale: Locale,
 ): ApplyFormFieldConfig["options"] {
   if (!Array.isArray(optionsJson)) {
     return [];
@@ -31,49 +31,29 @@ function parseOptions(
           : typeof record.label === "string"
             ? record.label
             : null;
-      const labelUr =
-        typeof record.labelUr === "string" ? record.labelUr : labelEn;
-
       if (!value || !labelEn) {
         return null;
       }
 
       return {
         value,
-        label: pickLocalized(locale, { en: labelEn, ur: labelUr ?? labelEn }),
+        label: labelEn ?? "",
       };
     })
     .filter((item): item is ApplyFormFieldConfig["options"][number] =>
-      Boolean(item),
-    );
+      Boolean(item));
 }
 
 export function mapServiceApplyConfig(
   service: PublicServiceApplyConfig,
-  locale: Locale,
-): ApplyServiceConfig {
+  locale: Locale): ApplyServiceConfig {
   const formFields: ApplyFormFieldConfig[] = service.formFields.map((field) => ({
     id: field.id,
     fieldKey: field.fieldKey,
     regionId: field.regionId,
-    label: pickLocalized(locale, {
-      en: field.labelEn,
-      ur: field.labelUr,
-    }),
-    placeholder:
-      field.placeholderEn || field.placeholderUr
-        ? pickLocalized(locale, {
-            en: field.placeholderEn ?? "",
-            ur: field.placeholderUr ?? field.placeholderEn ?? "",
-          })
-        : null,
-    helpText:
-      field.helpTextEn || field.helpTextUr
-        ? pickLocalized(locale, {
-            en: field.helpTextEn ?? "",
-            ur: field.helpTextUr ?? field.helpTextEn ?? "",
-          })
-        : null,
+    label: field.labelEn ?? "",
+    placeholder: field.placeholderEn ? field.placeholderEn : null,
+    helpText: field.helpTextEn ? field.helpTextEn : null,
     fieldType: field.fieldType,
     isRequired: field.isRequired,
     isEncrypted: field.isEncrypted,
@@ -82,32 +62,20 @@ export function mapServiceApplyConfig(
       field.validationJson && typeof field.validationJson === "object"
         ? (() => {
             const raw = field.validationJson as Record<string, unknown>;
-            const patternMessage = pickLocalized(locale, {
-              en:
-                typeof raw.patternMessageEn === "string"
-                  ? raw.patternMessageEn
-                  : typeof raw.patternMessage === "string"
-                    ? raw.patternMessage
-                    : "",
-              ur:
-                typeof raw.patternMessageUr === "string"
-                  ? raw.patternMessageUr
-                  : typeof raw.patternMessageEn === "string"
-                    ? raw.patternMessageEn
-                    : typeof raw.patternMessage === "string"
-                      ? raw.patternMessage
-                      : "",
-            });
+            const patternMessage =
+              typeof raw.patternMessageEn === "string"
+                ? raw.patternMessageEn
+                : typeof raw.patternMessage === "string"
+                  ? raw.patternMessage
+                  : "";
 
             return {
               ...raw,
-              ...(patternMessage ? { patternMessage } : {}),
-            };
+              ...(patternMessage ? { patternMessage } : {})};
           })()
         : null,
     conditional: parseFieldConditional(field.conditionalJson),
-    displayOrder: field.displayOrder,
-  }));
+    displayOrder: field.displayOrder}));
 
   const documentRequirements: ApplyDocumentRequirement[] =
     service.documentReqs.map((req) => ({
@@ -115,26 +83,15 @@ export function mapServiceApplyConfig(
       docType: req.docType,
       regionId: req.regionId,
       kind: req.kind,
-      label: pickLocalized(locale, {
-        en: req.labelEn,
-        ur: req.labelUr,
-      }),
-      instructions:
-        req.instructionsEn || req.instructionsUr
-          ? pickLocalized(locale, {
-              en: req.instructionsEn ?? "",
-              ur: req.instructionsUr ?? req.instructionsEn ?? "",
-            })
-          : null,
+      label: req.labelEn ?? "",
+      instructions: req.instructionsEn ? req.instructionsEn : null,
       isRequired: req.isRequired,
       maxSizeBytes: req.maxSizeBytes,
       acceptedMimeTypes: Array.isArray(req.acceptedMimeTypes)
         ? req.acceptedMimeTypes.filter(
-            (mime): mime is string => typeof mime === "string",
-          )
+            (mime): mime is string => typeof mime === "string")
         : [],
-      displayOrder: req.displayOrder,
-    }));
+      displayOrder: req.displayOrder}));
 
   const assignedRegions = service.serviceRegions
     .map((entry) => {
@@ -145,41 +102,25 @@ export function mapServiceApplyConfig(
       return {
         id: entry.region.id,
         slug: entry.region.slug,
-        name: pickLocalized(locale, {
-          en: entry.region.nameEn,
-          ur: entry.region.nameUr,
-        }),
-        supportNotes: pickLocalized(locale, {
-          en: entry.supportNotesEn ?? "",
-          ur: entry.supportNotesUr ?? entry.supportNotesEn ?? "",
-        }),
-      };
+        name: entry.region.nameEn ?? "",
+        supportNotes: entry.supportNotesEn ?? ""};
     })
     .filter((region): region is NonNullable<typeof region> => Boolean(region));
 
   return {
     id: service.id,
     slug: service.slug,
-    name: pickLocalized(locale, {
-      en: service.nameEn,
-      ur: service.nameUr,
-    }),
-    shortDescription:
-      service.shortDescriptionEn || service.shortDescriptionUr
-        ? pickLocalized(locale, {
-            en: service.shortDescriptionEn ?? "",
-            ur: service.shortDescriptionUr ?? service.shortDescriptionEn ?? "",
-          })
-        : null,
+    name: service.nameEn ?? "",
+    shortDescription: service.shortDescriptionEn
+      ? service.shortDescriptionEn
+      : null,
     requiresProof: service.requiresProof,
     region: getServiceRegionLabel(
       service,
       locale,
       "Multiple provinces",
-      "All Provinces",
-    ),
+      "All Provinces"),
     assignedRegions,
     formFields,
-    documentRequirements,
-  };
+    documentRequirements};
 }

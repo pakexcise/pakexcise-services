@@ -11,13 +11,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 import {
   buildServiceWhatsAppMessage,
   buildWhatsAppUrl,
 } from "@/lib/whatsapp/build-service-message";
 import { cn } from "@/lib/utils";
-import type { Locale } from "@/i18n/config";
+
+import type { Route } from "next";
+import Link from "next/link";
+
+type Locale = "en";
 
 export type ServiceOptionsLabels = {
   sectionTitle: string;
@@ -119,7 +122,7 @@ export function ServiceOptionsSection({
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full">
-              <Link href={guestHref}>{labels.guestCta}</Link>
+              <Link href={guestHref as Route}>{labels.guestCta}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -137,7 +140,7 @@ export function ServiceOptionsSection({
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full">
-              <Link href={accountHref}>
+              <Link href={accountHref as Route}>
                 {hasSubServices ? labels.accountSubServiceCta : labels.accountCta}
                 <DirectionalArrow />
               </Link>

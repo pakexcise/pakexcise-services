@@ -23,7 +23,7 @@ const DEFAULT_POLL_INTERVAL_MS = 15_000;
 
 function extractApplicationIdFromPath(pathname: string): string | null {
   const match = pathname.match(
-    /\/(?:admin|agent|customer|support)\/applications\/([^/]+)/,
+    /\/(?:admin|agent|customer || support)\/applications\/([^/]+)/,
   );
 
   return match?.[1] ?? null;

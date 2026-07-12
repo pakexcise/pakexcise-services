@@ -60,8 +60,7 @@ export function emptyPaginatedResult<T>(
     page,
     pageSize,
     total: 0,
-    totalPages: 1,
-  };
+    totalPages: 1};
 }
 
 export async function paginate<T>(
@@ -72,16 +71,14 @@ export async function paginate<T>(
   const { page, pageSize, skip, take } = resolvePagination(input);
   const [items, total] = await Promise.all([
     findMany({ skip, take }),
-    count(),
-  ]);
+    count()]);
 
   return {
     items,
     page,
     pageSize,
     total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    totalPages: Math.max(1, Math.ceil(total / pageSize))};
 }
 
 export function activeOnly<T extends { isActive?: boolean; deletedAt?: Date | null }>(
@@ -90,8 +87,7 @@ export function activeOnly<T extends { isActive?: boolean; deletedAt?: Date | nu
   return {
     ...where,
     isActive: true,
-    deletedAt: null,
-  };
+    deletedAt: null};
 }
 
 /** For models with isActive but no soft-delete (deletedAt) field. */
@@ -100,8 +96,7 @@ export function isActiveOnly<T extends { isActive?: boolean }>(
 ): T & { isActive: boolean } {
   return {
     ...where,
-    isActive: true,
-  };
+    isActive: true};
 }
 
 const publicServiceRegionSelect = {
@@ -111,21 +106,14 @@ const publicServiceRegionSelect = {
     region: {
       select: {
         slug: true,
-        nameEn: true,
-        nameUr: true,
-      },
-    },
-  },
-} as const satisfies Prisma.ServiceRegionFindManyArgs;
+        nameEn: true}}}} as const satisfies Prisma.ServiceRegionFindManyArgs;
 
 export type PublicServiceSelect = Prisma.ServiceGetPayload<{
   select: {
     id: true;
     slug: true;
     nameEn: true;
-    nameUr: true;
     shortDescriptionEn: true;
-    shortDescriptionUr: true;
     requiresProof: true;
     displayOrder: true;
     isFeatured: true;
@@ -135,7 +123,6 @@ export type PublicServiceSelect = Prisma.ServiceGetPayload<{
       select: {
         slug: true;
         nameEn: true;
-        nameUr: true;
       };
     };
   };
@@ -145,9 +132,7 @@ export const publicServiceSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   shortDescriptionEn: true,
-  shortDescriptionUr: true,
   requiresProof: true,
   displayOrder: true,
   isFeatured: true,
@@ -156,18 +141,11 @@ export const publicServiceSelect = {
   category: {
     select: {
       slug: true,
-      nameEn: true,
-      nameUr: true,
-    },
-  },
-} as const satisfies Prisma.ServiceSelect;
+      nameEn: true}}} as const satisfies Prisma.ServiceSelect;
 
 export const publicServiceWhere = {
   ...activeOnly(),
   serviceRegions: {
     some: {
       isActive: true,
-      region: activeOnly(),
-    },
-  },
-} as const satisfies Prisma.ServiceWhereInput;
+      region: activeOnly()}}} as const satisfies Prisma.ServiceWhereInput;

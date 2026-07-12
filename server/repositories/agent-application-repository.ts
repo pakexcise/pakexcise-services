@@ -15,17 +15,11 @@ const agentApplicationListSelect = {
   user: {
     select: {
       name: true,
-      email: true,
-    },
-  },
+      email: true}},
   service: {
     select: {
       slug: true,
-      nameEn: true,
-      nameUr: true,
-    },
-  },
-} as const satisfies Prisma.ApplicationSelect;
+      nameEn: true}}} as const satisfies Prisma.ApplicationSelect;
 
 export type AgentApplicationListItem = Prisma.ApplicationGetPayload<{
   select: typeof agentApplicationListSelect;
@@ -42,20 +36,14 @@ const agentApplicationDetailSelect = {
     select: {
       name: true,
       email: true,
-      phone: true,
-    },
-  },
+      phone: true}},
   service: {
     select: {
       nameEn: true,
-      nameUr: true,
       slug: true,
       region: {
         select: {
-          nameEn: true,
-          nameUr: true,
-        },
-      },
+          nameEn: true}},
       documentReqs: {
         where: { isActive: true },
         orderBy: { displayOrder: "asc" },
@@ -63,12 +51,7 @@ const agentApplicationDetailSelect = {
           id: true,
           docType: true,
           labelEn: true,
-          labelUr: true,
-          isRequired: true,
-        },
-      },
-    },
-  },
+          isRequired: true}}}},
   fieldValues: {
     orderBy: { createdAt: "asc" },
     select: {
@@ -81,13 +64,8 @@ const agentApplicationDetailSelect = {
         select: {
           fieldKey: true,
           labelEn: true,
-          labelUr: true,
           fieldType: true,
-          isEncrypted: true,
-        },
-      },
-    },
-  },
+          isEncrypted: true}}}},
   documents: {
     where: { type: { not: COMPLETION_PROOF_DOC_TYPE } },
     orderBy: { createdAt: "asc" },
@@ -97,9 +75,7 @@ const agentApplicationDetailSelect = {
       fileName: true,
       status: true,
       rejectionReason: true,
-      requirementId: true,
-    },
-  },
+      requirementId: true}},
   agentCommissions: {
     where: { payoutStatus: { not: "CANCELLED" } },
     orderBy: { createdAt: "desc" },
@@ -109,19 +85,14 @@ const agentApplicationDetailSelect = {
       label: true,
       amount: true,
       payoutStatus: true,
-      agentReceiptStatus: true,
-    },
-  },
+      agentReceiptStatus: true}},
   statusHistory: {
     orderBy: { createdAt: "asc" },
     select: {
       id: true,
       fromStatus: true,
       toStatus: true,
-      createdAt: true,
-    },
-  },
-} as const satisfies Prisma.ApplicationSelect;
+      createdAt: true}}} as const satisfies Prisma.ApplicationSelect;
 
 export type AgentApplicationDetail = Prisma.ApplicationGetPayload<{
   select: typeof agentApplicationDetailSelect;
@@ -139,11 +110,9 @@ export class AgentApplicationRepository extends Repository {
     return this.db.application.findMany({
       where: {
         agentId,
-        status: { not: "DRAFT" },
-      },
+        status: { not: "DRAFT" }},
       orderBy: { updatedAt: "desc" },
-      select: agentApplicationListSelect,
-    });
+      select: agentApplicationListSelect});
   }
 
   async getStatusCountsForAgent(
@@ -152,17 +121,14 @@ export class AgentApplicationRepository extends Repository {
     const rows = await this.db.application.findMany({
       where: {
         agentId,
-        status: { not: "DRAFT" },
-      },
-      select: { status: true },
-    });
+        status: { not: "DRAFT" }},
+      select: { status: true }});
 
     const counts: AgentApplicationStatusCounts = {
       total: rows.length,
       inProgress: 0,
       completed: 0,
-      closed: 0,
-    };
+      closed: 0};
 
     const inProgress: ApplicationStatus[] = [
       "SUBMITTED",
@@ -172,8 +138,7 @@ export class AgentApplicationRepository extends Repository {
       "PAYMENT_UPLOADED",
       "PAYMENT_VERIFIED",
       "IN_PROGRESS",
-      "AT_OFFICE",
-    ];
+      "AT_OFFICE"];
     const closed: ApplicationStatus[] = ["REJECTED", "CANCELLED"];
 
     for (const row of rows) {
@@ -194,10 +159,8 @@ export class AgentApplicationRepository extends Repository {
       where: {
         id: input.id,
         agentId: input.agentId,
-        status: { not: "DRAFT" },
-      },
-      select: agentApplicationDetailSelect,
-    });
+        status: { not: "DRAFT" }},
+      select: agentApplicationDetailSelect});
   }
 
   async findCompletionProofForAssignedApplication(input: {
@@ -208,10 +171,8 @@ export class AgentApplicationRepository extends Repository {
       where: {
         id: input.applicationId,
         agentId: input.agentId,
-        status: "COMPLETED",
-      },
-      select: { id: true },
-    });
+        status: "COMPLETED"},
+      select: { id: true }});
 
     if (!application) {
       return null;
@@ -224,12 +185,10 @@ export class AgentApplicationRepository extends Repository {
     return this.db.application.findMany({
       where: {
         agentId: agentUserId,
-        status: { not: "DRAFT" },
-      },
+        status: { not: "DRAFT" }},
       orderBy: { createdAt: "desc" },
       take: limit,
-      select: agentApplicationListSelect,
-    });
+      select: agentApplicationListSelect});
   }
 }
 

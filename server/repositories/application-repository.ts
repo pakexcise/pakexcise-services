@@ -46,7 +46,6 @@ const adminApplicationListSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   agent: {
@@ -72,12 +71,10 @@ const adminApplicationDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
       requiresProof: true,
       region: {
         select: {
           nameEn: true,
-          nameUr: true,
         },
       },
     },
@@ -95,7 +92,6 @@ const adminApplicationDetailSelect = {
         select: {
           fieldKey: true,
           labelEn: true,
-          labelUr: true,
           fieldType: true,
           isEncrypted: true,
           displayOrder: true,
@@ -120,7 +116,6 @@ const adminApplicationDetailSelect = {
       requirement: {
         select: {
           labelEn: true,
-          labelUr: true,
           isRequired: true,
         },
       },
@@ -148,15 +143,11 @@ const adminApplicationDetailSelect = {
           code: true,
           type: true,
           nameEn: true,
-          nameUr: true,
           accountTitleEn: true,
-          accountTitleUr: true,
           accountNumber: true,
           iban: true,
           bankNameEn: true,
-          bankNameUr: true,
           instructionsEn: true,
-          instructionsUr: true,
           qrCodeR2Key: true,
           qrCodeMimeType: true,
           displayOrder: true,
@@ -369,7 +360,7 @@ export class ApplicationRepository extends Repository {
         { user: { email: { contains: query, mode: "insensitive" } } },
         { user: { name: { contains: query, mode: "insensitive" } } },
         { service: { nameEn: { contains: query, mode: "insensitive" } } },
-        { service: { nameUr: { contains: query, mode: "insensitive" } } },
+        { service: { nameEn: { contains: query, mode: "insensitive" } } },
       ];
 
       for (const phoneVariant of buildPhoneSearchVariants(query)) {
@@ -417,7 +408,7 @@ export class ApplicationRepository extends Repository {
   }
 
   async listServicesForFilter(): Promise<
-    Array<{ id: string; nameEn: string; nameUr: string }>
+    Array<{ id: string; nameEn: string }>
   > {
     return this.db.service.findMany({
       where: { isActive: true, deletedAt: null },
@@ -425,7 +416,6 @@ export class ApplicationRepository extends Repository {
       select: {
         id: true,
         nameEn: true,
-        nameUr: true,
       },
     });
   }

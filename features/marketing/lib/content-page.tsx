@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { CTASection } from "@/components/marketing/cta-section";
 import { JsonLd } from "@/components/marketing/json-ld";
@@ -12,19 +12,17 @@ import {
   buildBreadcrumbJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
-import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl } from "@/lib/utils";
 import {
   getActiveSocialLinks,
   getPageContent,
   seoMetaRepository,
 } from "@/server/repositories";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 type ContentPageConfig = {
   pageKey: string;
   path: string;
-  breadcrumbLabel: { en: string; ur: string };
+  breadcrumbLabel: { en: string; ur?: string };
   showSocialLinks?: boolean;
   showDisclaimer?: boolean;
   showCta?: boolean;
@@ -33,7 +31,7 @@ type ContentPageConfig = {
 
 export function createContentPage(config: ContentPageConfig) {
   async function generateMetadata(): Promise<Metadata> {
-    const locale = await getCurrentLocale();
+    const locale = "en";
     const [seo, content] = await Promise.all([
       seoMetaRepository.findByPageKey(config.pageKey),
       getPageContent(config.pageKey),
@@ -41,7 +39,6 @@ export function createContentPage(config: ContentPageConfig) {
 
     const title = {
       en: content?.titleEn ?? config.breadcrumbLabel.en,
-      ur: content?.titleUr ?? config.breadcrumbLabel.ur,
     };
 
     return await resolveMetadataFromSeo({
@@ -52,7 +49,6 @@ export function createContentPage(config: ContentPageConfig) {
         title,
         description: {
           en: content?.excerptEn ?? content?.contentEn?.slice(0, 160) ?? title.en,
-          ur: content?.excerptUr ?? content?.contentUr?.slice(0, 160) ?? title.ur,
         },
         h1: title,
       },
@@ -60,8 +56,7 @@ export function createContentPage(config: ContentPageConfig) {
   }
 
   async function ContentPage() {
-    const locale = await getCurrentLocale();
-    setRequestLocale(locale);
+    const locale = "en";
 
     const tMarketing = await getTranslations("marketing");
     const tCommon = await getTranslations("common");
@@ -77,19 +72,10 @@ export function createContentPage(config: ContentPageConfig) {
       notFound();
     }
 
-    const title = pickLocalized(locale, {
-      en: seo?.h1En ?? content.titleEn,
-      ur: seo?.h1Ur ?? content.titleUr,
-    });
-    const description = pickLocalized(locale, {
-      en: content.excerptEn ?? "",
-      ur: content.excerptUr ?? "",
-    });
-    const body = pickLocalized(locale, {
-      en: content.contentEn,
-      ur: content.contentUr,
-    });
-    const breadcrumbLabel = pickLocalized(locale, config.breadcrumbLabel);
+    const title = seo?.h1En ?? content.titleEn;
+    const description = content.excerptEn ?? "";
+    const body = content.contentEn ?? "";
+    const breadcrumbLabel = config.breadcrumbLabel.en ?? "";
 
     const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       { name: "Home", url: absoluteUrl("/") },
@@ -112,7 +98,6 @@ export function createContentPage(config: ContentPageConfig) {
           {config.showSocialLinks ? (
             <SocialLinks
               links={socialLinks}
-              locale={locale}
               variant="cards"
             />
           ) : null}

@@ -13,14 +13,9 @@ export class ReviewRepository extends Repository {
           select: {
             id: true,
             authorNameEn: true,
-            authorNameUr: true,
             authorRoleEn: true,
-            authorRoleUr: true,
             contentEn: true,
-            contentUr: true,
-            rating: true,
-          },
-        }),
+            rating: true}}),
       [],
     );
   }

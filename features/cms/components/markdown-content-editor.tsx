@@ -48,7 +48,6 @@ type MarkdownContentEditorProps = {
   id: string;
   value: string;
   onChange: (value: string) => void;
-  dir?: "ltr" | "rtl";
   rows?: number;
   labels: MarkdownContentEditorLabels;
   className?: string;
@@ -84,7 +83,6 @@ export function MarkdownContentEditor({
   id,
   value,
   onChange,
-  dir = "ltr",
   rows = 16,
   labels,
   className,
@@ -237,7 +235,7 @@ export function MarkdownContentEditor({
               value={linkText}
               onChange={(e) => setLinkText(e.target.value)}
               placeholder={labels.linkText}
-              dir={dir}
+              dir="ltr"
             />
             <Input
               value={linkUrl}
@@ -271,30 +269,21 @@ export function MarkdownContentEditor({
             ref={textareaRef}
             id={id}
             rows={rows}
-            dir={dir}
+            dir="ltr"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className={cn(
-              "min-h-[320px] resize-y font-mono text-sm leading-relaxed",
-              dir === "rtl" && "text-right",
-            )}
+            className="min-h-[320px] resize-y font-mono text-sm leading-relaxed"
           />
         ) : previewHtml ? (
           <div
-            className={cn(
-              "prose-content min-h-[320px] space-y-4 rounded-lg border bg-muted/10 p-4 text-muted-foreground [&_a]:text-primary [&_strong]:text-foreground",
-              dir === "rtl" && "text-right",
-            )}
-            dir={dir}
+            className="prose-content min-h-[320px] space-y-4 rounded-lg border bg-muted/10 p-4 text-muted-foreground [&_a]:text-primary [&_strong]:text-foreground"
+            dir="ltr"
             dangerouslySetInnerHTML={{ __html: previewHtml }}
           />
         ) : (
           <div
-            className={cn(
-              "flex min-h-[320px] items-center justify-center rounded-lg border border-dashed bg-muted/10 px-4 text-sm text-muted-foreground",
-              dir === "rtl" && "text-right",
-            )}
-            dir={dir}
+            className="flex min-h-[320px] items-center justify-center rounded-lg border border-dashed bg-muted/10 px-4 text-sm text-muted-foreground"
+            dir="ltr"
           >
             {labels.previewEmpty}
           </div>

@@ -14,9 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 
+import Link from "next/link";
 type ApplicationRow = {
   id: string;
   trackingId: string;

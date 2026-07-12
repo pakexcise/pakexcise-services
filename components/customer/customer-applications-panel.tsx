@@ -6,16 +6,15 @@ import { NextActionBadge } from "@/components/customer/NextActionBadge";
 import type { CustomerNextAction } from "@/features/customer/lib/next-action";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
-import { Link } from "@/i18n/navigation";
-
 export type CustomerApplicationRow = {
   id: string;
   trackingId: string;

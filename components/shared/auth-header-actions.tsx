@@ -10,10 +10,12 @@ import {
 } from "@/components/shared/user-account-menu";
 import { Button } from "@/components/ui/button";
 import { getDashboardPathByRole } from "@/features/auth/lib/dashboard-path";
-import { Link } from "@/i18n/navigation";
 import { getUserRole } from "@/lib/auth-types";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type AuthHeaderActionsProps = {
   labels: UserAccountMenuLabels & {
@@ -109,7 +111,7 @@ export function AuthHeaderActions({
         className="hidden lg:inline-flex"
         onClick={onNavigate}
       >
-        <Link href={getDashboardPathByRole(role)}>
+        <Link href={getDashboardPathByRole(role) as Route}>
           {labels.myDashboard}
         </Link>
       </Button>

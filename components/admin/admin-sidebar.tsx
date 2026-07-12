@@ -1,6 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { copy, createT } from "@/messages";
+
+import { useTranslations } from "@/lib/i18n/t";
 
 import { AdminNavIcon } from "@/components/admin/admin-nav-icons";
 import { useAdminNavBadges } from "@/components/admin/admin-nav-badges-provider";
@@ -9,8 +11,11 @@ import {
   type AdminNavItem,
   type AdminNavSection,
 } from "@/config/admin";
-import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type AdminSidebarProps = {
   items: AdminNavItem[];
@@ -51,8 +56,8 @@ export function AdminSidebar({
   onNavigate,
   className,
 }: AdminSidebarProps) {
-  const t = useTranslations("admin.nav");
-  const tSections = useTranslations("admin.navSections");
+  const t = createT(copy.admin.nav);
+  const tSections = createT(copy.admin.navSections);
   const pathname = usePathname();
   const groupedItems = groupNavItems(items);
   const badgeCounts = useAdminNavBadges();
@@ -81,7 +86,7 @@ export function AdminSidebar({
                 return (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={item.href as Route}
                     onClick={onNavigate}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",

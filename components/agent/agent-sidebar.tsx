@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   FileStack,
   LayoutDashboard,
@@ -8,13 +10,12 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n/t";
 
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { Button } from "@/components/ui/button";
 import type { AgentNavItem } from "@/config/agent-nav";
-import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 const iconMap: Record<AgentNavItem["icon"], LucideIcon> = {

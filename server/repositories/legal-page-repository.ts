@@ -10,24 +10,18 @@ export const publicLegalPageSelect = {
   id: true,
   slug: true,
   titleEn: true,
-  titleUr: true,
   excerptEn: true,
-  excerptUr: true,
   contentEn: true,
-  contentUr: true,
   isPublished: true,
   isActive: true,
   displayOrder: true,
   updatedAt: true,
-  seoMeta: true,
-} as const satisfies Prisma.LegalPageSelect;
+  seoMeta: true} as const satisfies Prisma.LegalPageSelect;
 
 export const footerLegalPageSelect = {
   slug: true,
   titleEn: true,
-  titleUr: true,
-  displayOrder: true,
-} as const satisfies Prisma.LegalPageSelect;
+  displayOrder: true} as const satisfies Prisma.LegalPageSelect;
 
 export type PublicLegalPage = Prisma.LegalPageGetPayload<{
   select: typeof publicLegalPageSelect;
@@ -40,11 +34,8 @@ export type FooterLegalPageLink = Prisma.LegalPageGetPayload<{
 export type ResolvedLegalPageContent = {
   slug: string;
   titleEn: string;
-  titleUr: string;
   excerptEn: string;
-  excerptUr: string;
   contentEn: string;
-  contentUr: string;
   isPublished: boolean;
   updatedAt: Date | null;
   seo: PublicLegalPage["seoMeta"];
@@ -55,8 +46,7 @@ export class LegalPageRepository extends Repository {
     return this.query(async () => {
       return this.db.legalPage.findUnique({
         where: { slug },
-        select: publicLegalPageSelect,
-      });
+        select: publicLegalPageSelect});
     }, null);
   }
 
@@ -65,8 +55,7 @@ export class LegalPageRepository extends Repository {
       return this.db.legalPage.findMany({
         where: { isActive: true, isPublished: true },
         orderBy: [{ displayOrder: "asc" }, { titleEn: "asc" }],
-        select: footerLegalPageSelect,
-      });
+        select: footerLegalPageSelect});
     }, []);
   }
 
@@ -75,8 +64,7 @@ export class LegalPageRepository extends Repository {
       return this.db.legalPage.findMany({
         where: { isActive: true, isPublished: true },
         select: { slug: true, updatedAt: true },
-        orderBy: { displayOrder: "asc" },
-      });
+        orderBy: { displayOrder: "asc" }});
     }, []);
   }
 }
@@ -91,41 +79,30 @@ function legacySettingToContent(value: unknown): PageContent | null {
   const record = value as Partial<PageContent>;
   if (
     typeof record.titleEn !== "string" ||
-    typeof record.titleUr !== "string" ||
-    typeof record.contentEn !== "string" ||
-    typeof record.contentUr !== "string"
+    typeof record.contentEn !== "string"
   ) {
     return null;
   }
 
   return {
     titleEn: record.titleEn,
-    titleUr: record.titleUr,
     contentEn: record.contentEn,
-    contentUr: record.contentUr,
-    excerptEn: record.excerptEn,
-    excerptUr: record.excerptUr,
-  };
+    excerptEn: record.excerptEn};
 }
 
 export async function resolveLegalPageContent(
-  slug: string,
-): Promise<ResolvedLegalPageContent | null> {
+  slug: string): Promise<ResolvedLegalPageContent | null> {
   const page = await legalPageRepository.findBySlug(slug);
 
   if (page) {
     return {
       slug: page.slug,
       titleEn: page.titleEn,
-      titleUr: page.titleUr,
       excerptEn: page.excerptEn ?? "",
-      excerptUr: page.excerptUr ?? "",
       contentEn: page.contentEn,
-      contentUr: page.contentUr,
       isPublished: page.isPublished,
       updatedAt: page.updatedAt,
-      seo: page.seoMeta,
-    };
+      seo: page.seoMeta};
   }
 
   const { pageContentRepository } = await import(
@@ -145,8 +122,7 @@ export async function resolveLegalPageContent(
   if (!legacyContent) {
     const setting = await prisma.setting.findUnique({
       where: { key: `page:${slug}` },
-      select: { value: true },
-    });
+      select: { value: true }});
     legacyContent = legacySettingToContent(setting?.value);
   }
 
@@ -161,15 +137,11 @@ export async function resolveLegalPageContent(
   return {
     slug,
     titleEn: legacyContent.titleEn,
-    titleUr: legacyContent.titleUr,
     excerptEn: legacyContent.excerptEn ?? "",
-    excerptUr: legacyContent.excerptUr ?? "",
     contentEn: legacyContent.contentEn,
-    contentUr: legacyContent.contentUr,
     isPublished: true,
     updatedAt: null,
-    seo,
-  };
+    seo};
 }
 
 export async function getFooterLegalPages(): Promise<FooterLegalPageLink[]> {
@@ -181,7 +153,5 @@ export async function getFooterLegalPages(): Promise<FooterLegalPageLink[]> {
   return DEFAULT_LEGAL_PAGE_DEFINITIONS.map((page) => ({
     slug: page.slug,
     titleEn: page.titleEn,
-    titleUr: page.titleUr,
-    displayOrder: page.displayOrder,
-  }));
+    displayOrder: page.displayOrder}));
 }

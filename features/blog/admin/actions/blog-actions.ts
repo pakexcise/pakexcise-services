@@ -7,7 +7,6 @@ import { sanitizeContentRelationIds } from "@/features/cms/lib/sanitize-content-
 import { normalizeLocalizedContent } from "@/features/cms/lib/normalize-content-input";
 import { upsertBlogSeo } from "@/features/cms/lib/upsert-seo";
 import { normalizeBlogPostInput } from "@/features/blog/lib/normalize-blog-input";
-import { normalizeUrduBrandText } from "@/features/blog/lib/blog-brand";
 import { resolveLogoIconPath } from "@/features/settings/lib/branding-resolvers";
 import { getBrandingSettings } from "@/features/settings/lib/public-settings-cache";
 import { seoAbsoluteUrl } from "@/lib/seo-url";
@@ -68,7 +67,6 @@ async function resolveBlogCategoryFields(
       categoryId: string | null;
       subCategoryId: string | null;
       categoryEn: string | null;
-      categoryUr: string | null;
     }
   | { ok: false; error: string }
 > {
@@ -86,9 +84,6 @@ async function resolveBlogCategoryFields(
     categoryId: validation.category?.id ?? null,
     subCategoryId: validation.subCategory?.id ?? null,
     categoryEn: validation.category?.nameEn ?? null,
-    categoryUr: validation.category
-      ? normalizeUrduBrandText(validation.category.nameUr)
-      : null,
   };
 }
 
@@ -141,7 +136,6 @@ export async function createBlogPostAction(
   const blogFields = normalizeBlogPostInput({
     ...data,
     categoryEn: categoryFields.categoryEn,
-    categoryUr: categoryFields.categoryUr,
   });
   const publishedAt = data.isPublished ? new Date() : null;
 
@@ -212,7 +206,6 @@ export async function updateBlogPostAction(
   const blogFields = normalizeBlogPostInput({
     ...data,
     categoryEn: categoryFields.categoryEn,
-    categoryUr: categoryFields.categoryUr,
   });
   const publishedAt =
     data.isPublished && !existing.publishedAt

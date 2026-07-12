@@ -1,9 +1,12 @@
+import { copy, createT } from "@/messages";
 import type { ContactInquiryStatus } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { contactInquiryRepository } from "@/server/repositories/contact-inquiry-repository";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 const statStatuses = [
   "NEW",
@@ -39,7 +42,7 @@ export async function ContactInquiryStatusStats({
   currentStatus,
   searchParams,
 }: ContactInquiryStatusStatsProps) {
-  const t = await getTranslations("admin.contactInquiries");
+  const t = createT(copy.admin.contactInquiries);
   const counts = await contactInquiryRepository.countByStatus();
   const total = statStatuses.reduce(
     (sum, status) => sum + (counts[status] ?? 0),
@@ -49,7 +52,7 @@ export async function ContactInquiryStatusStats({
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
       <Link
-        href={buildHref(undefined, searchParams)}
+        href={buildHref(undefined, searchParams) as Route}
         className={cn(
           "rounded-xl border bg-card px-3 py-2.5 transition-colors hover:bg-muted/40",
           !currentStatus && "border-primary/50 bg-primary/5",
@@ -62,7 +65,7 @@ export async function ContactInquiryStatusStats({
       {statStatuses.map((status) => (
         <Link
           key={status}
-          href={buildHref(status, searchParams)}
+          href={buildHref(status, searchParams) as Route}
           className={cn(
             "rounded-xl border bg-card px-3 py-2.5 transition-colors hover:bg-muted/40",
             currentStatus === status && "border-primary/50 bg-primary/5",

@@ -6,19 +6,14 @@ const publicFaqCategorySelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   descriptionEn: true,
-  descriptionUr: true,
-  displayOrder: true,
-} as const;
+  displayOrder: true} as const;
 
 export type PublicFaqCategory = {
   id: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
   descriptionEn: string | null;
-  descriptionUr: string | null;
   displayOrder: number;
 };
 
@@ -29,8 +24,7 @@ export class FaqCategoryRepository extends Repository {
         this.db.faqCategory.findMany({
           where: { isActive: true },
           orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-          select: publicFaqCategorySelect,
-        }),
+          select: publicFaqCategorySelect}),
       [],
     );
   }

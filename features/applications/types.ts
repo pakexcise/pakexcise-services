@@ -5,7 +5,6 @@ import type { AttributionData } from "@/lib/attribution";
 
 export type LocalizedText = {
   en: string;
-  ur: string;
 };
 
 export type ApplyRegionOption = {

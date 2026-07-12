@@ -31,15 +31,7 @@ export function resolveAppleIconPath(branding: BrandingSettings): string {
 
 export function resolveDefaultOgImagePath(
   branding: BrandingSettings,
-  locale: string,
 ): string {
-  if (locale === "ur") {
-    return resolveBrandingAssetPath(
-      branding.defaultOgImagePathUr,
-      branding.defaultOgImagePath || brandingAssets.ogUr,
-    );
-  }
-
   return resolveBrandingAssetPath(
     branding.defaultOgImagePath,
     brandingAssets.ogEn,

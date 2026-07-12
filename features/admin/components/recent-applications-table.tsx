@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { copy, createT } from "@/messages";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
@@ -17,11 +18,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
 import type { AdminApplicationListItem } from "@/server/repositories/application-repository";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
 
+
+import Link from "next/link";
 type RecentApplicationsTableProps = {
   applications: AdminApplicationListItem[];
   title: string;
@@ -35,8 +36,8 @@ export async function RecentApplicationsTable({
   emptyMessage,
   viewLabel,
 }: RecentApplicationsTableProps) {
-  const locale = await getCurrentLocale();
-  const t = await getTranslations("admin");
+  const locale = "en";
+  const t = createT(copy.admin);
 
   return (
     <Card>
@@ -68,9 +69,7 @@ export async function RecentApplicationsTable({
                     {application.trackingId}
                   </TableCell>
                   <TableCell>
-                    {locale === "ur"
-                      ? application.service.nameUr
-                      : application.service.nameEn}
+                    {application.service.nameEn}
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">

@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-import { normalizeUrduBrandText } from "@/features/blog/lib/blog-brand";
 import {
   blogCategoryIdSchema,
   createBlogCategorySchema,
@@ -97,7 +96,6 @@ export async function createBlogCategoryAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: normalizeUrduBrandText(data.nameUr),
       parentId: data.parentId,
       isActive: data.isActive,
       displayOrder,
@@ -171,7 +169,6 @@ export async function updateBlogCategoryAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: normalizeUrduBrandText(data.nameUr),
       parentId: nextParentId,
       isActive: data.isActive,
       displayOrder: data.displayOrder,

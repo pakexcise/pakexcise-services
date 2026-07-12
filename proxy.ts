@@ -1,15 +1,9 @@
-import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 import { authConfig, buildLoginRedirectUrl } from "@/config/auth";
-import { LOCALE_COOKIE_NAME, routing } from "./i18n/routing";
-import { isValidLocale, resolveLocaleFromCookie } from "./i18n/locale";
 import { applySecurityHeaders } from "@/server/security/headers";
 
-const LOCALE_HEADER_NAME = "X-NEXT-INTL-LOCALE";
-
-const handleI18nRouting = createMiddleware(routing);
-
+/** Legacy bilingual URL prefixes — permanently redirect to clean English paths. */
 const legacyLocalePrefixPattern = /^\/(en|ur)(\/.*)?$/;
 
 const protectedRoutePrefixes = [
@@ -34,7 +28,7 @@ function redirectLegacyLocalePrefix(request: NextRequest): NextResponse | null {
   return NextResponse.redirect(url, 308);
 }
 
-function withoutAcceptLanguage(request: NextRequest): NextRequest {
+function withPathnameHeader(request: NextRequest): NextRequest {
   const headers = new Headers(request.headers);
   headers.delete("accept-language");
   headers.set("x-pakexcise-pathname", request.nextUrl.pathname);
@@ -43,20 +37,6 @@ function withoutAcceptLanguage(request: NextRequest): NextRequest {
     method: request.method,
     headers,
   });
-}
-
-function syncLocaleCookie(response: NextResponse, request: NextRequest): NextResponse {
-  const cookieLocale = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
-
-  if (cookieLocale && isValidLocale(cookieLocale)) {
-    response.cookies.set(LOCALE_COOKIE_NAME, cookieLocale, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-    });
-  }
-
-  return response;
 }
 
 function hasAuthSessionCookie(request: NextRequest): boolean {
@@ -93,64 +73,6 @@ function protectPrivateRoutes(request: NextRequest): NextResponse | null {
   return NextResponse.redirect(loginUrl);
 }
 
-function getRewritePathname(
-  response: NextResponse,
-  request: NextRequest,
-): string | null {
-  const rewrite =
-    response.headers.get("x-middleware-rewrite") ??
-    response.headers.get("x-nextjs-rewrite");
-
-  if (!rewrite) {
-    return null;
-  }
-
-  try {
-    return new URL(rewrite, request.url).pathname;
-  } catch {
-    return null;
-  }
-}
-
-function ensureLocaleRewrite(
-  request: NextRequest,
-  response: NextResponse,
-): NextResponse {
-  if (getRewritePathname(response, request)) {
-    return response;
-  }
-
-  if (response.status >= 300 && response.status < 400) {
-    return response;
-  }
-
-  const { pathname } = request.nextUrl;
-  const firstSegment = pathname.split("/").filter(Boolean)[0];
-
-  if (firstSegment && isValidLocale(firstSegment)) {
-    return response;
-  }
-
-  const cookieLocale = request.cookies.get(LOCALE_COOKIE_NAME)?.value;
-  const locale = resolveLocaleFromCookie(cookieLocale);
-  const url = request.nextUrl.clone();
-  url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
-
-  const headers = new Headers(request.headers);
-  headers.set(LOCALE_HEADER_NAME, locale);
-  headers.set("x-pakexcise-pathname", pathname);
-
-  const rewriteResponse = NextResponse.rewrite(url, {
-    request: { headers },
-  });
-
-  for (const cookie of response.cookies.getAll()) {
-    rewriteResponse.cookies.set(cookie);
-  }
-
-  return rewriteResponse;
-}
-
 function preventAuthPageCaching(
   request: NextRequest,
   response: NextResponse,
@@ -171,11 +93,19 @@ function preventAuthPageCaching(
   return response;
 }
 
+function clearLegacyLocaleCookie(response: NextResponse): NextResponse {
+  response.cookies.set("NEXT_LOCALE", "", {
+    path: "/",
+    maxAge: 0,
+  });
+  return response;
+}
+
 export default function proxy(request: NextRequest) {
   const legacyRedirect = redirectLegacyLocalePrefix(request);
 
   if (legacyRedirect) {
-    return applySecurityHeaders(legacyRedirect);
+    return applySecurityHeaders(clearLegacyLocaleCookie(legacyRedirect));
   }
 
   const authRedirect = protectPrivateRoutes(request);
@@ -184,13 +114,14 @@ export default function proxy(request: NextRequest) {
     return applySecurityHeaders(authRedirect);
   }
 
-  const response = ensureLocaleRewrite(
-    request,
-    handleI18nRouting(withoutAcceptLanguage(request)),
-  );
+  const response = NextResponse.next({
+    request: {
+      headers: withPathnameHeader(request).headers,
+    },
+  });
 
   return applySecurityHeaders(
-    preventAuthPageCaching(request, syncLocaleCookie(response, request)),
+    preventAuthPageCaching(request, clearLegacyLocaleCookie(response)),
   );
 }
 

@@ -10,7 +10,6 @@ export async function seedBlogCategories(prisma: PrismaClient) {
       where: { slug: parent.slug },
       update: {
         nameEn: parent.nameEn,
-        nameUr: parent.nameUr,
         displayOrder: parent.displayOrder,
         isActive: true,
         parentId: null,
@@ -18,7 +17,6 @@ export async function seedBlogCategories(prisma: PrismaClient) {
       create: {
         slug: parent.slug,
         nameEn: parent.nameEn,
-        nameUr: parent.nameUr,
         displayOrder: parent.displayOrder,
         isActive: true,
       },
@@ -31,7 +29,6 @@ export async function seedBlogCategories(prisma: PrismaClient) {
         where: { slug: child.slug },
         update: {
           nameEn: child.nameEn,
-          nameUr: child.nameUr,
           displayOrder: child.displayOrder,
           isActive: true,
           parentId: createdParent.id,
@@ -39,7 +36,6 @@ export async function seedBlogCategories(prisma: PrismaClient) {
         create: {
           slug: child.slug,
           nameEn: child.nameEn,
-          nameUr: child.nameUr,
           displayOrder: child.displayOrder,
           isActive: true,
           parentId: createdParent.id,

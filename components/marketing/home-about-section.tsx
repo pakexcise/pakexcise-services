@@ -2,8 +2,7 @@ import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type HomeAboutSectionProps = {
   title: string;
   description: string;

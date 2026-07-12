@@ -6,18 +6,13 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
-
+  CardTitle} from "@/components/ui/card";
+import Link from "next/link";
 type ProvinceCardProps = {
   region: {
     slug: string;
     nameEn: string;
-    nameUr: string;
     descriptionEn?: string | null;
-    descriptionUr?: string | null;
   };
   locale: string;
   viewLabel: string;
@@ -30,13 +25,9 @@ export function ProvinceCard({
   locale,
   viewLabel,
   serviceCount,
-  serviceCountLabel,
-}: ProvinceCardProps) {
-  const name = pickLocalized(locale, { en: region.nameEn, ur: region.nameUr });
-  const description = pickLocalized(locale, {
-    en: region.descriptionEn,
-    ur: region.descriptionUr,
-  });
+  serviceCountLabel}: ProvinceCardProps) {
+  const name = region.nameEn ?? "";
+  const description = region.descriptionEn ?? "";
 
   return (
     <Card className="h-full border-border/70 bg-background/80 transition-colors hover:border-primary/25 hover:bg-primary/[0.02]">

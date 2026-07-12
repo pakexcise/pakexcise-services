@@ -12,4 +12,4 @@ export const invoiceIdParamSchema = entityIdParamSchema;
 
 export const paymentIdParamSchema = entityIdParamSchema;
 
-export const localeCookieSchema = z.enum(["en", "ur"]);
+export const localeCookieSchema = z.literal("en");

@@ -40,7 +40,7 @@ type AdminAgentManagePanelProps = {
   payoutMethod: PayoutMethod;
   commissions: AdminAgentWorkspaceCommission[];
   notes?: string | null;
-  locale: "en" | "ur";
+  locale: "en";
   labels: Record<string, string>;
   ledgerLabels: AdminCommissionLedgerLabels;
 };

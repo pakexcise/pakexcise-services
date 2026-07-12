@@ -1,23 +1,17 @@
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
-import { Link } from "@/i18n/navigation";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
-import { pickLocalized } from "@/lib/i18n/content";
-
+import Link from "next/link";
 type RelatedService = {
   id: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
   shortDescriptionEn: string | null;
-  shortDescriptionUr: string | null;
 };
 
 type AttachedFaq = {
   id: string;
   questionEn: string;
-  questionUr: string;
   answerEn: string;
-  answerUr: string;
 };
 
 type ContentDetailExtrasProps = {
@@ -34,8 +28,7 @@ export function ContentDetailExtras({
   locale,
   relatedServices,
   attachedFaqs,
-  labels,
-}: ContentDetailExtrasProps) {
+  labels}: ContentDetailExtrasProps) {
   const faqItems = mapFaqsForLocale(attachedFaqs, locale);
 
   return (
@@ -51,16 +44,10 @@ export function ContentDetailExtras({
                 className="rounded-xl border p-4 transition-colors hover:bg-muted/40"
               >
                 <h3 className="font-medium text-primary">
-                  {pickLocalized(locale, {
-                    en: service.nameEn,
-                    ur: service.nameUr,
-                  })}
+                  {service.nameEn ?? ""}
                 </h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  {pickLocalized(locale, {
-                    en: service.shortDescriptionEn,
-                    ur: service.shortDescriptionUr,
-                  })}
+                  {service.shortDescriptionEn ?? ""}
                 </p>
               </Link>
             ))}

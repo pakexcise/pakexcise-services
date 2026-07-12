@@ -6,7 +6,6 @@ export type BlogCategoryOption = {
   id: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
   parentId: string | null;
 };
 
@@ -19,7 +18,6 @@ export class BlogCategoryRepository extends Repository {
         id: true,
         slug: true,
         nameEn: true,
-        nameUr: true,
         parentId: true,
       },
     });
@@ -32,7 +30,6 @@ export class BlogCategoryRepository extends Repository {
         id: true,
         slug: true,
         nameEn: true,
-        nameUr: true,
         parentId: true,
       },
     });

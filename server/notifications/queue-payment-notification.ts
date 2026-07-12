@@ -8,7 +8,6 @@ type QueuePaymentRejectedInput = {
   userId: string;
   trackingId: string;
   serviceName: string;
-  serviceNameUr?: string;
   locale?: string;
   reason: string;
   userEmail: string;
@@ -31,10 +30,7 @@ export async function queuePaymentRejectedNotifications(
     payload: {
       trackingId: input.trackingId,
       serviceName: input.serviceName,
-      serviceNameUr: input.serviceNameUr,
-      reason: input.reason,
-    },
-  });
+      reason: input.reason}});
 }
 
 type QueuePaymentUploadedInput = {
@@ -42,7 +38,6 @@ type QueuePaymentUploadedInput = {
   userId: string;
   trackingId: string;
   serviceName: string;
-  serviceNameUr?: string;
   locale?: string;
   userEmail: string;
   userPhone?: string | null;
@@ -63,8 +58,5 @@ export async function queuePaymentUploadedNotifications(
     recipientPhone: input.userPhone,
     payload: {
       trackingId: input.trackingId,
-      serviceName: input.serviceName,
-      serviceNameUr: input.serviceNameUr,
-    },
-  });
+      serviceName: input.serviceName}});
 }

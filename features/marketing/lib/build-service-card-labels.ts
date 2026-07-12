@@ -2,7 +2,7 @@ import type { ServiceCardLabels } from "@/components/marketing/service-card";
 
 type Translator = (
   key: string,
-  values?: Record<string, string | number | Date>,
+  values?: Record<string, string | number | boolean | null | undefined>,
 ) => string;
 
 export function buildServiceCardLabels(

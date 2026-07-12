@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowDown, ArrowUp, Pencil, Trash2 } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,23 +13,21 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  TableRow} from "@/components/ui/table";
 import {
   createSocialLinkAction,
   deleteSocialLinkAction,
   reorderSocialLinksAction,
   toggleSocialLinkActiveAction,
-  updateSocialLinkAction,
-} from "@/features/social/admin/actions/social-actions";
+  updateSocialLinkAction} from "@/features/social/admin/actions/social-actions";
 import type { SocialPanelLabels } from "@/features/social/admin/lib/labels";
 import {
   getSocialPlatformIcon,
   getSocialPlatformLabel,
-  SOCIAL_PLATFORMS,
-} from "@/features/social/lib/platforms";
+  SOCIAL_PLATFORMS} from "@/features/social/lib/platforms";
 import type { AdminSocialLinkItem } from "@/server/repositories/admin-social-repository";
 
+import { useRouter } from "next/navigation";
 type SocialLinksPanelProps = {
   links: AdminSocialLinkItem[];
   labels: SocialPanelLabels;
@@ -43,7 +40,6 @@ type LinkDraft = {
   url: string;
   iconName: string;
   labelEn: string;
-  labelUr: string;
   isActive: boolean;
   displayOrder: number;
 };
@@ -54,10 +50,8 @@ function emptyDraft(displayOrder: number): LinkDraft {
     url: "",
     iconName: "Link",
     labelEn: "",
-    labelUr: "",
     isActive: true,
-    displayOrder,
-  };
+    displayOrder};
 }
 
 function linkToDraft(link: AdminSocialLinkItem): LinkDraft {
@@ -67,17 +61,14 @@ function linkToDraft(link: AdminSocialLinkItem): LinkDraft {
     url: link.url,
     iconName: link.iconName,
     labelEn: link.labelEn,
-    labelUr: link.labelUr,
     isActive: link.isActive,
-    displayOrder: link.displayOrder,
-  };
+    displayOrder: link.displayOrder};
 }
 
 export function SocialLinksPanel({
   links,
   labels,
-  nextDisplayOrder,
-}: SocialLinksPanelProps) {
+  nextDisplayOrder}: SocialLinksPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [draft, setDraft] = useState<LinkDraft>(emptyDraft(nextDisplayOrder));
@@ -153,9 +144,7 @@ export function SocialLinksPanel({
       await reorderSocialLinksAction({
         items: [
           { id: current.id, displayOrder: target.displayOrder },
-          { id: target.id, displayOrder: current.displayOrder },
-        ],
-      });
+          { id: target.id, displayOrder: current.displayOrder }]});
       router.refresh();
     });
   }
@@ -302,13 +291,6 @@ export function SocialLinksPanel({
               onChange={(event) => updateDraft("labelEn", event.target.value)}
             />
           </Field>
-          <Field label={labels.labelUr}>
-            <Input
-              value={draft.labelUr}
-              onChange={(event) => updateDraft("labelUr", event.target.value)}
-              dir="rtl"
-            />
-          </Field>
           <Field label={labels.displayOrder}>
             <Input
               type="number"
@@ -347,8 +329,7 @@ export function SocialLinksPanel({
 
 function SocialActiveToggle({
   link,
-  labels,
-}: {
+  labels}: {
   link: AdminSocialLinkItem;
   labels: SocialPanelLabels;
 }) {
@@ -366,8 +347,7 @@ function SocialActiveToggle({
       setOptimisticActive(next);
       const result = await toggleSocialLinkActiveAction({
         id: link.id,
-        isActive: next,
-      });
+        isActive: next});
 
       if (!result.success) {
         setOptimisticActive(link.isActive);
@@ -395,8 +375,7 @@ function SocialActiveToggle({
 function Field({
   label,
   className,
-  children,
-}: {
+  children}: {
   label: string;
   className?: string;
   children: React.ReactNode;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,6 @@ type ParentOption = {
 type BlogCategoryEditorLabels = {
   slug: string;
   nameEn: string;
-  nameUr: string;
   parent: string;
   noParent: string;
   isActive: string;
@@ -127,13 +126,7 @@ export function BlogCategoryEditorForm({
             onChange={(event) => updateField("nameEn", event.target.value)}
           />
         </Field>
-        <Field label={labels.nameUr} error={fieldErrors.nameUr?.[0]}>
-          <Input
-            value={values.nameUr}
-            onChange={(event) => updateField("nameUr", event.target.value)}
-            dir="rtl"
-          />
-        </Field>
+        
         <Field label={labels.parent} className="lg:col-span-2">
           <select
             value={values.parentId}

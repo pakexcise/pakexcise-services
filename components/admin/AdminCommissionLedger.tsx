@@ -115,7 +115,7 @@ type AdminCommissionLedgerProps = {
   commissionMode: AgentCommissionMode;
   payoutMethodConfigured: boolean;
   commissions: AdminAgentWorkspaceCommission[];
-  locale: "en" | "ur";
+  locale: "en";
   labels: AdminCommissionLedgerLabels;
   fieldIdPrefix: string;
 };
@@ -143,8 +143,8 @@ function isEditable(commission: AdminAgentWorkspaceCommission) {
   );
 }
 
-function formatAmount(locale: "en" | "ur", amount: string) {
-  return new Intl.NumberFormat(locale === "ur" ? "ur-PK" : "en-PK", {
+function formatAmount(locale: "en", amount: string) {
+  return new Intl.NumberFormat("en-PK", {
     style: "currency",
     currency: "PKR",
   }).format(Number(amount));
@@ -185,7 +185,7 @@ function filterCount(
 
 type CommissionLedgerItemProps = {
   commission: AdminAgentWorkspaceCommission;
-  locale: "en" | "ur";
+  locale: "en";
   labels: AdminCommissionLedgerLabels;
   fieldId: (name: string) => string;
   isPending: boolean;

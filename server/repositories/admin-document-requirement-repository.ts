@@ -12,7 +12,6 @@ export const adminDocumentRequirementListSelect = {
   id: true,
   docType: true,
   labelEn: true,
-  labelUr: true,
   isRequired: true,
   isActive: true,
   displayOrder: true,
@@ -22,7 +21,6 @@ export const adminDocumentRequirementListSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   region: {
@@ -30,7 +28,6 @@ export const adminDocumentRequirementListSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
 } as const satisfies Prisma.DocumentRequirementSelect;
@@ -72,7 +69,7 @@ export class AdminDocumentRequirementRepository extends Repository {
       where.OR = [
         { docType: { contains: filters.q, mode: "insensitive" } },
         { labelEn: { contains: filters.q, mode: "insensitive" } },
-        { labelUr: { contains: filters.q, mode: "insensitive" } },
+
         {
           service: {
             nameEn: { contains: filters.q, mode: "insensitive" },

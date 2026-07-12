@@ -9,8 +9,7 @@ import { deliverAdminPlatformNotification } from "@/features/notifications/in-ap
 import { revalidateApplicationPages } from "@/server/realtime/revalidate-application-pages";
 import {
   mapChangeTypeToNotificationEventType,
-  publishApplicationUpdatedEvent,
-} from "@/server/realtime/stream-events";
+  publishApplicationUpdatedEvent} from "@/server/realtime/stream-events";
 
 export type ApplicationChangeType =
   | "status"
@@ -49,8 +48,7 @@ function getInMemoryStore(): InMemoryStore {
   if (!globalThis.__pakexciseApplicationEvents) {
     globalThis.__pakexciseApplicationEvents = {
       version: 0,
-      events: [],
-    };
+      events: []};
   }
 
   return globalThis.__pakexciseApplicationEvents;
@@ -79,8 +77,7 @@ async function storeInRedis(event: ApplicationRealtimeEvent): Promise<void> {
   await Promise.all([
     redis.zadd(EVENTS_KEY, { score: event.updatedAt, member: payload }),
     redis.set(VERSION_KEY, event.updatedAt, { ex: EVENT_TTL_SECONDS }),
-    redis.zremrangebyrank(EVENTS_KEY, 0, -(MAX_STORED_EVENTS + 1)),
-  ]);
+    redis.zremrangebyrank(EVENTS_KEY, 0, -(MAX_STORED_EVENTS + 1))]);
 }
 
 export async function emitApplicationChange(input: {
@@ -94,7 +91,6 @@ export async function emitApplicationChange(input: {
   notifyInApp?: boolean;
   notificationPayload?: {
     serviceName?: string;
-    serviceNameUr?: string;
     note?: string;
     toStatus?: string;
     fromStatus?: string;
@@ -117,12 +113,7 @@ export async function emitApplicationChange(input: {
         locale: true,
         service: {
           select: {
-            nameEn: true,
-            nameUr: true,
-          },
-        },
-      },
-    });
+            nameEn: true}}}});
 
     if (!application) {
       return;
@@ -145,16 +136,12 @@ export async function emitApplicationChange(input: {
         payload: {
           serviceName:
             input.notificationPayload?.serviceName ?? application.service.nameEn,
-          serviceNameUr:
-            input.notificationPayload?.serviceNameUr ?? application.service.nameUr,
           note: input.notificationPayload?.note,
           toStatus:
             (input.notificationPayload?.toStatus as ApplicationStatus | undefined) ??
             (input.status as ApplicationStatus),
           reason: input.notificationPayload?.reason,
-          invoiceNumber: input.notificationPayload?.invoiceNumber,
-        },
-      });
+          invoiceNumber: input.notificationPayload?.invoiceNumber}});
 
       await deliverAdminPlatformNotification({
         applicationId: input.applicationId,
@@ -167,16 +154,14 @@ export async function emitApplicationChange(input: {
           input.changeType,
           input.status,
         ),
-        locale,
-      });
+        locale});
     } else {
       publishApplicationUpdatedEvent({
         recipientUserIds: [userId, agentId],
         applicationId: input.applicationId,
         trackingId,
         status: input.status,
-        changeType: input.changeType,
-      });
+        changeType: input.changeType});
     }
   } else if (input.notifyInApp !== false) {
     await deliverInAppApplicationUpdate({
@@ -189,15 +174,12 @@ export async function emitApplicationChange(input: {
       changeType: input.changeType,
       payload: {
         serviceName: input.notificationPayload?.serviceName,
-        serviceNameUr: input.notificationPayload?.serviceNameUr,
         note: input.notificationPayload?.note,
         toStatus:
           (input.notificationPayload?.toStatus as ApplicationStatus | undefined) ??
           (input.status as ApplicationStatus),
         reason: input.notificationPayload?.reason,
-        invoiceNumber: input.notificationPayload?.invoiceNumber,
-      },
-    });
+        invoiceNumber: input.notificationPayload?.invoiceNumber}});
 
     await deliverAdminPlatformNotification({
       applicationId: input.applicationId,
@@ -209,16 +191,14 @@ export async function emitApplicationChange(input: {
         input.changeType,
         input.status,
       ),
-      locale,
-    });
+      locale});
   } else {
     publishApplicationUpdatedEvent({
       recipientUserIds: [userId, agentId],
       applicationId: input.applicationId,
       trackingId: trackingId ?? input.applicationId,
       status: input.status,
-      changeType: input.changeType,
-    });
+      changeType: input.changeType});
   }
 
   const event: ApplicationRealtimeEvent = {
@@ -227,8 +207,7 @@ export async function emitApplicationChange(input: {
     agentId,
     status: input.status,
     changeType: input.changeType,
-    updatedAt: Date.now(),
-  };
+    updatedAt: Date.now()};
 
   await storeInRedis(event);
   revalidateApplicationPages(input.applicationId);
@@ -252,14 +231,12 @@ export async function listApplicationEventsSince(
 
     return {
       version: resolveEventsVersion(events, store.version, since),
-      events,
-    };
+      events};
   }
 
   const [versionValue, rawEvents] = await Promise.all([
     redis.get<number>(VERSION_KEY),
-    redis.zrange(EVENTS_KEY, since, "+inf", { byScore: true }),
-  ]);
+    redis.zrange(EVENTS_KEY, since, "+inf", { byScore: true })]);
 
   const events = (rawEvents ?? [])
     .map((entry) => {
@@ -286,8 +263,7 @@ export async function listApplicationEventsSince(
 
   return {
     version: resolveEventsVersion(events, storedVersion, since),
-    events,
-  };
+    events};
 }
 
 function matchesApplicationScope(

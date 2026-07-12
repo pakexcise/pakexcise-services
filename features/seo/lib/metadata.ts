@@ -41,7 +41,6 @@ export type SeoInput = {
     index?: boolean;
     follow?: boolean;
   };
-  alternates?: Record<string, string>;
 };
 
 function buildNonProductionMetadata(input: SeoInput): Metadata {
@@ -60,7 +59,7 @@ function buildNonProductionMetadata(input: SeoInput): Metadata {
       title: input.ogTitle ?? input.title,
       description: input.ogDescription ?? input.description,
       siteName: input.siteName ?? "PakExcise.com",
-      locale: input.locale === "ur" ? "ur_PK" : "en_PK",
+      locale: "en_PK",
       type: "website",
     },
     twitter: {
@@ -92,7 +91,6 @@ export function buildMetadata(input: SeoInput): Metadata {
     description: input.description,
     alternates: {
       canonical,
-      languages: input.alternates,
     },
     robots: {
       index: input.robots?.index ?? true,
@@ -103,7 +101,7 @@ export function buildMetadata(input: SeoInput): Metadata {
       description: ogDescription,
       url: canonical,
       siteName,
-      locale: input.locale === "ur" ? "ur_PK" : "en_PK",
+      locale: "en_PK",
       type: "website",
       images: ogImage
         ? [{ url: ogImage, width: 1200, height: 630, alt: ogTitle }]
@@ -188,7 +186,7 @@ export function buildWebSiteJsonLd(
     "@id": websiteId(normalizedBaseUrl),
     name: siteName,
     url: normalizedBaseUrl,
-    inLanguage: ["en-PK", "ur-PK"],
+    inLanguage: ["en-PK"],
     publisher: {
       "@id": organizationId(normalizedBaseUrl),
     },
@@ -529,7 +527,7 @@ export function buildBusinessContactPoints(input: {
     {
       contactType: "customer support",
       areaServed: "PK",
-      availableLanguage: ["English", "Urdu"],
+      availableLanguage: ["English"],
       ...(input.phone?.trim() ? { telephone: input.phone.trim() } : {}),
       ...(input.email?.trim() ? { email: input.email.trim() } : {}),
     },
@@ -540,7 +538,7 @@ export function buildBusinessContactPoints(input: {
       contactType: "customer support",
       url: input.whatsappUrl.trim(),
       areaServed: "PK",
-      availableLanguage: ["English", "Urdu"],
+      availableLanguage: ["English"],
     });
   }
 
@@ -561,7 +559,7 @@ export function resolveBrandingMetadataDefaults(
   siteName?: string,
 ): Pick<SeoInput, "ogImage" | "twitterImage" | "siteName"> {
   return {
-    ogImage: resolveDefaultOgImagePath(branding, locale),
+    ogImage: resolveDefaultOgImagePath(branding),
     twitterImage: resolveDefaultTwitterImagePath(branding),
     siteName: siteName?.trim() || "PakExcise.com",
   };

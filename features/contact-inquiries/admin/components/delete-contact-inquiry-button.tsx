@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { deleteContactInquiryAdminAction } from "@/features/contact-inquiries/actions/admin-contact-inquiry-actions";
 
+import { useRouter } from "next/navigation";
 type DeleteContactInquiryButtonProps = {
   inquiryId: string;
   labels: {

@@ -1,3 +1,4 @@
+import { copy, createT } from "@/messages";
 import type { Metadata } from "next";
 import {
   ArrowLeft,
@@ -8,7 +9,7 @@ import {
   MessageCircle,
   Search,
 } from "lucide-react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
@@ -23,16 +24,13 @@ import {
   resolveWhatsappDefaultMessage,
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
-import { Link } from "@/i18n/navigation";
 import { siteChromeShellClassName } from "@/lib/styles/site-chrome";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
 import { cn } from "@/lib/utils";
 
+import Link from "next/link";
 export async function generateNotFoundMetadata(): Promise<Metadata> {
-  const locale = await getCurrentLocale();
-  setRequestLocale(locale);
-  const t = await getTranslations("common");
+  const t = createT(copy.common);
 
   return {
     title: t("notFoundMetaTitle"),
@@ -49,9 +47,6 @@ type QuickLink = {
 };
 
 export async function NotFoundPageView() {
-  const locale = await getCurrentLocale();
-  setRequestLocale(locale);
-
   const [t, tNav, publicSettings] = await Promise.all([
     getTranslations("common"),
     getTranslations("nav"),
@@ -59,9 +54,9 @@ export async function NotFoundPageView() {
   ]);
 
   const { business, publicUi, branding } = publicSettings;
-  const localized = localizeGlobalSiteContent(business, locale, publicUi);
+  const localized = localizeGlobalSiteContent(business, publicUi);
   const whatsappLinkNumber = resolveWhatsappLinkNumber(business);
-  const whatsappMessage = resolveWhatsappDefaultMessage(business, locale);
+  const whatsappMessage = resolveWhatsappDefaultMessage(business);
   const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
 
   const headerProps = {

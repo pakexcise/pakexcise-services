@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,11 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createRegionAction,
-  updateRegionAction,
-} from "@/features/regions/admin/actions/region-actions";
+  updateRegionAction} from "@/features/regions/admin/actions/region-actions";
+import { useRouter } from "next/navigation";
 import {
   editorValuesToPayload,
-  type RegionEditorValues,
+  type RegionEditorValues
 } from "@/features/regions/admin/lib/form-defaults";
 
 type RegionEditorLabels = {
@@ -21,19 +20,14 @@ type RegionEditorLabels = {
   tabSeo: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
   descriptionEn: string;
-  descriptionUr: string;
   isActive: string;
   showInFooter: string;
   displayOrder: string;
   footerDisplayOrder: string;
   metaTitleEn: string;
-  metaTitleUr: string;
   metaDescriptionEn: string;
-  metaDescriptionUr: string;
   h1En: string;
-  h1Ur: string;
   save: string;
   saving: string;
   saveFailed: string;
@@ -52,8 +46,7 @@ export function RegionEditorForm({
   mode,
   regionId,
   initialValues,
-  labels,
-}: RegionEditorFormProps) {
+  labels}: RegionEditorFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState<TabKey>("general");
@@ -73,8 +66,7 @@ export function RegionEditorForm({
   ) {
     setValues((current) => ({
       ...current,
-      seo: { ...current.seo, [key]: value },
-    }));
+      seo: { ...current.seo, [key]: value }}));
   }
 
   function handleSubmit() {
@@ -169,14 +161,7 @@ export function RegionEditorForm({
               onChange={(event) => updateField("nameEn", event.target.value)}
             />
           </div>
-          <div className="space-y-2">
-            <Label>{labels.nameUr}</Label>
-            <Input
-              value={values.nameUr}
-              onChange={(event) => updateField("nameUr", event.target.value)}
-              dir="rtl"
-            />
-          </div>
+          
           <div className="space-y-2 lg:col-span-2">
             <Label>{labels.descriptionEn}</Label>
             <Textarea
@@ -187,17 +172,7 @@ export function RegionEditorForm({
               }
             />
           </div>
-          <div className="space-y-2 lg:col-span-2">
-            <Label>{labels.descriptionUr}</Label>
-            <Textarea
-              className="min-h-28"
-              value={values.descriptionUr}
-              onChange={(event) =>
-                updateField("descriptionUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </div>
+          
           <label className="flex items-center gap-2 text-sm lg:col-span-2">
             <input
               type="checkbox"
@@ -228,16 +203,7 @@ export function RegionEditorForm({
               }
             />
           </div>
-          <div className="space-y-2">
-            <Label>{labels.metaTitleUr}</Label>
-            <Input
-              value={values.seo.metaTitleUr}
-              onChange={(event) =>
-                updateSeoField("metaTitleUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </div>
+          
           <div className="space-y-2 lg:col-span-2">
             <Label>{labels.metaDescriptionEn}</Label>
             <Textarea
@@ -247,16 +213,7 @@ export function RegionEditorForm({
               }
             />
           </div>
-          <div className="space-y-2 lg:col-span-2">
-            <Label>{labels.metaDescriptionUr}</Label>
-            <Textarea
-              value={values.seo.metaDescriptionUr}
-              onChange={(event) =>
-                updateSeoField("metaDescriptionUr", event.target.value)
-              }
-              dir="rtl"
-            />
-          </div>
+          
           <div className="space-y-2">
             <Label>{labels.h1En}</Label>
             <Input
@@ -264,14 +221,7 @@ export function RegionEditorForm({
               onChange={(event) => updateSeoField("h1En", event.target.value)}
             />
           </div>
-          <div className="space-y-2">
-            <Label>{labels.h1Ur}</Label>
-            <Input
-              value={values.seo.h1Ur}
-              onChange={(event) => updateSeoField("h1Ur", event.target.value)}
-              dir="rtl"
-            />
-          </div>
+          
         </div>
       )}
 

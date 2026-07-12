@@ -1,20 +1,17 @@
-import { pickLocalized } from "@/lib/i18n/content";
-
 type CategoryLike = {
   nameEn: string;
-  nameUr: string;
 } | null | undefined;
 
 export function resolveBlogCategoryLabels(
-  locale: string,
+  _locale: string,
   category: CategoryLike,
   subCategory: CategoryLike,
 ): { category: string | null; subCategory: string | null; combined: string | null } {
   const categoryLabel = category
-    ? pickLocalized(locale, { en: category.nameEn, ur: category.nameUr })
+    ? category.nameEn ?? ""
     : null;
   const subCategoryLabel = subCategory
-    ? pickLocalized(locale, { en: subCategory.nameEn, ur: subCategory.nameUr })
+    ? subCategory.nameEn ?? ""
     : null;
 
   const combined =

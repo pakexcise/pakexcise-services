@@ -5,10 +5,10 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "@/i18n/navigation";
 import { forgetPassword } from "@/lib/auth-client";
 import { absoluteUrl } from "@/lib/utils";
 
+import Link from "next/link";
 type ForgotPasswordFormLabels = {
   email: string;
   submit: string;

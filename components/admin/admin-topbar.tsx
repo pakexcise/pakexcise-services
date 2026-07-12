@@ -1,12 +1,11 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n/t";
 
 import { AdminSearch } from "@/components/admin/admin-search";
 import { AdminUserMenu, type AdminUserSummary } from "@/components/admin/admin-user-menu";
 import { NotificationBell } from "@/components/notifications/notification-bell";
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
@@ -39,7 +38,6 @@ export function AdminTopbar({ user, onMenuClick }: AdminTopbarProps) {
 
       <div className="ms-auto flex min-w-0 shrink-0 items-center gap-1 sm:gap-2">
         <NotificationBell applicationBasePath="/admin/applications" />
-        <LanguageSwitcher />
         <ThemeToggle />
         <AdminUserMenu user={user} />
       </div>

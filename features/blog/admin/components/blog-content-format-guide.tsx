@@ -8,7 +8,7 @@ export function BlogContentFormatGuide({ title }: BlogContentFormatGuideProps) {
       <summary className="cursor-pointer font-medium text-foreground">{title}</summary>
       <div className="mt-4 space-y-4 text-muted-foreground">
         <section className="space-y-2">
-          <h4 className="font-medium text-foreground">English (LTR)</h4>
+          <h4 className="font-medium text-foreground">Markdown</h4>
           <ul className="list-disc space-y-1 ps-5">
             <li>
               <strong>Heading (H2):</strong>{" "}
@@ -41,34 +41,6 @@ export function BlogContentFormatGuide({ title }: BlogContentFormatGuideProps) {
             <li>
               <strong>Image:</strong>{" "}
               <code className="rounded bg-muted px-1">![alt text](/api/blog/images/image.webp)</code>
-            </li>
-          </ul>
-        </section>
-
-        <section className="space-y-2">
-          <h4 className="font-medium text-foreground">Urdu (RTL)</h4>
-          <ul className="list-disc space-y-1 ps-5">
-            <li>Use the Urdu content field with the same markdown syntax.</li>
-            <li>Write Urdu naturally right-to-left; the editor and page render RTL automatically.</li>
-            <li>
-              Example heading:{" "}
-              <code className="rounded bg-muted px-1" dir="rtl">
-                ## PakExcise کیا ہے؟
-              </code>
-            </li>
-            <li>
-              Example link:{" "}
-              <code className="rounded bg-muted px-1" dir="rtl">
-                [خدمات دیکھیں](/services)
-              </code>
-            </li>
-            <li>
-              Example list:
-              <pre className="mt-1 overflow-x-auto rounded bg-muted p-2 text-xs" dir="rtl">
-{`- گاڑی کی منتقلی
-- ٹوکن ٹیکس
-- لائسنس کی تجدید`}
-              </pre>
             </li>
           </ul>
         </section>

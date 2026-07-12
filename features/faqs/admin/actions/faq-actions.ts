@@ -8,14 +8,12 @@ import {
   faqIdSchema,
   reorderFaqsSchema,
   toggleFaqSchema,
-  updateFaqSchema,
-} from "@/lib/validations/admin-faq";
+  updateFaqSchema} from "@/lib/validations/admin-faq";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { sanitizeFaqAnswer } from "@/lib/security/sanitize-content";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { prisma } from "@/server/db/client";
@@ -42,26 +40,21 @@ function normalizeFaqInput(
 
   return {
     questionEn: data.questionEn,
-    questionUr: data.questionUr,
     answerEn: sanitizeFaqAnswer(data.answerEn),
-    answerUr: sanitizeFaqAnswer(data.answerUr),
     categoryId: data.categoryId,
     serviceId,
     regionId: data.regionId || null,
     seoKeywordsEn: data.seoKeywordsEn?.trim() || null,
-    seoKeywordsUr: data.seoKeywordsUr?.trim() || null,
     isActive: data.isActive,
     isFeatured: serviceId ? false : data.isFeatured,
     displayOrder: data.displayOrder,
-    featuredDisplayOrder: serviceId ? 0 : data.featuredDisplayOrder,
-  };
+    featuredDisplayOrder: serviceId ? 0 : data.featuredDisplayOrder};
 }
 
 async function validateFaqCategoryId(categoryId: string) {
   const category = await prisma.faqCategory.findUnique({
     where: { id: categoryId },
-    select: { id: true },
-  });
+    select: { id: true }});
 
   return category;
 }
@@ -82,33 +75,28 @@ export async function createFaqAction(
 
   if (!category) {
     return errorResult("Category not found", {
-      categoryId: ["Invalid category"],
-    });
+      categoryId: ["Invalid category"]});
   }
 
   if (data.serviceId) {
     const service = await prisma.service.findFirst({
       where: { id: data.serviceId, deletedAt: null },
-      select: { id: true },
-    });
+      select: { id: true }});
 
     if (!service) {
       return errorResult("Service not found", {
-        serviceId: ["Invalid service"],
-      });
+        serviceId: ["Invalid service"]});
     }
   }
 
   if (data.regionId) {
     const region = await prisma.region.findFirst({
       where: { id: data.regionId, deletedAt: null },
-      select: { id: true },
-    });
+      select: { id: true }});
 
     if (!region) {
       return errorResult("Region not found", {
-        regionId: ["Invalid region"],
-      });
+        regionId: ["Invalid region"]});
     }
   }
 
@@ -119,9 +107,7 @@ export async function createFaqAction(
   const faq = await prisma.fAQ.create({
     data: {
       ...normalizeFaqInput(data),
-      displayOrder,
-    },
-  });
+      displayOrder}});
 
   const created = await adminFaqRepository.findById(faq.id);
 
@@ -130,8 +116,7 @@ export async function createFaqAction(
     action: "CREATE",
     entityType: "faq",
     entityId: faq.id,
-    after: faqAuditSnapshot(created),
-  });
+    after: faqAuditSnapshot(created)});
 
   revalidateFaqPaths(created?.service?.slug);
   return successResult({ id: faq.id });
@@ -158,33 +143,28 @@ export async function updateFaqAction(
 
   if (!category) {
     return errorResult("Category not found", {
-      categoryId: ["Invalid category"],
-    });
+      categoryId: ["Invalid category"]});
   }
 
   if (data.serviceId) {
     const service = await prisma.service.findFirst({
       where: { id: data.serviceId, deletedAt: null },
-      select: { id: true },
-    });
+      select: { id: true }});
 
     if (!service) {
       return errorResult("Service not found", {
-        serviceId: ["Invalid service"],
-      });
+        serviceId: ["Invalid service"]});
     }
   }
 
   if (data.regionId) {
     const region = await prisma.region.findFirst({
       where: { id: data.regionId, deletedAt: null },
-      select: { id: true },
-    });
+      select: { id: true }});
 
     if (!region) {
       return errorResult("Region not found", {
-        regionId: ["Invalid region"],
-      });
+        regionId: ["Invalid region"]});
     }
   }
 
@@ -192,8 +172,7 @@ export async function updateFaqAction(
 
   await prisma.fAQ.update({
     where: { id: data.id },
-    data: normalizeFaqInput(data),
-  });
+    data: normalizeFaqInput(data)});
 
   const updated = await adminFaqRepository.findById(data.id);
 
@@ -203,8 +182,7 @@ export async function updateFaqAction(
     entityType: "faq",
     entityId: data.id,
     before,
-    after: faqAuditSnapshot(updated),
-  });
+    after: faqAuditSnapshot(updated)});
 
   revalidateFaqPaths(existing.service?.slug);
   revalidateFaqPaths(updated?.service?.slug);
@@ -230,16 +208,14 @@ export async function deleteFaqAction(
   const before = faqAuditSnapshot(existing);
 
   await prisma.fAQ.delete({
-    where: { id: parsed.data.id },
-  });
+    where: { id: parsed.data.id }});
 
   await auditAdminAction({
     actorId: user.id,
     action: "DELETE",
     entityType: "faq",
     entityId: parsed.data.id,
-    before,
-  });
+    before});
 
   revalidateFaqPaths(existing.service?.slug);
   return successResult({ id: parsed.data.id });
@@ -265,8 +241,7 @@ export async function toggleFaqActiveAction(
 
   await prisma.fAQ.update({
     where: { id: parsed.data.id },
-    data: { isActive: parsed.data.isActive },
-  });
+    data: { isActive: parsed.data.isActive }});
 
   const updated = await adminFaqRepository.findById(parsed.data.id);
 
@@ -276,14 +251,12 @@ export async function toggleFaqActiveAction(
     entityType: "faq",
     entityId: parsed.data.id,
     before,
-    after: faqAuditSnapshot(updated),
-  });
+    after: faqAuditSnapshot(updated)});
 
   revalidateFaqPaths(existing.service?.slug);
   return successResult({
     id: parsed.data.id,
-    isActive: parsed.data.isActive,
-  });
+    isActive: parsed.data.isActive});
 }
 
 export async function reorderFaqsAction(
@@ -304,8 +277,7 @@ export async function reorderFaqsAction(
     parsed.data.items.map((item) =>
       prisma.fAQ.update({
         where: { id: item.id },
-        data: { displayOrder: item.displayOrder },
-      }),
+        data: { displayOrder: item.displayOrder }}),
     ),
   );
 
@@ -315,12 +287,9 @@ export async function reorderFaqsAction(
     entityType: "faq",
     entityId: "reorder",
     before: {
-      items: beforeItems.map((faq) => faqAuditSnapshot(faq)),
-    },
+      items: beforeItems.map((faq) => faqAuditSnapshot(faq))},
     after: {
-      items: parsed.data.items,
-    },
-  });
+      items: parsed.data.items}});
 
   revalidateFaqPaths();
   return successResult({ count: parsed.data.items.length });

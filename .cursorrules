@@ -24,7 +24,7 @@ Use:
 * React Hook Form
 * Zustand only where client state is needed
 * next-themes for dark/light/system theme
-* next-intl for English and Urdu translations
+* next-intl for English UI message catalogs (English-only site)
 * Cloudflare R2 for private document storage
 * Upstash Redis for rate limiting and queues
 * Resend + React Email for email notifications
@@ -162,7 +162,6 @@ utils.ts
 i18n/
 messages/
 en.json
-ur.json
 config.ts
 request.ts
 prisma/
@@ -187,7 +186,7 @@ Rules:
 
 ## URL and Language Rules
 
-PakExcise must use clean URLs without locale prefixes.
+PakExcise is English-only and must use clean URLs without locale prefixes.
 
 Do not use:
 
@@ -220,64 +219,33 @@ Use only clean URLs:
 
 Language behavior:
 
-* English is the default language.
-* New users must see English by default.
-* When the user switches to Urdu, the URL must stay the same.
+* English is the only supported language.
+* Do not add a language switcher.
+* Do not add Urdu UI, RTL layout, or locale-prefixed routes.
 * Do not redirect `/` to `/en`.
-* Do not redirect any route to `/ur`.
-* Store selected language in a cookie, for example `NEXT_LOCALE`.
-* On refresh, keep the selected language from cookie.
-* On a new browser/session without cookie, default to English.
-* Use next-intl with no visible locale prefix, such as `localePrefix: "never"` if compatible with the installed version.
-* If using next-intl internally, do not expose locale segments in the browser URL.
-* The LanguageSwitcher must only update the language cookie and refresh/re-render the current page.
-* Navigation links must never generate `/en` or `/ur`.
-* Sitemap URLs must never include `/en` or `/ur`.
-* Canonical URLs must never include `/en` or `/ur`.
-* Do not generate separate hreflang URLs for `/en` or `/ur`.
-* Since the same URL is used for both languages, treat the clean URL as canonical.
-* Keep `<html lang>` dynamic based on selected language.
-* Use `<html dir="rtl">` only when Urdu is selected.
-* Use `<html dir="ltr">` when English is selected.
-* Urdu UI/content must render RTL correctly.
-* English UI/content must render LTR correctly.
-* All user-facing strings must come from next-intl translation files or database multilingual fields.
+* Redirect legacy `/en/...` and `/ur/...` to the clean path with 308.
+* Use next-intl with English message catalogs only and `localePrefix: "never"`.
+* Navigation links, sitemap URLs, and canonical URLs must never include `/en` or `/ur`.
+* Keep `<html lang="en" dir="ltr">`.
+* All user-facing static strings must come from next-intl `en.json` or English DB fields.
 * No hardcoded user-facing strings in components.
 
 ## i18n Content Rules
 
-Support English and Urdu.
+English only.
 
 Use:
 
 * en.json for English UI strings
-* ur.json for Urdu UI strings
-* English and Urdu fields in database for admin-managed content
-
-Admin-managed content that needs both languages:
-
-* Service name
-* Service short description
-* Service full content
-* Region name
-* Document checklist label/instructions
-* Dynamic form field label/help text/options
-* FAQ question/answer
-* SEO title/description/H1
-* Legal disclaimer
-* Payment instructions where shown to user
-* Notification templates
-* Email templates
-* WhatsApp templates
+* English fields in the database for admin-managed content (legacy `*Ur` columns may remain unused)
 
 Rules:
 
-* All user-facing static text must use next-intl.
-* All dynamic content must come from DB fields based on selected language.
-* If Urdu field is missing, fallback to English safely.
+* All user-facing static text must use next-intl English catalogs.
+* All dynamic content must use English DB fields (`pickLocalized` prefers English).
 * Never break page rendering because a translation is missing.
-* Urdu must use proper Urdu font through next/font.
-* Keep layout mobile-first in both LTR and RTL.
+* Keep layout mobile-first LTR.
+* Do not reintroduce Urdu admin fields, Noto Nastaliq, or RTL styles.
 
 ## Business Rules
 
@@ -330,7 +298,7 @@ Admin must manage:
 * Service schema data
 * Breadcrumb schema data
 * Page content
-* Urdu metadata/content fields
+* English metadata/content fields
 
 Use generateMetadata() on public pages.
 Use server-rendered public pages.
@@ -379,7 +347,7 @@ SEO URL rules:
 * Do not generate duplicate language URLs.
 * Clean URL is the canonical URL.
 * Public pages must still be server-rendered and SEO optimized.
-* Admin should manage SEO content for English and Urdu, but the canonical URL remains the same.
+* Admin should manage SEO content in English; the canonical URL remains the clean path.
 
 ## UI/UX Rules
 
@@ -391,8 +359,7 @@ Design must be:
 * Clean, modern, trustworthy
 * Conversion-focused
 * Accessible
-* RTL compatible for Urdu
-* LTR compatible for English
+* LTR English layout
 * Dark/light/system theme compatible
 
 Use PakExcise brand style:
@@ -754,7 +721,7 @@ Admin must manage:
 * Audit logs
 * Redirects
 * Blog/guides
-* English and Urdu content fields
+* English content fields
 
 Every admin CRUD must have:
 
@@ -786,9 +753,8 @@ Add tests for:
 * FAQ JSON-LD
 * Tracking events
 * Admin CRUD actions
-* Language switching without URL change
-* English default language
-* Urdu RTL layout
+* English-only UI (no language switcher)
+* SEO metadata generation
 
 Before saying a feature is complete:
 
@@ -800,8 +766,7 @@ Before saying a feature is complete:
 * Ensure no frontend service fees
 * Ensure no `/en` routes
 * Ensure no `/ur` routes
-* Ensure language switch keeps the same URL
+* Ensure English-only (no language switcher / no RTL)
 * Ensure mobile responsive UI
 * Ensure dark mode works
-* Ensure Urdu RTL works
 * Ensure SEO metadata exists

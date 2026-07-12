@@ -4,14 +4,12 @@ import { revalidatePath } from "next/cache";
 
 import {
   checklistItemSchema,
-  deleteChecklistItemSchema,
-} from "@/lib/validations/admin-checklist-item";
+  deleteChecklistItemSchema} from "@/lib/validations/admin-checklist-item";
 import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { requirePermission } from "@/server/permissions/guards";
 import { prisma } from "@/server/db/client";
@@ -20,8 +18,7 @@ const DEFAULT_MIME_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
-  "application/pdf",
-];
+  "application/pdf"];
 
 export async function upsertChecklistItemAction(
   input: unknown,
@@ -37,21 +34,16 @@ export async function upsertChecklistItemAction(
   const payload = {
     slug: data.slug,
     nameEn: data.nameEn,
-    nameUr: data.nameUr,
     descriptionEn: data.descriptionEn,
-    descriptionUr: data.descriptionUr,
     itemType: data.itemType,
     displayOrder: data.displayOrder,
-    isActive: data.isActive,
-  };
+    isActive: data.isActive};
 
   const duplicate = await prisma.checklistItem.findFirst({
     where: {
       slug: data.slug,
-      ...(data.id ? { NOT: { id: data.id } } : {}),
-    },
-    select: { id: true },
-  });
+      ...(data.id ? { NOT: { id: data.id } } : {})},
+    select: { id: true }});
 
   if (duplicate) {
     return errorResult("A checklist item with this slug already exists");
@@ -60,16 +52,14 @@ export async function upsertChecklistItemAction(
   if (data.id) {
     const updated = await prisma.checklistItem.update({
       where: { id: data.id },
-      data: payload,
-    });
+      data: payload});
 
     await auditAdminAction({
       actorId: user.id,
       action: "UPDATE",
       entityType: "checklist_item",
       entityId: updated.id,
-      after: { slug: updated.slug },
-    });
+      after: { slug: updated.slug }});
 
     revalidatePath("/admin/checklist-items");
     return successResult({ id: updated.id });
@@ -78,17 +68,14 @@ export async function upsertChecklistItemAction(
   const created = await prisma.checklistItem.create({
     data: {
       ...payload,
-      defaultAcceptedMimeTypes: DEFAULT_MIME_TYPES,
-    },
-  });
+      defaultAcceptedMimeTypes: DEFAULT_MIME_TYPES}});
 
   await auditAdminAction({
     actorId: user.id,
     action: "CREATE",
     entityType: "checklist_item",
     entityId: created.id,
-    after: { slug: created.slug },
-  });
+    after: { slug: created.slug }});
 
   revalidatePath("/admin/checklist-items");
   return successResult({ id: created.id });
@@ -105,8 +92,7 @@ export async function deleteChecklistItemAction(
   }
 
   const assignmentCount = await prisma.documentRequirement.count({
-    where: { checklistItemId: parsed.data.id },
-  });
+    where: { checklistItemId: parsed.data.id }});
 
   if (assignmentCount > 0) {
     return errorResult(
@@ -120,8 +106,7 @@ export async function deleteChecklistItemAction(
     actorId: user.id,
     action: "DELETE",
     entityType: "checklist_item",
-    entityId: parsed.data.id,
-  });
+    entityId: parsed.data.id});
 
   revalidatePath("/admin/checklist-items");
   return successResult({ id: parsed.data.id });

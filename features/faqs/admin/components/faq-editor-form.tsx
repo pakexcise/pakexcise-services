@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,29 +8,26 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createFaqAction,
-  updateFaqAction,
-} from "@/features/faqs/admin/actions/faq-actions";
+  updateFaqAction} from "@/features/faqs/admin/actions/faq-actions";
 import type { FaqEditorValues } from "@/features/faqs/admin/lib/form-defaults";
 import type { FaqEditorLabels } from "@/features/faqs/admin/lib/labels";
 
+import { useRouter } from "next/navigation";
 type ServiceOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type CategoryOption = {
   id: string;
   slug: string;
   nameEn: string;
-  nameUr: string;
   isActive: boolean;
 };
 
 type RegionOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type FaqEditorFormProps = {
@@ -53,8 +49,7 @@ export function FaqEditorForm({
   categories,
   regions,
   locale,
-  labels,
-}: FaqEditorFormProps) {
+  labels}: FaqEditorFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [values, setValues] = useState(initialValues);
@@ -76,9 +71,7 @@ export function FaqEditorForm({
       ...values,
       serviceId: values.serviceId || null,
       regionId: values.regionId || null,
-      seoKeywordsEn: values.seoKeywordsEn.trim() || null,
-      seoKeywordsUr: values.seoKeywordsUr.trim() || null,
-    };
+      seoKeywordsEn: values.seoKeywordsEn.trim() || null};
 
     startTransition(async () => {
       try {
@@ -113,10 +106,7 @@ export function FaqEditorForm({
             id: initialValues.categoryId,
             slug: "unknown",
             nameEn: labels.unknownCategory,
-            nameUr: labels.unknownCategory,
-            isActive: false,
-          },
-        ]
+            isActive: false}]
       : [];
 
   return (
@@ -134,13 +124,7 @@ export function FaqEditorForm({
             onChange={(event) => updateField("questionEn", event.target.value)}
           />
         </Field>
-        <Field label={labels.questionUr} error={fieldErrors.questionUr?.[0]}>
-          <Input
-            value={values.questionUr}
-            onChange={(event) => updateField("questionUr", event.target.value)}
-            dir="rtl"
-          />
-        </Field>
+        
         <Field label={labels.answerEn} error={fieldErrors.answerEn?.[0]} className="lg:col-span-2">
           <Textarea
             className="min-h-32"
@@ -148,14 +132,7 @@ export function FaqEditorForm({
             onChange={(event) => updateField("answerEn", event.target.value)}
           />
         </Field>
-        <Field label={labels.answerUr} error={fieldErrors.answerUr?.[0]} className="lg:col-span-2">
-          <Textarea
-            className="min-h-32"
-            value={values.answerUr}
-            onChange={(event) => updateField("answerUr", event.target.value)}
-            dir="rtl"
-          />
-        </Field>
+        
         <Field label={labels.category} error={fieldErrors.categoryId?.[0]}>
           <select
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
@@ -165,7 +142,7 @@ export function FaqEditorForm({
             <option value="">{labels.selectCategory}</option>
             {categoryOptions.map((category) => (
               <option key={category.id} value={category.id}>
-                {locale === "ur" ? category.nameUr : category.nameEn}
+                {category.nameEn}
                 {!category.isActive ? ` (${labels.inactiveCategory})` : ""}
               </option>
             ))}
@@ -187,7 +164,7 @@ export function FaqEditorForm({
             <option value="">{labels.noService}</option>
             {services.map((service) => (
               <option key={service.id} value={service.id}>
-                {locale === "ur" ? service.nameUr : service.nameEn}
+                {service.nameEn}
               </option>
             ))}
           </select>
@@ -202,7 +179,7 @@ export function FaqEditorForm({
             <option value="">{labels.noRegion}</option>
             {regions.map((region) => (
               <option key={region.id} value={region.id}>
-                {locale === "ur" ? region.nameUr : region.nameEn}
+                {region.nameEn}
               </option>
             ))}
           </select>
@@ -215,14 +192,7 @@ export function FaqEditorForm({
             placeholder={labels.seoKeywordsPlaceholder}
           />
         </Field>
-        <Field label={labels.seoKeywordsUr} error={fieldErrors.seoKeywordsUr?.[0]}>
-          <Input
-            value={values.seoKeywordsUr}
-            onChange={(event) => updateField("seoKeywordsUr", event.target.value)}
-            placeholder={labels.seoKeywordsPlaceholder}
-            dir="rtl"
-          />
-        </Field>
+        
         <Field label={labels.displayOrder}>
           <Input
             type="number"
@@ -290,8 +260,7 @@ function Field({
   label,
   error,
   className,
-  children,
-}: {
+  children}: {
   label: string;
   error?: string;
   className?: string;

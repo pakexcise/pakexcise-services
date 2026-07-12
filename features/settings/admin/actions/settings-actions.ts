@@ -7,8 +7,7 @@ import {
   featureFlagSettingsSnapshot,
   paymentSettingsSnapshot,
   seoSettingsSnapshot,
-  trackingSettingsSnapshot,
-} from "@/features/settings/admin/lib/snapshots";
+  trackingSettingsSnapshot} from "@/features/settings/admin/lib/snapshots";
 import { CONTACT_PAGE_SETTINGS_CACHE_TAG } from "@/features/contact-page/lib/defaults";
 import { PUBLIC_SETTINGS_CACHE_TAG } from "@/features/settings/lib/keys";
 import { loadAdminSettingsSnapshot, saveSettingsGroup } from "@/server/repositories/admin-settings-repository";
@@ -17,13 +16,11 @@ import {
   updateFeatureFlagSettingsSchema,
   updatePaymentSettingsSchema,
   updateSeoSettingsSchema,
-  updateTrackingSettingsSchema,
-} from "@/lib/validations/admin-settings";
+  updateTrackingSettingsSchema} from "@/lib/validations/admin-settings";
 import {
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { requirePermission } from "@/server/permissions/guards";
 
@@ -57,9 +54,7 @@ export async function updateBusinessSettingsAction(
   const businessPayload = {
     ...before.business,
     siteName: parsed.data.siteName,
-    addressEn: parsed.data.addressEn,
-    addressUr: parsed.data.addressUr,
-  };
+    addressEn: parsed.data.addressEn};
 
   await saveSettingsGroup("business", businessPayload);
 
@@ -69,8 +64,7 @@ export async function updateBusinessSettingsAction(
     entityType: "settings",
     entityId: "business",
     before: businessSettingsSnapshot(before.business),
-    after: businessSettingsSnapshot(businessPayload),
-  });
+    after: businessSettingsSnapshot(businessPayload)});
 
   revalidateAfterSettingsUpdate();
   return successResult({ ok: true });
@@ -96,8 +90,7 @@ export async function updatePaymentSettingsAction(
     entityType: "settings",
     entityId: "payment",
     before: paymentSettingsSnapshot(before.payment),
-    after: paymentSettingsSnapshot(parsed.data),
-  });
+    after: paymentSettingsSnapshot(parsed.data)});
 
   revalidateAfterSettingsUpdate();
   return successResult({ ok: true });
@@ -123,8 +116,7 @@ export async function updateSeoSettingsAction(
     entityType: "settings",
     entityId: "seo",
     before: seoSettingsSnapshot(before.seo),
-    after: seoSettingsSnapshot(parsed.data),
-  });
+    after: seoSettingsSnapshot(parsed.data)});
 
   revalidateAfterSettingsUpdate();
   return successResult({ ok: true });
@@ -150,8 +142,7 @@ export async function updateTrackingSettingsAction(
     entityType: "settings",
     entityId: "tracking",
     before: trackingSettingsSnapshot(before.tracking),
-    after: trackingSettingsSnapshot(parsed.data),
-  });
+    after: trackingSettingsSnapshot(parsed.data)});
 
   revalidateAfterSettingsUpdate();
   return successResult({ ok: true });
@@ -177,8 +168,7 @@ export async function updateFeatureFlagSettingsAction(
     entityType: "settings",
     entityId: "features",
     before: featureFlagSettingsSnapshot(before.features),
-    after: featureFlagSettingsSnapshot(parsed.data),
-  });
+    after: featureFlagSettingsSnapshot(parsed.data)});
 
   revalidateAfterSettingsUpdate();
   return successResult({ ok: true });

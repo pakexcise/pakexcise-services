@@ -14,7 +14,8 @@ import { SocialAuthButtons } from "@/features/auth/components/social-auth-button
 import { useAuthPageQuery } from "@/features/auth/hooks/use-auth-page-query";
 import { buildSignupUrl } from "@/features/auth/lib/auth-url";
 import type { SocialProviderId } from "@/features/auth/lib/social-providers";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type LoginFormLabels = {
   email: string;
@@ -187,7 +188,7 @@ function LoginFormContent({ labels, socialProviders, unified = false }: LoginFor
       {unified ? null : (
         <p className="text-center text-sm text-muted-foreground">
           {labels.noAccount}{" "}
-          <Link href={signupHref} className="font-medium text-primary hover:underline">
+          <Link href={signupHref as Route} className="font-medium text-primary hover:underline">
             {labels.signupLink}
           </Link>
         </p>

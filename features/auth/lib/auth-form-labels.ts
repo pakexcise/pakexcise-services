@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 export async function getLoginFormLabels() {
   const t = await getTranslations("auth.login");

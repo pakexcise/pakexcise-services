@@ -2,7 +2,6 @@
 
 import type { PaymentMethodType } from "@prisma/client";
 import { ArrowDown, ArrowUp, Pencil, Trash2 } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -15,23 +14,21 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  TableRow} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createPaymentMethodAction,
   deletePaymentMethodAction,
   reorderPaymentMethodsAction,
   togglePaymentMethodActiveAction,
-  updatePaymentMethodAction,
-} from "@/features/payment-methods/admin/actions/payment-method-actions";
+  updatePaymentMethodAction} from "@/features/payment-methods/admin/actions/payment-method-actions";
 import type { PaymentMethodPanelLabels } from "@/features/payment-methods/admin/lib/labels";
 import {
   PaymentMethodQrField,
-  PaymentMethodQrSaveFirstHint,
-} from "@/features/payment-methods/admin/components/payment-method-qr-field";
+  PaymentMethodQrSaveFirstHint} from "@/features/payment-methods/admin/components/payment-method-qr-field";
 import type { AdminPaymentMethodItem } from "@/server/repositories/admin-payment-method-repository";
 
+import { useRouter } from "next/navigation";
 type PaymentMethodsPanelProps = {
   methods: AdminPaymentMethodItem[];
   labels: PaymentMethodPanelLabels;
@@ -43,15 +40,11 @@ type MethodDraft = {
   code: string;
   type: PaymentMethodType;
   nameEn: string;
-  nameUr: string;
   accountTitleEn: string;
-  accountTitleUr: string;
   accountNumber: string;
   iban: string;
   bankNameEn: string;
-  bankNameUr: string;
   instructionsEn: string;
-  instructionsUr: string;
   isActive: boolean;
   displayOrder: number;
 };
@@ -62,26 +55,20 @@ const paymentMethodTypes: PaymentMethodType[] = [
   "EASYPAISA",
   "NAYAPAY",
   "SADAPAY",
-  "OTHER",
-];
+  "OTHER"];
 
 function emptyDraft(displayOrder: number): MethodDraft {
   return {
     code: "",
     type: "BANK_TRANSFER",
     nameEn: "",
-    nameUr: "",
     accountTitleEn: "",
-    accountTitleUr: "",
     accountNumber: "",
     iban: "",
     bankNameEn: "",
-    bankNameUr: "",
     instructionsEn: "",
-    instructionsUr: "",
     isActive: true,
-    displayOrder,
-  };
+    displayOrder};
 }
 
 function methodToDraft(method: AdminPaymentMethodItem): MethodDraft {
@@ -90,25 +77,19 @@ function methodToDraft(method: AdminPaymentMethodItem): MethodDraft {
     code: method.code,
     type: method.type,
     nameEn: method.nameEn,
-    nameUr: method.nameUr,
     accountTitleEn: method.accountTitleEn ?? "",
-    accountTitleUr: method.accountTitleUr ?? "",
     accountNumber: method.accountNumber ?? "",
     iban: method.iban ?? "",
     bankNameEn: method.bankNameEn ?? "",
-    bankNameUr: method.bankNameUr ?? "",
     instructionsEn: method.instructionsEn ?? "",
-    instructionsUr: method.instructionsUr ?? "",
     isActive: method.isActive,
-    displayOrder: method.displayOrder,
-  };
+    displayOrder: method.displayOrder};
 }
 
 export function PaymentMethodsPanel({
   methods,
   labels,
-  nextDisplayOrder,
-}: PaymentMethodsPanelProps) {
+  nextDisplayOrder}: PaymentMethodsPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [draft, setDraft] = useState<MethodDraft>(emptyDraft(nextDisplayOrder));
@@ -145,18 +126,13 @@ export function PaymentMethodsPanel({
                   code: draft.code,
                   type: draft.type,
                   nameEn: draft.nameEn,
-                  nameUr: draft.nameUr,
                   accountTitleEn: draft.accountTitleEn,
-                  accountTitleUr: draft.accountTitleUr,
                   accountNumber: draft.accountNumber,
                   iban: draft.iban,
                   bankNameEn: draft.bankNameEn,
-                  bankNameUr: draft.bankNameUr,
                   instructionsEn: draft.instructionsEn,
-                  instructionsUr: draft.instructionsUr,
                   isActive: draft.isActive,
-                  displayOrder: draft.displayOrder,
-                },
+                  displayOrder: draft.displayOrder},
           );
         }
         router.refresh();
@@ -226,9 +202,7 @@ export function PaymentMethodsPanel({
       const result = await reorderPaymentMethodsAction({
         items: reordered.map((method, order) => ({
           id: method.id,
-          displayOrder: order + 1,
-        })),
-      });
+          displayOrder: order + 1}))});
 
       if (!result.success) {
         setError(result.error);
@@ -287,33 +261,11 @@ export function PaymentMethodsPanel({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="nameUr">{labels.nameUr}</Label>
-            <p className="text-xs text-muted-foreground">{labels.nameUrHint}</p>
-            <Input
-              id="nameUr"
-              value={draft.nameUr}
-              onChange={(event) => updateDraft("nameUr", event.target.value)}
-              dir="rtl"
-              placeholder="میزان بینک"
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="bankNameEn">{labels.bankNameEn}</Label>
             <Input
               id="bankNameEn"
               value={draft.bankNameEn}
               onChange={(event) => updateDraft("bankNameEn", event.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="bankNameUr">{labels.bankNameUr}</Label>
-            <Input
-              id="bankNameUr"
-              value={draft.bankNameUr}
-              onChange={(event) => updateDraft("bankNameUr", event.target.value)}
-              dir="rtl"
             />
           </div>
 
@@ -325,18 +277,6 @@ export function PaymentMethodsPanel({
               onChange={(event) =>
                 updateDraft("accountTitleEn", event.target.value)
               }
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="accountTitleUr">{labels.accountTitleUr}</Label>
-            <Input
-              id="accountTitleUr"
-              value={draft.accountTitleUr}
-              onChange={(event) =>
-                updateDraft("accountTitleUr", event.target.value)
-              }
-              dir="rtl"
             />
           </div>
 
@@ -369,19 +309,6 @@ export function PaymentMethodsPanel({
               onChange={(event) =>
                 updateDraft("instructionsEn", event.target.value)
               }
-            />
-          </div>
-
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="instructionsUr">{labels.instructionsUr}</Label>
-            <Textarea
-              id="instructionsUr"
-              rows={2}
-              value={draft.instructionsUr}
-              onChange={(event) =>
-                updateDraft("instructionsUr", event.target.value)
-              }
-              dir="rtl"
             />
           </div>
 
@@ -427,8 +354,7 @@ export function PaymentMethodsPanel({
                 invalidType: labels.qrCodeInvalidType,
                 tooLarge: labels.qrCodeTooLarge,
                 invalidName: labels.qrCodeInvalidName,
-                maxSize: labels.qrCodeMaxSize,
-              }}
+                maxSize: labels.qrCodeMaxSize}}
             />
           ) : (
             <PaymentMethodQrSaveFirstHint

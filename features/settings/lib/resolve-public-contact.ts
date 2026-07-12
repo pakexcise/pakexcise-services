@@ -5,12 +5,11 @@ import {
   DEFAULT_PHONE_DISPLAY,
   DEFAULT_WHATSAPP_LINK_NUMBER,
   DEFAULT_WHATSAPP_MESSAGE_EN,
-  DEFAULT_WHATSAPP_MESSAGE_UR,
 } from "@/features/settings/lib/defaults";
 import type { BusinessSettings } from "@/features/settings/types";
 import { normalizePhoneForWhatsApp } from "@/lib/whatsapp/build-service-message";
-import type { Locale } from "@/i18n/config";
-import { pickLocalized } from "@/lib/i18n/content";
+import type { SiteLocale } from "@/config/site";
+type Locale = SiteLocale;
 
 export function normalizeBusinessSettings(
   stored: Partial<BusinessSettings> | null,
@@ -46,28 +45,21 @@ export function normalizeBusinessSettings(
       stored.whatsappDefaultMessageEn?.trim() ||
       legacyMessage ||
       defaults.whatsappDefaultMessageEn,
-    whatsappDefaultMessageUr:
-      stored.whatsappDefaultMessageUr?.trim() ||
-      defaults.whatsappDefaultMessageUr,
+      
     whatsappDefaultMessage:
       stored.whatsappDefaultMessageEn?.trim() ||
       legacyMessage ||
       defaults.whatsappDefaultMessageEn,
     businessEmail: stored.businessEmail?.trim() || defaults.businessEmail,
     supportDaysEn: stored.supportDaysEn?.trim() || defaults.supportDaysEn,
-    supportDaysUr: stored.supportDaysUr?.trim() || defaults.supportDaysUr,
     supportHoursEn: stored.supportHoursEn?.trim() || defaults.supportHoursEn,
-    supportHoursUr: stored.supportHoursUr?.trim() || defaults.supportHoursUr,
     whatsappChannelUrl:
       stored.whatsappChannelUrl?.trim() || defaults.whatsappChannelUrl,
     businessHoursEn: stored.businessHoursEn?.trim() || defaults.businessHoursEn,
-    businessHoursUr: stored.businessHoursUr?.trim() || defaults.businessHoursUr,
     disclaimerEn: stored.disclaimerEn?.trim() || defaults.disclaimerEn,
-    disclaimerUr: stored.disclaimerUr?.trim() || defaults.disclaimerUr,
     footerDescriptionEn:
       stored.footerDescriptionEn?.trim() || defaults.footerDescriptionEn,
-    footerDescriptionUr:
-      stored.footerDescriptionUr?.trim() || defaults.footerDescriptionUr,
+      
   };
 }
 
@@ -89,15 +81,13 @@ export function resolveWhatsappLinkNumber(business: BusinessSettings): string {
 
 export function resolveWhatsappDefaultMessage(
   business: BusinessSettings,
-  locale: Locale,
+  _locale: Locale = "en",
 ): string {
-  return pickLocalized(locale, {
-    en:
-      business.whatsappDefaultMessageEn ||
-      business.whatsappDefaultMessage ||
-      DEFAULT_WHATSAPP_MESSAGE_EN,
-    ur: business.whatsappDefaultMessageUr || DEFAULT_WHATSAPP_MESSAGE_UR,
-  });
+  return (
+    business.whatsappDefaultMessageEn ||
+    business.whatsappDefaultMessage ||
+    DEFAULT_WHATSAPP_MESSAGE_EN
+  );
 }
 
 export function resolveSupportEmail(business: BusinessSettings): string {

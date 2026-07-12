@@ -1,7 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useTransition } from "react";
 
 import { Button } from "@/components/ui/button";

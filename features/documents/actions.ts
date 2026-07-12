@@ -6,23 +6,19 @@ import {
   errorResult,
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import {
   documentIdParamSchema,
-  documentPurposeQuerySchema,
-} from "@/lib/validations/route-params";
+  documentPurposeQuerySchema} from "@/lib/validations/route-params";
 import {
   handleApproveDocument,
   handleConfirmUpload,
   handleDeleteDocument,
   handlePresignUpload,
   handleRejectDocument,
-  handleSignedUrl,
-} from "@/features/documents/lib/handlers";
+  handleSignedUrl} from "@/features/documents/lib/handlers";
 import {
-  rejectDocumentSchema,
-} from "@/lib/validations/documents";
+  rejectDocumentSchema} from "@/lib/validations/documents";
 import { prisma } from "@/server/db/client";
 import { emitApplicationChange } from "@/server/realtime/application-events";
 import { requireUser } from "@/server/permissions/guards";
@@ -71,8 +67,7 @@ export async function confirmDocumentUploadAction(
 
 const documentSignedUrlSchema = z.object({
   documentId: documentIdParamSchema,
-  purpose: documentPurposeQuerySchema,
-});
+  purpose: documentPurposeQuerySchema});
 
 export async function getDocumentSignedUrlAction(
   input: unknown,
@@ -118,11 +113,7 @@ export async function approveDocumentAction(
             userId: true,
             agentId: true,
             trackingId: true,
-            locale: true,
-          },
-        },
-      },
-    });
+            locale: true}}}});
 
     if (document?.application) {
       await emitApplicationChange({
@@ -132,8 +123,7 @@ export async function approveDocumentAction(
         trackingId: document.application.trackingId,
         locale: document.application.locale,
         status: document.application.status,
-        changeType: "document",
-      });
+        changeType: "document"});
     }
   }
 
@@ -166,14 +156,7 @@ export async function rejectDocumentAction(
             locale: true,
             service: {
               select: {
-                nameEn: true,
-                nameUr: true,
-              },
-            },
-          },
-        },
-      },
-    });
+                nameEn: true}}}}}});
 
     if (document?.application) {
       await emitApplicationChange({
@@ -186,10 +169,7 @@ export async function rejectDocumentAction(
         changeType: "document",
         notificationPayload: {
           serviceName: document.application.service.nameEn,
-          serviceNameUr: document.application.service.nameUr,
-          reason: parsed.data.reason,
-        },
-      });
+          reason: parsed.data.reason}});
     }
   }
 

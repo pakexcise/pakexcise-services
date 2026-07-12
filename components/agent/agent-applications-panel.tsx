@@ -4,15 +4,16 @@ import { CustomerGettingStarted } from "@/components/customer/customer-getting-s
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { Route } from "next";
+import Link from "next/link";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
-import { Link } from "@/i18n/navigation";
 
 export type AgentApplicationRow = {
   id: string;
@@ -90,7 +91,7 @@ export function AgentApplicationsPanel({
           <Badge variant="secondary">{countLabel}</Badge>
         </div>
         <Button asChild size="sm" variant="outline">
-          <Link href={viewAllHref}>{viewAllLabel}</Link>
+          <Link href={viewAllHref as Route}>{viewAllLabel}</Link>
         </Button>
       </div>
 

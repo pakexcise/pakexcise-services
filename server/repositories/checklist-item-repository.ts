@@ -8,15 +8,12 @@ const checklistItemSelect = {
   id: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   descriptionEn: true,
-  descriptionUr: true,
   itemType: true,
   isActive: true,
   displayOrder: true,
   createdAt: true,
-  updatedAt: true,
-} as const satisfies Prisma.ChecklistItemSelect;
+  updatedAt: true} as const satisfies Prisma.ChecklistItemSelect;
 
 export type AdminChecklistItem = Prisma.ChecklistItemGetPayload<{
   select: typeof checklistItemSelect;
@@ -28,8 +25,7 @@ export class ChecklistItemRepository extends Repository {
       () =>
         this.db.checklistItem.findMany({
           orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-          select: checklistItemSelect,
-        }),
+          select: checklistItemSelect}),
       [],
     );
   }
@@ -40,8 +36,7 @@ export class ChecklistItemRepository extends Repository {
         this.db.checklistItem.findMany({
           where: { isActive: true },
           orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-          select: checklistItemSelect,
-        }),
+          select: checklistItemSelect}),
       [],
     );
   }

@@ -7,7 +7,6 @@ type DocumentRequirement = {
   id: string;
   docType: string;
   labelEn: string;
-  labelUr: string;
   isRequired: boolean;
 };
 
@@ -21,7 +20,7 @@ type ApplicationDocument = {
 };
 
 type AgentApplicationDocumentsReadOnlyProps = {
-  locale: "en" | "ur";
+  locale: "en";
   requirements: DocumentRequirement[];
   documents: ApplicationDocument[];
   labels: {
@@ -41,8 +40,7 @@ export function AgentApplicationDocumentsReadOnly({
   locale,
   requirements,
   documents,
-  labels,
-}: AgentApplicationDocumentsReadOnlyProps) {
+  labels}: AgentApplicationDocumentsReadOnlyProps) {
   const applicantDocuments = documents.filter(
     (doc) => doc.type !== COMPLETION_PROOF_DOC_TYPE,
   );
@@ -58,17 +56,15 @@ export function AgentApplicationDocumentsReadOnly({
 
           return {
             id: requirement.id,
-            label: locale === "ur" ? requirement.labelUr : requirement.labelEn,
+            label: requirement.labelEn,
             isRequired: requirement.isRequired,
-            uploaded,
-          };
+            uploaded};
         })
       : applicantDocuments.map((doc) => ({
           id: doc.id,
           label: doc.fileName,
           isRequired: true,
-          uploaded: doc,
-        }));
+          uploaded: doc}));
 
   return (
     <div className="rounded-xl border bg-card p-5 shadow-sm">

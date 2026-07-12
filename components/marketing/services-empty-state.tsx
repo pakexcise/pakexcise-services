@@ -1,8 +1,7 @@
 import { MapPin, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type ServicesEmptyStateProps = {
   title: string;
   description: string;

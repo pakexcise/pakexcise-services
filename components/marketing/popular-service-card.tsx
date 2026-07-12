@@ -2,12 +2,14 @@ import { Sparkles } from "lucide-react";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { getServiceCardDisplayText } from "@/features/services/lib/service-regions";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 import type { PublicServiceSelect } from "@/server/repositories";
 
 import type { ServiceCardLabels } from "@/components/marketing/service-card";
+
+import Link from "next/link";
+
+type Locale = "en";
 
 type PopularServiceCardProps = {
   service: PublicServiceSelect;
@@ -20,28 +22,20 @@ export function PopularServiceCard({
   service,
   locale,
   labels,
-  badgeLabel,
-}: PopularServiceCardProps) {
-  const name = pickLocalized(locale, {
-    en: service.nameEn,
-    ur: service.nameUr,
-  });
+  badgeLabel}: PopularServiceCardProps) {
+  const name = service.nameEn ?? "";
 
   const { availabilityLine, summary } = getServiceCardDisplayText(
     service,
-    locale as "en" | "ur",
+    locale as Locale,
     {
       allProvincesLabel: labels.allProvincesLabel,
       conjunction: labels.conjunction,
       availableInTemplate: labels.availableInTemplate,
-      summaryTemplate: labels.summaryTemplate,
-    },
+      summaryTemplate: labels.summaryTemplate},
   );
 
-  const fallbackSummary = pickLocalized(locale, {
-    en: service.shortDescriptionEn,
-    ur: service.shortDescriptionUr,
-  });
+  const fallbackSummary = service.shortDescriptionEn ?? "";
   const description = summary || fallbackSummary;
 
   return (
@@ -63,10 +57,7 @@ export function PopularServiceCard({
           </span>
           {service.category ? (
             <span className="text-xs font-medium text-muted-foreground">
-              {pickLocalized(locale, {
-                en: service.category.nameEn,
-                ur: service.category.nameUr,
-              })}
+              {service.category.nameEn ?? ""}
             </span>
           ) : null}
         </div>

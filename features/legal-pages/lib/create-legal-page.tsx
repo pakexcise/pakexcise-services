@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { CTASection } from "@/components/marketing/cta-section";
 import { JsonLd } from "@/components/marketing/json-ld";
@@ -12,13 +12,11 @@ import {
   buildBreadcrumbJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
-import { pickLocalized } from "@/lib/i18n/content";
 import { absoluteUrl, formatDate } from "@/lib/utils";
-import { getCurrentLocale } from "@/server/i18n/get-locale";
 
 type LegalPageConfig = {
   slug: string;
-  breadcrumbLabel: { en: string; ur: string };
+  breadcrumbLabel: { en: string; ur?: string };
   showCta?: boolean;
   applyHref?: string;
 };
@@ -27,17 +25,15 @@ export function createLegalPage(config: LegalPageConfig) {
   const path = legalPagePath(config.slug);
 
   async function generateMetadata(): Promise<Metadata> {
-    const locale = await getCurrentLocale();
+    const locale = "en";
     const content = await resolveLegalPageContent(config.slug);
 
     const title = {
       en: content?.titleEn ?? config.breadcrumbLabel.en,
-      ur: content?.titleUr ?? config.breadcrumbLabel.ur,
     };
 
     const description = {
       en: content?.excerptEn || content?.contentEn?.slice(0, 160) || title.en,
-      ur: content?.excerptUr || content?.contentUr?.slice(0, 160) || title.ur,
     };
 
     const metadata = await resolveMetadataFromSeo({
@@ -62,8 +58,7 @@ export function createLegalPage(config: LegalPageConfig) {
   }
 
   async function LegalPageView() {
-    const locale = await getCurrentLocale();
-    setRequestLocale(locale);
+    const locale = "en";
 
     const tMarketing = await getTranslations("marketing");
     const tCommon = await getTranslations("common");
@@ -74,24 +69,15 @@ export function createLegalPage(config: LegalPageConfig) {
       config.showCta ? getBusinessSettings() : Promise.resolve(null),
     ]);
 
-    const fallbackTitle = pickLocalized(locale, config.breadcrumbLabel);
+    const fallbackTitle = config.breadcrumbLabel.en ?? "";
     const title = content
-      ? pickLocalized(locale, {
-          en: content.seo?.h1En ?? content.titleEn,
-          ur: content.seo?.h1Ur ?? content.titleUr,
-        })
+      ? content.seo?.h1En ?? content.titleEn
       : fallbackTitle;
     const description = content
-      ? pickLocalized(locale, {
-          en: content.excerptEn,
-          ur: content.excerptUr,
-        })
+      ? content.excerptEn ?? ""
       : "";
     const body = content
-      ? pickLocalized(locale, {
-          en: content.contentEn,
-          ur: content.contentUr,
-        })
+      ? content.contentEn ?? ""
       : "";
     const hasPublishedContent = Boolean(content?.isPublished && body.trim());
     const lastUpdated =

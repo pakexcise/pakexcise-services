@@ -1,0 +1,145 @@
+Inline English messages report
+Generated: 2026-07-11T22:55:53.917Z
+
+Changed files (78):
+  app/not-found.tsx
+  app/[locale]/(admin)/admin/agent-payouts/page.tsx
+  app/[locale]/(admin)/admin/agents/page.tsx
+  app/[locale]/(admin)/admin/analytics/page.tsx
+  app/[locale]/(admin)/admin/audit-logs/page.tsx
+  app/[locale]/(admin)/admin/blog/new/page.tsx
+  app/[locale]/(admin)/admin/blog/page.tsx
+  app/[locale]/(admin)/admin/blog/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/blog-categories/new/page.tsx
+  app/[locale]/(admin)/admin/blog-categories/page.tsx
+  app/[locale]/(admin)/admin/blog-categories/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/cities/new/page.tsx
+  app/[locale]/(admin)/admin/cities/page.tsx
+  app/[locale]/(admin)/admin/cities/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/contact-inquiries/new/page.tsx
+  app/[locale]/(admin)/admin/contact-inquiries/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/contact-page/page.tsx
+  app/[locale]/(admin)/admin/document-requirements/page.tsx
+  app/[locale]/(admin)/admin/faq-categories/new/page.tsx
+  app/[locale]/(admin)/admin/faq-categories/page.tsx
+  app/[locale]/(admin)/admin/faq-categories/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/faqs/new/page.tsx
+  app/[locale]/(admin)/admin/faqs/page.tsx
+  app/[locale]/(admin)/admin/faqs/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/guest-leads/new/page.tsx
+  app/[locale]/(admin)/admin/guest-leads/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/guides/new/page.tsx
+  app/[locale]/(admin)/admin/guides/page.tsx
+  app/[locale]/(admin)/admin/guides/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/legal-pages/new/page.tsx
+  app/[locale]/(admin)/admin/legal-pages/page.tsx
+  app/[locale]/(admin)/admin/legal-pages/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/payment-methods/page.tsx
+  app/[locale]/(admin)/admin/redirects/new/page.tsx
+  app/[locale]/(admin)/admin/redirects/page.tsx
+  app/[locale]/(admin)/admin/redirects/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/regions/new/page.tsx
+  app/[locale]/(admin)/admin/regions/page.tsx
+  app/[locale]/(admin)/admin/regions/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/seo/page.tsx
+  app/[locale]/(admin)/admin/service-availability/page.tsx
+  app/[locale]/(admin)/admin/service-categories/new/page.tsx
+  app/[locale]/(admin)/admin/service-categories/page.tsx
+  app/[locale]/(admin)/admin/service-categories/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/services/new/page.tsx
+  app/[locale]/(admin)/admin/services/page.tsx
+  app/[locale]/(admin)/admin/services/[id]/edit/page.tsx
+  app/[locale]/(admin)/admin/social/page.tsx
+  app/[locale]/(admin)/admin/users/new/page.tsx
+  app/[locale]/(admin)/admin/users/page.tsx
+  app/[locale]/(admin)/admin/users/[id]/edit/page.tsx
+  app/[locale]/(agent)/agent/applications/new/page.tsx
+  app/[locale]/(agent)/agent/commissions/page.tsx
+  app/[locale]/(auth)/choose-role/page.tsx
+  app/[locale]/(auth)/forgot-password/page.tsx
+  app/[locale]/(auth)/login/page.tsx
+  app/[locale]/(auth)/reset-password/page.tsx
+  app/[locale]/(auth)/signup/page.tsx
+  app/[locale]/(customer)/customer/profile/page.tsx
+  app/[locale]/(marketing)/apply/[serviceSlug]/page.tsx
+  app/[locale]/(marketing)/apply/[serviceSlug]/success/page.tsx
+  app/[locale]/(marketing)/blog/page.tsx
+  app/[locale]/(marketing)/blog/[slug]/page.tsx
+  app/[locale]/(marketing)/contact/page.tsx
+  app/[locale]/(marketing)/faqs/page.tsx
+  app/[locale]/(marketing)/guides/page.tsx
+  app/[locale]/(marketing)/guides/[slug]/page.tsx
+  app/[locale]/(marketing)/page.tsx
+  app/[locale]/(marketing)/regions/page.tsx
+  app/[locale]/(marketing)/request/[serviceSlug]/page.tsx
+  app/[locale]/(marketing)/reviews/page.tsx
+  app/[locale]/(marketing)/track/page.tsx
+  components/shared/Footer.tsx
+  features/auth/lib/auth-form-labels.ts
+  features/faqs/admin/lib/labels.ts
+  features/legal-pages/lib/create-legal-page.tsx
+  features/marketing/lib/content-page.tsx
+  features/services/admin/lib/labels.ts
+
+Skipped files (56):
+  app/api/applications/[id]/snapshot/route.ts — dynamic key: tStatus(getApplicationStatusLabelKey(application...)
+  app/[locale]/(admin)/admin/applications/new/page.tsx — dynamic key: tAdmin(getAdminApplicationStatusLabelKey(status...)
+  app/[locale]/(admin)/admin/applications/page.tsx — dynamic key: t(getAdminApplicationStatusLabelKey(applic...)
+  app/[locale]/(admin)/admin/applications/[id]/edit/page.tsx — dynamic key: tAdmin(getAdminApplicationStatusLabelKey(status...)
+  app/[locale]/(admin)/admin/applications/[id]/page.tsx — dynamic key: t(getAdminApplicationStatusLabelKey(status...)
+  app/[locale]/(admin)/admin/checklist-items/page.tsx — t.raw(...)
+  app/[locale]/(admin)/admin/contact-inquiries/page.tsx — dynamic key: t(`status.${inquiry.status}`...)
+  app/[locale]/(admin)/admin/contact-inquiries/[id]/page.tsx — dynamic key: t(`status.${inquiry.status}`...)
+  app/[locale]/(admin)/admin/customers/page.tsx — dynamic key: t(`customers.status.${customer.status}`...)
+  app/[locale]/(admin)/admin/dashboard/page.tsx — dynamic key: t(`dashboard.cards.${card.key}`...)
+  app/[locale]/(admin)/admin/guest-leads/page.tsx — dynamic key: t(`guestLeads.source.${lead.source}`...)
+  app/[locale]/(admin)/admin/guest-leads/[id]/page.tsx — dynamic key: t(`guestLeads.status.${lead.status}`...)
+  app/[locale]/(admin)/admin/home-page/page.tsx — dynamic key: t(`sections.${key}`...)
+  app/[locale]/(admin)/admin/notifications/page.tsx — dynamic key: t(`notifications.eventType.${item.eventTyp...)
+  app/[locale]/(admin)/admin/settings/page.tsx — translator 't' used outside simple t("key") calls
+  app/[locale]/(admin)/admin/site-settings/page.tsx — dynamic key: t("submitRequest.submitRequestSaveToSuppor...)
+  app/[locale]/(agent)/agent/applications/page.tsx — dynamic key: tStatus(getApplicationStatusLabelKey(application...)
+  app/[locale]/(agent)/agent/applications/[id]/page.tsx — dynamic key: t(`${guidanceKey}.title`...)
+  app/[locale]/(agent)/agent/dashboard/page.tsx — dynamic key: t(`statusCards.${card.key}`...)
+  app/[locale]/(agent)/agent/profile/page.tsx — dynamic key: tApproval(profile.approvalStatus...)
+  app/[locale]/(customer)/customer/applications/[id]/page.tsx — dynamic key: tStatus(getApplicationStatusLabelKey(status)...)
+  app/[locale]/(customer)/customer/dashboard/page.tsx — dynamic key: t(`statusCards.${card.key}`...)
+  app/[locale]/(marketing)/about/page.tsx — translator 'tCommon' used outside simple t("key") calls
+  app/[locale]/(marketing)/regions/[regionSlug]/page.tsx — translator 't' used outside simple t("key") calls
+  app/[locale]/(marketing)/regions/[regionSlug]/[citySlug]/page.tsx — translator 't' used outside simple t("key") calls
+  app/[locale]/(marketing)/services/page.tsx — translator 't' used outside simple t("key") calls
+  app/[locale]/(marketing)/services/[serviceSlug]/page.tsx — translator 't' used outside simple t("key") calls
+  app/[locale]/(support)/support/applications/page.tsx — dynamic key: tAdmin(getAdminApplicationStatusLabelKey(applic...)
+  app/[locale]/(support)/support/applications/[id]/page.tsx — dynamic key: tAdmin(getAdminApplicationStatusLabelKey(applic...)
+  app/[locale]/(support)/support/dashboard/page.tsx — dynamic key: t(`statusCards.${card.key}`...)
+  app/[locale]/(support)/support/guest-leads/page.tsx — dynamic key: t(`guestLeads.status.${value}`...)
+  app/[locale]/(support)/support/guest-leads/[id]/page.tsx — dynamic key: t(`guestLeads.status.${lead.status}`...)
+  components/admin/admin-sidebar.tsx — dynamic key: t(item.labelKey...)
+  components/agent/agent-sidebar.tsx — dynamic key: t(item.key...)
+  components/customer/CustomerPortalNav.tsx — dynamic key: t(item.key...)
+  components/customer/StatusTimeline.tsx — dynamic key: tStatus(getApplicationStatusLabelKey(status)...)
+  components/marketing/home-regions-section.tsx — complex ICU at marketing.regions.serviceCount
+  components/marketing/not-found-page.tsx — translator 't' used outside simple t("key") calls
+  components/notifications/notification-bell.tsx — complex ICU at realtime.notifications.bellAria
+  components/shared/Header.tsx — dynamic key: t(item.key...)
+  components/support/support-sidebar.tsx — dynamic key: t(item.labelKey...)
+  features/admin/components/agent-filters.tsx — dynamic key: t(`approvalStatus.${status}`...)
+  features/admin/components/application-filters.tsx — dynamic key: t(getAdminApplicationStatusLabelKey(status...)
+  features/admin/components/application-queue-stats.tsx — dynamic key: t(getAdminApplicationStatusLabelKey(status...)
+  features/admin/components/customer-filters.tsx — dynamic key: t(`status.${status}`...)
+  features/admin/components/dashboard-insight-cards.tsx — complex ICU at admin.dashboard.insights.applicationCount
+  features/admin/components/notification-filters.tsx — dynamic key: t(`status.${status}`...)
+  features/admin/components/recent-applications-table.tsx — dynamic key: t(getAdminApplicationStatusLabelKey(applic...)
+  features/admin/components/recent-contact-inquiries-table.tsx — dynamic key: t(`status.${inquiry.status}`...)
+  features/admin/lib/create-admin-list-page.tsx — dynamic key: t(`nav.${config.navKey}`...)
+  features/admin/users/components/admin-permission-picker.tsx — dynamic key: t(`groups.${group.labelKey}`...)
+  features/contact-inquiries/admin/components/contact-inquiry-filters.tsx — dynamic key: t(`status.${value}`...)
+  features/contact-inquiries/admin/components/contact-inquiry-status-stats.tsx — dynamic key: t(`status.${status}`...)
+  features/customer/hooks/use-customer-application-labels.ts — dynamic key: tStatus(getApplicationStatusLabelKey(status as A...)
+  features/guest-leads/admin/components/support-request-filters.tsx — dynamic key: t(`status.${value}`...)
+  features/guest-leads/admin/components/support-request-status-stats.tsx — dynamic key: t(`status.${status}`...)
+
+Notes:
+- Restored NextIntlClientProvider in app/[locale]/layout.tsx and app/not-found.tsx (skipped children still need it).
+- Fixed next-intl redirect({href,locale}) -> redirect(href) in 16 files.
+- Repaired 11 mangled multi-line imports from navigation rewrite.

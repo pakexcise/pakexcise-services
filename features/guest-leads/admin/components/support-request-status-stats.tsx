@@ -1,9 +1,12 @@
+import { copy, createT } from "@/messages";
 import type { GuestLeadStatus } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { guestLeadRepository } from "@/server/repositories/guest-lead-repository";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 const statStatuses = [
   "NEW",
@@ -57,7 +60,7 @@ export async function SupportRequestStatusStats({
   currentStatus,
   searchParams,
 }: SupportRequestStatusStatsProps) {
-  const t = await getTranslations("admin.guestLeads");
+  const t = createT(copy.admin.guestLeads);
   const counts = await guestLeadRepository.countByStatus();
   const total = statStatuses.reduce(
     (sum, status) => sum + (counts[status] ?? 0),
@@ -67,7 +70,7 @@ export async function SupportRequestStatusStats({
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7">
       <Link
-        href={buildHref(undefined, searchParams)}
+        href={buildHref(undefined, searchParams) as Route}
         className={cn(
           "rounded-xl border bg-card px-3 py-2.5 transition-colors hover:bg-muted/40",
           !currentStatus && "border-primary/50 bg-primary/5",
@@ -80,7 +83,7 @@ export async function SupportRequestStatusStats({
       {statStatuses.map((status) => (
         <Link
           key={status}
-          href={buildHref(status, searchParams)}
+          href={buildHref(status, searchParams) as Route}
           className={cn(
             "rounded-xl border bg-card px-3 py-2.5 transition-colors hover:bg-muted/40",
             currentStatus === status && "border-primary/50 bg-primary/5",

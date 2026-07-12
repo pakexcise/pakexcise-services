@@ -6,23 +6,19 @@ import { SeoFieldsSection } from "@/features/cms/components/seo-fields-section";
 import { emptySeoInput } from "@/features/cms/lib/default-seo";
 import {
   createGuideAction,
-  updateGuideAction,
-} from "@/features/guides/admin/actions/guide-actions";
+  updateGuideAction} from "@/features/guides/admin/actions/guide-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "@/i18n/navigation";
 import type { SeoMetaInput } from "@/lib/validations/admin-seo";
 
+import { useRouter } from "next/navigation";
 export type GuideEditorValues = {
   slug: string;
   titleEn: string;
-  titleUr: string;
   excerptEn: string;
-  excerptUr: string;
   contentEn: string;
-  contentUr: string;
   relatedServiceIds: string[];
   attachedFaqIds: string[];
   isPublished: boolean;
@@ -44,8 +40,7 @@ export function GuideEditorForm({
   guideId,
   initialValues,
   services,
-  faqs,
-}: GuideEditorFormProps) {
+  faqs}: GuideEditorFormProps) {
   const router = useRouter();
   const [values, setValues] = useState(initialValues);
   const [error, setError] = useState<string | null>(null);
@@ -61,10 +56,8 @@ export function GuideEditorForm({
       const payload = {
         ...values,
         excerptEn: values.excerptEn || null,
-        excerptUr: values.excerptUr || null,
         seo: values.seo,
-        ...(mode === "edit" ? { id: guideId } : {}),
-      };
+        ...(mode === "edit" ? { id: guideId } : {})};
 
       const result =
         mode === "create"
@@ -100,15 +93,7 @@ export function GuideEditorForm({
             onChange={(e) => setValues((c) => ({ ...c, titleEn: e.target.value }))}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="titleUr">Title (Urdu)</Label>
-          <Input
-            id="titleUr"
-            dir="rtl"
-            value={values.titleUr}
-            onChange={(e) => setValues((c) => ({ ...c, titleUr: e.target.value }))}
-          />
-        </div>
+        
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="contentEn">Content (English)</Label>
           <Textarea
@@ -118,16 +103,7 @@ export function GuideEditorForm({
             onChange={(e) => setValues((c) => ({ ...c, contentEn: e.target.value }))}
           />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="contentUr">Content (Urdu)</Label>
-          <Textarea
-            id="contentUr"
-            rows={12}
-            dir="rtl"
-            value={values.contentUr}
-            onChange={(e) => setValues((c) => ({ ...c, contentUr: e.target.value }))}
-          />
-        </div>
+        
         <label className="flex items-center gap-2 text-sm md:col-span-2">
           <input
             type="checkbox"
@@ -151,8 +127,7 @@ export function GuideEditorForm({
                 onChange={() =>
                   setValues((c) => ({
                     ...c,
-                    relatedServiceIds: toggleId(c.relatedServiceIds, service.id),
-                  }))
+                    relatedServiceIds: toggleId(c.relatedServiceIds, service.id)}))
                 }
               />
               {service.label}
@@ -172,8 +147,7 @@ export function GuideEditorForm({
                 onChange={() =>
                   setValues((c) => ({
                     ...c,
-                    attachedFaqIds: toggleId(c.attachedFaqIds, faq.id),
-                  }))
+                    attachedFaqIds: toggleId(c.attachedFaqIds, faq.id)}))
                 }
               />
               {faq.label}
@@ -188,21 +162,15 @@ export function GuideEditorForm({
         labels={{
           title: "SEO metadata",
           metaTitleEn: "Meta title (EN)",
-          metaTitleUr: "Meta title (UR)",
           metaDescriptionEn: "Meta description (EN)",
-          metaDescriptionUr: "Meta description (UR)",
           h1En: "H1 (EN)",
-          h1Ur: "H1 (UR)",
           canonicalUrl: "Canonical URL",
           ogTitleEn: "OG title (EN)",
-          ogTitleUr: "OG title (UR)",
           ogDescriptionEn: "OG description (EN)",
-          ogDescriptionUr: "OG description (UR)",
           ogImage: "OG image URL",
           twitterCard: "Twitter card",
           robotsIndex: "Allow indexing",
-          robotsFollow: "Allow following",
-        }}
+          robotsFollow: "Allow following"}}
       />
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
@@ -223,14 +191,10 @@ export function createEmptyGuideValues(): GuideEditorValues {
   return {
     slug: "",
     titleEn: "",
-    titleUr: "",
     excerptEn: "",
-    excerptUr: "",
     contentEn: "",
-    contentUr: "",
     relatedServiceIds: [],
     attachedFaqIds: [],
     isPublished: false,
-    seo: { ...emptySeoInput },
-  };
+    seo: { ...emptySeoInput }};
 }

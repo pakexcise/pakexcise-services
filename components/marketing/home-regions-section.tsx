@@ -1,22 +1,20 @@
+import { copy, createT } from "@/messages";
 import { MapPin } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { ProvinceCard } from "@/components/marketing/province-card";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type HomeRegionsSectionProps = {
   title: string;
   description: string;
   regions: Array<{
     slug: string;
     nameEn: string;
-    nameUr: string;
     descriptionEn?: string | null;
-    descriptionUr?: string | null;
     activeServiceCount?: number;
   }>;
   locale: string;
@@ -36,9 +34,8 @@ export async function HomeRegionsSection({
   viewAllLabel,
   emptyMessage,
   tone = "default",
-  className,
-}: HomeRegionsSectionProps) {
-  const t = await getTranslations("marketing");
+  className}: HomeRegionsSectionProps) {
+  const t = createT(copy.marketing);
 
   return (
     <HomeSectionShell tone={tone} className={className}>

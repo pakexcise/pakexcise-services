@@ -16,7 +16,7 @@ export type InvoicePaymentMethodView = PaymentMethodDisplayFields & {
 
 type InvoicePaymentMethodsDisplayProps = {
   methods: InvoicePaymentMethodView[];
-  locale: "en" | "ur";
+  locale: "en";
   labels: PaymentMethodDisplayLabels & {
     title: string;
     empty?: string;
@@ -57,7 +57,7 @@ export function InvoicePaymentMethodsDisplay({
       <div className="grid gap-3 sm:grid-cols-2">
         {methods.map((method) => {
           const Icon = methodIcon(method.type);
-          const lines = formatPaymentMethodDetails(method, locale, labels);
+          const lines = formatPaymentMethodDetails(method, labels);
 
           return (
             <div

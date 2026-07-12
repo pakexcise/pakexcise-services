@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,14 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createGuestLeadAdminAction,
-  updateGuestLeadAdminAction,
-} from "@/features/guest-leads/actions/admin-guest-lead-actions";
+  updateGuestLeadAdminAction} from "@/features/guest-leads/actions/admin-guest-lead-actions";
 import type { GuestLeadSource, GuestLeadStatus } from "@prisma/client";
 
+import { useRouter } from "next/navigation";
 type ServiceOption = {
   id: string;
   nameEn: string;
-  nameUr: string;
 };
 
 export type SupportRequestEditorValues = {
@@ -27,13 +25,12 @@ export type SupportRequestEditorValues = {
   phone: string;
   email: string;
   regionNameEn: string;
-  regionNameUr: string;
   cityName: string;
   vehicleInfo: string;
   licenseInfo: string;
   message: string;
   adminNotes: string;
-  locale: "en" | "ur";
+  locale: "en";
 };
 
 type SupportRequestEditorFormProps = {
@@ -54,7 +51,6 @@ type SupportRequestEditorFormProps = {
     phone: string;
     email: string;
     regionEn: string;
-    regionUr: string;
     city: string;
     vehicleInfo: string;
     licenseInfo: string;
@@ -81,16 +77,14 @@ const statusOptions: GuestLeadStatus[] = [
   "IN_PROGRESS",
   "CONVERTED",
   "CLOSED",
-  "SPAM",
-];
+  "SPAM"];
 
 export function SupportRequestEditorForm({
   mode,
   leadId,
   initialValues,
   services,
-  labels,
-}: SupportRequestEditorFormProps) {
+  labels}: SupportRequestEditorFormProps) {
   const router = useRouter();
   const [values, setValues] = useState(initialValues);
   const [error, setError] = useState<string | null>(null);
@@ -98,21 +92,18 @@ export function SupportRequestEditorForm({
 
   const selectedService = useMemo(
     () => services.find((service) => service.id === values.serviceId),
-    [services, values.serviceId],
-  );
+    [services, values.serviceId]);
 
   function updateField<K extends keyof SupportRequestEditorValues>(
     key: K,
-    value: SupportRequestEditorValues[K],
-  ) {
+    value: SupportRequestEditorValues[K]) {
     setValues((current) => ({ ...current, [key]: value }));
   }
 
   function handleServiceChange(serviceId: string) {
     setValues((current) => ({
       ...current,
-      serviceId,
-    }));
+      serviceId}));
   }
 
   function statusLabel(status: GuestLeadStatus): string {
@@ -138,9 +129,8 @@ export function SupportRequestEditorForm({
     setError(null);
 
     const serviceNameEn = selectedService?.nameEn ?? "";
-    const serviceNameUr = selectedService?.nameUr ?? "";
 
-    if (!serviceNameEn || !serviceNameUr) {
+    if (!serviceNameEn) {
       setError(labels.saveFailed);
       return;
     }
@@ -150,21 +140,18 @@ export function SupportRequestEditorForm({
         ...(mode === "edit" ? { id: leadId! } : {}),
         serviceId: values.serviceId || null,
         serviceNameEn,
-        serviceNameUr,
         source: values.source,
         status: values.status,
         fullName: values.fullName,
         phone: values.phone,
         email: values.email || null,
         regionNameEn: values.regionNameEn || null,
-        regionNameUr: values.regionNameUr || null,
         cityName: values.cityName || null,
         vehicleInfo: values.vehicleInfo || null,
         licenseInfo: values.licenseInfo || null,
         message: values.message || null,
         adminNotes: values.adminNotes || null,
-        locale: values.locale,
-      };
+        locale: values.locale};
 
       const result =
         mode === "create"
@@ -225,12 +212,11 @@ export function SupportRequestEditorForm({
               id="sr-locale"
               value={values.locale}
               onChange={(event) =>
-                updateField("locale", event.target.value as "en" | "ur")
+                updateField("locale", event.target.value as "en")
               }
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
             >
               <option value="en">English</option>
-              <option value="ur">Urdu</option>
             </select>
           </div>
         </div>
@@ -294,17 +280,6 @@ export function SupportRequestEditorForm({
               onChange={(event) =>
                 updateField("regionNameEn", event.target.value)
               }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="sr-region-ur">{labels.regionUr}</Label>
-            <Input
-              id="sr-region-ur"
-              value={values.regionNameUr}
-              onChange={(event) =>
-                updateField("regionNameUr", event.target.value)
-              }
-              dir="rtl"
             />
           </div>
           <div className="space-y-2 md:col-span-2">

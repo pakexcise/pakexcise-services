@@ -37,16 +37,11 @@ function normalizeSeoInput(
 ) {
   return {
     metaTitleEn: seo.metaTitleEn || null,
-    metaTitleUr: seo.metaTitleUr || null,
     metaDescriptionEn: seo.metaDescriptionEn || null,
-    metaDescriptionUr: seo.metaDescriptionUr || null,
     h1En: seo.h1En || null,
-    h1Ur: seo.h1Ur || null,
     canonicalUrl: seo.canonicalUrl || null,
     ogTitleEn: seo.ogTitleEn || null,
-    ogTitleUr: seo.ogTitleUr || null,
     ogDescriptionEn: seo.ogDescriptionEn || null,
-    ogDescriptionUr: seo.ogDescriptionUr || null,
     ogImage: seo.ogImage || null,
     twitterCard: seo.twitterCard ?? "summary_large_image",
     robotsIndex: seo.robotsIndex,
@@ -109,9 +104,7 @@ export async function createCityAction(
       regionId: data.regionId,
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
       displayOrder: data.displayOrder,
     },
@@ -130,11 +123,8 @@ export async function createCityAction(
         pageKey: `city:${region.slug}:${city.slug}`,
         cityId: city.id,
         metaTitleEn: `${city.nameEn} Excise Services | PakExcise.com`,
-        metaTitleUr: `${city.nameUr} ایکسائز خدمات | PakExcise.com`,
         metaDescriptionEn: city.descriptionEn,
-        metaDescriptionUr: city.descriptionUr,
         h1En: city.nameEn,
-        h1Ur: city.nameUr,
       },
     });
   }
@@ -173,9 +163,7 @@ export async function updateCityAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
       displayOrder: data.displayOrder,
     },

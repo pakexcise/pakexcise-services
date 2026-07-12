@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { BrandingImageUploadField } from "@/features/settings/admin/components/branding-image-upload-field";
 import { updateGlobalSiteSettingsAction } from "@/features/settings/admin/actions/site-settings-actions";
 import type { GlobalSiteFormValues } from "@/features/settings/admin/lib/global-site-form";
-import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type SiteSettingsTab =
@@ -32,28 +32,20 @@ export type SiteSettingsPanelLabels = {
     phoneDisplayNumber: string;
     whatsappLinkNumber: string;
     whatsappDefaultMessageEn: string;
-    whatsappDefaultMessageUr: string;
     supportDaysEn: string;
-    supportDaysUr: string;
     supportHoursEn: string;
-    supportHoursUr: string;
     whatsappChannelUrl: string;
   };
   header: {
     headerWhatsappEnabled: string;
     headerWhatsappLabelEn: string;
-    headerWhatsappLabelUr: string;
     announcementBarEnabled: string;
     announcementBarTextEn: string;
-    announcementBarTextUr: string;
     defaultApplyCtaTextEn: string;
-    defaultApplyCtaTextUr: string;
     defaultSubmitRequestCtaTextEn: string;
-    defaultSubmitRequestCtaTextUr: string;
   };
   fab: {
     floatingWhatsappMessageEn: string;
-    floatingWhatsappMessageUr: string;
     floatingWhatsappPosition: string;
     positionBottomRight: string;
     positionBottomLeft: string;
@@ -62,27 +54,21 @@ export type SiteSettingsPanelLabels = {
   contactForm: {
     contactRecipientEmail: string;
     contactSuccessMessageEn: string;
-    contactSuccessMessageUr: string;
     contactAdminNotificationEnabled: string;
     contactAutoReplyEnabled: string;
     featureFlagNote: string;
   };
   submitRequest: {
     submitRequestSuccessMessageEn: string;
-    submitRequestSuccessMessageUr: string;
     submitRequestSaveToSupportRequests: string;
     submitRequestNotifyAdminEnabled: string;
     featureFlagNote: string;
   };
   footer: {
     footerDescriptionEn: string;
-    footerDescriptionUr: string;
     footerWhatsappLabelEn: string;
-    footerWhatsappLabelUr: string;
     footerWhatsappChannelLabelEn: string;
-    footerWhatsappChannelLabelUr: string;
     disclaimerEn: string;
-    disclaimerUr: string;
     catalogNote: string;
   };
   branding: {
@@ -93,7 +79,6 @@ export type SiteSettingsPanelLabels = {
     faviconPath: string;
     appleIconPath: string;
     defaultOgImagePath: string;
-    defaultOgImagePathUr: string;
     defaultTwitterImagePath: string;
     defaultBlogFallbackImagePath: string;
     defaultGuideFallbackImagePath: string;
@@ -273,22 +258,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.contact.whatsappDefaultMessageUr} className="md:col-span-2">
-            <Textarea
-              dir="rtl"
-              rows={2}
-              value={values.business.whatsappDefaultMessageUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    whatsappDefaultMessageUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.contact.supportDaysEn}>
             <Input
               value={values.business.supportDaysEn}
@@ -303,21 +273,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.contact.supportDaysUr}>
-            <Input
-              dir="rtl"
-              value={values.business.supportDaysUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    supportDaysUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.contact.supportHoursEn}>
             <Input
               value={values.business.supportHoursEn}
@@ -332,21 +288,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.contact.supportHoursUr}>
-            <Input
-              dir="rtl"
-              value={values.business.supportHoursUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    supportHoursUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
         </div>
       ) : null}
 
@@ -388,21 +330,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.header.headerWhatsappLabelUr}>
-            <Input
-              dir="rtl"
-              value={values.publicUi.headerWhatsappLabelUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  publicUi: {
-                    ...current.publicUi,
-                    headerWhatsappLabelUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.header.announcementBarTextEn} className="md:col-span-2">
             <Textarea
               rows={2}
@@ -418,22 +346,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.header.announcementBarTextUr} className="md:col-span-2">
-            <Textarea
-              dir="rtl"
-              rows={2}
-              value={values.publicUi.announcementBarTextUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  publicUi: {
-                    ...current.publicUi,
-                    announcementBarTextUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.header.defaultApplyCtaTextEn}>
             <Input
               value={values.publicUi.defaultApplyCtaTextEn}
@@ -448,21 +361,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.header.defaultApplyCtaTextUr}>
-            <Input
-              dir="rtl"
-              value={values.publicUi.defaultApplyCtaTextUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  publicUi: {
-                    ...current.publicUi,
-                    defaultApplyCtaTextUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.header.defaultSubmitRequestCtaTextEn}>
             <Input
               value={values.publicUi.defaultSubmitRequestCtaTextEn}
@@ -477,21 +376,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.header.defaultSubmitRequestCtaTextUr}>
-            <Input
-              dir="rtl"
-              value={values.publicUi.defaultSubmitRequestCtaTextUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  publicUi: {
-                    ...current.publicUi,
-                    defaultSubmitRequestCtaTextUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
         </div>
       ) : null}
 
@@ -516,22 +401,7 @@ export function SiteSettingsPanel({
                 }
               />
             </Field>
-            <Field label={labels.fab.floatingWhatsappMessageUr} className="md:col-span-2">
-              <Textarea
-                dir="rtl"
-                rows={2}
-                value={values.publicUi.floatingWhatsappMessageUr}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    publicUi: {
-                      ...current.publicUi,
-                      floatingWhatsappMessageUr: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </Field>
+            
             <Field label={labels.fab.floatingWhatsappPosition}>
               <select
                 className={cn(
@@ -594,22 +464,7 @@ export function SiteSettingsPanel({
                 }
               />
             </Field>
-            <Field label={labels.contactForm.contactSuccessMessageUr} className="md:col-span-2">
-              <Textarea
-                dir="rtl"
-                rows={2}
-                value={values.forms.contactSuccessMessageUr}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    forms: {
-                      ...current.forms,
-                      contactSuccessMessageUr: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </Field>
+            
             <CheckboxField
               id="contactAdminNotificationEnabled"
               label={labels.contactForm.contactAdminNotificationEnabled}
@@ -663,25 +518,7 @@ export function SiteSettingsPanel({
                 }
               />
             </Field>
-            <Field
-              label={labels.submitRequest.submitRequestSuccessMessageUr}
-              className="md:col-span-2"
-            >
-              <Textarea
-                dir="rtl"
-                rows={2}
-                value={values.forms.submitRequestSuccessMessageUr}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    forms: {
-                      ...current.forms,
-                      submitRequestSuccessMessageUr: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </Field>
+            
             <CheckboxField
               id="submitRequestSaveToSupportRequests"
               label={labels.submitRequest.submitRequestSaveToSupportRequests}
@@ -734,22 +571,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.footer.footerDescriptionUr} className="md:col-span-2">
-            <Textarea
-              dir="rtl"
-              rows={3}
-              value={values.business.footerDescriptionUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    footerDescriptionUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.footer.footerWhatsappLabelEn}>
             <Input
               value={values.publicUi.footerWhatsappLabelEn}
@@ -764,21 +586,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.footer.footerWhatsappLabelUr}>
-            <Input
-              dir="rtl"
-              value={values.publicUi.footerWhatsappLabelUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  publicUi: {
-                    ...current.publicUi,
-                    footerWhatsappLabelUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.footer.footerWhatsappChannelLabelEn}>
             <Input
               value={values.publicUi.footerWhatsappChannelLabelEn}
@@ -793,21 +601,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.footer.footerWhatsappChannelLabelUr}>
-            <Input
-              dir="rtl"
-              value={values.publicUi.footerWhatsappChannelLabelUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  publicUi: {
-                    ...current.publicUi,
-                    footerWhatsappChannelLabelUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
           <Field label={labels.footer.disclaimerEn} className="md:col-span-2">
             <Textarea
               rows={3}
@@ -823,22 +617,7 @@ export function SiteSettingsPanel({
               }
             />
           </Field>
-          <Field label={labels.footer.disclaimerUr} className="md:col-span-2">
-            <Textarea
-              dir="rtl"
-              rows={3}
-              value={values.business.disclaimerUr}
-              onChange={(event) =>
-                setValues((current) => ({
-                  ...current,
-                  business: {
-                    ...current.business,
-                    disclaimerUr: event.target.value,
-                  },
-                }))
-              }
-            />
-          </Field>
+          
         </div>
       ) : null}
 
@@ -853,7 +632,6 @@ export function SiteSettingsPanel({
               ["faviconPath", labels.branding.faviconPath],
               ["appleIconPath", labels.branding.appleIconPath],
               ["defaultOgImagePath", labels.branding.defaultOgImagePath],
-              ["defaultOgImagePathUr", labels.branding.defaultOgImagePathUr],
               ["defaultTwitterImagePath", labels.branding.defaultTwitterImagePath],
               ["defaultBlogFallbackImagePath", labels.branding.defaultBlogFallbackImagePath],
               ["defaultGuideFallbackImagePath", labels.branding.defaultGuideFallbackImagePath],

@@ -12,8 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type SupportApplicationRow = {
   id: string;
@@ -83,7 +85,7 @@ export function SupportApplicationsTable({
             <TableCell>{formatDate(application.createdAt, locale)}</TableCell>
             <TableCell className="text-end">
               <Button asChild variant="ghost" size="sm">
-                <Link href={`${detailBasePath}/${application.id}`}>
+                <Link href={`${detailBasePath}/${application.id}` as Route}>
                   {labels.view}
                 </Link>
               </Button>

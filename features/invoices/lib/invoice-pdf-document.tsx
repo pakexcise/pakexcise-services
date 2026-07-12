@@ -369,7 +369,7 @@ function formatInvoiceDate(value: string, locale: InvoiceLocale): string {
     return value;
   }
 
-  return new Intl.DateTimeFormat(locale === "ur" ? "ur-PK" : "en-PK", {
+  return new Intl.DateTimeFormat("en-PK", {
     dateStyle: "medium",
   }).format(date);
 }
@@ -394,7 +394,7 @@ function PaymentMethodCard({
   labels: (typeof invoicePdfLabels)[InvoiceLocale];
   compact?: boolean;
 }) {
-  const lines = formatPaymentMethodDetails(method, locale, {
+  const lines = formatPaymentMethodDetails(method, {
     accountTitle: labels.accountTitle,
     accountNumber: labels.accountNumber,
     iban: labels.iban,
@@ -405,7 +405,7 @@ function PaymentMethodCard({
   return (
     <View style={compact ? styles.paymentCard : styles.paymentCardFull}>
       <Text style={styles.paymentCardTitle}>
-        {getPaymentMethodName(method, locale)}
+        {getPaymentMethodName(method)}
       </Text>
       {lines.slice(1).map((line, lineIndex) => (
         <Text key={`payment-line-${lineIndex}`} style={styles.paymentLine}>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CalendarDays, Clock3, UserRound } from "lucide-react";
 
 import { BlogResponsiveImage } from "@/components/marketing/blog/blog-responsive-image";
@@ -6,28 +7,21 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { resolveBlogPostCategoryLabel } from "@/features/blog/lib/resolve-blog-post-category";
 import { resolvePublicImageDimensions } from "@/features/blog/lib/resolve-image-dimensions";
-import { Link } from "@/i18n/navigation";
 import { resolveBlogFeaturedImage } from "@/lib/i18n/blog-featured-image";
-import { pickLocalized } from "@/lib/i18n/content";
 import { formatDate } from "@/lib/utils";
 
 type BlogFeaturedHeroCardProps = {
   post: {
     slug: string;
     titleEn: string;
-    titleUr: string;
     excerptEn?: string | null;
-    excerptUr?: string | null;
     categoryEn?: string | null;
-    categoryUr?: string | null;
-    category?: { nameEn: string; nameUr: string } | null;
-    subCategory?: { nameEn: string; nameUr: string } | null;
+    category?: { nameEn: string } | null;
+    subCategory?: { nameEn: string } | null;
     authorNameEn?: string | null;
-    authorNameUr?: string | null;
     readingTimeMinutes?: number | null;
     featuredImagePath?: string | null;
     featuredImageAltEn?: string | null;
-    featuredImageAltUr?: string | null;
     publishedAt?: Date | null;
     seoMeta?: {
       ogImage?: string | null;
@@ -44,25 +38,16 @@ export async function BlogFeaturedHeroCard({
   readMoreLabel,
   readingTimeLabel,
 }: BlogFeaturedHeroCardProps) {
-  const title = pickLocalized(locale, { en: post.titleEn, ur: post.titleUr });
-  const excerpt = pickLocalized(locale, {
-    en: post.excerptEn,
-    ur: post.excerptUr,
-  });
+  const title = post.titleEn ?? "";
+  const excerpt = post.excerptEn ?? "";
   const category = resolveBlogPostCategoryLabel(locale, post);
-  const author = pickLocalized(locale, {
-    en: post.authorNameEn,
-    ur: post.authorNameUr,
-  });
+  const author = post.authorNameEn ?? "";
   const imageUrl = resolveBlogFeaturedImage(post);
   const naturalDimensions = imageUrl
     ? await resolvePublicImageDimensions(imageUrl)
     : null;
   const imageAlt =
-    pickLocalized(locale, {
-      en: post.featuredImageAltEn,
-      ur: post.featuredImageAltUr,
-    }) || title;
+    (post.featuredImageAltEn ?? "") || title;
 
   return (
     <Card className="group overflow-hidden border-primary/20 p-0 shadow-md transition-shadow hover:shadow-lg">

@@ -69,11 +69,8 @@ export async function createLegalPageAction(
     data: {
       slug: data.slug,
       titleEn: content.titleEn,
-      titleUr: content.titleUr,
       excerptEn: content.excerptEn,
-      excerptUr: content.excerptUr,
       contentEn: content.contentEn,
-      contentUr: content.contentUr,
       isPublished: data.isPublished,
       isActive: data.isActive,
       displayOrder: data.displayOrder,
@@ -135,11 +132,8 @@ export async function updateLegalPageAction(
     data: {
       slug: nextSlug,
       titleEn: content.titleEn,
-      titleUr: content.titleUr,
       excerptEn: content.excerptEn,
-      excerptUr: content.excerptUr,
       contentEn: content.contentEn,
-      contentUr: content.contentUr,
       isPublished: data.isPublished,
       isActive: data.isActive,
       displayOrder: data.displayOrder,

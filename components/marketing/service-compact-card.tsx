@@ -1,11 +1,13 @@
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { getServiceCardDisplayText } from "@/features/services/lib/service-regions";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 import type { PublicServiceSelect } from "@/server/repositories";
 
 import type { ServiceCardLabels } from "@/components/marketing/service-card";
+
+import Link from "next/link";
+
+type Locale = "en";
 
 type ServiceCompactCardProps = {
   service: PublicServiceSelect;
@@ -16,22 +18,17 @@ type ServiceCompactCardProps = {
 export function ServiceCompactCard({
   service,
   locale,
-  labels,
-}: ServiceCompactCardProps) {
-  const name = pickLocalized(locale, {
-    en: service.nameEn,
-    ur: service.nameUr,
-  });
+  labels}: ServiceCompactCardProps) {
+  const name = service.nameEn ?? "";
 
   const { availabilityLine } = getServiceCardDisplayText(
     service,
-    locale as "en" | "ur",
+    locale as Locale,
     {
       allProvincesLabel: labels.allProvincesLabel,
       conjunction: labels.conjunction,
       availableInTemplate: labels.availableInTemplate,
-      summaryTemplate: labels.summaryTemplate,
-    },
+      summaryTemplate: labels.summaryTemplate},
   );
 
   return (

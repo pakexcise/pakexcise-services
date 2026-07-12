@@ -11,9 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 import type { PublicServiceCategoryGroup } from "@/server/repositories/service-category-repository";
 
+import Link from "next/link";
 type HomeServicesSectionProps = {
   title: string;
   description: string;

@@ -2,7 +2,9 @@ import "server-only";
 
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { emailOTP } from "better-auth/plugins";
+import { nextCookies } from "better-auth/next-js";
+import { admin, emailOTP } from "better-auth/plugins";
+import { adminAc } from "better-auth/plugins/admin/access";
 
 import { authConfig } from "@/config/auth";
 import { getPublicAppUrl } from "@/config/env.shared";
@@ -73,6 +75,15 @@ export const auth = betterAuth({
         await sendEmailOtp(email, otp, type);
       },
     }),
+    admin({
+      defaultRole: "CUSTOMER",
+      adminRoles: ["SUPER_ADMIN"],
+      impersonationSessionDuration: 60 * 60,
+      roles: {
+        SUPER_ADMIN: adminAc,
+      },
+    }),
+    nextCookies(),
   ],
   session: {
     expiresIn: 60 * 60 * 24 * 7,

@@ -6,6 +6,7 @@ import { ensureAgentProfileForUser } from "@/features/agents/lib/ensure-agent-pr
 import { AuthError } from "@/lib/errors/auth-errors";
 import {
   getServerSession,
+  getSessionImpersonationMeta,
   getSessionTwoFactorVerifiedAt,
 } from "@/server/auth/session";
 import { prisma } from "@/server/db/client";
@@ -22,6 +23,13 @@ export type CurrentUser = {
   agentProfile: AgentProfile | null;
   sessionId: string;
   sessionTwoFactorVerifiedAt: Date | null;
+  impersonatedBy: string | null;
+  isImpersonating: boolean;
+  impersonator: {
+    id: string;
+    name: string | null;
+    email: string;
+  } | null;
 };
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -61,9 +69,24 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     agentProfile: user.agentProfile,
   });
 
-  const sessionTwoFactorVerifiedAt = await getSessionTwoFactorVerifiedAt(
-    session.session.id,
-  );
+  const [sessionTwoFactorVerifiedAt, impersonationMeta] = await Promise.all([
+    getSessionTwoFactorVerifiedAt(session.session.id),
+    getSessionImpersonationMeta(session.session.id),
+  ]);
+
+  const impersonatedBy = impersonationMeta.impersonatedBy;
+  let impersonator: CurrentUser["impersonator"] = null;
+
+  if (impersonatedBy) {
+    const actor = await prisma.user.findFirst({
+      where: { id: impersonatedBy, deletedAt: null },
+      select: { id: true, name: true, email: true },
+    });
+
+    if (actor) {
+      impersonator = actor;
+    }
+  }
 
   return {
     id: user.id,
@@ -77,6 +100,9 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     agentProfile,
     sessionId: session.session.id,
     sessionTwoFactorVerifiedAt,
+    impersonatedBy,
+    isImpersonating: Boolean(impersonatedBy),
+    impersonator,
   };
 }
 

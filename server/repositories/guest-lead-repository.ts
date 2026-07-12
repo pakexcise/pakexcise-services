@@ -10,9 +10,7 @@ const guestLeadListSelect = {
   source: true,
   status: true,
   serviceNameEn: true,
-  serviceNameUr: true,
   regionNameEn: true,
-  regionNameUr: true,
   cityName: true,
   fullName: true,
   phone: true,
@@ -34,7 +32,6 @@ const guestLeadDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   contactedBy: {
@@ -60,9 +57,7 @@ export type CreateGuestLeadInput = {
   status?: GuestLeadStatus;
   serviceId?: string | null;
   serviceNameEn: string;
-  serviceNameUr: string;
   regionNameEn?: string | null;
-  regionNameUr?: string | null;
   cityName?: string | null;
   fullName: string;
   phone: string;
@@ -81,9 +76,7 @@ export type AdminUpdateGuestLeadInput = {
   status: GuestLeadStatus;
   serviceId?: string | null;
   serviceNameEn: string;
-  serviceNameUr: string;
   regionNameEn?: string | null;
-  regionNameUr?: string | null;
   cityName?: string | null;
   fullName: string;
   phone: string;
@@ -115,9 +108,7 @@ export class GuestLeadRepository extends Repository {
         status: input.status ?? "NEW",
         serviceId: input.serviceId ?? null,
         serviceNameEn: input.serviceNameEn,
-        serviceNameUr: input.serviceNameUr,
         regionNameEn: input.regionNameEn ?? null,
-        regionNameUr: input.regionNameUr ?? null,
         cityName: input.cityName ?? null,
         fullName: input.fullName,
         phone: input.phone,
@@ -170,7 +161,7 @@ export class GuestLeadRepository extends Repository {
               { phone: { contains: search, mode: "insensitive" } },
               { email: { contains: search, mode: "insensitive" } },
               { serviceNameEn: { contains: search, mode: "insensitive" } },
-              { serviceNameUr: { contains: search, mode: "insensitive" } },
+
             ],
           }
         : {}),
@@ -203,9 +194,7 @@ export class GuestLeadRepository extends Repository {
         status: input.status,
         serviceId: input.serviceId ?? null,
         serviceNameEn: input.serviceNameEn,
-        serviceNameUr: input.serviceNameUr,
         regionNameEn: input.regionNameEn ?? null,
-        regionNameUr: input.regionNameUr ?? null,
         cityName: input.cityName ?? null,
         fullName: input.fullName,
         phone: input.phone,

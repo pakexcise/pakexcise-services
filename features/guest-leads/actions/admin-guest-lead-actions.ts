@@ -38,15 +38,14 @@ function revalidateGuestLeadPaths(id?: string) {
 async function resolveServiceNames(
   serviceId: string | null | undefined,
   serviceNameEn: string,
-  serviceNameUr: string,
 ) {
   if (!serviceId) {
-    return { serviceNameEn, serviceNameUr, serviceId: null as string | null };
+    return { serviceNameEn, serviceId: null as string | null };
   }
 
   const service = await prisma.service.findFirst({
     where: { id: serviceId, deletedAt: null },
-    select: { id: true, nameEn: true, nameUr: true },
+    select: { id: true, nameEn: true },
   });
 
   if (!service) {
@@ -56,7 +55,6 @@ async function resolveServiceNames(
   return {
     serviceId: service.id,
     serviceNameEn: service.nameEn,
-    serviceNameUr: service.nameUr,
   };
 }
 
@@ -113,7 +111,6 @@ export async function createGuestLeadAdminAction(
   const serviceNames = await resolveServiceNames(
     data.serviceId,
     data.serviceNameEn,
-    data.serviceNameUr,
   );
 
   if (serviceNames === null) {
@@ -126,9 +123,7 @@ export async function createGuestLeadAdminAction(
     status: data.status,
     serviceId: serviceNames.serviceId,
     serviceNameEn: serviceNames.serviceNameEn,
-    serviceNameUr: serviceNames.serviceNameUr,
     regionNameEn: data.regionNameEn,
-    regionNameUr: data.regionNameUr ?? data.regionNameEn,
     cityName: data.cityName,
     fullName: data.fullName.trim(),
     phone: formatPhoneForDisplay(data.phone.trim()),
@@ -173,7 +168,6 @@ export async function updateGuestLeadAdminAction(
   const serviceNames = await resolveServiceNames(
     data.serviceId,
     data.serviceNameEn,
-    data.serviceNameUr,
   );
 
   if (serviceNames === null) {
@@ -186,9 +180,7 @@ export async function updateGuestLeadAdminAction(
     status: data.status,
     serviceId: serviceNames.serviceId,
     serviceNameEn: serviceNames.serviceNameEn,
-    serviceNameUr: serviceNames.serviceNameUr,
     regionNameEn: data.regionNameEn,
-    regionNameUr: data.regionNameUr ?? data.regionNameEn,
     cityName: data.cityName,
     fullName: data.fullName.trim(),
     phone: formatPhoneForDisplay(data.phone.trim()),

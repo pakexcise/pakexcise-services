@@ -1,20 +1,19 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Link } from "@/i18n/navigation";
 import {
   createCityAction,
   deleteCityAction,
-  toggleCityAction,
-} from "@/features/cities/admin/actions/city-actions";
+  toggleCityAction} from "@/features/cities/admin/actions/city-actions";
 import type { AdminCityListItem } from "@/server/repositories/admin-city-repository";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 type RegionCitiesPanelProps = {
   regionId: string;
   cities: AdminCityListItem[];
@@ -23,7 +22,6 @@ type RegionCitiesPanelProps = {
     addCity: string;
     slug: string;
     nameEn: string;
-    nameUr: string;
     descriptionEn: string;
     isActive: string;
     save: string;
@@ -40,14 +38,12 @@ type RegionCitiesPanelProps = {
 export function RegionCitiesPanel({
   regionId,
   cities,
-  labels,
-}: RegionCitiesPanelProps) {
+  labels}: RegionCitiesPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showForm, setShowForm] = useState(false);
   const [slug, setSlug] = useState("");
   const [nameEn, setNameEn] = useState("");
-  const [nameUr, setNameUr] = useState("");
   const [descriptionEn, setDescriptionEn] = useState("");
 
   function handleCreate() {
@@ -56,18 +52,14 @@ export function RegionCitiesPanel({
         regionId,
         slug,
         nameEn,
-        nameUr,
         descriptionEn: descriptionEn || null,
-        descriptionUr: null,
         isActive: true,
-        displayOrder: cities.length,
-      });
+        displayOrder: cities.length});
 
       if (result.success) {
         setShowForm(false);
         setSlug("");
         setNameEn("");
-        setNameUr("");
         setDescriptionEn("");
         router.refresh();
       }
@@ -113,14 +105,6 @@ export function RegionCitiesPanel({
           <div className="space-y-2">
             <Label>{labels.nameEn}</Label>
             <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>{labels.nameUr}</Label>
-            <Input
-              value={nameUr}
-              onChange={(e) => setNameUr(e.target.value)}
-              dir="rtl"
-            />
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label>{labels.descriptionEn}</Label>

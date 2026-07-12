@@ -11,9 +11,7 @@ type DocumentRequirement = {
   id: string;
   docType: string;
   labelEn: string;
-  labelUr: string;
   instructionsEn: string | null;
-  instructionsUr: string | null;
   isRequired: boolean;
   maxSizeBytes: number;
   acceptedMimeTypes: unknown;
@@ -33,7 +31,7 @@ type ApplicationDocument = {
 type ApplicationDocumentsPanelProps = {
   applicationId: string;
   applicationStatus: string;
-  locale: "en" | "ur";
+  locale: "en";
   requirements: DocumentRequirement[];
   documents: ApplicationDocument[];
   labels: {
@@ -72,8 +70,7 @@ export function ApplicationDocumentsPanel({
   locale,
   requirements,
   documents,
-  labels,
-}: ApplicationDocumentsPanelProps) {
+  labels}: ApplicationDocumentsPanelProps) {
   const router = useRouter();
 
   const applicantDocuments = useMemo(
@@ -110,11 +107,9 @@ export function ApplicationDocumentsPanel({
           {requirements.map((requirement) => {
             const document = documentsByRequirement.get(requirement.id);
             const label =
-              locale === "ur" ? requirement.labelUr : requirement.labelEn;
+              requirement.labelEn;
             const instructions =
-              locale === "ur"
-                ? requirement.instructionsUr
-                : requirement.instructionsEn;
+              requirement.instructionsEn;
 
             return (
               <div key={requirement.id} className="space-y-3 rounded-lg border p-4">
@@ -165,8 +160,7 @@ export function ApplicationDocumentsPanel({
                             fileName: document.fileName,
                             mimeType: document.mimeType,
                             fileSize: document.fileSize,
-                            requirementId: document.requirementId,
-                          }
+                            requirementId: document.requirementId}
                         : null
                     }
                     labels={{
@@ -181,8 +175,7 @@ export function ApplicationDocumentsPanel({
                       uploadFailed: labels.uploadFailed,
                       invalidType: labels.invalidType,
                       tooLarge: labels.tooLarge,
-                      invalidName: labels.invalidName,
-                    }}
+                      invalidName: labels.invalidName}}
                     onUploaded={() => router.refresh()}
                   />
                 ) : null}

@@ -2,7 +2,6 @@ import { ServiceCompactCard } from "@/components/marketing/service-compact-card"
 import type { ServiceCardLabels } from "@/components/marketing/service-card";
 import { ServiceGrid } from "@/components/marketing/service-grid";
 import { ProseContent } from "@/components/marketing/prose-content";
-import { pickLocalized } from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 import type { PublicServiceCategoryGroup } from "@/server/repositories/service-category-repository";
 
@@ -23,17 +22,10 @@ export function ServiceCategorySection({
   useDynamicSummary = true,
   heading = "h2",
   compact = false,
-  layout,
-}: ServiceCategorySectionProps) {
+  layout}: ServiceCategorySectionProps) {
   const resolvedLayout = layout ?? (compact ? "compact" : "grid");
-  const title = pickLocalized(locale, {
-    en: group.nameEn,
-    ur: group.nameUr,
-  });
-  const description = pickLocalized(locale, {
-    en: group.descriptionEn,
-    ur: group.descriptionUr,
-  });
+  const title = group.nameEn ?? "";
+  const description = group.descriptionEn ?? "";
 
   const HeadingTag = heading;
 

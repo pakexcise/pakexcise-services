@@ -48,8 +48,6 @@ export async function updateGlobalSiteSettingsAction(
   const combinedHours = combineBusinessHours(
     data.business.supportDaysEn,
     data.business.supportHoursEn,
-    data.business.supportDaysUr,
-    data.business.supportHoursUr,
   );
 
   const updatedBusiness = {
@@ -58,16 +56,11 @@ export async function updateGlobalSiteSettingsAction(
     phoneDisplayNumber: data.business.phoneDisplayNumber.trim(),
     whatsappLinkNumber: data.business.whatsappLinkNumber.trim(),
     whatsappDefaultMessageEn: data.business.whatsappDefaultMessageEn.trim(),
-    whatsappDefaultMessageUr: data.business.whatsappDefaultMessageUr.trim(),
     supportDaysEn: data.business.supportDaysEn.trim(),
-    supportDaysUr: data.business.supportDaysUr.trim(),
     supportHoursEn: data.business.supportHoursEn.trim(),
-    supportHoursUr: data.business.supportHoursUr.trim(),
     whatsappChannelUrl: data.business.whatsappChannelUrl.trim(),
     footerDescriptionEn: data.business.footerDescriptionEn.trim(),
-    footerDescriptionUr: data.business.footerDescriptionUr.trim(),
     disclaimerEn: data.business.disclaimerEn.trim(),
-    disclaimerUr: data.business.disclaimerUr.trim(),
     ...combinedHours,
   };
 

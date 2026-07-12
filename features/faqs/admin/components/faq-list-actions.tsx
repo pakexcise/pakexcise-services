@@ -1,12 +1,10 @@
 "use client";
 
 import { ArrowDown, ArrowUp, Pencil, Trash2 } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useOptimistic, useTransition } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import {
   deleteFaqAction,
   reorderFaqsAction,
@@ -15,6 +13,8 @@ import {
 import type { FaqListLabels } from "@/features/faqs/admin/lib/labels";
 import type { AdminFaqListItem } from "@/server/repositories/admin-faq-repository";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 type FaqListActionsProps = {
   faq: AdminFaqListItem;
   labels: FaqListLabels;

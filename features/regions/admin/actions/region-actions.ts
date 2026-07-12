@@ -39,16 +39,11 @@ function normalizeSeoInput(
 ) {
   return {
     metaTitleEn: seo.metaTitleEn || null,
-    metaTitleUr: seo.metaTitleUr || null,
     metaDescriptionEn: seo.metaDescriptionEn || null,
-    metaDescriptionUr: seo.metaDescriptionUr || null,
     h1En: seo.h1En || null,
-    h1Ur: seo.h1Ur || null,
     canonicalUrl: seo.canonicalUrl || null,
     ogTitleEn: seo.ogTitleEn || null,
-    ogTitleUr: seo.ogTitleUr || null,
     ogDescriptionEn: seo.ogDescriptionEn || null,
-    ogDescriptionUr: seo.ogDescriptionUr || null,
     ogImage: seo.ogImage || null,
     twitterCard: seo.twitterCard ?? "summary_large_image",
     robotsIndex: seo.robotsIndex,
@@ -95,9 +90,7 @@ export async function createRegionAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
       showInFooter: data.showInFooter,
       footerDisplayOrder: data.footerDisplayOrder,
@@ -113,11 +106,8 @@ export async function createRegionAction(
         pageKey: `region:${region.slug}`,
         regionId: region.id,
         metaTitleEn: `${region.nameEn} Services | PakExcise.com`,
-        metaTitleUr: `${region.nameUr} خدمات | PakExcise.com`,
         metaDescriptionEn: region.descriptionEn,
-        metaDescriptionUr: region.descriptionUr,
         h1En: region.nameEn,
-        h1Ur: region.nameUr,
       },
     });
   }
@@ -166,9 +156,7 @@ export async function updateRegionAction(
     data: {
       slug: data.slug,
       nameEn: data.nameEn,
-      nameUr: data.nameUr,
       descriptionEn: data.descriptionEn,
-      descriptionUr: data.descriptionUr,
       isActive: data.isActive,
       showInFooter: data.showInFooter,
       footerDisplayOrder: data.footerDisplayOrder,

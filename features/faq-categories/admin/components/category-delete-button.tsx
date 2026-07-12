@@ -1,12 +1,12 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { deleteFaqCategoryAction } from "@/features/faq-categories/admin/actions/category-actions";
 
+import { useRouter } from "next/navigation";
 type FaqCategoryDeleteButtonProps = {
   categoryId: string;
   faqCount: number;

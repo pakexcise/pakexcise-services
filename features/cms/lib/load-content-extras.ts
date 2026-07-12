@@ -17,11 +17,9 @@ export async function loadRelatedServices(serviceIds: string[]) {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
       shortDescriptionEn: true,
-      shortDescriptionUr: true,
       region: {
-        select: { nameEn: true, nameUr: true },
+        select: { nameEn: true },
       },
     },
     orderBy: { displayOrder: "asc" },
@@ -41,9 +39,7 @@ export async function loadAttachedFaqs(faqIds: string[]) {
     select: {
       id: true,
       questionEn: true,
-      questionUr: true,
       answerEn: true,
-      answerUr: true,
     },
   });
 

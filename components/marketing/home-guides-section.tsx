@@ -4,18 +4,14 @@ import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
-
+import Link from "next/link";
 type HomeGuidesSectionProps = {
   title: string;
   description: string;
   guides: Array<{
     slug: string;
     titleEn: string;
-    titleUr: string;
     excerptEn?: string | null;
-    excerptUr?: string | null;
     seoMeta?: { ogImage?: string | null } | null;
   }>;
   locale: string;
@@ -35,8 +31,7 @@ export function HomeGuidesSection({
   viewAllLabel,
   emptyMessage,
   tone = "accent",
-  className,
-}: HomeGuidesSectionProps) {
+  className}: HomeGuidesSectionProps) {
   return (
     <HomeSectionShell tone={tone} className={className}>
       <SectionHeader
@@ -57,14 +52,8 @@ export function HomeGuidesSection({
       ) : (
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {guides.map((guide) => {
-            const guideTitle = pickLocalized(locale, {
-              en: guide.titleEn,
-              ur: guide.titleUr,
-            });
-            const excerpt = pickLocalized(locale, {
-              en: guide.excerptEn,
-              ur: guide.excerptUr,
-            });
+            const guideTitle = guide.titleEn ?? "";
+            const excerpt = guide.excerptEn ?? "";
 
             return (
               <Card

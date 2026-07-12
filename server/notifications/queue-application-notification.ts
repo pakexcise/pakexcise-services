@@ -8,7 +8,6 @@ type QueueApplicationSubmittedInput = {
   userId: string;
   trackingId: string;
   serviceName: string;
-  serviceNameUr?: string;
   locale?: string;
   userEmail: string;
   userPhone?: string | null;
@@ -29,8 +28,5 @@ export async function queueApplicationSubmittedNotifications(
     recipientPhone: input.userPhone,
     payload: {
       trackingId: input.trackingId,
-      serviceName: input.serviceName,
-      serviceNameUr: input.serviceNameUr,
-    },
-  });
+      serviceName: input.serviceName}});
 }

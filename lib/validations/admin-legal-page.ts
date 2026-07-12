@@ -11,36 +11,27 @@ const slugSchema = z
 
 export const legalPageContentFieldsSchema = z.object({
   titleEn: z.string().trim().min(2).max(200),
-  titleUr: z.string().trim().min(2).max(200),
   excerptEn: z.string().trim().max(5000).optional().nullable(),
-  excerptUr: z.string().trim().max(5000).optional().nullable(),
   contentEn: z.string().trim().min(1).max(100000),
-  contentUr: z.string().trim().min(1).max(100000),
   isPublished: z.boolean().default(false),
   isActive: z.boolean().default(true),
   displayOrder: z.number().int().min(0).max(9999).default(0),
-  seo: seoMetaInputSchema.optional(),
-});
+  seo: seoMetaInputSchema.optional()});
 
 export const createLegalPageSchema = legalPageContentFieldsSchema.extend({
-  slug: slugSchema,
-});
+  slug: slugSchema});
 
 export const updateLegalPageSchema = legalPageContentFieldsSchema.extend({
   id: z.string().trim().min(1),
-  slug: slugSchema.optional(),
-});
+  slug: slugSchema.optional()});
 
 export const legalPageIdSchema = z.object({
-  id: z.string().trim().min(1),
-});
+  id: z.string().trim().min(1)});
 
 export const toggleLegalPagePublishSchema = z.object({
   id: z.string().trim().min(1),
-  isPublished: z.boolean(),
-});
+  isPublished: z.boolean()});
 
 export const toggleLegalPageActiveSchema = z.object({
   id: z.string().trim().min(1),
-  isActive: z.boolean(),
-});
+  isActive: z.boolean()});

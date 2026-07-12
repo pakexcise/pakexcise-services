@@ -12,7 +12,6 @@ export const adminSeoListSelect = {
   id: true,
   pageKey: true,
   metaTitleEn: true,
-  metaTitleUr: true,
   canonicalUrl: true,
   robotsIndex: true,
   robotsFollow: true,
@@ -44,7 +43,7 @@ export class AdminSeoRepository extends Repository {
       where.OR = [
         { pageKey: { contains: q, mode: "insensitive" } },
         { metaTitleEn: { contains: q, mode: "insensitive" } },
-        { metaTitleUr: { contains: q, mode: "insensitive" } },
+
       ];
     }
 

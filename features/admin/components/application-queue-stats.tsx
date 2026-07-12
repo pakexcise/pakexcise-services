@@ -1,10 +1,13 @@
+import { copy, createT } from "@/messages";
 import type { ApplicationStatus } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from "@/lib/i18n/t";
 
 import { getAdminApplicationStatusLabelKey } from "@/features/admin/lib/application-status";
 import { applicationRepository } from "@/server/repositories/application-repository";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type ApplicationQueueStatsProps = {
   currentStatus?: ApplicationStatus;
@@ -64,13 +67,15 @@ export async function ApplicationQueueStats({
   searchParams,
   applicationsBasePath = "/admin/applications",
 }: ApplicationQueueStatsProps) {
-  const t = await getTranslations("admin");
+  const t = createT(copy.admin);
   const counts = await applicationRepository.getAdminPipelineStatusCounts();
 
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
       <Link
-        href={buildStatusHref(undefined, searchParams, applicationsBasePath)}
+        href={
+          buildStatusHref(undefined, searchParams, applicationsBasePath) as Route
+        }
         className={cn(
           "rounded-lg border px-3 py-2 text-sm transition-colors hover:bg-muted/50",
           !currentStatus && "border-primary bg-primary/5",
@@ -90,7 +95,9 @@ export async function ApplicationQueueStats({
       {statStatuses.map((status) => (
         <Link
           key={status}
-          href={buildStatusHref(status, searchParams, applicationsBasePath)}
+          href={
+            buildStatusHref(status, searchParams, applicationsBasePath) as Route
+          }
           className={cn(
             "rounded-lg border px-3 py-2 text-sm transition-colors hover:bg-muted/50",
             currentStatus === status && "border-primary bg-primary/5",

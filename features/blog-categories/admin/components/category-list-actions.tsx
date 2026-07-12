@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 import { useTransition } from "react";
 
@@ -8,7 +10,6 @@ import {
   toggleBlogCategoryAction,
 } from "@/features/blog-categories/admin/actions/category-actions";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type BlogCategoryRowActionsProps = {

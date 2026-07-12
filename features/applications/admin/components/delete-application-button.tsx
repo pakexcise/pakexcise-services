@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { deleteApplicationAdminAction } from "@/features/applications/admin/actions/application-admin-actions";
 
+import { useRouter } from "next/navigation";
 type DeleteApplicationButtonProps = {
   applicationId: string;
   labels: {

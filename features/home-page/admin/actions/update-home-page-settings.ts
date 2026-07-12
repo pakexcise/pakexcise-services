@@ -5,14 +5,12 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { upsertStaticPageSeo } from "@/features/cms/lib/upsert-seo";
 import {
   HOME_PAGE_SETTINGS_CACHE_TAG,
-  HOME_PAGE_SETTINGS_KEY,
-} from "@/features/home-page/lib/defaults";
+  HOME_PAGE_SETTINGS_KEY} from "@/features/home-page/lib/defaults";
 import { getHomePageSettings } from "@/features/home-page/lib/home-page-settings-cache";
 import {
   parseInput,
   successResult,
-  type ActionResult,
-} from "@/lib/validations/common";
+  type ActionResult} from "@/lib/validations/common";
 import { updateHomePageSettingsSchema } from "@/lib/validations/home-page-settings";
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { requirePermission } from "@/server/permissions/guards";
@@ -43,23 +41,17 @@ export async function updateHomePageSettingsAction(
 
   await upsertStaticPageSeo("home", {
     metaTitleEn: parsed.data.seo.metaTitleEn,
-    metaTitleUr: parsed.data.seo.metaTitleUr,
     metaDescriptionEn: parsed.data.seo.metaDescriptionEn,
-    metaDescriptionUr: parsed.data.seo.metaDescriptionUr,
     h1En: parsed.data.seo.h1En,
-    h1Ur: parsed.data.seo.h1Ur,
     canonicalUrl: null,
     ogTitleEn: parsed.data.seo.metaTitleEn,
-    ogTitleUr: parsed.data.seo.metaTitleUr,
     ogDescriptionEn: parsed.data.seo.metaDescriptionEn,
-    ogDescriptionUr: parsed.data.seo.metaDescriptionUr,
     ogImage: null,
     twitterCard: "summary_large_image",
     robotsIndex: true,
     robotsFollow: true,
     faqSchemaJson: null,
-    breadcrumbJson: null,
-  });
+    breadcrumbJson: null});
 
   await auditAdminAction({
     actorId: user.id,
@@ -69,9 +61,7 @@ export async function updateHomePageSettingsAction(
     before: { isPageActive: before.isPageActive, heroTitleEn: before.hero.titleEn },
     after: {
       isPageActive: parsed.data.isPageActive,
-      heroTitleEn: parsed.data.hero.titleEn,
-    },
-  });
+      heroTitleEn: parsed.data.hero.titleEn}});
 
   revalidateAfterHomePageUpdate();
   return successResult({ ok: true });

@@ -9,30 +9,22 @@ const publicPlateFormatSelect = {
   id: true,
   vehicleType: true,
   titleEn: true,
-  titleUr: true,
   formatsJson: true,
   descriptionEn: true,
-  descriptionUr: true,
   relatedServiceSlugs: true,
   imageR2Key: true,
   imageMimeType: true,
   imageAltEn: true,
-  imageAltUr: true,
   imageCaptionEn: true,
-  imageCaptionUr: true,
   isFeatured: true,
-  displayOrder: true,
-} as const satisfies Prisma.RegionNumberPlateFormatSelect;
+  displayOrder: true} as const satisfies Prisma.RegionNumberPlateFormatSelect;
 
 const publicSectionSelect = {
   sectionTitleEn: true,
-  sectionTitleUr: true,
   sectionDescEn: true,
-  sectionDescUr: true,
   faqJson: true,
   isActive: true,
-  showOnRegionPage: true,
-} as const satisfies Prisma.RegionPlateFormatSectionSelect;
+  showOnRegionPage: true} as const satisfies Prisma.RegionPlateFormatSectionSelect;
 
 export type PublicRegionPlateFormat = Prisma.RegionNumberPlateFormatGetPayload<{
   select: typeof publicPlateFormatSelect;
@@ -58,19 +50,15 @@ export class RegionPlateFormatRepository extends Repository {
     const [section, formats] = await Promise.all([
       this.db.regionPlateFormatSection.findUnique({
         where: { regionId },
-        select: publicSectionSelect,
-      }),
+        select: publicSectionSelect}),
       this.db.regionNumberPlateFormat.findMany({
         where: {
           regionId,
           isActive: true,
           showOnRegionPage: true,
-          deletedAt: null,
-        },
+          deletedAt: null},
         orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
-        select: publicPlateFormatSelect,
-      }),
-    ]);
+        select: publicPlateFormatSelect})]);
 
     if (section && (!section.isActive || !section.showOnRegionPage)) {
       return { section: null, formats: [] };
@@ -90,8 +78,7 @@ export class RegionPlateFormatRepository extends Repository {
         isActive: true,
         showOnRegionPage: true,
         deletedAt: null,
-        imageR2Key: { not: null },
-      },
+        imageR2Key: { not: null }},
       select: {
         id: true,
         imageR2Key: true,
@@ -100,11 +87,7 @@ export class RegionPlateFormatRepository extends Repository {
         region: {
           select: {
             isActive: true,
-            deletedAt: true,
-          },
-        },
-      },
-    });
+            deletedAt: true}}}});
   }
 }
 

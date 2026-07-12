@@ -10,12 +10,10 @@ import {
   defaultPaymentSettings,
   defaultPublicUiSettings,
   defaultSeoSettings,
-  defaultTrackingSettings,
-} from "@/features/settings/lib/defaults";
+  defaultTrackingSettings} from "@/features/settings/lib/defaults";
 import {
   PUBLIC_SETTINGS_CACHE_TAG,
-  SETTINGS_KEYS,
-} from "@/features/settings/lib/keys";
+  SETTINGS_KEYS} from "@/features/settings/lib/keys";
 import { mergeLegacyBusinessSettings } from "@/features/settings/lib/merge-legacy";
 import { normalizeBusinessSettings } from "@/features/settings/lib/resolve-public-contact";
 import type {
@@ -27,8 +25,7 @@ import type {
   PublicSettingsSnapshot,
   PublicUiSettings,
   SeoSettings,
-  TrackingSettings,
-} from "@/features/settings/types";
+  TrackingSettings} from "@/features/settings/types";
 import { settingsRepository } from "@/server/repositories/settings-repository";
 
 function mergeWithDefaults<T extends Record<string, unknown>>(
@@ -52,8 +49,7 @@ const PUBLIC_SETTINGS_LOOKUP_KEYS = [
   SETTINGS_KEYS.tracking,
   SETTINGS_KEYS.features,
   "site",
-  "whatsapp",
-] as const;
+  "whatsapp"] as const;
 
 async function loadPublicSettingsSnapshot(): Promise<PublicSettingsSnapshot> {
   const stored = await settingsRepository.getValuesByKeys(
@@ -87,7 +83,6 @@ async function loadPublicSettingsSnapshot(): Promise<PublicSettingsSnapshot> {
         supportEmail?: string;
         supportPhone?: string;
         businessHoursEn?: string;
-        businessHoursUr?: string;
       }
     | undefined;
   const legacyWhatsapp = stored.whatsapp as
@@ -104,8 +99,7 @@ async function loadPublicSettingsSnapshot(): Promise<PublicSettingsSnapshot> {
     business: mergeLegacyBusinessSettings({
       stored: businessRaw ?? null,
       legacySite: legacySite ?? null,
-      legacyWhatsapp: legacyWhatsapp ?? null,
-    }),
+      legacyWhatsapp: legacyWhatsapp ?? null}),
     publicUi: mergeWithDefaults(defaultPublicUiSettings(), publicUiRaw ?? null),
     forms: mergeWithDefaults(defaultFormsSettings(), formsRaw ?? null),
     branding: mergeWithDefaults(defaultBrandingSettings(), brandingRaw ?? null),
@@ -114,15 +108,13 @@ async function loadPublicSettingsSnapshot(): Promise<PublicSettingsSnapshot> {
       paymentMethods:
         paymentRaw?.paymentMethods && paymentRaw.paymentMethods.length > 0
           ? paymentRaw.paymentMethods
-          : paymentDefaults.paymentMethods,
-    },
+          : paymentDefaults.paymentMethods},
     seo: mergeWithDefaults(defaultSeoSettings(), seoRaw ?? null),
     tracking: mergeWithDefaults(defaultTrackingSettings(), trackingRaw ?? null),
     features: mergeWithDefaults(
       defaultFeatureFlagSettings(),
       featuresRaw ?? null,
-    ),
-  };
+    )};
 }
 
 const getCachedPublicSettings = unstable_cache(
@@ -130,8 +122,7 @@ const getCachedPublicSettings = unstable_cache(
   ["public-settings-snapshot"],
   {
     tags: [PUBLIC_SETTINGS_CACHE_TAG],
-    revalidate: 300,
-  },
+    revalidate: 300},
 );
 
 export async function getPublicSettings(): Promise<PublicSettingsSnapshot> {

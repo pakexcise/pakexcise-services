@@ -7,29 +7,22 @@ const publicDocumentPreviewSelect = {
   id: true,
   docType: true,
   labelEn: true,
-  labelUr: true,
   isRequired: true,
   displayOrder: true,
   service: {
     select: {
       slug: true,
-      nameEn: true,
-      nameUr: true,
-    },
-  },
-} as const;
+      nameEn: true}}} as const;
 
 export type PublicDocumentPreview = {
   id: string;
   docType: string;
   labelEn: string;
-  labelUr: string;
   isRequired: boolean;
   displayOrder: number;
   service: {
     slug: string;
     nameEn: string;
-    nameUr: string;
   };
 };
 
@@ -39,12 +32,10 @@ export class DocumentRequirementRepository extends Repository {
       const rows = await this.db.documentRequirement.findMany({
         where: {
           isActive: true,
-          service: publicTopLevelServiceWhere,
-        },
+          service: publicTopLevelServiceWhere},
         orderBy: [{ displayOrder: "asc" }, { labelEn: "asc" }],
         select: publicDocumentPreviewSelect,
-        take: 80,
-      });
+        take: 80});
 
       const seen = new Set<string>();
       const unique: PublicDocumentPreview[] = [];

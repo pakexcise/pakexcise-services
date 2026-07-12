@@ -34,12 +34,9 @@ const paymentUploadInclude = {
       userId: true,
       agentId: true,
       locale: true,
-      service: { select: { nameEn: true, nameUr: true } },
-      user: { select: { email: true, phone: true } },
-    },
-  },
-  invoice: { select: { status: true } },
-} as const;
+      service: { select: { nameEn: true} },
+      user: { select: { email: true, phone: true } }}},
+  invoice: { select: { status: true } }} as const;
 
 const paymentUploadSelect = {
   id: true,
@@ -48,8 +45,7 @@ const paymentUploadSelect = {
   screenshotR2Key: true,
   screenshotMimeType: true,
   screenshotFileSize: true,
-  screenshotFileName: true,
-} as const;
+  screenshotFileName: true} as const;
 
 export type PaymentForUploadAccess = NonNullable<
   Awaited<ReturnType<typeof getPaymentForUploadAccess>>
@@ -64,9 +60,7 @@ export async function getPaymentForUploadAccess(
     select: {
       ...paymentUploadSelect,
       application: paymentUploadInclude.application,
-      invoice: paymentUploadInclude.invoice,
-    },
-  });
+      invoice: paymentUploadInclude.invoice}});
 
   if (!payment || !canUploadPaymentProof(user, payment.application)) {
     return null;

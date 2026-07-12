@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,11 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   deleteServiceFormFieldAction,
-  upsertServiceFormFieldAction,
-} from "@/features/services/admin/actions/service-actions";
+  upsertServiceFormFieldAction} from "@/features/services/admin/actions/service-actions";
 import type { FormFieldsPanelLabels } from "@/features/services/admin/lib/labels";
 import type { AdminServiceDetail } from "@/server/repositories/admin-service-repository";
 
+import { useRouter } from "next/navigation";
 const FIELD_TYPES = [
   "TEXT",
   "TEXTAREA",
@@ -26,8 +25,7 @@ const FIELD_TYPES = [
   "FILE",
   "EMAIL",
   "PHONE",
-  "CNIC",
-] as const;
+  "CNIC"] as const;
 
 type FormFieldsPanelProps = {
   serviceId: string;
@@ -39,11 +37,8 @@ type FieldDraft = {
   id?: string;
   fieldKey: string;
   labelEn: string;
-  labelUr: string;
   placeholderEn: string;
-  placeholderUr: string;
   helpTextEn: string;
-  helpTextUr: string;
   fieldType: (typeof FIELD_TYPES)[number];
   isRequired: boolean;
   isEncrypted: boolean;
@@ -58,11 +53,8 @@ function emptyDraft(displayOrder: number): FieldDraft {
   return {
     fieldKey: "",
     labelEn: "",
-    labelUr: "",
     placeholderEn: "",
-    placeholderUr: "",
     helpTextEn: "",
-    helpTextUr: "",
     fieldType: "TEXT",
     isRequired: false,
     isEncrypted: false,
@@ -70,8 +62,7 @@ function emptyDraft(displayOrder: number): FieldDraft {
     validationJson: "",
     conditionalJson: "",
     displayOrder,
-    isActive: true,
-  };
+    isActive: true};
 }
 
 function jsonToText(value: unknown): string {
@@ -88,11 +79,8 @@ function toDraft(field: AdminServiceDetail["formFields"][number]): FieldDraft {
     id: field.id,
     fieldKey: field.fieldKey,
     labelEn: field.labelEn,
-    labelUr: field.labelUr,
     placeholderEn: field.placeholderEn ?? "",
-    placeholderUr: field.placeholderUr ?? "",
     helpTextEn: field.helpTextEn ?? "",
-    helpTextUr: field.helpTextUr ?? "",
     fieldType: field.fieldType,
     isRequired: field.isRequired,
     isEncrypted: field.isEncrypted,
@@ -100,8 +88,7 @@ function toDraft(field: AdminServiceDetail["formFields"][number]): FieldDraft {
     validationJson: jsonToText(field.validationJson),
     conditionalJson: jsonToText(field.conditionalJson),
     displayOrder: field.displayOrder,
-    isActive: field.isActive,
-  };
+    isActive: field.isActive};
 }
 
 function parseJsonField(value: string) {
@@ -113,8 +100,7 @@ function parseJsonField(value: string) {
 export function FormFieldsPanel({
   serviceId,
   fields,
-  labels,
-}: FormFieldsPanelProps) {
+  labels}: FormFieldsPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [draft, setDraft] = useState<FieldDraft>(emptyDraft(fields.length + 1));
@@ -130,8 +116,7 @@ export function FormFieldsPanel({
           serviceId,
           optionsJson: parseJsonField(draft.optionsJson),
           validationJson: parseJsonField(draft.validationJson),
-          conditionalJson: parseJsonField(draft.conditionalJson),
-        });
+          conditionalJson: parseJsonField(draft.conditionalJson)});
 
         if (!result.success) {
           setError(result.error);
@@ -237,8 +222,7 @@ export function FormFieldsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                fieldType: event.target.value as FieldDraft["fieldType"],
-              }))
+                fieldType: event.target.value as FieldDraft["fieldType"]}))
             }
           >
             {FIELD_TYPES.map((type) => (
@@ -258,38 +242,14 @@ export function FormFieldsPanel({
           />
         </div>
         <div>
-          <Label className="mb-2 block">{labels.labelUr}</Label>
-          <Input
-            value={draft.labelUr}
-            onChange={(event) =>
-              setDraft((current) => ({ ...current, labelUr: event.target.value }))
-            }
-            dir="rtl"
-          />
-        </div>
-        <div>
           <Label className="mb-2 block">{labels.placeholderEn}</Label>
           <Input
             value={draft.placeholderEn}
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                placeholderEn: event.target.value,
-              }))
+                placeholderEn: event.target.value}))
             }
-          />
-        </div>
-        <div>
-          <Label className="mb-2 block">{labels.placeholderUr}</Label>
-          <Input
-            value={draft.placeholderUr}
-            onChange={(event) =>
-              setDraft((current) => ({
-                ...current,
-                placeholderUr: event.target.value,
-              }))
-            }
-            dir="rtl"
           />
         </div>
         <div className="lg:col-span-2">
@@ -301,16 +261,6 @@ export function FormFieldsPanel({
             }
           />
         </div>
-        <div className="lg:col-span-2">
-          <Label className="mb-2 block">{labels.helpTextUr}</Label>
-          <Textarea
-            value={draft.helpTextUr}
-            onChange={(event) =>
-              setDraft((current) => ({ ...current, helpTextUr: event.target.value }))
-            }
-            dir="rtl"
-          />
-        </div>
         <div>
           <Label className="mb-2 block">{labels.displayOrder}</Label>
           <Input
@@ -319,8 +269,7 @@ export function FormFieldsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                displayOrder: Number(event.target.value),
-              }))
+                displayOrder: Number(event.target.value)}))
             }
           />
         </div>
@@ -332,8 +281,7 @@ export function FormFieldsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  isRequired: event.target.checked,
-                }))
+                  isRequired: event.target.checked}))
               }
             />
             {labels.required}
@@ -345,8 +293,7 @@ export function FormFieldsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  isEncrypted: event.target.checked,
-                }))
+                  isEncrypted: event.target.checked}))
               }
             />
             {labels.isEncrypted}
@@ -358,8 +305,7 @@ export function FormFieldsPanel({
               onChange={(event) =>
                 setDraft((current) => ({
                   ...current,
-                  isActive: event.target.checked,
-                }))
+                  isActive: event.target.checked}))
               }
             />
             {labels.isActive}
@@ -383,8 +329,7 @@ export function FormFieldsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                validationJson: event.target.value,
-              }))
+                validationJson: event.target.value}))
             }
           />
         </div>
@@ -396,8 +341,7 @@ export function FormFieldsPanel({
             onChange={(event) =>
               setDraft((current) => ({
                 ...current,
-                conditionalJson: event.target.value,
-              }))
+                conditionalJson: event.target.value}))
             }
           />
         </div>

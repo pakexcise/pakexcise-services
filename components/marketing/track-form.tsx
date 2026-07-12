@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 
@@ -8,10 +8,12 @@ import { TrackResult } from "@/components/marketing/TrackResult";
 import { Button } from "@/components/ui/button";
 import { trackApplicationAction } from "@/features/customer/actions/track-application";
 import { resolvePostLoginPath } from "@/features/auth/lib/redirect";
-import { Link, useRouter } from "@/i18n/navigation";
 import { siteConfig } from "@/config/site";
 import { getUserRole } from "@/lib/auth-types";
 import { useSession } from "@/lib/auth-client";
+
+import type { Route } from "next";
+import Link from "next/link";
 
 type TrackFormProps = {
   placeholder: string;
@@ -19,7 +21,7 @@ type TrackFormProps = {
   helpText: string;
   loginLabel: string;
   dashboardLabel: string;
-  locale: "en" | "ur";
+  locale: "en";
   whatsappPhone?: string;
   whatsappDefaultMessage?: string;
   labels: {
@@ -163,7 +165,7 @@ export function TrackForm({
         <p className="text-sm text-muted-foreground">{helpText}</p>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline" size="sm">
-            <Link href={accountHref}>{accountLabel}</Link>
+            <Link href={accountHref as Route}>{accountLabel}</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
             <a
@@ -191,9 +193,7 @@ export function TrackForm({
           trackingId={result.data.trackingId}
           status={result.data.status}
           serviceName={
-            locale === "ur"
-              ? result.data.serviceNameUr
-              : result.data.serviceNameEn
+            result.data.serviceNameEn
           }
           updatedAt={result.data.updatedAt}
           locale={locale}

@@ -6,19 +6,17 @@ import { isBasicApplicantFieldKey } from "@/features/applications/lib/basic-fiel
 import {
   maskCnic,
   maskEmail,
-  maskPhone,
-} from "@/features/applications/lib/mask-sensitive";
-import type { Locale } from "@/i18n/config";
+  maskPhone} from "@/features/applications/lib/mask-sensitive";
+type Locale = "en";
+
 import {
   decryptSensitiveValue,
-  isEncryptedPayload,
-} from "@/server/security/encryption";
+  isEncryptedPayload} from "@/server/security/encryption";
 
 export type AdminFieldDisplayValue = {
   fieldId: string;
   fieldKey: string;
   labelEn: string;
-  labelUr: string;
   fieldType: FieldType;
   isEncrypted: boolean;
   displayValue: string;
@@ -34,7 +32,6 @@ type FieldValueRecord = {
   field: {
     fieldKey: string;
     labelEn: string;
-    labelUr: string;
     fieldType: FieldType;
     isEncrypted: boolean;
     optionsJson?: unknown;
@@ -66,10 +63,7 @@ function resolveOptionLabel(
         : typeof record.label === "string"
           ? record.label
           : value;
-    const labelUr =
-      typeof record.labelUr === "string" ? record.labelUr : labelEn;
-
-    return locale === "ur" ? labelUr : labelEn;
+    return labelEn;
   }
 
   return value;
@@ -184,12 +178,10 @@ export function resolveAdminFieldDisplayValues(
       fieldId: record.fieldId,
       fieldKey: record.field.fieldKey,
       labelEn: record.field.labelEn,
-      labelUr: record.field.labelUr,
       fieldType: record.field.fieldType,
       isEncrypted: record.field.isEncrypted || record.isEncrypted,
       displayValue,
-      isMasked: shouldMask,
-    };
+      isMasked: shouldMask};
   });
 }
 
@@ -205,6 +197,5 @@ export function resolveCustomerContactDisplay(input: {
     name: input.name ?? "—",
     email: reveal ? input.email : maskEmail(input.email),
     phone: input.phone ? (reveal ? input.phone : maskPhone(input.phone)) : "—",
-    isMasked: !reveal,
-  };
+    isMasked: !reveal};
 }

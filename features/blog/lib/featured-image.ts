@@ -25,15 +25,8 @@ export function resolveBlogOgImageUrl(
 }
 
 export function resolveBlogFeaturedImageAlt(
-  post: Pick<
-    PublicBlogPostCard,
-    "titleEn" | "titleUr" | "featuredImageAltEn" | "featuredImageAltUr"
-  >,
-  locale: string,
+  post: Pick<PublicBlogPostCard, "titleEn" | "featuredImageAltEn">,
+  _locale?: string,
 ): string {
-  if (locale === "ur") {
-    return post.featuredImageAltUr?.trim() || post.titleUr;
-  }
-
   return post.featuredImageAltEn?.trim() || post.titleEn;
 }

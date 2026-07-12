@@ -8,9 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateContactPageSettingsAction } from "@/features/contact-page/admin/actions/update-contact-page-settings";
 import type { ContactPageSettings } from "@/features/contact-page/types";
-import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
+import { useRouter } from "next/navigation";
 type SettingsTab =
   | "hero"
   | "contact"
@@ -22,48 +22,30 @@ type SettingsTab =
 type ContactPageFieldLabels = {
   pageActive: string;
   heroTitleEn: string;
-  heroTitleUr: string;
   heroDescriptionEn: string;
-  heroDescriptionUr: string;
   phoneNumber: string;
   whatsappNumber: string;
   supportEmail: string;
   supportDaysEn: string;
-  supportDaysUr: string;
   supportHoursEn: string;
-  supportHoursUr: string;
   whatsappChannelUrl: string;
   whatsappPrefillMessage: string;
   cardActive: string;
   cardTitleEn: string;
-  cardTitleUr: string;
   cardDescriptionEn: string;
-  cardDescriptionUr: string;
   cardButtonEn: string;
-  cardButtonUr: string;
   supportHoursCardTitleEn: string;
-  supportHoursCardTitleUr: string;
   formHeadingEn: string;
-  formHeadingUr: string;
   formDescriptionEn: string;
-  formDescriptionUr: string;
   socialHeadingEn: string;
-  socialHeadingUr: string;
   socialDescriptionEn: string;
-  socialDescriptionUr: string;
   ctaActive: string;
   ctaTitleEn: string;
-  ctaTitleUr: string;
   ctaDescriptionEn: string;
-  ctaDescriptionUr: string;
   ctaViewServicesEn: string;
-  ctaViewServicesUr: string;
   ctaWhatsappEn: string;
-  ctaWhatsappUr: string;
   metaTitleEn: string;
-  metaTitleUr: string;
   metaDescriptionEn: string;
-  metaDescriptionUr: string;
 };
 
 type ContactPageSettingsPanelProps = {
@@ -82,8 +64,7 @@ function CheckboxField({
   id,
   label,
   checked,
-  onChange,
-}: {
+  onChange}: {
   id: string;
   label: string;
   checked: boolean;
@@ -107,19 +88,12 @@ function CheckboxField({
 
 function BilingualField({
   labelEn,
-  labelUr,
   valueEn,
-  valueUr,
   onChangeEn,
-  onChangeUr,
-  multiline = false,
-}: {
+  multiline = false}: {
   labelEn: string;
-  labelUr: string;
   valueEn: string;
-  valueUr: string;
   onChangeEn: (value: string) => void;
-  onChangeUr: (value: string) => void;
   multiline?: boolean;
 }) {
   if (multiline) {
@@ -133,15 +107,6 @@ function BilingualField({
             rows={3}
           />
         </div>
-        <div className="space-y-2">
-          <Label>{labelUr}</Label>
-          <Textarea
-            value={valueUr}
-            onChange={(event) => onChangeUr(event.target.value)}
-            rows={3}
-            dir="rtl"
-          />
-        </div>
       </div>
     );
   }
@@ -152,22 +117,13 @@ function BilingualField({
         <Label>{labelEn}</Label>
         <Input value={valueEn} onChange={(event) => onChangeEn(event.target.value)} />
       </div>
-      <div className="space-y-2">
-        <Label>{labelUr}</Label>
-        <Input
-          value={valueUr}
-          onChange={(event) => onChangeUr(event.target.value)}
-          dir="rtl"
-        />
-      </div>
     </div>
   );
 }
 
 export function ContactPageSettingsPanel({
   initialValues,
-  labels,
-}: ContactPageSettingsPanelProps) {
+  labels}: ContactPageSettingsPanelProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<SettingsTab>("hero");
   const [values, setValues] = useState(initialValues);
@@ -206,8 +162,7 @@ export function ContactPageSettingsPanel({
               "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
               activeTab === tab
                 ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:text-foreground",
-            )}
+                : "bg-muted text-muted-foreground hover:text-foreground")}
           >
             {labels.tabs[tab]}
           </button>
@@ -224,22 +179,14 @@ export function ContactPageSettingsPanel({
           />
           <BilingualField
             labelEn={labels.fields.heroTitleEn}
-            labelUr={labels.fields.heroTitleUr}
             valueEn={values.heroTitleEn}
-            valueUr={values.heroTitleUr}
             onChangeEn={(heroTitleEn) => setValues((current) => ({ ...current, heroTitleEn }))}
-            onChangeUr={(heroTitleUr) => setValues((current) => ({ ...current, heroTitleUr }))}
           />
           <BilingualField
             labelEn={labels.fields.heroDescriptionEn}
-            labelUr={labels.fields.heroDescriptionUr}
             valueEn={values.heroDescriptionEn}
-            valueUr={values.heroDescriptionUr}
             onChangeEn={(heroDescriptionEn) =>
               setValues((current) => ({ ...current, heroDescriptionEn }))
-            }
-            onChangeUr={(heroDescriptionUr) =>
-              setValues((current) => ({ ...current, heroDescriptionUr }))
             }
             multiline
           />
@@ -292,34 +239,23 @@ export function ContactPageSettingsPanel({
               onChange={(event) =>
                 setValues((current) => ({
                   ...current,
-                  whatsappPrefillMessage: event.target.value,
-                }))
+                  whatsappPrefillMessage: event.target.value}))
               }
               rows={2}
             />
           </div>
           <BilingualField
             labelEn={labels.fields.supportDaysEn}
-            labelUr={labels.fields.supportDaysUr}
             valueEn={values.supportDaysEn}
-            valueUr={values.supportDaysUr}
             onChangeEn={(supportDaysEn) =>
               setValues((current) => ({ ...current, supportDaysEn }))
-            }
-            onChangeUr={(supportDaysUr) =>
-              setValues((current) => ({ ...current, supportDaysUr }))
             }
           />
           <BilingualField
             labelEn={labels.fields.supportHoursEn}
-            labelUr={labels.fields.supportHoursUr}
             valueEn={values.supportHoursEn}
-            valueUr={values.supportHoursUr}
             onChangeEn={(supportHoursEn) =>
               setValues((current) => ({ ...current, supportHoursEn }))
-            }
-            onChangeUr={(supportHoursUr) =>
-              setValues((current) => ({ ...current, supportHoursUr }))
             }
           />
         </div>
@@ -337,68 +273,39 @@ export function ContactPageSettingsPanel({
                   onChange={(checked) =>
                     setValues((current) => ({
                       ...current,
-                      [cardKey]: { ...current[cardKey], isActive: checked },
-                    }))
+                      [cardKey]: { ...current[cardKey], isActive: checked }}))
                   }
                 />
                 <BilingualField
                   labelEn={labels.fields.cardTitleEn}
-                  labelUr={labels.fields.cardTitleUr}
                   valueEn={values[cardKey].titleEn}
-                  valueUr={values[cardKey].titleUr}
                   onChangeEn={(titleEn) =>
                     setValues((current) => ({
                       ...current,
-                      [cardKey]: { ...current[cardKey], titleEn },
-                    }))
-                  }
-                  onChangeUr={(titleUr) =>
-                    setValues((current) => ({
-                      ...current,
-                      [cardKey]: { ...current[cardKey], titleUr },
-                    }))
+                      [cardKey]: { ...current[cardKey], titleEn }}))
                   }
                 />
                 <BilingualField
                   labelEn={labels.fields.cardDescriptionEn}
-                  labelUr={labels.fields.cardDescriptionUr}
                   valueEn={values[cardKey].descriptionEn}
-                  valueUr={values[cardKey].descriptionUr}
                   onChangeEn={(descriptionEn) =>
                     setValues((current) => ({
                       ...current,
-                      [cardKey]: { ...current[cardKey], descriptionEn },
-                    }))
-                  }
-                  onChangeUr={(descriptionUr) =>
-                    setValues((current) => ({
-                      ...current,
-                      [cardKey]: { ...current[cardKey], descriptionUr },
-                    }))
+                      [cardKey]: { ...current[cardKey], descriptionEn }}))
                   }
                   multiline
                 />
                 <BilingualField
                   labelEn={labels.fields.cardButtonEn}
-                  labelUr={labels.fields.cardButtonUr}
                   valueEn={values[cardKey].buttonLabelEn}
-                  valueUr={values[cardKey].buttonLabelUr}
                   onChangeEn={(buttonLabelEn) =>
                     setValues((current) => ({
                       ...current,
-                      [cardKey]: { ...current[cardKey], buttonLabelEn },
-                    }))
-                  }
-                  onChangeUr={(buttonLabelUr) =>
-                    setValues((current) => ({
-                      ...current,
-                      [cardKey]: { ...current[cardKey], buttonLabelUr },
-                    }))
+                      [cardKey]: { ...current[cardKey], buttonLabelEn }}))
                   }
                 />
               </section>
-            ),
-          )}
+            ))}
           <section className="space-y-4 rounded-lg border p-4">
             <CheckboxField
               id="support-hours-active"
@@ -407,26 +314,16 @@ export function ContactPageSettingsPanel({
               onChange={(checked) =>
                 setValues((current) => ({
                   ...current,
-                  supportHoursCard: { ...current.supportHoursCard, isActive: checked },
-                }))
+                  supportHoursCard: { ...current.supportHoursCard, isActive: checked }}))
               }
             />
             <BilingualField
               labelEn={labels.fields.supportHoursCardTitleEn}
-              labelUr={labels.fields.supportHoursCardTitleUr}
               valueEn={values.supportHoursCard.titleEn}
-              valueUr={values.supportHoursCard.titleUr}
               onChangeEn={(titleEn) =>
                 setValues((current) => ({
                   ...current,
-                  supportHoursCard: { ...current.supportHoursCard, titleEn },
-                }))
-              }
-              onChangeUr={(titleUr) =>
-                setValues((current) => ({
-                  ...current,
-                  supportHoursCard: { ...current.supportHoursCard, titleUr },
-                }))
+                  supportHoursCard: { ...current.supportHoursCard, titleEn }}))
               }
             />
           </section>
@@ -437,47 +334,29 @@ export function ContactPageSettingsPanel({
         <div className="space-y-8">
           <BilingualField
             labelEn={labels.fields.formHeadingEn}
-            labelUr={labels.fields.formHeadingUr}
             valueEn={values.formHeadingEn}
-            valueUr={values.formHeadingUr}
             onChangeEn={(formHeadingEn) => setValues((current) => ({ ...current, formHeadingEn }))}
-            onChangeUr={(formHeadingUr) => setValues((current) => ({ ...current, formHeadingUr }))}
           />
           <BilingualField
             labelEn={labels.fields.formDescriptionEn}
-            labelUr={labels.fields.formDescriptionUr}
             valueEn={values.formDescriptionEn}
-            valueUr={values.formDescriptionUr}
             onChangeEn={(formDescriptionEn) =>
               setValues((current) => ({ ...current, formDescriptionEn }))
-            }
-            onChangeUr={(formDescriptionUr) =>
-              setValues((current) => ({ ...current, formDescriptionUr }))
             }
             multiline
           />
           <BilingualField
             labelEn={labels.fields.socialHeadingEn}
-            labelUr={labels.fields.socialHeadingUr}
             valueEn={values.socialHeadingEn}
-            valueUr={values.socialHeadingUr}
             onChangeEn={(socialHeadingEn) =>
               setValues((current) => ({ ...current, socialHeadingEn }))
-            }
-            onChangeUr={(socialHeadingUr) =>
-              setValues((current) => ({ ...current, socialHeadingUr }))
             }
           />
           <BilingualField
             labelEn={labels.fields.socialDescriptionEn}
-            labelUr={labels.fields.socialDescriptionUr}
             valueEn={values.socialDescriptionEn}
-            valueUr={values.socialDescriptionUr}
             onChangeEn={(socialDescriptionEn) =>
               setValues((current) => ({ ...current, socialDescriptionEn }))
-            }
-            onChangeUr={(socialDescriptionUr) =>
-              setValues((current) => ({ ...current, socialDescriptionUr }))
             }
             multiline
           />
@@ -494,47 +373,29 @@ export function ContactPageSettingsPanel({
           />
           <BilingualField
             labelEn={labels.fields.ctaTitleEn}
-            labelUr={labels.fields.ctaTitleUr}
             valueEn={values.ctaTitleEn}
-            valueUr={values.ctaTitleUr}
             onChangeEn={(ctaTitleEn) => setValues((current) => ({ ...current, ctaTitleEn }))}
-            onChangeUr={(ctaTitleUr) => setValues((current) => ({ ...current, ctaTitleUr }))}
           />
           <BilingualField
             labelEn={labels.fields.ctaDescriptionEn}
-            labelUr={labels.fields.ctaDescriptionUr}
             valueEn={values.ctaDescriptionEn}
-            valueUr={values.ctaDescriptionUr}
             onChangeEn={(ctaDescriptionEn) =>
               setValues((current) => ({ ...current, ctaDescriptionEn }))
-            }
-            onChangeUr={(ctaDescriptionUr) =>
-              setValues((current) => ({ ...current, ctaDescriptionUr }))
             }
             multiline
           />
           <BilingualField
             labelEn={labels.fields.ctaViewServicesEn}
-            labelUr={labels.fields.ctaViewServicesUr}
             valueEn={values.ctaViewServicesLabelEn}
-            valueUr={values.ctaViewServicesLabelUr}
             onChangeEn={(ctaViewServicesLabelEn) =>
               setValues((current) => ({ ...current, ctaViewServicesLabelEn }))
-            }
-            onChangeUr={(ctaViewServicesLabelUr) =>
-              setValues((current) => ({ ...current, ctaViewServicesLabelUr }))
             }
           />
           <BilingualField
             labelEn={labels.fields.ctaWhatsappEn}
-            labelUr={labels.fields.ctaWhatsappUr}
             valueEn={values.ctaWhatsappLabelEn}
-            valueUr={values.ctaWhatsappLabelUr}
             onChangeEn={(ctaWhatsappLabelEn) =>
               setValues((current) => ({ ...current, ctaWhatsappLabelEn }))
-            }
-            onChangeUr={(ctaWhatsappLabelUr) =>
-              setValues((current) => ({ ...current, ctaWhatsappLabelUr }))
             }
           />
         </div>
@@ -543,20 +404,11 @@ export function ContactPageSettingsPanel({
       {activeTab === "seo" ? (
         <BilingualField
           labelEn={labels.fields.metaTitleEn}
-          labelUr={labels.fields.metaTitleUr}
           valueEn={values.seo.metaTitleEn}
-          valueUr={values.seo.metaTitleUr}
           onChangeEn={(metaTitleEn) =>
             setValues((current) => ({
               ...current,
-              seo: { ...current.seo, metaTitleEn },
-            }))
-          }
-          onChangeUr={(metaTitleUr) =>
-            setValues((current) => ({
-              ...current,
-              seo: { ...current.seo, metaTitleUr },
-            }))
+              seo: { ...current.seo, metaTitleEn }}))
           }
         />
       ) : null}
@@ -564,20 +416,11 @@ export function ContactPageSettingsPanel({
       {activeTab === "seo" ? (
         <BilingualField
           labelEn={labels.fields.metaDescriptionEn}
-          labelUr={labels.fields.metaDescriptionUr}
           valueEn={values.seo.metaDescriptionEn}
-          valueUr={values.seo.metaDescriptionUr}
           onChangeEn={(metaDescriptionEn) =>
             setValues((current) => ({
               ...current,
-              seo: { ...current.seo, metaDescriptionEn },
-            }))
-          }
-          onChangeUr={(metaDescriptionUr) =>
-            setValues((current) => ({
-              ...current,
-              seo: { ...current.seo, metaDescriptionUr },
-            }))
+              seo: { ...current.seo, metaDescriptionEn }}))
           }
           multiline
         />

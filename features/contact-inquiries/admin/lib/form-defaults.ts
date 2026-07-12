@@ -29,6 +29,6 @@ export function inquiryToEditorValues(
     cityName: inquiry.cityName ?? "",
     message: inquiry.message ?? "",
     adminNotes: inquiry.adminNotes ?? "",
-    locale: inquiry.locale === "ur" ? "ur" : "en",
+    locale: "en",
   };
 }

@@ -13,13 +13,14 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import type { Route } from "next";
+import Link from "next/link";
 import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 
 type QuickLink = {
   href: string;
@@ -47,7 +48,7 @@ export function QuickLinks({ title, links }: QuickLinksProps) {
             className="h-auto min-h-10 w-full min-w-0 justify-start whitespace-normal py-2.5"
           >
             <Link
-              href={link.href}
+              href={link.href as Route}
               className="flex w-full min-w-0 items-start gap-2 text-left"
             >
               <span className="mt-0.5 shrink-0">{link.icon}</span>

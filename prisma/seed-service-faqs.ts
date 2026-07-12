@@ -8,16 +8,12 @@ export async function seedServiceFaqs(prisma: PrismaClient) {
   const [services, categories, regions] = await Promise.all([
     prisma.service.findMany({
       where: { deletedAt: null },
-      select: { id: true, slug: true },
-    }),
+      select: { id: true, slug: true }}),
     prisma.faqCategory.findMany({
-      select: { id: true, slug: true },
-    }),
+      select: { id: true, slug: true }}),
     prisma.region.findMany({
       where: { deletedAt: null },
-      select: { id: true, slug: true },
-    }),
-  ]);
+      select: { id: true, slug: true }})]);
 
   const serviceMap = Object.fromEntries(services.map((item) => [item.slug, item.id]));
   const categoryMap = Object.fromEntries(categories.map((item) => [item.slug, item.id]));
@@ -30,10 +26,7 @@ export async function seedServiceFaqs(prisma: PrismaClient) {
       serviceId: {
         in: serviceSlugs
           .map((slug) => serviceMap[slug])
-          .filter((id): id is string => Boolean(id)),
-      },
-    },
-  });
+          .filter((id): id is string => Boolean(id))}}});
   console.log(`Removed ${deleted.count} existing service FAQ(s).`);
 
   let created = 0;
@@ -62,17 +55,12 @@ export async function seedServiceFaqs(prisma: PrismaClient) {
         categoryId,
         regionId: regionId ?? null,
         questionEn: faq.questionEn,
-        questionUr: faq.questionUr,
         answerEn: faq.answerEn,
-        answerUr: faq.answerUr,
         seoKeywordsEn: faq.seoKeywordsEn ?? null,
-        seoKeywordsUr: faq.seoKeywordsUr ?? null,
         displayOrder: faq.displayOrder,
         isActive: true,
         isFeatured: false,
-        featuredDisplayOrder: 0,
-      },
-    });
+        featuredDisplayOrder: 0}});
     created += 1;
   }
 

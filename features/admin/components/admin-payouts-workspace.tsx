@@ -3,7 +3,6 @@ import type { AgentPayoutStatus, AgentReceiptStatus } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
 import {
   Table,
   TableBody,
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
+import Link from "next/link";
 type AdminPayoutRow = {
   id: string;
   label: string;

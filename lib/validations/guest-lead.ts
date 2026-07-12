@@ -27,8 +27,7 @@ export function createGuestRequestFormSchema(messages: GuestRequestValidationMes
     cityName: z.string().trim().max(120),
     vehicleInfo: z.string().trim().max(500),
     licenseInfo: z.string().trim().max(500),
-    message: z.string().trim().max(2000),
-  });
+    message: z.string().trim().max(2000)});
 }
 
 export type GuestRequestFormValues = z.infer<
@@ -45,8 +44,7 @@ export const submitGuestLeadSchema = z.object({
   vehicleInfo: z.string().trim().max(500).optional().or(z.literal("")),
   licenseInfo: z.string().trim().max(500).optional().or(z.literal("")),
   message: z.string().trim().max(2000).optional().or(z.literal("")),
-  locale: localeSchema,
-});
+  locale: localeSchema});
 
 export const updateGuestLeadStatusSchema = z.object({
   leadId: z.string().trim().min(1),
@@ -56,10 +54,8 @@ export const updateGuestLeadStatusSchema = z.object({
     "IN_PROGRESS",
     "CONVERTED",
     "CLOSED",
-    "SPAM",
-  ]),
-  adminNotes: z.string().trim().max(5000).optional().or(z.literal("")),
-});
+    "SPAM"]),
+  adminNotes: z.string().trim().max(5000).optional().or(z.literal(""))});
 
 const guestLeadStatusSchema = z.enum([
   "NEW",
@@ -67,36 +63,30 @@ const guestLeadStatusSchema = z.enum([
   "IN_PROGRESS",
   "CONVERTED",
   "CLOSED",
-  "SPAM",
-]);
+  "SPAM"]);
 
 const guestLeadSourceSchema = z.enum(["WHATSAPP", "GUEST_FORM"]);
 
 export const adminCreateGuestLeadSchema = z.object({
   serviceId: z.string().cuid().optional().nullable(),
   serviceNameEn: z.string().trim().min(2).max(200),
-  serviceNameUr: z.string().trim().min(2).max(200),
   source: guestLeadSourceSchema.default("GUEST_FORM"),
   status: guestLeadStatusSchema.default("NEW"),
   fullName: z.string().trim().min(2).max(120),
   phone: phoneSchema,
   email: optionalEmailSchema(),
   regionNameEn: z.string().trim().max(120).optional().nullable(),
-  regionNameUr: z.string().trim().max(120).optional().nullable(),
   cityName: z.string().trim().max(120).optional().nullable(),
   vehicleInfo: z.string().trim().max(500).optional().nullable(),
   licenseInfo: z.string().trim().max(500).optional().nullable(),
   message: z.string().trim().max(2000).optional().nullable(),
   adminNotes: z.string().trim().max(5000).optional().nullable(),
-  locale: localeSchema,
-});
+  locale: localeSchema});
 
 export const adminUpdateGuestLeadSchema = adminCreateGuestLeadSchema.extend({
-  id: z.string().cuid(),
-});
+  id: z.string().cuid()});
 
 export const deleteGuestLeadSchema = z.object({
-  id: z.string().cuid(),
-});
+  id: z.string().cuid()});
 
 export type SubmitGuestLeadInput = z.infer<typeof submitGuestLeadSchema>;

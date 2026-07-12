@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LogOut, Menu } from "lucide-react";
 import { useTransition } from "react";
 
@@ -7,10 +9,8 @@ import { CustomerAccountAvatar } from "@/components/customer/customer-account-av
 import type { CustomerShellLabels } from "@/components/customer/customer-shell-labels";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth-client";
 
 type CustomerTopbarProps = {
@@ -67,7 +67,6 @@ export function CustomerTopbar({
             ) : null}
           </div>
         </div>
-        <LanguageSwitcher />
         <NotificationBell applicationBasePath="/customer/applications" />
         <ThemeToggle />
         <Button

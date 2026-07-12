@@ -6,11 +6,9 @@ const publicSocialLinkSelect = {
   id: true,
   platform: true,
   labelEn: true,
-  labelUr: true,
   url: true,
   iconName: true,
-  displayOrder: true,
-} as const;
+  displayOrder: true} as const;
 
 export class SocialLinkRepository extends Repository {
   async listPublic() {
@@ -19,8 +17,7 @@ export class SocialLinkRepository extends Repository {
         this.db.socialLink.findMany({
           where: { isActive: true },
           orderBy: { displayOrder: "asc" },
-          select: publicSocialLinkSelect,
-        }),
+          select: publicSocialLinkSelect}),
       [],
     );
   }

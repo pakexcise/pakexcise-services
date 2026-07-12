@@ -1,7 +1,8 @@
 import type { DocumentRequirementKind } from "@prisma/client";
-import type { Locale } from "@/i18n/config";
-import { pickLocalized } from "@/lib/i18n/content";
+
 import type { PublicServiceDetail } from "@/server/repositories/service-repository";
+
+type Locale = "en";
 
 export type ServiceDocumentItem = {
   id: string;
@@ -30,55 +31,41 @@ export type ServiceFieldItem = {
 
 export function mapServiceDocumentsForLocale(
   docs: PublicServiceDetail["documentReqs"],
-  locale: Locale,
+  _locale: Locale,
   allRegionsLabel: string,
 ): ServiceDocumentItem[] {
   return docs.map((doc) => ({
     id: doc.id,
     docType: doc.docType,
     kind: doc.kind,
-    label: pickLocalized(locale, { en: doc.labelEn, ur: doc.labelUr }),
-    instructions: pickLocalized(locale, {
-      en: doc.instructionsEn,
-      ur: doc.instructionsUr,
-    }),
+    label: doc.labelEn ?? "",
+    instructions: doc.instructionsEn ?? "",
     isRequired: doc.isRequired,
     scopeLabel: doc.region
-      ? pickLocalized(locale, {
-          en: doc.region.nameEn,
-          ur: doc.region.nameUr,
-        })
+      ? doc.region.nameEn ?? ""
       : allRegionsLabel,
     regionId: doc.regionId,
     regionSlug: doc.region?.slug ?? null,
-    displayOrder: doc.displayOrder,
-  }));
+    displayOrder: doc.displayOrder}));
 }
 
 export function mapServiceFieldsForLocale(
   fields: PublicServiceDetail["formFields"],
-  locale: Locale,
+  _locale: Locale,
   allRegionsLabel: string,
 ): ServiceFieldItem[] {
   return fields.map((field) => ({
     id: field.id,
     fieldKey: field.fieldKey,
-    label: pickLocalized(locale, { en: field.labelEn, ur: field.labelUr }),
-    helpText: pickLocalized(locale, {
-      en: field.helpTextEn,
-      ur: field.helpTextUr,
-    }),
+    label: field.labelEn ?? "",
+    helpText: field.helpTextEn ?? "",
     fieldType: field.fieldType,
     isRequired: field.isRequired,
     scopeLabel: field.region
-      ? pickLocalized(locale, {
-          en: field.region.nameEn,
-          ur: field.region.nameUr,
-        })
+      ? field.region.nameEn ?? ""
       : allRegionsLabel,
     regionId: field.regionId,
-    displayOrder: field.displayOrder,
-  }));
+    displayOrder: field.displayOrder}));
 }
 
 export function groupDocumentsByRegion(
@@ -106,32 +93,24 @@ export function groupDocumentsByRegion(
   return [...groups.entries()].map(([regionKey, group]) => ({
     regionKey,
     regionLabel: group.regionLabel,
-    items: group.items,
-  }));
+    items: group.items}));
 }
 
 export function getRegionSupportNotes(
   serviceRegions: PublicServiceDetail["serviceRegions"],
-  locale: Locale,
+  _locale: Locale,
 ): Array<{ regionName: string; notes: string }> {
   return serviceRegions
     .map((entry) => {
-      const notes = pickLocalized(locale, {
-        en: entry.supportNotesEn ?? "",
-        ur: entry.supportNotesUr ?? entry.supportNotesEn ?? "",
-      });
+      const notes = entry.supportNotesEn ?? "";
 
       if (!notes.trim() || !entry.region) {
         return null;
       }
 
       return {
-        regionName: pickLocalized(locale, {
-          en: entry.region.nameEn,
-          ur: entry.region.nameUr,
-        }),
-        notes,
-      };
+        regionName: entry.region.nameEn ?? "",
+        notes};
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
 }

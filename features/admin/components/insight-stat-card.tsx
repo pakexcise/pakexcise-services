@@ -1,10 +1,11 @@
+import type { Route } from "next";
+import Link from "next/link";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type InsightStatCardProps = {
@@ -89,7 +90,7 @@ export function InsightStatCard({
   if (href) {
     return (
       <Link
-        href={href}
+        href={href as Route}
         className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {card}

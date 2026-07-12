@@ -1,12 +1,11 @@
 import type { PublicServiceSelect } from "@/server/repositories/base/repository";
-import type { Locale } from "@/i18n/config";
 import { CANONICAL_PROVINCE_SLUGS } from "@/config/region-slugs";
-import { pickLocalized } from "@/lib/i18n/content";
+
+type Locale = "en";
 
 type RegionRef = {
   slug: string;
   nameEn: string;
-  nameUr: string;
 };
 
 type RegionListLabels = {
@@ -31,11 +30,8 @@ export function serviceCoversAllProvinces(
   return CANONICAL_PROVINCE_SLUGS.every((slug) => assignedSlugs.has(slug));
 }
 
-function localizeRegionName(region: RegionRef, locale: Locale): string {
-  return pickLocalized(locale, {
-    en: region.nameEn,
-    ur: region.nameUr,
-  });
+function localizeRegionName(region: RegionRef, _locale: Locale): string {
+  return region.nameEn ?? "";
 }
 
 export function formatRegionList(
@@ -128,7 +124,7 @@ type ServiceCardTextLabels = RegionListLabels & {
 export function getServiceCardDisplayText(
   service: Pick<
     PublicServiceSelect,
-    "nameEn" | "nameUr" | "shortDescriptionEn" | "shortDescriptionUr" | "serviceRegions"
+    "nameEn" | "shortDescriptionEn" | "serviceRegions"
   >,
   locale: Locale,
   labels: ServiceCardTextLabels,
@@ -136,10 +132,7 @@ export function getServiceCardDisplayText(
   availabilityLine: string;
   summary: string;
 } {
-  const serviceName = pickLocalized(locale, {
-    en: service.nameEn,
-    ur: service.nameUr,
-  });
+  const serviceName = service.nameEn ?? "";
   const provinces = getServiceProvinceListText(
     service,
     locale,

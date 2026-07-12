@@ -3,13 +3,11 @@ import type {
   AgentCommissionMode,
   AgentCommissionSource,
   AgentPayoutStatus,
-  PaymentMethodType,
-} from "@prisma/client";
+  PaymentMethodType} from "@prisma/client";
 
 import type {
   AdminAgentListItem,
-  AgentCommissionListItem,
-} from "@/server/repositories/agent-repository";
+  AgentCommissionListItem} from "@/server/repositories/agent-repository";
 
 export type AdminAgentWorkspaceApplication = {
   id: string;
@@ -17,7 +15,6 @@ export type AdminAgentWorkspaceApplication = {
   status: string;
   createdAt: string;
   serviceNameEn: string;
-  serviceNameUr: string;
 };
 
 export type AdminAgentWorkspaceCommission = {
@@ -70,8 +67,7 @@ export type AdminAgentWorkspaceItem = {
 };
 
 function serializeCommission(
-  commission: AgentCommissionListItem,
-): AdminAgentWorkspaceCommission {
+  commission: AgentCommissionListItem): AdminAgentWorkspaceCommission {
   return {
     id: commission.id,
     label: commission.label,
@@ -85,8 +81,7 @@ function serializeCommission(
     agentConfirmedAt: commission.agentConfirmedAt?.toISOString() ?? null,
     agentReceiptStatus: commission.agentReceiptStatus,
     agentDisputeReason: commission.agentDisputeReason,
-    createdAt: commission.createdAt.toISOString(),
-  };
+    createdAt: commission.createdAt.toISOString()};
 }
 
 export function serializeAdminAgentForWorkspace(input: {
@@ -97,7 +92,7 @@ export function serializeAdminAgentForWorkspace(input: {
     trackingId: string;
     status: string;
     createdAt: Date;
-    service: { nameEn: string; nameUr: string };
+    service: { nameEn: string};
   }>;
   commissions: AgentCommissionListItem[];
   displayEmail: string;
@@ -123,8 +118,7 @@ export function serializeAdminAgentForWorkspace(input: {
       iban: input.agent.payoutIban,
       bankName: input.agent.payoutBankName,
       walletNumber: input.agent.payoutWalletNumber,
-      notes: input.agent.payoutNotes,
-    },
+      notes: input.agent.payoutNotes},
     user: {
       id: input.agent.user.id,
       name: input.agent.user.name,
@@ -132,16 +126,12 @@ export function serializeAdminAgentForWorkspace(input: {
       phone: input.agent.user.phone,
       status: input.agent.user.status,
       displayEmail: input.displayEmail,
-      displayPhone: input.displayPhone,
-    },
+      displayPhone: input.displayPhone},
     recentApplications: input.recentApplications.map((application) => ({
       id: application.id,
       trackingId: application.trackingId,
       status: application.status,
       createdAt: application.createdAt.toISOString(),
-      serviceNameEn: application.service.nameEn,
-      serviceNameUr: application.service.nameUr,
-    })),
-    commissions: serializedCommissions,
-  };
+      serviceNameEn: application.service.nameEn})),
+    commissions: serializedCommissions};
 }

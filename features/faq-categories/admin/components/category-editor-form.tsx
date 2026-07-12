@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,19 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createFaqCategoryAction,
-  updateFaqCategoryAction,
-} from "@/features/faq-categories/admin/actions/category-actions";
+  updateFaqCategoryAction} from "@/features/faq-categories/admin/actions/category-actions";
+import { useRouter } from "next/navigation";
 import {
   editorValuesToPayload,
-  type FaqCategoryEditorValues,
+  type FaqCategoryEditorValues
 } from "@/features/faq-categories/admin/lib/form-defaults";
 
 type FaqCategoryEditorLabels = {
   slug: string;
   nameEn: string;
-  nameUr: string;
   descriptionEn: string;
-  descriptionUr: string;
   isActive: string;
   displayOrder: string;
   save: string;
@@ -41,8 +38,7 @@ export function FaqCategoryEditorForm({
   mode,
   categoryId,
   initialValues,
-  labels,
-}: FaqCategoryEditorFormProps) {
+  labels}: FaqCategoryEditorFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [values, setValues] = useState(initialValues);
@@ -117,13 +113,7 @@ export function FaqCategoryEditorForm({
             onChange={(event) => updateField("nameEn", event.target.value)}
           />
         </Field>
-        <Field label={labels.nameUr} error={fieldErrors.nameUr?.[0]}>
-          <Input
-            value={values.nameUr}
-            onChange={(event) => updateField("nameUr", event.target.value)}
-            dir="rtl"
-          />
-        </Field>
+        
         <Field label={labels.descriptionEn} className="lg:col-span-2">
           <Textarea
             className="min-h-28"
@@ -133,16 +123,7 @@ export function FaqCategoryEditorForm({
             }
           />
         </Field>
-        <Field label={labels.descriptionUr} className="lg:col-span-2">
-          <Textarea
-            className="min-h-28"
-            value={values.descriptionUr}
-            onChange={(event) =>
-              updateField("descriptionUr", event.target.value)
-            }
-            dir="rtl"
-          />
-        </Field>
+        
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"
@@ -173,8 +154,7 @@ function Field({
   label,
   error,
   className,
-  children,
-}: {
+  children}: {
   label: string;
   error?: string;
   className?: string;

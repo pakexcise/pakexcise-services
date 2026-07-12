@@ -2,8 +2,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 import { CustomerAccountAvatar } from "@/components/customer/customer-account-avatar";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-
+import Link from "next/link";
 type CustomerDashboardHeroProps = {
   name: string;
   contactLine: string;

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CalendarDays, Clock3, UserRound } from "lucide-react";
 
 import { BlogCardImage } from "@/components/marketing/blog-card-image";
@@ -5,27 +6,20 @@ import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { resolveBlogPostCategoryLabel } from "@/features/blog/lib/resolve-blog-post-category";
-import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/i18n/content";
 import { formatDate } from "@/lib/utils";
 
 type BlogCardProps = {
   post: {
     slug: string;
     titleEn: string;
-    titleUr: string;
     excerptEn?: string | null;
-    excerptUr?: string | null;
     categoryEn?: string | null;
-    categoryUr?: string | null;
-    category?: { nameEn: string; nameUr: string } | null;
-    subCategory?: { nameEn: string; nameUr: string } | null;
+    category?: { nameEn: string } | null;
+    subCategory?: { nameEn: string } | null;
     authorNameEn?: string | null;
-    authorNameUr?: string | null;
     readingTimeMinutes?: number | null;
     featuredImagePath?: string | null;
     featuredImageAltEn?: string | null;
-    featuredImageAltUr?: string | null;
     publishedAt?: Date | null;
     seoMeta?: {
       ogImage?: string | null;
@@ -44,16 +38,10 @@ export function BlogCard({
   readingTimeLabel = "min read",
   featured = false,
 }: BlogCardProps) {
-  const title = pickLocalized(locale, { en: post.titleEn, ur: post.titleUr });
-  const excerpt = pickLocalized(locale, {
-    en: post.excerptEn,
-    ur: post.excerptUr,
-  });
+  const title = post.titleEn ?? "";
+  const excerpt = post.excerptEn ?? "";
   const category = resolveBlogPostCategoryLabel(locale, post);
-  const author = pickLocalized(locale, {
-    en: post.authorNameEn,
-    ur: post.authorNameUr,
-  });
+  const author = post.authorNameEn ?? "";
 
   return (
     <Card

@@ -21,8 +21,7 @@ const invoiceLineItemFormSchema = z.object({
   label: z.string().trim().min(1).max(120),
   description: z.string().trim().max(500).optional(),
   amount: z.coerce.number().min(0),
-  isOfficialFee: z.boolean(),
-});
+  isOfficialFee: z.boolean()});
 
 const invoiceFormSchema = z.object({
   serviceFee: z.coerce.number().min(0.01),
@@ -33,8 +32,7 @@ const invoiceFormSchema = z.object({
   notes: z.string().optional(),
   taxTotal: z.coerce.number().min(0),
   statusNote: z.string().trim().min(3),
-  lineItems: z.array(invoiceLineItemFormSchema),
-});
+  lineItems: z.array(invoiceLineItemFormSchema)});
 
 type InvoiceFormValues = z.infer<typeof invoiceFormSchema>;
 
@@ -42,18 +40,15 @@ export type InvoiceGeneratorPaymentMethod = {
   id: string;
   type: PaymentMethodType;
   nameEn: string;
-  nameUr: string;
   accountTitleEn: string | null;
-  accountTitleUr: string | null;
   accountNumber: string | null;
   iban: string | null;
   bankNameEn: string | null;
-  bankNameUr: string | null;
 };
 
 type InvoiceGeneratorProps = {
   applicationId: string;
-  locale: "en" | "ur";
+  locale: "en";
   paymentMethods: InvoiceGeneratorPaymentMethod[];
   labels: {
     title: string;
@@ -105,8 +100,7 @@ export function InvoiceGenerator({
   applicationId,
   locale,
   paymentMethods,
-  labels,
-}: InvoiceGeneratorProps) {
+  labels}: InvoiceGeneratorProps) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -117,8 +111,7 @@ export function InvoiceGenerator({
     control,
     handleSubmit,
     setValue,
-    formState: { errors },
-  } = useForm<InvoiceFormValues>({
+    formState: { errors }} = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceFormSchema),
     defaultValues: {
       serviceFee: 0,
@@ -126,20 +119,16 @@ export function InvoiceGenerator({
       lineItems: [],
       statusNote: "",
       paymentMethodIds: paymentMethods.length === 1 ? [paymentMethods[0]!.id] : [],
-      paymentInstructions: "",
-    },
-  });
+      paymentInstructions: ""}});
 
   const selectedPaymentMethodIds = useWatch({
     control,
     name: "paymentMethodIds",
-    defaultValue: [],
-  });
+    defaultValue: []});
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "lineItems",
-  });
+    name: "lineItems"});
 
   function togglePaymentMethod(id: string) {
     const current = selectedPaymentMethodIds ?? [];
@@ -155,8 +144,7 @@ export function InvoiceGenerator({
 
     startTransition(async () => {
       const lineItems = values.lineItems.filter(
-        (item) => item.label.trim().length > 0 && item.amount > 0,
-      );
+        (item) => item.label.trim().length > 0 && item.amount > 0);
 
       const result = await createAndSendInvoiceAction({
         applicationId,
@@ -165,8 +153,7 @@ export function InvoiceGenerator({
         lineItems,
         dueAt: values.dueAt
           ? new Date(`${values.dueAt}T12:00:00.000Z`).toISOString()
-          : undefined,
-      });
+          : undefined});
 
       if (!result.success) {
         setError(result.error ?? labels.error);
@@ -232,15 +219,11 @@ export function InvoiceGenerator({
               {paymentMethods.map((method) => {
                 const Icon = methodIcon(method.type);
                 const selected = selectedPaymentMethodIds?.includes(method.id) ?? false;
-                const name = getPaymentMethodName(method, locale);
+                const name = getPaymentMethodName(method);
                 const bankName =
-                  locale === "ur"
-                    ? method.bankNameUr ?? method.bankNameEn
-                    : method.bankNameEn ?? method.bankNameUr;
+                  method.bankNameEn;
                 const accountTitle =
-                  locale === "ur"
-                    ? method.accountTitleUr ?? method.accountTitleEn
-                    : method.accountTitleEn ?? method.accountTitleUr;
+                  method.accountTitleEn;
 
                 return (
                   <button
@@ -251,8 +234,7 @@ export function InvoiceGenerator({
                       "rounded-xl border p-4 text-start text-sm transition-colors",
                       selected
                         ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                        : "hover:border-primary/30 hover:bg-muted/30",
-                    )}
+                        : "hover:border-primary/30 hover:bg-muted/30")}
                   >
                     <div className="flex items-start gap-3">
                       <div className="rounded-lg bg-background p-2 shadow-sm">
@@ -338,8 +320,7 @@ export function InvoiceGenerator({
                 label: "",
                 description: "",
                 amount: 0,
-                isOfficialFee: false,
-              })
+                isOfficialFee: false})
             }
           >
             <Plus className="size-4" />

@@ -1,6 +1,8 @@
 "use client";
 
-import { Link, usePathname } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 type BlogAdminTabsProps = {
@@ -40,7 +42,7 @@ function TabLink({
 }) {
   return (
     <Link
-      href={href}
+      href={href as Route}
       className={cn(
         "rounded-full px-4 py-2 text-sm font-medium transition-colors",
         active

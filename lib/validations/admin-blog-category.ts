@@ -6,7 +6,6 @@ import { serviceSlugSchema } from "@/lib/validations/admin-service";
 export const blogCategoryCoreSchema = z.object({
   slug: serviceSlugSchema,
   nameEn: z.string().trim().min(2).max(200),
-  nameUr: z.string().trim().min(2).max(200),
   parentId: z.string().cuid().optional().nullable(),
   isActive: z.boolean().default(true),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),

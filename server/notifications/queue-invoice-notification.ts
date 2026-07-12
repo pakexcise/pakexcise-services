@@ -9,7 +9,6 @@ type QueueInvoiceSentInput = {
   trackingId: string;
   invoiceNumber: string;
   serviceName: string;
-  serviceNameUr?: string;
   locale?: string;
   total: string;
   userEmail: string;
@@ -32,9 +31,6 @@ export async function queueInvoiceSentNotifications(
     payload: {
       trackingId: input.trackingId,
       serviceName: input.serviceName,
-      serviceNameUr: input.serviceNameUr,
       invoiceNumber: input.invoiceNumber,
-      total: input.total,
-    },
-  });
+      total: input.total}});
 }

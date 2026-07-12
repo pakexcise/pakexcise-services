@@ -14,7 +14,8 @@ import { SocialAuthButtons } from "@/features/auth/components/social-auth-button
 import { useAuthPageQuery } from "@/features/auth/hooks/use-auth-page-query";
 import { buildLoginUrl } from "@/features/auth/lib/auth-url";
 import type { SocialProviderId } from "@/features/auth/lib/social-providers";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type SignupFormLabels = {
   name: string;
@@ -189,7 +190,7 @@ function SignupFormContent({ labels, socialProviders, unified = false }: SignupF
       {unified ? null : (
         <p className="text-center text-sm text-muted-foreground">
           {labels.hasAccount}{" "}
-          <Link href={loginHref} className="font-medium text-primary hover:underline">
+          <Link href={loginHref as Route} className="font-medium text-primary hover:underline">
             {labels.loginLink}
           </Link>
         </p>

@@ -10,8 +10,7 @@ import type { ApplicationChangeType } from "@/server/realtime/application-events
 import {
   mapChangeTypeToNotificationEventType,
   publishApplicationUpdatedEvent,
-  publishNotificationCreatedEvent,
-} from "@/server/realtime/stream-events";
+  publishNotificationCreatedEvent} from "@/server/realtime/stream-events";
 
 export async function deliverInAppApplicationUpdate(input: {
   applicationId: string;
@@ -32,12 +31,10 @@ export async function deliverInAppApplicationUpdate(input: {
   const payload: NotificationPayload = {
     trackingId: input.trackingId,
     serviceName: input.payload?.serviceName ?? "Application",
-    serviceNameUr: input.payload?.serviceNameUr,
     note: input.payload?.note,
     toStatus: input.payload?.toStatus as ApplicationStatus | undefined,
     reason: input.payload?.reason,
-    invoiceNumber: input.payload?.invoiceNumber,
-  };
+    invoiceNumber: input.payload?.invoiceNumber};
 
   const recipientIds =
     input.recipientUserIds ??
@@ -50,8 +47,7 @@ export async function deliverInAppApplicationUpdate(input: {
     applicationId: input.applicationId,
     trackingId: input.trackingId,
     status: input.status,
-    changeType: input.changeType,
-  });
+    changeType: input.changeType});
 
   await Promise.all(
     recipientIds.map(async (recipientUserId) => {
@@ -59,14 +55,12 @@ export async function deliverInAppApplicationUpdate(input: {
         eventType,
         locale: normalizeNotificationLocale(input.locale),
         applicationId: input.applicationId,
-        payload,
-      });
+        payload});
 
       const safePayload: Prisma.InputJsonValue = {
         trackingId: input.trackingId,
         changeType: input.changeType,
-        status: input.status,
-      };
+        status: input.status};
 
       const notification = await inAppNotificationRepository.create({
         userId: recipientUserId,
@@ -75,8 +69,7 @@ export async function deliverInAppApplicationUpdate(input: {
         locale: input.locale,
         title: template.title,
         body: template.body,
-        payloadJson: safePayload,
-      });
+        payloadJson: safePayload});
 
       const unreadCount = await inAppNotificationRepository.countUnread(
         recipientUserId,
@@ -89,8 +82,7 @@ export async function deliverInAppApplicationUpdate(input: {
         title: notification.title,
         message: notification.body,
         createdAt: notification.createdAt,
-        unreadCount,
-      });
+        unreadCount});
     }),
   );
 }

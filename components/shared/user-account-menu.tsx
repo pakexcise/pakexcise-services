@@ -28,9 +28,12 @@ import {
   getProfilePathByRole,
   shouldShowApplicationsLink,
 } from "@/features/auth/lib/dashboard-path";
-import { Link, useRouter } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+
+import type { Route as NextRoute } from "next";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export type UserAccountMenuLabels = {
   myAccount: string;
@@ -89,7 +92,7 @@ export function UserAccountMenu({
     return (
       <div className={cn("flex flex-col gap-2", className)}>
         <Button asChild className="justify-start" onClick={onNavigate}>
-          <Link href={dashboardHref}>
+          <Link href={dashboardHref as NextRoute}>
             <LayoutDashboard className="size-4" aria-hidden="true" />
             {labels.myDashboard}
           </Link>
@@ -102,7 +105,7 @@ export function UserAccountMenu({
             className="justify-start"
             onClick={onNavigate}
           >
-            <Link href={applicationsHref}>
+            <Link href={applicationsHref as NextRoute}>
               <ClipboardList className="size-4" aria-hidden="true" />
               {labels.myApplications}
             </Link>
@@ -128,7 +131,7 @@ export function UserAccountMenu({
             className="justify-start"
             onClick={onNavigate}
           >
-            <Link href={profileHref}>
+            <Link href={profileHref as NextRoute}>
               <Settings className="size-4" aria-hidden="true" />
               {labels.profileSettings}
             </Link>
@@ -183,14 +186,14 @@ export function UserAccountMenu({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild onClick={onNavigate}>
-          <Link href={dashboardHref}>
+          <Link href={dashboardHref as NextRoute}>
             <LayoutDashboard className="size-4" aria-hidden="true" />
             {labels.dashboard}
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild onClick={onNavigate}>
-          <Link href={applicationsHref}>
+          <Link href={applicationsHref as NextRoute}>
             <ClipboardList className="size-4" aria-hidden="true" />
             {labels.myApplications}
           </Link>
@@ -205,7 +208,7 @@ export function UserAccountMenu({
 
         {profileHref ? (
           <DropdownMenuItem asChild onClick={onNavigate}>
-            <Link href={profileHref}>
+            <Link href={profileHref as NextRoute}>
               <User className="size-4" aria-hidden="true" />
               {labels.profileSettings}
             </Link>

@@ -16,7 +16,7 @@ type ApplicationEventEmailProps = {
   body: string;
   ctaLabel: string;
   ctaUrl: string;
-  locale: "en" | "ur";
+  locale: "en";
 };
 
 export function ApplicationEventEmail({
@@ -26,7 +26,7 @@ export function ApplicationEventEmail({
   ctaUrl,
   locale,
 }: ApplicationEventEmailProps) {
-  const direction = locale === "ur" ? "rtl" : "ltr";
+  const direction = "ltr";
   const paragraphs = body.split("\n").filter(Boolean);
 
   return (
@@ -49,9 +49,7 @@ export function ApplicationEventEmail({
           </Section>
           <Hr style={hr} />
           <Text style={footer}>
-            {locale === "ur"
-              ? "یہ ایک نجی سہولت سروس ہے۔ کسی سرکاری ادارے سے وابستہ نہیں۔"
-              : "Private facilitation service. Not affiliated with any government body."}
+            {"Private facilitation service. Not affiliated with any government body."}
           </Text>
         </Container>
       </Body>

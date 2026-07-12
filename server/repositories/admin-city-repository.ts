@@ -13,9 +13,7 @@ export const adminCityDetailSelect = {
   regionId: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   descriptionEn: true,
-  descriptionUr: true,
   isActive: true,
   displayOrder: true,
   deletedAt: true,
@@ -26,7 +24,6 @@ export const adminCityDetailSelect = {
       id: true,
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
   seoMeta: true,
@@ -41,7 +38,6 @@ export const adminCityListSelect = {
   regionId: true,
   slug: true,
   nameEn: true,
-  nameUr: true,
   isActive: true,
   displayOrder: true,
   updatedAt: true,
@@ -50,7 +46,6 @@ export const adminCityListSelect = {
     select: {
       slug: true,
       nameEn: true,
-      nameUr: true,
     },
   },
 } as const satisfies Prisma.CitySelect;
@@ -86,7 +81,7 @@ export class AdminCityRepository extends Repository {
     if (filters.q) {
       where.OR = [
         { nameEn: { contains: filters.q, mode: "insensitive" } },
-        { nameUr: { contains: filters.q, mode: "insensitive" } },
+
         { slug: { contains: filters.q, mode: "insensitive" } },
       ];
     }

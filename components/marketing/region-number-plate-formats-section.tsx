@@ -3,12 +3,12 @@
 import Image from "next/image";
 import { Car } from "lucide-react";
 
-import { Link } from "@/i18n/navigation";
 import { DEFAULT_PLATE_FORMAT_IMAGE_PATH } from "@/features/regions/lib/plate-format-image-paths";
 import type { MappedRegionPlateFormatsSection } from "@/features/regions/lib/map-region-plate-formats";
 import { Badge } from "@/components/ui/badge";
 import { disclaimerBoxClassName } from "@/lib/styles/disclaimer-banner";
 
+import Link from "next/link";
 type RegionNumberPlateFormatsSectionProps = {
   data: MappedRegionPlateFormatsSection;
   relatedServices: Array<{ slug: string; name: string }>;

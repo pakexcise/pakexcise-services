@@ -2,7 +2,8 @@ import type { ApplicationStatus } from "@prisma/client";
 
 import { ApplicationStatusBadge } from "@/features/admin/components/application-status-badge";
 import { formatDate } from "@/lib/utils";
-import { Link } from "@/i18n/navigation";
+import type { Route } from "next";
+import Link from "next/link";
 
 type TrackResultProps = {
   trackingId: string;
@@ -65,7 +66,7 @@ export function TrackResult({
       <p className="text-sm text-muted-foreground">{publicStatusMessage}</p>
       <p className="text-sm">{labels.accountPrompt}</p>
       <Link
-        href={accountHref}
+        href={accountHref as Route}
         className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium shadow-sm transition-colors hover:bg-muted"
       >
         {labels.accountCta}

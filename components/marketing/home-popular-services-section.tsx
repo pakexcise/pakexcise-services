@@ -4,9 +4,9 @@ import { SectionHeader } from "@/components/marketing/section-header";
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import type { ServiceCardLabels } from "@/components/marketing/service-card";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
 import type { PublicServiceSelect } from "@/server/repositories";
 
+import Link from "next/link";
 type HomePopularServicesSectionProps = {
   title: string;
   description: string;

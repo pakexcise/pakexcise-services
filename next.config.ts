@@ -2,12 +2,9 @@ import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
 import { execSync } from "node:child_process";
 import { withSentryConfig } from "@sentry/nextjs";
-import createNextIntlPlugin from "next-intl/plugin";
 
 import { REGION_SLUG_ALIASES } from "./config/region-slugs";
 import { buildLegacyServiceNextRedirects } from "./config/legacy-url-redirects";
-
-const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -79,7 +76,31 @@ const nextConfig: NextConfig = {
       },
     ];
 
+    const legacyLocaleRedirects = [
+      {
+        source: "/en",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/ur",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/en/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
+      {
+        source: "/ur/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
+    ];
+
     return [
+      ...legacyLocaleRedirects,
       ...legalRedirects,
       ...regionRedirects,
       ...buildLegacyServiceNextRedirects(),
@@ -87,7 +108,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-const config = withBundleAnalyzer(withNextIntl(nextConfig));
+const config = withBundleAnalyzer(nextConfig);
 
 export default withSentryConfig(config, {
   org: process.env.SENTRY_ORG,

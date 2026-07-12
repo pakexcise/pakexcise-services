@@ -9,15 +9,11 @@ export type CustomerInvoicePaymentMethodView = {
   code: string;
   type: PaymentMethodType;
   nameEn: string;
-  nameUr: string;
   accountTitleEn: string | null;
-  accountTitleUr: string | null;
   accountNumber: string | null;
   iban: string | null;
   bankNameEn: string | null;
-  bankNameUr: string | null;
   instructionsEn: string | null;
-  instructionsUr: string | null;
   qrCodeUrl: string | null;
 };
 
@@ -53,25 +49,19 @@ export async function serializeCustomerInvoiceForView(
       const qrCodeUrl = await resolveInvoicePaymentMethodQrDataUri({
         qrCodeR2Key: method.qrCodeR2Key,
         qrCodeMimeType: method.qrCodeMimeType,
-        paymentMethodId: method.paymentMethodId,
-      });
+        paymentMethodId: method.paymentMethodId});
 
       return {
         id: method.id,
         code: method.code,
         type: method.type,
         nameEn: method.nameEn,
-        nameUr: method.nameUr,
         accountTitleEn: method.accountTitleEn,
-        accountTitleUr: method.accountTitleUr,
         accountNumber: method.accountNumber,
         iban: method.iban,
         bankNameEn: method.bankNameEn,
-        bankNameUr: method.bankNameUr,
         instructionsEn: method.instructionsEn,
-        instructionsUr: method.instructionsUr,
-        qrCodeUrl,
-      };
+        qrCodeUrl};
     }),
   );
 
@@ -95,7 +85,5 @@ export async function serializeCustomerInvoiceForView(
       label: item.label,
       description: item.description,
       amount: item.amount.toString(),
-      isOfficialFee: item.isOfficialFee,
-    })),
-  };
+      isOfficialFee: item.isOfficialFee}))};
 }
