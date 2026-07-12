@@ -7,7 +7,7 @@
     "dev": "next dev --webpack",
     "dev:clean": "node scripts/reset-dev.mjs && npm run dev",
     "dev:reset": "node scripts/reset-dev.mjs",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
