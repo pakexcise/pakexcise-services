@@ -29,7 +29,7 @@ Destructive schema changes on shared DBs (dropping columns/tables such as Urdu f
 pnpm exec prisma db push --accept-data-loss
 ```
 
-Use only with explicit intent per environment.
+Use only with explicit intent per environment. **Live (Jul 2026):** that sync already ran — Urdu `*Ur` columns and the `guides` table are gone. Do not re-add them.
 
 ## Soft delete
 

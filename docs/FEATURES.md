@@ -3,6 +3,8 @@
 Status values: **complete** | **partial** | **planned** | **deprecated**.  
 “Complete” means primary UI + actions + repositories exist in repo — not a claim of zero bugs.
 
+**Live (Jul 2026):** English-only + Guides removal are on production (schema drop via `--accept-data-loss`). See [PROJECT_STATUS.md](./PROJECT_STATUS.md).
+
 ## Public marketing
 
 | Feature | Status | Main files / routes | Business rules / notes |
@@ -10,7 +12,7 @@ Status values: **complete** | **partial** | **planned** | **deprecated**.
 | Homepage CMS sections | complete | `app/(marketing)/page.tsx`, `features/home-page/` | Sections/limits from DB settings |
 | Services catalog | complete | `/services`, `/services/[slug]`, `features/services/` | No public fees |
 | Regions & cities | complete | `/regions`, `features/regions/`, `features/cities/` | Plate formats on province pages |
-| FAQs | complete | `/faqs`, `features/faqs/` | Multilingual DB fields English-only post-cleanup |
+| FAQs | complete | `/faqs`, `features/faqs/` | English DB fields only |
 | Blog | complete | `/blog`, `features/blog/` | Feature-flaggable via settings |
 | Track application | complete | `/track`, `features/customer/actions/track-application.ts` | Tracking ID |
 | Contact + inquiries | complete | `/contact`, `features/contact-inquiries/` | Turnstile/rate limits — Needs verification on all envs |

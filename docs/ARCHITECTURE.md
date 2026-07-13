@@ -174,7 +174,7 @@ Every transition records `StatusHistory` with a note. `COMPLETED` may require pr
 | `messages/` | English UI catalog |
 | `scripts/` | Deploy, env sync, content promote |
 | `proxy.ts` | Request proxy (locale redirects + cookie gate) |
-| `.cursorrules` | Product/architecture constraints (some lines may lag code, e.g. Guides) |
+| `.cursorrules` | Updated for English-only; prefer `docs/` if conflict |
 
 ## Related docs
 

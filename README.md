@@ -123,7 +123,8 @@ CLAUDE.md      # Instructions for Claude Code
 
 ## Documentation map
 
-Start here for a new developer or AI agent: [PROJECT_HANDOVER.md](./PROJECT_HANDOVER.md).
+**Full index:** [docs/README.md](./docs/README.md)  
+**Start here:** [PROJECT_HANDOVER.md](./PROJECT_HANDOVER.md) · [CLAUDE.md](./CLAUDE.md)
 
 | Doc | Contents |
 |-----|----------|
@@ -135,8 +136,7 @@ Start here for a new developer or AI agent: [PROJECT_HANDOVER.md](./PROJECT_HAND
 | [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Staging / live VPS |
 | [docs/MAINTENANCE.md](./docs/MAINTENANCE.md) | Day-to-day engineering |
 | [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | Common failures |
-| [docs/PROJECT_STATUS.md](./docs/PROJECT_STATUS.md) | Status & next steps |
-| [CLAUDE.md](./CLAUDE.md) | Claude Code permanent rules |
+| [docs/PROJECT_STATUS.md](./docs/PROJECT_STATUS.md) | Status & next steps (includes live cutover) |
 
 ## Basic troubleshooting
 

@@ -1,81 +1,100 @@
 # Project status
 
-Snapshot based on repository inspection at documentation time. Mark anything uncertain as **Needs verification**.
+Last updated: **2026-07-14** (after live English-only + Guides removal schema sync).
+
+Snapshot from repository + live deploy confirmation. Items still uncertain are marked **Needs verification**.
+
+## Production reality (confirmed)
+
+- Live DB synced with Prisma schema via `prisma db push --accept-data-loss`
+- Dropped Urdu `*Ur` columns and **`guides` table** (had 1 row) on live
+- PM2: `pakexcise-live` and `pakexcise-staging` online
+- App code on GitHub `staging` includes Guides removal, English-only, marketing-only GTM (`cff65df` docs commit; app changes in `5c1925c`)
+
+Verify anytime:
+
+```bash
+curl -s https://pakexcise.com/api/health
+curl -s https://staging.pakexcise.com/api/health
+```
+
+Expect `"env"` matching the host and a current `buildId`.
 
 ## Completed work
 
-- Full multi-portal product: marketing, customer, agent, support, admin
-- Dynamic services, regions, FAQs, blog, legal CMS
-- Application lifecycle with invoices, payments, documents, status history
-- Better Auth + RBAC permissions
-- R2 uploads with signed URLs
-- SES email + WhatsApp OTP/notifications scaffolding
-- First-party analytics admin dashboard excluding portals
-- English-only cleanup (next-intl / Urdu / `[locale]` routes removed)
+- Multi-portal product: marketing, customer, agent, support, admin / super admin
+- Dynamic services, regions/cities, FAQs, blog, legal CMS, SEO, redirects
+- Application lifecycle: documents, invoices, payments, status history, tracking
+- Better Auth + RBAC (`server/permissions/`)
+- Cloudflare R2 signed uploads; AWS SES; WhatsApp Cloud API scaffolding
+- First-party admin analytics (excludes admin/portal paths)
+- English-only UI (next-intl / locale routes / Urdu fields removed)
 - Guides CMS removed; `/guides` → `/blog`
-- GTM/GA4 load only from marketing layout; production-gated
-- Staging/live Hostinger + PM2 deploy scripts
-- Webpack build flag for Sentry compatibility
+- GTM/GA4 only via `MarketingAnalytics` on marketing layout; production-gated
+- Hostinger VPS + PM2 deploy scripts (`scripts/deploy-*.sh`)
+- `next build --webpack` for Sentry webpack compatibility
+- Claude Code handover documentation under `docs/`, `CLAUDE.md`, `PROJECT_HANDOVER.md`
 
 ## Partially completed
 
 | Area | Gap |
 |------|-----|
-| Automated tests | `pnpm test` placeholder only |
-| Realtime multi-instance | Default `REALTIME_DRIVER=memory`; Valkey path Needs verification |
-| Virus scanning for uploads | Product rules mention hook/queue — wiring Needs verification |
-| Twilio SMS | Placeholder env vars |
-| Agent verifications admin route | Empty/orphan directory Needs verification |
-| `ServiceFeeConfig` | Model exists; public exposure blocked; full admin UX Needs verification |
-| GTM console exceptions | Code done; console exception/publish still manual |
-| Live deploy of analytics+guides commits | Staging/live may lag GitHub — verify `buildId` |
+| Automated tests | `pnpm test` is a placeholder |
+| Realtime multi-instance | Default `REALTIME_DRIVER=memory`; Valkey Needs verification |
+| Upload virus scanning | Mentioned in product rules; wiring Needs verification |
+| Twilio SMS | Env placeholders only |
+| Agent verifications admin folder | Orphan / empty — Needs verification |
+| `ServiceFeeConfig` model | Exists + blocked from public selects; full admin UX Needs verification |
+| GTM **console** path exceptions | App code done; container exceptions still **manual** |
+| Consent banner UX | Settings support consent modes; full product UX Needs verification |
+| `.cursorrules` vs code | Updated for English-only + no Guides; still prefer `docs/` when unsure |
 
 ## Missing / planned
 
-- Comprehensive unit/integration/E2E suite (RBAC, IDOR, uploads, status machine)
-- Formal Prisma migrate workflow vs push-only (document per team preference)
-- Continuous CI gate beyond local typecheck/lint (Needs verification if GitHub Actions exists)
-- Consent banner UI fully productized (settings mention consent modes)
+- Real unit / integration / E2E suite (RBAC, IDOR, uploads, status machine)
+- Optional formal Prisma migrate history vs ongoing `db push`
+- CI gate on PRs (`typecheck` + `lint` minimum) — Needs verification if Actions already exist
+- Prefer cleaning legacy settings JSON keys (`guidesEnabled`, etc.) on next admin saves
 
 ## Technical debt
 
-- `.cursorrules` still mentions next-intl, Urdu, Guides model — partially stale vs code
-- Large English catalog `messages/en.ts` (legacy translation key style)
-- Dual GTM vs direct GA4 operational guidance historically conflicting; code prefers GTM when set
-- Promote-staging-content scripts are powerful and risky if misused
-- Windows disk/`ENOSPC` during large builds observed in development
+- Large key-style English catalog in `messages/en.ts`
+- Historical “ga4 only vs GTM” ops notes; **code prefers GTM when `NEXT_PUBLIC_GTM_ID` is set**
+- `promote-staging-content-to-live` is powerful and dangerous if misused
+- Local Windows builds can hit disk (`ENOSPC`) — clear `.next` when needed
 
-## Known bugs / behaviors
+## Known behaviors (not regressions)
 
-- Historical GA4 reports include admin page titles until date filtered after fix (not “code still broken” once live has marketing-only tags)
-- Hard-refresh required after deploy due to caching
-- **Needs verification:** any remaining admin nav or homepage section driven purely from stale DB settings JSON
+- GA4 **historical** reports still show old admin page titles; filter dates after cutover
+- Hard-refresh after deploy (CDN/browser cache)
+- Deploy can fail if live has **untracked** files under `public/blog/uploads/` that collide with git pull — move/backup then redeploy
+- Destructive schema sync on live requires explicit `--accept-data-loss`
 
-## Security concerns
+## Security watchlist
 
-- Always validate env files never enter git
-- Peppers/encryption rotation without migration breaks crypto fields
-- Impersonation is Super Admin–only — treat as high risk
-- Shared R2 for marketing assets: confirm access policies
-- Notification processor secret must stay private
+- Never commit `.env*` secrets
+- Do not rotate `ENCRYPTION_KEY` / peppers without a migration plan
+- Impersonation = Super Admin only
+- Notification process endpoint secret must stay private
+- Confirm R2 bucket policies for shared marketing assets
 
-## Performance concerns
+## Performance watchlist
 
-- Admin analytics queries over large `ActivityEvent` tables — monitor
-- N+1 risks in complex admin lists — follow repository patterns
-- SSE + Nginx buffering Needs verification for scale
-- First-load JS budget: keep heavy charts (recharts) admin-only
+- Admin analytics over large `ActivityEvent` sets
+- Keep heavy chart libs admin-only
+- SSE + Nginx buffering for `/api/realtime/` — Needs verification at scale
 
 ## Recommended next steps (priority)
 
-1. **Verify staging `buildId` is `5c1925c` or newer** — Guides gone; if not, redeploy staging.
-2. **Deploy live** with English-only + Guides removal + marketing-only GTM; confirm DebugView.
-3. **Publish GTM path exceptions** for admin/portal prefixes (defense in depth).
-4. **Add CI:** at least `typecheck` + `lint` on PRs; seed a few RBAC/status unit tests.
-5. **Refresh `.cursorrules`** to English-only / no Guides / current stack so agents do not resurrect i18n.
+1. **Smoke-check live:** homepage, `/guides`→`/blog`, no admin Guides, no fees on public service pages, GTM absent on `/admin` (Network tab).  
+2. **Publish GTM trigger exceptions** for `/admin`, `/customer`, `/agent`, `/support`, `/login`, `/signup`, `/auth`, `/choose-role`, `/api`.  
+3. **Keep `.cursorrules` / `docs/` aligned** when product rules change.  
+4. **Add CI** (`pnpm typecheck` + `pnpm lint`) and first RBAC/status tests.  
+5. **Confirm staging `buildId`** matches live lineage; redeploy staging if it lagged live.
 
 ## Related
 
 - [FEATURES.md](./FEATURES.md)
 - [DEPLOYMENT.md](./DEPLOYMENT.md)
 - [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+- [README.md](./README.md) (docs index)

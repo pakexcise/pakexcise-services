@@ -9,7 +9,7 @@ Authoritative ops notes for Hostinger VPS + PM2. Root `DEPLOYMENT.md` redirects 
 | Staging | `/var/www/pakexcise-staging` | `pakexcise-staging` | 3001 | https://staging.pakexcise.com |
 | Live | `/var/www/pakexcise-live` | `pakexcise-live` | 3000 | https://pakexcise.com |
 
-- SSH user historically: `deploy@<VPS_IP>` (example IP from ops history — **Needs verification** against current inventory).
+- SSH: `deploy@93.127.213.11` (Hostinger VPS; update this doc if the IP changes).
 - Process manager: PM2 (`ecosystem.config.cjs`, `scripts/ensure-*-pm2.sh`).
 - Reverse proxy: Nginx (or Hostinger equivalent) — SSE for `/api/realtime/` may need buffering off — **Needs verification** of live Nginx snippets.
 - Databases: separate Neon projects/branches per environment (do not share production DB with staging).
@@ -121,18 +121,37 @@ pm2 restart pakexcise-staging   # or live
 
 `pnpm db:promote-staging-content` / `scripts/promote-staging-content-to-live.ts` can copy CMS content. **Not** the normal release path (see older ops notes). Prefer Live Admin edits + seeds.
 
+## Live cutover notes (English-only + Guides removal)
+
+Observed successful steps on `/var/www/pakexcise-live`:
+
+1. If `git pull` fails on untracked upload collision, move the file aside first, e.g.  
+   `public/blog/uploads/*.webp` → `~/live-upload-backup/`
+2. Re-run `bash scripts/deploy-live.sh` (or finish pull/build manually).
+3. When Prisma refuses to drop Urdu columns / `guides` table:
+
+```bash
+pnpm exec prisma db push --accept-data-loss
+pm2 restart pakexcise-live
+```
+
+4. Confirm health + hard-refresh https://pakexcise.com.
+
+This permanently deletes Urdu column data and Guides rows on that environment’s DB.
+
 ## Common deployment problems
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | Deploy “Already up to date” but UI old | Commit never pushed from laptop | Push from PC, then redeploy |
+| `untracked working tree file would be overwritten` | Server-local upload under `public/` | Move/backup file, then pull/deploy |
 | Turbopack/webpack error | Old build script | Ensure `build` uses `--webpack` |
-| Prisma data loss stop | Schema dropped columns | Explicit `--accept-data-loss` on correct env |
+| Prisma data loss stop | Schema dropped columns/tables | Explicit `--accept-data-loss` on correct env only |
 | `pnpm: command not found` | Non-login SSH shell | `source ~/.nvm/nvm.sh` or `bash -lc '…'` |
 | Health `buildId` wrong | Stale build / wrong dir | Confirm path + `git rev-parse HEAD` |
 | Broken pipe / SSH | Network | Retry; use screen/tmux for long builds |
-| GA4 still seeing admin | Live not on new code; or historical report | Deploy live `5c1925c+`; expect history retained |
-| Staging shows old Guides | Same — pull `5c1925c+` | Redeploy staging |
+| GA4 still seeing admin | Historical report and/or GTM exceptions missing | App excludes admin; publish GTM exceptions; filter dates |
+| Staging/live shows old Guides | Old SHA | Redeploy from `staging` after Guides removal commits |
 
 ## Related
 

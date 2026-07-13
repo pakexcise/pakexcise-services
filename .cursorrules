@@ -24,10 +24,10 @@ Use:
 * React Hook Form
 * Zustand only where client state is needed
 * next-themes for dark/light/system theme
-* next-intl for English UI message catalogs (English-only site)
+* English-only UI copy via `messages/en.ts` + `lib/i18n/t.ts` (next-intl removed)
 * Cloudflare R2 for private document storage
 * Upstash Redis for rate limiting and queues
-* Resend + React Email for email notifications
+* AWS SES for email notifications
 * WhatsApp Cloud API for WhatsApp notifications
 * GA4, GTM, Meta Pixel/CAPI, TikTok Pixel/Events API
 * Sentry for error monitoring
@@ -51,9 +51,6 @@ page.tsx
 page.tsx
 regions/
 [regionSlug]/
-page.tsx
-guides/
-[slug]/
 page.tsx
 blog/
 [slug]/
@@ -124,8 +121,6 @@ redirects/
 page.tsx
 blog/
 page.tsx
-guides/
-page.tsx
 api/
 upload/
 tracking/
@@ -159,11 +154,8 @@ permissions/
 lib/
 validations/
 utils.ts
-i18n/
 messages/
-en.json
-config.ts
-request.ts
+en.ts
 prisma/
 config/
 
@@ -203,7 +195,6 @@ Use only clean URLs:
 * /services
 * /services/[serviceSlug]
 * /regions/[regionSlug]
-* /guides/[slug]
 * /blog/[slug]
 * /faqs
 * /track
@@ -224,11 +215,12 @@ Language behavior:
 * Do not add Urdu UI, RTL layout, or locale-prefixed routes.
 * Do not redirect `/` to `/en`.
 * Redirect legacy `/en/...` and `/ur/...` to the clean path with 308.
-* Use next-intl with English message catalogs only and `localePrefix: "never"`.
+* Static English copy: `messages/en.ts` via `lib/i18n/t.ts` — do not reintroduce next-intl.
 * Navigation links, sitemap URLs, and canonical URLs must never include `/en` or `/ur`.
 * Keep `<html lang="en" dir="ltr">`.
-* All user-facing static strings must come from next-intl `en.json` or English DB fields.
+* All user-facing static strings must come from `messages/en.ts` or English DB fields.
 * No hardcoded user-facing strings in components.
+* Guides CMS removed — `/guides` redirects to `/blog`; do not recreate Guides.
 
 ## i18n Content Rules
 
@@ -236,16 +228,16 @@ English only.
 
 Use:
 
-* en.json for English UI strings
-* English fields in the database for admin-managed content (legacy `*Ur` columns may remain unused)
+* `messages/en.ts` for English UI strings
+* English fields in the database for admin-managed content (Urdu `*Ur` columns removed)
 
 Rules:
 
-* All user-facing static text must use next-intl English catalogs.
-* All dynamic content must use English DB fields (`pickLocalized` prefers English).
+* All user-facing static text must use `messages/en.ts` helpers.
+* All dynamic content must use English DB fields.
 * Never break page rendering because a translation is missing.
 * Keep layout mobile-first LTR.
-* Do not reintroduce Urdu admin fields, Noto Nastaliq, or RTL styles.
+* Do not reintroduce Urdu admin fields, Noto Nastaliq, RTL styles, or next-intl.
 
 ## Business Rules
 
@@ -318,7 +310,6 @@ Use human-readable URLs:
 * /services
 * /services/[serviceSlug]
 * /regions/[regionSlug]
-* /guides/[slug]
 * /faqs
 * /track
 * /about
@@ -720,7 +711,7 @@ Admin must manage:
 * Settings
 * Audit logs
 * Redirects
-* Blog/guides
+* Blog
 * English content fields
 
 Every admin CRUD must have:

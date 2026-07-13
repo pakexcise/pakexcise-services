@@ -115,3 +115,4 @@ Before claiming done: `pnpm typecheck`, `pnpm lint`, and `pnpm build` when feasi
 3. **Do not make unrelated changes** or drive-by refactors.
 4. **Explain planned changes** before major/multi-file work; wait for confirmation when risk is high.
 5. Prefer updating `docs/` when behavior changes permanently.
+6. Documentation index: `docs/README.md`. Prefer `docs/` + this file over stale `.cursorrules` lines about next-intl, Urdu, or Guides.

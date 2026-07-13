@@ -27,7 +27,8 @@ pm2 logs pakexcise-staging --lines 80
 | Turbopack vs webpack on `next build` | Fixed by `build: next build --webpack` |
 | English-only cleanup incomplete on remote | Needed commit+push; staging showed old language switcher until deploy of cleanup |
 | Guides still on staging after “commit” on VPS | Commit must happen on laptop; VPS was clean of changes |
-| Prisma stop on drop `*Ur` / `guides` | Use `--accept-data-loss` intentionally per env |
+| Live `git pull` blocked by untracked `public/blog/uploads/…` | Move file to backup outside repo, then deploy |
+| Prisma stop on drop `*Ur` / `guides` | Use `--accept-data-loss` intentionally per env (done on live Jul 2026) |
 | Disk full (`ENOSPC`) during local webpack build | Clear `.next` cache |
 | GA4 admin contamination | Tags now marketing-only + production-only; live deploy required; history remains |
 

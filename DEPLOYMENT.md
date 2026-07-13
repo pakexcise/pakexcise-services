@@ -4,7 +4,7 @@ The canonical deployment documentation is:
 
 → **[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)**
 
-Also see [docs/ENVIRONMENT.md](./docs/ENVIRONMENT.md) and [PROJECT_HANDOVER.md](./PROJECT_HANDOVER.md).
+Full docs index: [docs/README.md](./docs/README.md). Also [docs/ENVIRONMENT.md](./docs/ENVIRONMENT.md) and [PROJECT_HANDOVER.md](./PROJECT_HANDOVER.md).
 
 Historical checklist content that remains useful (providers):
 
