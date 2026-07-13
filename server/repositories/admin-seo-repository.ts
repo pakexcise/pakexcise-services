@@ -19,7 +19,6 @@ export const adminSeoListSelect = {
   service: { select: { slug: true, nameEn: true } },
   region: { select: { slug: true, nameEn: true } },
   blogPost: { select: { slug: true, titleEn: true } },
-  guide: { select: { slug: true, titleEn: true } },
 } as const satisfies Prisma.SeoMetaSelect;
 
 export type AdminSeoListItem = Prisma.SeoMetaGetPayload<{

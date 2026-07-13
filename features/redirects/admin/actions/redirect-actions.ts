@@ -45,7 +45,6 @@ function revalidateRedirectPaths() {
   revalidatePath(ADMIN_PATH);
   revalidatePath("/services");
   revalidatePath("/blog");
-  revalidatePath("/guides");
   revalidatePath("/apply");
   revalidatePath("/request");
 }

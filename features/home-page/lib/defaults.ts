@@ -21,7 +21,6 @@ export const HOME_SECTION_KEYS: HomeSectionKey[] = [
   "documents",
   "whyChoose",
   "about",
-  "guides",
   "blog",
   "faqs",
   "finalCta",
@@ -161,11 +160,6 @@ export function defaultHomePageSettings(): HomePageSettings {
         "About PakExcise",
         "PakExcise is built to make vehicle, license, token tax, e-challan, and excise-related facilitation easier for users in Pakistan.",
       ),
-      guides: section(
-        90,
-        "Helpful Guides",
-        "Explore step-by-step guides to understand service requirements, documents, and the process before submitting your request.",
-      ),
       blog: section(
         100,
         "Latest from PakExcise Blog",
@@ -259,7 +253,6 @@ export function defaultHomePageSettings(): HomePageSettings {
       faqCount: 8,
       documentCount: 8,
       blogCount: 6,
-      guideCount: 6,
       popularCount: 6,
     },
     footerDescriptionEn:
@@ -389,12 +382,6 @@ export function mergeHomePageSettings(
       blogCount: sanitizeHomeLimit(
         storedLimits.blogCount,
         defaults.limits.blogCount,
-        1,
-        12,
-      ),
-      guideCount: sanitizeHomeLimit(
-        storedLimits.guideCount,
-        defaults.limits.guideCount,
         1,
         12,
       ),

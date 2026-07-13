@@ -214,7 +214,6 @@ async function main() {
     "services",
     "regions",
     "faqs",
-    "guides",
     "blog",
     "track",
     "about",
@@ -306,42 +305,6 @@ async function main() {
       create: { key: `page:${page.key}`, value: page },
     });
   }
-
-  const guide = await prisma.guide.upsert({
-    where: { slug: "vehicle-transfer-checklist" },
-    update: {
-      titleEn: "Vehicle transfer document checklist",
-      excerptEn: "Prepare your documents before starting a vehicle transfer application.",
-      contentEn:
-        "1. Verify seller and buyer CNIC copies.\n2. Collect registration book and number plates information.\n3. Prepare sale agreement if applicable.\n4. Start your PakExcise application and upload documents securely.",
-      isPublished: true,
-      publishedAt: new Date(),
-    },
-    create: {
-      slug: "vehicle-transfer-checklist",
-      titleEn: "Vehicle transfer document checklist",
-      excerptEn: "Prepare your documents before starting a vehicle transfer application.",
-      contentEn:
-        "1. Verify seller and buyer CNIC copies.\n2. Collect registration book and number plates information.\n3. Prepare sale agreement if applicable.\n4. Start your PakExcise application and upload documents securely.",
-      isPublished: true,
-      publishedAt: new Date(),
-    },
-  });
-
-  await prisma.seoMeta.upsert({
-    where: { pageKey: `guide:${guide.slug}` },
-    update: {
-      guideId: guide.id,
-      metaTitleEn: `${guide.titleEn} | PakExcise.com`,
-      h1En: guide.titleEn,
-    },
-    create: {
-      pageKey: `guide:${guide.slug}`,
-      guideId: guide.id,
-      metaTitleEn: `${guide.titleEn} | PakExcise.com`,
-      h1En: guide.titleEn,
-    },
-  });
 
   await prisma.$executeRaw`
     UPDATE users

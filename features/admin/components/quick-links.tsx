@@ -1,7 +1,6 @@
 import {
   ArrowRightLeft,
   Bell,
-  BookOpen,
   Briefcase,
   CreditCard,
   FileStack,
@@ -72,7 +71,6 @@ export const quickLinkIcons = {
   seo: <Search className="size-4" aria-hidden="true" />,
   blog: <Newspaper className="size-4" aria-hidden="true" />,
   redirects: <ArrowRightLeft className="size-4" aria-hidden="true" />,
-  guides: <BookOpen className="size-4" aria-hidden="true" />,
   settings: <Settings className="size-4" aria-hidden="true" />,
   users: <UserCog className="size-4" aria-hidden="true" />,
 };

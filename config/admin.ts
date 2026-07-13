@@ -173,13 +173,6 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "content:manage",
   },
   {
-    href: "/admin/guides",
-    labelKey: "guides",
-    icon: "book-open",
-    section: "content",
-    permission: "platform:manage",
-  },
-  {
     href: "/admin/legal-pages",
     labelKey: "legalPages",
     icon: "file-text",

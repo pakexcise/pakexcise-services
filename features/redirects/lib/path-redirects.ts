@@ -13,7 +13,7 @@ export function normalizeRedirectKey(value: string): string {
     return trimmed;
   }
 
-  if (trimmed.startsWith("blog:") || trimmed.startsWith("guide:")) {
+  if (trimmed.startsWith("blog:")) {
     return trimmed;
   }
 
@@ -39,10 +39,6 @@ function destinationFromRedirectTarget(target: string): string {
     return `/blog/${normalized.slice("blog:".length)}`;
   }
 
-  if (normalized.startsWith("guide:")) {
-    return `/guides/${normalized.slice("guide:".length)}`;
-  }
-
   if (normalized.startsWith("/")) {
     return normalized;
   }
@@ -53,7 +49,7 @@ function destinationFromRedirectTarget(target: string): string {
 
 /**
  * Resolve a browser pathname (e.g. `/faqs`) against admin path redirects.
- * Service/blog/guide slug redirects continue to be handled by their page loaders.
+ * Service/blog slug redirects continue to be handled by their page loaders.
  */
 export async function resolveActivePathRedirect(pathname: string): Promise<{
   destination: string;

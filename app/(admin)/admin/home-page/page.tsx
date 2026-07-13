@@ -57,7 +57,6 @@ export default async function AdminHomePageSettingsPage() {
             faqCount: t("fields.faqCount"),
             documentCount: t("fields.documentCount"),
             blogCount: t("fields.blogCount"),
-            guideCount: t("fields.guideCount"),
             popularCount: t("fields.popularCount"),
           },
           sectionLabels,

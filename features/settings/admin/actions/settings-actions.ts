@@ -35,7 +35,6 @@ function revalidateAfterSettingsUpdate() {
   revalidatePath("/about");
   revalidatePath("/contact");
   revalidatePath("/blog");
-  revalidatePath("/guides");
   revalidatePath("/sitemap.xml");
 }
 

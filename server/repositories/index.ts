@@ -85,16 +85,11 @@ export {
   PageContentRepository,
 } from "./page-content-repository";
 export type { PageContent } from "./page-content-repository";
-export { guideRepository, GuideRepository } from "./guide-repository";
 export { blogPostRepository, BlogPostRepository } from "./blog-post-repository";
 export {
   adminBlogRepository,
   AdminBlogRepository,
 } from "./admin-blog-repository";
-export {
-  adminGuideRepository,
-  AdminGuideRepository,
-} from "./admin-guide-repository";
 export {
   adminSeoRepository,
   AdminSeoRepository,

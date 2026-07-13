@@ -52,7 +52,6 @@ export type BrandingSettings = {
   defaultOgImagePath: string;
   defaultTwitterImagePath: string;
   defaultBlogFallbackImagePath: string;
-  defaultGuideFallbackImagePath: string;
   defaultServiceFallbackImagePath: string;
   defaultRegionFallbackImagePath: string;
   primaryBrandColor: string;
@@ -127,7 +126,6 @@ export type TrackingSettings = {
 export type FeatureFlagSettings = {
   agentModuleEnabled: boolean;
   blogEnabled: boolean;
-  guidesEnabled: boolean;
   reviewsEnabled: boolean;
   contactFormEnabled: boolean;
   submitRequestEnabled: boolean;

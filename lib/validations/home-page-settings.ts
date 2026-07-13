@@ -23,7 +23,6 @@ const homeSectionKeys = [
   "documents",
   "whyChoose",
   "about",
-  "guides",
   "blog",
   "faqs",
   "finalCta"] as const;
@@ -34,7 +33,8 @@ const sectionsSchema = z.object(
   ) as Record<(typeof homeSectionKeys)[number], typeof sectionConfigSchema>,
 );
 
-export const updateHomePageSettingsSchema = z.object({
+export const updateHomePageSettingsSchema = z
+  .object({
   isPageActive: z.boolean(),
   hero: z.object({
     badgeEn: z.string().trim().min(1).max(200),
@@ -66,10 +66,10 @@ export const updateHomePageSettingsSchema = z.object({
     faqCount: z.coerce.number().int().min(1).max(20),
     documentCount: z.coerce.number().int().min(1).max(20),
     blogCount: z.coerce.number().int().min(1).max(12),
-    guideCount: z.coerce.number().int().min(1).max(12),
     popularCount: z.coerce.number().int().min(4).max(6)}),
   footerDescriptionEn: z.string().trim().min(1).max(2000),
   seo: z.object({
     metaTitleEn: z.string().trim().min(1).max(200),
     metaDescriptionEn: z.string().trim().min(1).max(500),
-    h1En: z.string().trim().min(1).max(300)})});
+    h1En: z.string().trim().min(1).max(300)})})
+  .strip();

@@ -20,7 +20,6 @@ PakExcise.com helps people in Pakistan with vehicle, license, token tax, and rel
 - How it works: ${PRODUCTION_SITE_ORIGIN}/how-it-works
 - Documents guide: ${PRODUCTION_SITE_ORIGIN}/documents
 - Blog: ${PRODUCTION_SITE_ORIGIN}/blog
-- Guides: ${PRODUCTION_SITE_ORIGIN}/guides
 - Track application: ${PRODUCTION_SITE_ORIGIN}/track
 - Reviews: ${PRODUCTION_SITE_ORIGIN}/reviews
 

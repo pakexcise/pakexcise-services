@@ -40,26 +40,6 @@ export async function upsertBlogSeo(
       ...data}});
 }
 
-export async function upsertGuideSeo(
-  guideId: string,
-  slug: string,
-  seo?: SeoMetaInput,
-) {
-  if (!seo) {
-    return;
-  }
-
-  const data = normalizeSeoInput(seo);
-
-  await prisma.seoMeta.upsert({
-    where: { guideId },
-    update: data,
-    create: {
-      pageKey: `guide:${slug}`,
-      guideId,
-      ...data}});
-}
-
 export async function upsertLegalPageSeo(
   legalPageId: string,
   slug: string,

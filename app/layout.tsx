@@ -2,11 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "@/app/globals.css";
-import {
-  GoogleAnalyticsScripts,
-  GoogleTagManagerHead,
-  GoogleTagManagerNoScript,
-} from "@/components/analytics/google-tags";
 import { BrandThemeStyles } from "@/components/theme/BrandThemeStyles";
 import { shouldAllowSearchIndexing } from "@/config/env.server";
 import {
@@ -121,8 +116,6 @@ export default async function RootLayout({
         {bingVerification ? (
           <meta name="msvalidate.01" content={bingVerification} />
         ) : null}
-        <GoogleTagManagerHead />
-        <GoogleAnalyticsScripts />
         <BrandThemeStyles />
       </head>
       <body
@@ -130,7 +123,6 @@ export default async function RootLayout({
         data-locale="en"
         suppressHydrationWarning
       >
-        <GoogleTagManagerNoScript />
         {children}
       </body>
     </html>

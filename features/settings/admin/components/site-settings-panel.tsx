@@ -81,7 +81,6 @@ export type SiteSettingsPanelLabels = {
     defaultOgImagePath: string;
     defaultTwitterImagePath: string;
     defaultBlogFallbackImagePath: string;
-    defaultGuideFallbackImagePath: string;
     defaultServiceFallbackImagePath: string;
     defaultRegionFallbackImagePath: string;
     primaryBrandColor: string;
@@ -634,7 +633,6 @@ export function SiteSettingsPanel({
               ["defaultOgImagePath", labels.branding.defaultOgImagePath],
               ["defaultTwitterImagePath", labels.branding.defaultTwitterImagePath],
               ["defaultBlogFallbackImagePath", labels.branding.defaultBlogFallbackImagePath],
-              ["defaultGuideFallbackImagePath", labels.branding.defaultGuideFallbackImagePath],
               ["defaultServiceFallbackImagePath", labels.branding.defaultServiceFallbackImagePath],
               ["defaultRegionFallbackImagePath", labels.branding.defaultRegionFallbackImagePath],
             ] as const

@@ -13,6 +13,7 @@ import {
   getStoredAttribution,
   toAttributionAnalyticsContext,
 } from "@/lib/attribution";
+import { getTrafficAnalyticsContext } from "@/lib/analytics/traffic-context";
 
 export type DataLayerEvent = {
   event: AnalyticsEventName;
@@ -136,7 +137,10 @@ export function pushAnalyticsEvent<T extends AnalyticsEventName>(
   const attribution =
     options?.includeAttribution === false
       ? {}
-      : toAttributionAnalyticsContext(getStoredAttribution());
+      : {
+          ...toAttributionAnalyticsContext(getStoredAttribution()),
+          ...getTrafficAnalyticsContext(),
+        };
 
   const dataLayerEvent: DataLayerEvent = {
     event,
@@ -148,7 +152,10 @@ export function pushAnalyticsEvent<T extends AnalyticsEventName>(
 
   const layer = ensureDataLayer();
   layer.push(dataLayerEvent);
-  pushVendorEvents(event, eventId, sanitized);
+  pushVendorEvents(event, eventId, {
+    ...attribution,
+    ...sanitized,
+  });
 
   return eventId;
 }

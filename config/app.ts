@@ -51,7 +51,6 @@ export const publicMarketingRoutes = [
   "/",
   "/services",
   "/regions",
-  "/guides",
   "/blog",
   "/how-it-works",
   "/documents",

@@ -76,6 +76,19 @@ const nextConfig: NextConfig = {
       },
     ];
 
+    const legacyGuidesRedirects = [
+      {
+        source: "/guides",
+        destination: "/blog",
+        permanent: true,
+      },
+      {
+        source: "/guides/:slug*",
+        destination: "/blog",
+        permanent: true,
+      },
+    ];
+
     const legacyLocaleRedirects = [
       {
         source: "/en",
@@ -101,6 +114,7 @@ const nextConfig: NextConfig = {
 
     return [
       ...legacyLocaleRedirects,
+      ...legacyGuidesRedirects,
       ...legalRedirects,
       ...regionRedirects,
       ...buildLegacyServiceNextRedirects(),

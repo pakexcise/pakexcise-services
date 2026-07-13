@@ -122,11 +122,9 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
                       ? `service:${item.service.slug}`
                       : item.blogPost?.slug
                         ? `blog:${item.blogPost.slug}`
-                        : item.guide?.slug
-                          ? `guide:${item.guide.slug}`
-                          : item.region?.slug
-                            ? `region:${item.region.slug}`
-                            : "static"}
+                        : item.region?.slug
+                          ? `region:${item.region.slug}`
+                          : "static"}
                   </TableCell>
                   <TableCell>{formatDate(item.updatedAt, locale)}</TableCell>
                 </TableRow>

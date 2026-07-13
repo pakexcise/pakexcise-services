@@ -57,7 +57,6 @@ const en = {
     "services": "Services",
     "regions": "Regions",
     "blog": "Blog",
-    "guides": "Guides",
     "faqs": "FAQs",
     "track": "Track",
     "about": "About",
@@ -1346,14 +1345,6 @@ const en = {
       "resultsCount": "{count} questions shown",
       "noResults": "No questions match your search. Try another keyword or category."
     },
-    "guides": {
-      "title": "Guides",
-      "metaTitle": "Guides | PakExcise.com",
-      "metaDescription": "Step-by-step guides for Pakistan excise facilitation processes.",
-      "empty": "No guides are published yet.",
-      "relatedServices": "Related services",
-      "attachedFaqs": "Related FAQs"
-    },
     "blog": {
       "title": "Blog",
       "metaTitle": "Blog | PakExcise.com",
@@ -1490,7 +1481,6 @@ const en = {
       "redirects": "Redirects",
       "blog": "Blog",
       "blogCategories": "Blog categories",
-      "guides": "Guides",
       "auditLogs": "Audit logs",
       "settings": "Settings",
       "users": "Admin users",
@@ -1500,7 +1490,7 @@ const en = {
       "title": "Dashboard",
       "description": "Overview of application volume, queues, and quick admin actions.",
       "descriptionAdmin": "Operational overview for day-to-day application, payment, and customer workflows.",
-      "descriptionSuperAdmin": "Full platform overview with operations, SEO, redirects, guides, and system settings.",
+      "descriptionSuperAdmin": "Full platform overview with operations, SEO, redirects, and system settings.",
       "pipelineTitle": "Application pipeline",
       "recentApplications": "Recent applications",
       "recentContactInquiries": "Recent contact inquiries",
@@ -1519,7 +1509,6 @@ const en = {
         "auditLogs": "View audit logs",
         "seo": "SEO metadata",
         "redirects": "URL redirects",
-        "guides": "Guides",
         "blog": "Blog posts",
         "settings": "System settings",
         "users": "Admin users & permissions"
@@ -1671,8 +1660,8 @@ const en = {
             "description": "Create and publish blog posts."
           },
           "platform:manage": {
-            "title": "SEO, redirects & guides",
-            "description": "Manage SEO metadata, URL redirects, and guides."
+            "title": "SEO & redirects",
+            "description": "Manage SEO metadata and URL redirects."
           },
           "settings:manage": {
             "title": "System settings",
@@ -2011,7 +2000,6 @@ const en = {
         "documents": "Documents preview",
         "about": "About",
         "blog": "Blog",
-        "guides": "Guides",
         "whyChoose": "Why choose",
         "faqs": "FAQs",
         "finalCta": "Final CTA"
@@ -2033,7 +2021,6 @@ const en = {
         "faqCount": "FAQ count",
         "documentCount": "Document preview count",
         "blogCount": "Blog posts count",
-        "guideCount": "Guides count",
         "popularCount": "Popular services count (4–6)"
       }
     },
@@ -2672,13 +2659,6 @@ const en = {
           "deleteConfirm": "Delete this blog post?"
         }
       },
-      "guides": {
-        "title": "Guides",
-        "description": "Create and publish guides with SEO fields.",
-        "emptyTitle": "No guides to manage",
-        "emptyDescription": "Guides will appear here for CRUD operations.",
-        "create": "Add guide"
-      },
       "legalPages": {
         "title": "Legal pages",
         "description": "Manage privacy, terms, disclaimer, refund, payment, and cookie policies with SEO fields.",
@@ -2845,7 +2825,6 @@ const en = {
         "defaultOgImagePath": "Default OG image (English)",
         "defaultTwitterImagePath": "Default Twitter/X image",
         "defaultBlogFallbackImagePath": "Blog fallback image",
-        "defaultGuideFallbackImagePath": "Guide fallback image",
         "defaultServiceFallbackImagePath": "Service fallback image",
         "defaultRegionFallbackImagePath": "Region/city fallback image",
         "primaryBrandColor": "Primary brand color",
@@ -2948,7 +2927,6 @@ const en = {
       "features": {
         "agentModuleEnabled": "Agent module enabled",
         "blogEnabled": "Blog enabled",
-        "guidesEnabled": "Guides enabled",
         "reviewsEnabled": "Reviews page enabled",
         "contactFormEnabled": "Contact form enabled",
         "submitRequestEnabled": "Submit request (guest leads) enabled",

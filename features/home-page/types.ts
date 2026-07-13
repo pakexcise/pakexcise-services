@@ -12,7 +12,6 @@ export type HomeSectionKey =
   | "documents"
   | "about"
   | "blog"
-  | "guides"
   | "whyChoose"
   | "faqs"
   | "finalCta";
@@ -58,7 +57,6 @@ export type HomePageLimits = {
   faqCount: number;
   documentCount: number;
   blogCount: number;
-  guideCount: number;
   popularCount: number;
 };
 

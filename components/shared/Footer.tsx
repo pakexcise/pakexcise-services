@@ -106,7 +106,6 @@ export async function Footer() {
   let whatsappChannelLabel = t("whatsappChannel");
   let whatsappChannelLabelEn = t("whatsappChannel");
   let showBlog = true;
-  let showGuides = true;
   let showWhatsappChannel = true;
   let footerLogoPath: string | undefined;
   let logoDarkPath: string | undefined;
@@ -138,7 +137,6 @@ export async function Footer() {
     socialLinks = socialResult;
     legalPages = legalPagesResult;
     showBlog = featureFlags.blogEnabled;
-    showGuides = featureFlags.guidesEnabled;
     showWhatsappChannel = featureFlags.whatsappChannelEnabled;
 
     const localized = localizeGlobalSiteContent(business, publicUi);
@@ -227,11 +225,6 @@ export async function Footer() {
           {showBlog ? (
             <li>
               <FooterLink href="/blog">{tNav("blog")}</FooterLink>
-            </li>
-          ) : null}
-          {showGuides ? (
-            <li>
-              <FooterLink href="/guides">{tNav("guides")}</FooterLink>
             </li>
           ) : null}
           <li>

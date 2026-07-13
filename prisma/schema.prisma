@@ -1043,7 +1043,6 @@ model SeoMeta {
   regionId          String?  @unique
   cityId            String?  @unique
   blogPostId        String?  @unique
-  guideId           String?  @unique
   legalPageId       String?  @unique
   metaTitleEn       String?
   metaDescriptionEn String?  @db.Text
@@ -1064,7 +1063,6 @@ model SeoMeta {
   region   Region?   @relation(fields: [regionId], references: [id])
   city     City?     @relation(fields: [cityId], references: [id])
   blogPost BlogPost? @relation(fields: [blogPostId], references: [id])
-  guide    Guide?    @relation(fields: [guideId], references: [id])
   legalPage LegalPage? @relation(fields: [legalPageId], references: [id])
 
   @@map("seo_meta")
@@ -1143,25 +1141,6 @@ model BlogCategory {
 
   @@index([parentId, isActive, displayOrder])
   @@map("blog_categories")
-}
-
-model Guide {
-  id                String    @id @default(cuid())
-  slug              String    @unique
-  titleEn           String
-  excerptEn         String?   @db.Text
-  contentEn         String    @db.Text
-  relatedServiceIds String[]  @default([])
-  attachedFaqIds    String[]  @default([])
-  isPublished       Boolean   @default(false)
-  publishedAt       DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  seoMeta SeoMeta?
-
-  @@index([isPublished, publishedAt])
-  @@map("guides")
 }
 
 model LegalPage {

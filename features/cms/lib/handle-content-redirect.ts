@@ -2,9 +2,9 @@ import "server-only";
 
 import { upsertAutoRedirects } from "@/features/redirects/lib/upsert-auto-redirect";
 
-/** @deprecated Prefer upsertAutoRedirects({ kind: "blog" | "guide", ... }) */
+/** @deprecated Prefer upsertAutoRedirects({ kind: "blog", ... }) */
 export async function handleContentSlugRedirect(input: {
-  prefix: "blog" | "guide";
+  prefix: "blog";
   oldSlug: string;
   newSlug: string;
   actorId: string;

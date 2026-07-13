@@ -25,14 +25,6 @@ export async function requireBlogEnabled(): Promise<void> {
   }
 }
 
-export async function requireGuidesEnabled(): Promise<void> {
-  const flags = await getFeatureFlags();
-
-  if (!flags.guidesEnabled) {
-    notFound();
-  }
-}
-
 export async function requireReviewsEnabled(): Promise<void> {
   const flags = await getFeatureFlags();
 

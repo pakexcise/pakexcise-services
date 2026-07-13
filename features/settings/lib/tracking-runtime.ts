@@ -14,8 +14,8 @@ export type TrackingRuntimeConfig = {
 
 /**
  * Build client tracking config.
- * Marketing pixels (GA4/GTM/Meta/TikTok) are production-only.
- * Root layout already injects GA4/GTM in production — AnalyticsProvider must not re-inject them.
+ * Marketing pixels (GA4/GTM/Meta/TikTok) are production-only and load only on
+ * public marketing routes via MarketingAnalytics — never on admin/portals.
  */
 export function buildTrackingRuntimeConfig(
   tracking: TrackingSettings,

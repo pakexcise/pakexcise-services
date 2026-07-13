@@ -15,6 +15,7 @@ const PRIVATE_DISALLOW_PATHS = [
   "/forgot-password",
   "/reset-password",
   "/choose-role",
+  "/auth/",
   "/apply/",
   "/request/",
 ] as const;

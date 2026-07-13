@@ -71,7 +71,7 @@ function loadThirdPartyScripts(tracking?: TrackingRuntimeConfig): void {
 
   window.dataLayer = window.dataLayer ?? [];
 
-  // GA4 + GTM are injected once by the root layout in production.
+  // GA4 + GTM are injected by MarketingAnalytics on public routes only.
   // Only load Meta / TikTok here to avoid double-counting pageviews.
   const metaPixelId = tracking.metaPixelId;
   const tiktokPixelId = tracking.tiktokPixelId;
@@ -138,12 +138,13 @@ type AnalyticsProviderProps = {
  * Must NOT wrap route `children`.
  * `useSearchParams()` suspends this client boundary; wrapping pages inside it
  * can leave the App Router stuck on loading.tsx forever.
+ *
+ * Mount only from the marketing layout via MarketingAnalytics.
  */
 export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const scriptsLoadedRef = useRef(false);
-  const isFirstPageViewRef = useRef(true);
 
   useEffect(() => {
     captureAttributionFromUrl();
@@ -153,7 +154,6 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     const query = searchParams.toString();
     const pagePath = query ? `${pathname}?${query}` : pathname;
 
-    // Capture UTMs/referrer first, then record first-party page_view for public routes only.
     const traffic = captureAndGetTrafficAnalyticsContext();
 
     if (isPublicAnalyticsPath(pathname)) {
@@ -161,7 +161,6 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
       try {
         const last = sessionStorage.getItem(dedupeKey);
         const now = Date.now();
-        // Soft dedupe Strict Mode double-mount / rapid remounts (2s).
         if (!last || now - Number(last) > 2000) {
           sessionStorage.setItem(dedupeKey, String(now));
           recordClientActivity({
@@ -183,30 +182,23 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
       return;
     }
 
-    const ga4Id = tracking.ga4MeasurementId;
-    const gtmId = tracking.gtmId;
-
-    if (!ga4Id && !gtmId) {
-      return;
-    }
-
-    // Root layout already sends the initial GA4 page_view. Skip the first
-    // client push to avoid double-counting; keep SPA navigations.
-    if (isFirstPageViewRef.current) {
-      isFirstPageViewRef.current = false;
-      return;
-    }
-
     if (!isPublicAnalyticsPath(pathname)) {
       return;
     }
 
-    if (ga4Id) {
-      pushGa4PageView(ga4Id, pagePath, getTrafficAnalyticsContext());
-    }
+    const ga4Id = tracking.ga4MeasurementId;
+    const gtmId = tracking.gtmId;
+    const trafficParams = {
+      page_type: "public" as const,
+      ...getTrafficAnalyticsContext(),
+    };
 
+    // Prefer GTM dataLayer when GTM is configured; otherwise direct GA4.
+    // Tags bootstrap with send_page_view:false so this is the sole page_view source.
     if (gtmId) {
-      pushGtmPageView(pagePath, getTrafficAnalyticsContext());
+      pushGtmPageView(pagePath, trafficParams);
+    } else if (ga4Id) {
+      pushGa4PageView(ga4Id, pagePath, trafficParams);
     }
   }, [pathname, searchParams, tracking]);
 
@@ -242,6 +234,10 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
       const target = event.target;
 
       if (!(target instanceof Element)) {
+        return;
+      }
+
+      if (!isPublicAnalyticsPath(window.location.pathname)) {
         return;
       }
 

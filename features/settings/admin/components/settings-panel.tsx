@@ -1003,17 +1003,6 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
             }
           />
           <CheckboxField
-            id="guidesEnabled"
-            label={labels.features.guidesEnabled}
-            checked={values.features.guidesEnabled}
-            onChange={(checked) =>
-              setValues((current) => ({
-                ...current,
-                features: { ...current.features, guidesEnabled: checked },
-              }))
-            }
-          />
-          <CheckboxField
             id="reviewsEnabled"
             label={labels.features.reviewsEnabled}
             checked={values.features.reviewsEnabled}

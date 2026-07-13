@@ -86,10 +86,10 @@ const trackingSettingsSchema = z.object({
   showConsentBanner: z.boolean(),
 });
 
-const featureFlagSettingsSchema = z.object({
+const featureFlagSettingsSchema = z
+  .object({
   agentModuleEnabled: z.boolean(),
   blogEnabled: z.boolean(),
-  guidesEnabled: z.boolean(),
   reviewsEnabled: z.boolean(),
   contactFormEnabled: z.boolean(),
   submitRequestEnabled: z.boolean(),
@@ -99,7 +99,8 @@ const featureFlagSettingsSchema = z.object({
   smsFallbackEnabled: z.boolean(),
   maintenanceMode: z.boolean(),
   maintenanceMessageEn: z.string().trim().min(5).max(500),
-});
+})
+  .strip();
 
 export const updateBusinessSettingsSchema = businessSettingsSchema;
 export const updatePaymentSettingsSchema = paymentSettingsSchema;

@@ -63,7 +63,8 @@ const colorSchema = z
   .trim()
   .regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, "Must be a hex color");
 
-export const brandingSettingsSchema = z.object({
+export const brandingSettingsSchema = z
+  .object({
   logoPath: assetPathSchema,
   logoDarkPath: assetPathSchema,
   footerLogoPath: assetPathSchema,
@@ -73,16 +74,18 @@ export const brandingSettingsSchema = z.object({
   defaultOgImagePath: assetPathSchema,
   defaultTwitterImagePath: assetPathSchema,
   defaultBlogFallbackImagePath: assetPathSchema,
-  defaultGuideFallbackImagePath: assetPathSchema,
   defaultServiceFallbackImagePath: assetPathSchema,
   defaultRegionFallbackImagePath: assetPathSchema,
   primaryBrandColor: colorSchema,
   secondaryBrandColor: colorSchema,
-});
+})
+  .strip();
 
-export const updateGlobalSiteSettingsSchema = z.object({
+export const updateGlobalSiteSettingsSchema = z
+  .object({
   business: businessContactSchema.merge(footerSchema),
   publicUi: publicUiSettingsSchema,
   forms: formsSettingsSchema,
   branding: brandingSettingsSchema,
-});
+})
+  .strip();

@@ -1,19 +1,26 @@
 /**
  * Paths that should count toward public product analytics (page views, traffic).
  * Admin/customer/agent/API/auth shells are excluded so they do not pollute dashboards.
+ *
+ * Keep this list in sync with GTM trigger exceptions (same prefixes).
  */
-const INTERNAL_PATH_PREFIXES = [
+export const INTERNAL_ANALYTICS_PATH_PREFIXES = [
   "/admin",
   "/customer",
   "/agent",
   "/support",
   "/api",
+  "/auth",
   "/login",
   "/signup",
+  "/choose-role",
   "/reset-password",
   "/verify-email",
   "/forgot-password",
 ] as const;
+
+/** @deprecated Use INTERNAL_ANALYTICS_PATH_PREFIXES */
+const INTERNAL_PATH_PREFIXES = INTERNAL_ANALYTICS_PATH_PREFIXES;
 
 export function normalizeAnalyticsPath(path: string | null | undefined): string {
   if (!path) {

@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 
+import { MarketingAnalytics } from "@/components/analytics/MarketingAnalytics";
 import { MaintenanceView } from "@/components/marketing/maintenance-view";
 import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
@@ -61,6 +62,7 @@ export default async function MarketingLayout({
   if (features.maintenanceMode) {
     return (
       <>
+        <MarketingAnalytics />
         <div className={siteChromeShellClassName}>
           <LegalDisclaimer bannerText={localized.disclaimer} embedded />
           <Header {...headerProps} />
@@ -76,6 +78,7 @@ export default async function MarketingLayout({
 
   return (
     <>
+      <MarketingAnalytics />
       <div className={siteChromeShellClassName}>
         <LegalDisclaimer bannerText={localized.disclaimer} embedded />
         <Header {...headerProps} />

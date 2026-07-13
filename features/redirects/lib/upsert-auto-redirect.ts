@@ -8,7 +8,6 @@ import { normalizeRedirectKey } from "@/features/redirects/lib/path-redirects";
 export type AutoRedirectInput =
   | { kind: "service"; oldSlug: string; newSlug: string; actorId: string }
   | { kind: "blog"; oldSlug: string; newSlug: string; actorId: string }
-  | { kind: "guide"; oldSlug: string; newSlug: string; actorId: string }
   | { kind: "region"; oldSlug: string; newSlug: string; actorId: string }
   | {
       kind: "city";
@@ -50,17 +49,6 @@ function pairsForInput(input: AutoRedirectInput): Array<{
         {
           oldSlug: `/blog/${input.oldSlug}`,
           newSlug: `/blog/${input.newSlug}`,
-        },
-      ];
-    case "guide":
-      return [
-        {
-          oldSlug: `guide:${input.oldSlug}`,
-          newSlug: `guide:${input.newSlug}`,
-        },
-        {
-          oldSlug: `/guides/${input.oldSlug}`,
-          newSlug: `/guides/${input.newSlug}`,
         },
       ];
     case "region":

@@ -87,7 +87,6 @@ export function defaultBrandingSettings(): BrandingSettings {
     defaultOgImagePath: brandingAssets.ogEn,
     defaultTwitterImagePath: brandingAssets.ogEn,
     defaultBlogFallbackImagePath: brandingAssets.ogEn,
-    defaultGuideFallbackImagePath: brandingAssets.ogEn,
     defaultServiceFallbackImagePath: brandingAssets.ogEn,
     defaultRegionFallbackImagePath: brandingAssets.ogEn,
     primaryBrandColor: "#2159BA",
@@ -163,7 +162,6 @@ export function defaultFeatureFlagSettings(): FeatureFlagSettings {
   return {
     agentModuleEnabled: true,
     blogEnabled: true,
-    guidesEnabled: true,
     reviewsEnabled: true,
     contactFormEnabled: true,
     submitRequestEnabled: true,

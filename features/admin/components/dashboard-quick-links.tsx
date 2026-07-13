@@ -19,7 +19,6 @@ type DashboardQuickLinksProps = {
     auditLogs: string;
     seo: string;
     redirects: string;
-    guides: string;
     blog: string;
     settings: string;
     users: string;
@@ -81,12 +80,6 @@ export function DashboardQuickLinks({
       href: "/admin/redirects",
       label: labels.redirects,
       icon: quickLinkIcons.redirects,
-      permission: "platform:manage",
-    },
-    {
-      href: "/admin/guides",
-      label: labels.guides,
-      icon: quickLinkIcons.guides,
       permission: "platform:manage",
     },
     {

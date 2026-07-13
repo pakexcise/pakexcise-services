@@ -172,7 +172,6 @@ export default async function AdminDashboardPage() {
             auditLogs: t("dashboard.links.auditLogs"),
             seo: t("dashboard.links.seo"),
             redirects: t("dashboard.links.redirects"),
-            guides: t("dashboard.links.guides"),
             blog: t("dashboard.links.blog"),
             settings: t("dashboard.links.settings"),
             users: t("dashboard.links.users"),

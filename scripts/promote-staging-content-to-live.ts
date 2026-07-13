@@ -130,7 +130,6 @@ async function main() {
   const checklistIdMap = new Map<string, string>();
   const blogCategoryIdMap = new Map<string, string>();
   const blogPostIdMap = new Map<string, string>();
-  const guideIdMap = new Map<string, string>();
   const legalPageIdMap = new Map<string, string>();
   const faqCategoryIdMap = new Map<string, string>();
   const faqIdMap = new Map<string, string>();
@@ -733,54 +732,6 @@ async function main() {
       summarize("blog_posts", c);
     }
 
-    // --- Guides ---
-    logSection("Guides");
-    {
-      const c = emptyCounters();
-      const rows = await source.guide.findMany();
-      const stagingSlugs = new Set(rows.map((r) => r.slug));
-      for (const row of rows) {
-        const existing = await target.guide.findUnique({ where: { slug: row.slug } });
-        const data = {
-          titleEn: row.titleEn,
-          excerptEn: row.excerptEn,
-          contentEn: row.contentEn,
-          relatedServiceIds: row.relatedServiceIds
-            .map((id) => serviceIdMap.get(id))
-            .filter((id): id is string => typeof id === "string" && !id.startsWith("dry-")),
-          attachedFaqIds: row.attachedFaqIds,
-          isPublished: row.isPublished,
-          publishedAt: row.publishedAt,
-        };
-        if (existing) {
-          guideIdMap.set(row.id, existing.id);
-          if (!dryRun) {
-            await target.guide.update({ where: { id: existing.id }, data });
-          }
-          c.updated += 1;
-        } else if (dryRun) {
-          guideIdMap.set(row.id, `dry-${row.id}`);
-          c.created += 1;
-        } else {
-          const created = await target.guide.create({
-            data: { slug: row.slug, ...data },
-          });
-          guideIdMap.set(row.id, created.id);
-          c.created += 1;
-        }
-      }
-      const liveGuides = await target.guide.findMany({ select: { id: true, slug: true } });
-      for (const live of liveGuides) {
-        if (stagingSlugs.has(live.slug)) continue;
-        if (!dryRun) {
-          await target.seoMeta.deleteMany({ where: { guideId: live.id } });
-          await target.guide.delete({ where: { id: live.id } });
-        }
-        c.deleted += 1;
-      }
-      summarize("guides", c);
-    }
-
     // --- Legal pages ---
     logSection("Legal pages");
     {
@@ -897,7 +848,7 @@ async function main() {
       summarize("faqs", c);
     }
 
-    // Remap attachedFaqIds on blog/guides now that FAQ map exists
+    // Remap attachedFaqIds on blog posts now that FAQ map exists
     if (!dryRun) {
       logSection("Remap attached FAQ ids");
       const stagingPosts = await source.blogPost.findMany({
@@ -910,20 +861,6 @@ async function main() {
           .map((id) => faqIdMap.get(id))
           .filter((id): id is string => Boolean(id));
         await target.blogPost.update({
-          where: { id: liveId },
-          data: { attachedFaqIds },
-        });
-      }
-      const stagingGuides = await source.guide.findMany({
-        select: { id: true, attachedFaqIds: true },
-      });
-      for (const row of stagingGuides) {
-        const liveId = guideIdMap.get(row.id);
-        if (!liveId) continue;
-        const attachedFaqIds = row.attachedFaqIds
-          .map((id) => faqIdMap.get(id))
-          .filter((id): id is string => Boolean(id));
-        await target.guide.update({
           where: { id: liveId },
           data: { attachedFaqIds },
         });
@@ -1064,7 +1001,6 @@ async function main() {
         const blogPostId = row.blogPostId
           ? (blogPostIdMap.get(row.blogPostId) ?? null)
           : null;
-        const guideId = row.guideId ? (guideIdMap.get(row.guideId) ?? null) : null;
         const legalPageId = row.legalPageId
           ? (legalPageIdMap.get(row.legalPageId) ?? null)
           : null;
@@ -1075,10 +1011,6 @@ async function main() {
           continue;
         }
         if (row.blogPostId && !blogPostId) {
-          c.warned += 1;
-          continue;
-        }
-        if (row.guideId && !guideId) {
           c.warned += 1;
           continue;
         }
@@ -1104,7 +1036,6 @@ async function main() {
           regionId,
           cityId,
           blogPostId,
-          guideId,
           legalPageId,
           faqSchemaJson: seoFields.faqSchemaJson ?? Prisma.JsonNull,
           breadcrumbJson: seoFields.breadcrumbJson ?? Prisma.JsonNull,

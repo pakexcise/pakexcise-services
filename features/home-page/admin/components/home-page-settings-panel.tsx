@@ -39,7 +39,6 @@ type HomePageSettingsPanelProps = {
       faqCount: string;
       documentCount: string;
       blogCount: string;
-      guideCount: string;
       popularCount: string;
     };
     sectionLabels: Record<HomeSectionKey, string>;
@@ -387,7 +386,6 @@ export function HomePageSettingsPanel({
                 ["faqCount", labels.fields.faqCount],
                 ["documentCount", labels.fields.documentCount],
                 ["blogCount", labels.fields.blogCount],
-                ["guideCount", labels.fields.guideCount],
                 ["popularCount", labels.fields.popularCount]] as const
             ).map(([key, label]) => (
               <div key={key} className="space-y-2">

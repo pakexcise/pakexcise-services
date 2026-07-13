@@ -79,7 +79,6 @@ export type SettingsPanelLabels = {
   features: {
     agentModuleEnabled: string;
     blogEnabled: string;
-    guidesEnabled: string;
     reviewsEnabled: string;
     contactFormEnabled: string;
     submitRequestEnabled: string;

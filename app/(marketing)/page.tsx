@@ -10,7 +10,6 @@ import { HomeAboutSection } from "@/components/marketing/home-about-section";
 import { HomeBlogSection } from "@/components/marketing/home-blog-section";
 import { HomeDocumentsPreviewSection } from "@/components/marketing/home-documents-preview-section";
 import { HomeFinalCtaSection } from "@/components/marketing/home-final-cta-section";
-import { HomeGuidesSection } from "@/components/marketing/home-guides-section";
 import { HomeHeroSection } from "@/components/marketing/home-hero-section";
 import { HomeHowItWorksSection } from "@/components/marketing/home-how-it-works-section";
 import { HomePopularServicesSection } from "@/components/marketing/home-popular-services-section";
@@ -52,7 +51,6 @@ import {
   documentRequirementRepository,
   faqRepository,
   getFeaturedServices,
-  guideRepository,
   regionRepository,
   seoMetaRepository} from "@/server/repositories";
 import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
@@ -125,7 +123,6 @@ const defaults = defaultHomePageSettings();
     faqs,
     documents,
     blogPosts,
-    guides,
     tCommon,
     tMarketing] = await Promise.all([
     safeLoad("business", () => getBusinessSettings(), defaultBusinessSettings()),
@@ -155,11 +152,6 @@ const defaults = defaultHomePageSettings();
     safeLoad(
       "blog",
       () => blogPostRepository.listPublished(settings.limits.blogCount),
-      [],
-    ),
-    safeLoad(
-      "guides",
-      () => guideRepository.listPublished(settings.limits.guideCount),
       [],
     ),
     getTranslations("common"),
@@ -330,24 +322,6 @@ const defaults = defaultHomePageSettings();
               additional={content.about.additional}
               cta={content.about.cta}
               trustCards={content.about.trustCards}
-              tone={tone}
-            />
-          );
-          break;
-
-        case "guides":
-          if (!featureFlags.guidesEnabled) {
-            return null;
-          }
-          sectionNode = (
-            <HomeGuidesSection
-              title={content.sections.guides.title}
-              description={content.sections.guides.description}
-              guides={guides ?? []}
-              locale={locale}
-              readGuideLabel={tCommon("learnMore")}
-              viewAllLabel={tCommon("viewAll")}
-              emptyMessage={tMarketing("guides.empty")}
               tone={tone}
             />
           );

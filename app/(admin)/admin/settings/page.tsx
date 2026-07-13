@@ -117,7 +117,6 @@ async function buildLabels(
     features: {
       agentModuleEnabled: t("settingsPanel.features.agentModuleEnabled"),
       blogEnabled: t("settingsPanel.features.blogEnabled"),
-      guidesEnabled: t("settingsPanel.features.guidesEnabled"),
       reviewsEnabled: t("settingsPanel.features.reviewsEnabled"),
       contactFormEnabled: t("settingsPanel.features.contactFormEnabled"),
       submitRequestEnabled: t("settingsPanel.features.submitRequestEnabled"),

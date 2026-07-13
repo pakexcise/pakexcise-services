@@ -31,15 +31,16 @@ export function pushGa4PageView(
 
   window.gtag("config", ga4Id, {
     page_path: pagePath,
+    send_page_view: false,
     ...extra,
   });
 
-  if (Object.keys(extra).length > 0) {
-    window.gtag("event", "page_view", {
-      page_path: pagePath,
-      ...extra,
-    });
-  }
+  window.gtag("event", "page_view", {
+    page_path: pagePath,
+    page_location: window.location.href,
+    page_title: document.title,
+    ...extra,
+  });
 }
 
 export function pushGtmPageView(
@@ -50,6 +51,8 @@ export function pushGtmPageView(
   window.dataLayer.push({
     event: "page_view",
     page_path: pagePath,
+    page_location: typeof window !== "undefined" ? window.location.href : pagePath,
+    page_title: typeof document !== "undefined" ? document.title : undefined,
     ...extra,
   });
 }

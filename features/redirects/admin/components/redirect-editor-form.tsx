@@ -61,8 +61,8 @@ export function RedirectEditorForm({
       <p className="text-sm text-muted-foreground">
         Page redirects use paths: <code>/faqs</code> → <code>/help</code>.
         Service renames use bare slugs: <code>old-service</code> →{" "}
-        <code>new-service</code>. Content uses <code>blog:old-slug</code> /{" "}
-        <code>guide:old-slug</code>. Built-in legal/region/legacy service aliases
+        <code>new-service</code>. Content uses <code>blog:old-slug</code>.
+        Built-in legal/region/legacy service aliases
         are already handled by the app.
       </p>
       <div className="space-y-2">

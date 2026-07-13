@@ -111,7 +111,6 @@ export default async function AdminSiteSettingsPage() {
               defaultOgImagePath: t("branding.defaultOgImagePath"),
               defaultTwitterImagePath: t("branding.defaultTwitterImagePath"),
               defaultBlogFallbackImagePath: t("branding.defaultBlogFallbackImagePath"),
-              defaultGuideFallbackImagePath: t("branding.defaultGuideFallbackImagePath"),
               defaultServiceFallbackImagePath: t("branding.defaultServiceFallbackImagePath"),
               defaultRegionFallbackImagePath: t("branding.defaultRegionFallbackImagePath"),
               primaryBrandColor: t("branding.primaryBrandColor"),

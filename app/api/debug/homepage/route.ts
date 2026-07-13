@@ -7,7 +7,6 @@ import {
   documentRequirementRepository,
   faqRepository,
   getFeaturedServices,
-  guideRepository,
   regionRepository,
 } from "@/server/repositories";
 import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
@@ -102,11 +101,6 @@ export async function GET(request: Request) {
   await run(
     "blog.listPublished",
     () => blogPostRepository.listPublished(settings?.limits.blogCount ?? 6),
-    (value) => value.length,
-  );
-  await run(
-    "guide.listPublished",
-    () => guideRepository.listPublished(settings?.limits.guideCount ?? 6),
     (value) => value.length,
   );
 
