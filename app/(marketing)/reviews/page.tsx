@@ -1,19 +1,29 @@
 import type { Metadata } from "next";
-import { getTranslations } from "@/lib/i18n/t";
-import { Eye, LockKeyhole, ShieldCheck, Star, Users } from "lucide-react";
+import { Eye, LockKeyhole, MessageCircle, ShieldCheck, Star, Users } from "lucide-react";
 
 import { CTASection } from "@/components/marketing/cta-section";
+import { CustomerReviewForm } from "@/components/marketing/customer-review-form";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { ReviewCard } from "@/components/marketing/review-card";
+import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { buildBreadcrumbJsonLd, buildReviewsJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { requireReviewsEnabled } from "@/features/settings/lib/feature-gates";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { resolveWhatsappLinkNumber } from "@/features/settings/lib/resolve-public-contact";
+import { getTranslations } from "@/lib/i18n/t";
 import { absoluteUrl } from "@/lib/utils";
-import { getPageContent, reviewRepository, seoMetaRepository } from "@/server/repositories";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
+import { getCurrentUser } from "@/server/auth/current-user";
+import {
+  getPageContent,
+  reviewRepository,
+  seoMetaRepository,
+} from "@/server/repositories";
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = "en";
   const [seo, content] = await Promise.all([
@@ -42,21 +52,30 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ReviewsPage() {
   await requireReviewsEnabled();
 
-  const [content, reviews, business, tMarketing, tCommon] =
+  const [content, reviews, summary, business, tMarketing, tCommon, currentUser] =
     await Promise.all([
       getPageContent("reviews"),
       reviewRepository.listPublic(),
+      reviewRepository.getPublicSummary(),
       getBusinessSettings(),
       getTranslations("marketing"),
       getTranslations("common"),
+      getCurrentUser(),
     ]);
+
+  const eligibleApplications =
+    currentUser?.role === "CUSTOMER"
+      ? await reviewRepository.listEligibleApplicationsForCustomer(currentUser.id)
+      : [];
 
   const title = content?.titleEn ?? "Customer Reviews";
   const intro = content?.contentEn ?? "";
-  const averageRating =
-    reviews.length > 0
-      ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length
-      : 0;
+  const whatsappPhone = resolveWhatsappLinkNumber(business);
+  const whatsappHref = buildWhatsAppUrl(
+    whatsappPhone,
+    business.whatsappDefaultMessageEn || business.whatsappDefaultMessage || "",
+  );
+  const googleReviewHref = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || "";
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -91,7 +110,7 @@ export default async function ReviewsPage() {
           <div className="grid gap-8 lg:grid-cols-[0.8fr_2fr] lg:items-center">
             <div className="text-center lg:border-r lg:pr-8">
               <p className="text-5xl font-bold tracking-tight text-primary">
-                {averageRating.toFixed(1)}
+                {summary.averageRating.toFixed(1)}
               </p>
               <div className="mt-3 flex justify-center gap-1 text-secondary">
                 {Array.from({ length: 5 }).map((_, index) => (
@@ -99,14 +118,61 @@ export default async function ReviewsPage() {
                 ))}
               </div>
               <p className="mt-2 text-sm font-medium">
-                {tMarketing("reviews.ratingSummary", { count: reviews.length })}
+                {tMarketing("reviews.ratingSummary", { count: summary.count })}
               </p>
             </div>
             <div className="grid gap-5 sm:grid-cols-3">
-              <TrustPoint icon={ShieldCheck} title={tMarketing("reviews.privateTitle")} description={tMarketing("reviews.privateDescription")} />
-              <TrustPoint icon={Eye} title={tMarketing("reviews.transparentTitle")} description={tMarketing("reviews.transparentDescription")} />
-              <TrustPoint icon={LockKeyhole} title={tMarketing("reviews.privacyTitle")} description={tMarketing("reviews.privacyDescription")} />
+              <TrustPoint
+                icon={ShieldCheck}
+                title={tMarketing("reviews.privateTitle")}
+                description={tMarketing("reviews.privateDescription")}
+              />
+              <TrustPoint
+                icon={Eye}
+                title={tMarketing("reviews.transparentTitle")}
+                description={tMarketing("reviews.transparentDescription")}
+              />
+              <TrustPoint
+                icon={LockKeyhole}
+                title={tMarketing("reviews.privacyTitle")}
+                description={tMarketing("reviews.privacyDescription")}
+              />
             </div>
+          </div>
+        </section>
+
+        <section className="grid gap-4 rounded-2xl border bg-card p-5 md:grid-cols-2 md:p-6">
+          <div>
+            <h2 className="text-lg font-semibold">{tMarketing("reviews.whatsappFastTitle")}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {tMarketing("reviews.whatsappFastDescription")}
+            </p>
+            <Button asChild className="mt-4" variant="outline">
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-analytics-event="click_whatsapp"
+                data-analytics-placement="reviews_fast_whatsapp"
+              >
+                <WhatsAppIcon className="size-4" />
+                {tMarketing("reviews.whatsappFastCta")}
+              </a>
+            </Button>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">{tMarketing("reviews.googleReviewCta")}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {tMarketing("reviews.disclaimer")}
+            </p>
+            {googleReviewHref ? (
+              <Button asChild className="mt-4" variant="secondary">
+                <a href={googleReviewHref} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="size-4" aria-hidden="true" />
+                  {tMarketing("reviews.googleReviewCta")}
+                </a>
+              </Button>
+            ) : null}
           </div>
         </section>
 
@@ -115,6 +181,7 @@ export default async function ReviewsPage() {
             <ProseContent content={intro} />
           </div>
         ) : null}
+
         {reviews.length > 0 ? (
           <section aria-labelledby="customer-feedback-title">
             <div className="mb-7 flex items-end justify-between gap-4">
@@ -129,32 +196,57 @@ export default async function ReviewsPage() {
               <Users className="hidden size-9 text-primary/35 sm:block" aria-hidden="true" />
             </div>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {reviews.map((review) => (
-              <ReviewCard
-                key={review.id}
-                review={review}
-                feedbackLabel={tMarketing("reviews.feedbackLabel")}
-              />
-            ))}
+              {reviews.map((review) => (
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  feedbackLabel={
+                    review.source === "GOOGLE"
+                      ? tMarketing("reviews.googleLabel")
+                      : tMarketing("reviews.customerLabel")
+                  }
+                />
+              ))}
             </div>
           </section>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            {tMarketing("reviews.empty")}
-          </p>
+          <p className="text-sm text-muted-foreground">{tMarketing("reviews.empty")}</p>
         )}
+
+        <CustomerReviewForm
+          applications={eligibleApplications}
+          defaultName={currentUser?.name?.trim() || ""}
+          isAuthenticated={currentUser?.role === "CUSTOMER"}
+          labels={{
+            title: tMarketing("reviews.formTitle"),
+            description: tMarketing("reviews.formDescription"),
+            loginPrompt: tMarketing("reviews.formLoginPrompt"),
+            loginCta: tMarketing("reviews.formLoginCta"),
+            noEligible: tMarketing("reviews.formNoEligible"),
+            application: tMarketing("reviews.formApplication"),
+            name: tMarketing("reviews.formName"),
+            content: tMarketing("reviews.formContent"),
+            rating: tMarketing("reviews.formRating"),
+            consent: tMarketing("reviews.formConsent"),
+            submit: tMarketing("reviews.formSubmit"),
+            submitting: tMarketing("reviews.formSubmitting"),
+            success: tMarketing("reviews.formSuccess"),
+          }}
+        />
+
         <p className="rounded-2xl border border-secondary/40 bg-secondary/10 p-4 text-sm leading-relaxed text-muted-foreground">
           <strong className="text-foreground">{tMarketing("reviews.disclaimerTitle")}</strong>{" "}
           {tMarketing("reviews.disclaimer")}
         </p>
+
         <CTASection
           title={tMarketing("service.ctaTitle")}
           description={tMarketing("service.ctaDescription")}
           applyLabel={tMarketing("service.applyNow")}
           applyHref="/services"
           whatsappLabel={tCommon("whatsappHelp")}
-          whatsappPhone={resolveWhatsappLinkNumber(business)}
-          whatsappMessage={business.whatsappDefaultMessage}
+          whatsappPhone={whatsappPhone}
+          whatsappMessage={business.whatsappDefaultMessageEn || business.whatsappDefaultMessage}
         />
       </div>
     </>

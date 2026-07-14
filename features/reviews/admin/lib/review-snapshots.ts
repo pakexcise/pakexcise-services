@@ -11,7 +11,15 @@ export function reviewAuditSnapshot(review: AdminReviewItem | null) {
     authorRoleEn: review.authorRoleEn,
     contentEn: review.contentEn,
     rating: review.rating,
+    status: review.status,
+    source: review.source,
     isActive: review.isActive,
     displayOrder: review.displayOrder,
+    customerConsent: review.customerConsent,
+    moderationNote: review.moderationNote,
+    serviceId: review.serviceId,
+    applicationId: review.applicationId,
+    userId: review.userId,
+    externalId: review.externalId,
   };
 }

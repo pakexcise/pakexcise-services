@@ -121,6 +121,18 @@ enum DocumentStatus {
   MISSING
 }
 
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReviewSource {
+  MANUAL
+  CUSTOMER
+  GOOGLE
+}
+
 enum NotificationChannel {
   EMAIL
   WHATSAPP
@@ -146,6 +158,8 @@ enum NotificationEventType {
   APPLICATION_REJECTED
   APPLICATION_CANCELLED
   PAYMENT_REJECTED
+  REVIEW_APPROVED
+  REVIEW_REJECTED
 }
 
 enum FieldType {
@@ -241,6 +255,8 @@ model User {
   guestLeadContacts    GuestLead[]           @relation("GuestLeadContactedBy")
   contactInquiryContacts ContactInquiry[]    @relation("ContactInquiryContactedBy")
   activityEvents       ActivityEvent[]
+  submittedReviews     Review[]              @relation("ReviewAuthor")
+  moderatedReviews     Review[]              @relation("ReviewModerator")
 
   @@index([role, status])
   @@map("users")
@@ -483,17 +499,39 @@ model ServiceCategory {
 }
 
 model Review {
-  id           String   @id @default(cuid())
-  authorNameEn String
-  authorRoleEn String?
-  contentEn    String   @db.Text
-  rating       Int      @default(5)
-  isActive     Boolean  @default(true)
-  displayOrder Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String       @id @default(cuid())
+  authorNameEn    String
+  authorRoleEn    String?
+  contentEn       String       @db.Text
+  rating          Int          @default(5)
+  status          ReviewStatus @default(PENDING)
+  source          ReviewSource @default(MANUAL)
+  isActive        Boolean      @default(false)
+  displayOrder    Int          @default(0)
+  customerConsent Boolean      @default(false)
+  moderationNote  String?      @db.Text
+  moderatedAt     DateTime?
+  submittedAt     DateTime     @default(now())
+  externalId      String?
+  externalUpdatedAt DateTime?
+  reviewerPhotoUrl String?
+  userId          String?
+  applicationId   String?      @unique
+  serviceId       String?
+  moderatedById   String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
-  @@index([isActive, displayOrder])
+  user        User?        @relation("ReviewAuthor", fields: [userId], references: [id], onDelete: SetNull)
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  service     Service?     @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  moderatedBy User?        @relation("ReviewModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+
+  @@unique([source, externalId])
+  @@index([status, isActive, displayOrder])
+  @@index([userId, createdAt])
+  @@index([serviceId, status])
+  @@index([source, externalUpdatedAt])
   @@map("reviews")
 }
 
@@ -550,6 +588,7 @@ model Service {
   faqs            FAQ[]
   applications    Application[]
   guestLeads      GuestLead[]
+  reviews         Review[]
   seoMeta         SeoMeta?
   feeConfig       ServiceFeeConfig?
 
@@ -690,6 +729,7 @@ model Application {
   notifications Notification[]
   attribution   AnalyticsAttribution?
   agentCommissions AgentCommission[]
+  review        Review?
 
   @@index([status, createdAt])
   @@index([trackingId])

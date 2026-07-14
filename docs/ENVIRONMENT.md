@@ -87,6 +87,26 @@ Without Redis, rate limiting behavior may degrade — **Needs verification** of 
 | `NOTIFICATION_DISPATCH_SECRET` | Recommended for prod | Authenticates `/api/notifications/process` |
 | `NOTIFICATION_RECIPIENT_PEPPER` | Recommended | Hashing for recipient privacy |
 
+## Google Business Profile reviews
+
+One-way import only (`GET`/`POST` `/api/reviews/google/sync`). Website reviews are **not** posted to Google.
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `GOOGLE_BUSINESS_PROFILE_ACCOUNT_ID` | For sync | GBP account ID from API |
+| `GOOGLE_BUSINESS_PROFILE_LOCATION_ID` | For sync | GBP location ID from API |
+| `GOOGLE_BUSINESS_PROFILE_CLIENT_ID` | For sync | OAuth client ID |
+| `GOOGLE_BUSINESS_PROFILE_CLIENT_SECRET` | For sync | OAuth client secret |
+| `GOOGLE_BUSINESS_PROFILE_REFRESH_TOKEN` | For sync | Offline refresh token for a manager user |
+| `GOOGLE_REVIEW_SYNC_SECRET` | Recommended | Bearer/query secret for the sync route |
+| `NEXT_PUBLIC_GOOGLE_REVIEW_URL` | Optional | “Review us on Google” CTA |
+
+Schedule sync with VPS cron or QStash, e.g. every 6 hours:
+
+`Authorization: Bearer $GOOGLE_REVIEW_SYNC_SECRET` → `POST https://staging.pakexcise.com/api/reviews/google/sync`
+
+Reference only (not substitutes for API IDs): Business Profile ID `8066285004634443548`.
+
 ## Turnstile / bot
 
 | Variable | Required | Purpose |

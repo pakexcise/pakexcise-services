@@ -1,6 +1,14 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Pencil, Star, Trash2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Check,
+  Pencil,
+  Star,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
@@ -9,9 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  approveReviewAction,
   createReviewAction,
   deleteReviewAction,
+  rejectReviewAction,
   reorderReviewsAction,
+  syncGoogleReviewsAction,
   toggleReviewActiveAction,
   updateReviewAction,
 } from "@/features/reviews/admin/actions/review-actions";
@@ -39,9 +50,33 @@ export type ReviewPanelLabels = {
   moveDown: string;
   searchPlaceholder: string;
   allStatuses: string;
+  statusPending: string;
+  statusApproved: string;
+  statusRejected: string;
+  approve: string;
+  reject: string;
+  rejectReason: string;
+  rejectReasonRequired: string;
+  source: string;
+  sourceManual: string;
+  sourceCustomer: string;
+  sourceGoogle: string;
+  service: string;
+  trackingId: string;
+  syncNow: string;
+  syncing: string;
+  syncSuccess: string;
+  syncFailed: string;
+  lastSynced: string;
+  neverSynced: string;
   previous: string;
   next: string;
   results: string;
+};
+
+type ServiceOption = {
+  id: string;
+  nameEn: string;
 };
 
 type ReviewDraft = {
@@ -52,6 +87,7 @@ type ReviewDraft = {
   rating: number;
   isActive: boolean;
   displayOrder: number;
+  serviceId: string;
 };
 
 function emptyDraft(displayOrder: number): ReviewDraft {
@@ -62,6 +98,7 @@ function emptyDraft(displayOrder: number): ReviewDraft {
     rating: 5,
     isActive: false,
     displayOrder,
+    serviceId: "",
   };
 }
 
@@ -74,6 +111,7 @@ function toDraft(review: AdminReviewItem): ReviewDraft {
     rating: review.rating,
     isActive: review.isActive,
     displayOrder: review.displayOrder,
+    serviceId: review.serviceId ?? "",
   };
 }
 
@@ -81,41 +119,55 @@ export function ReviewsPanel({
   reviews,
   nextDisplayOrder,
   labels,
+  services,
+  lastSyncedAt,
 }: {
   reviews: AdminReviewItem[];
   nextDisplayOrder: number;
   labels: ReviewPanelLabels;
+  services: ServiceOption[];
+  lastSyncedAt: string | null;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [draft, setDraft] = useState<ReviewDraft>(emptyDraft(nextDisplayOrder));
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<"all" | "published" | "draft">("all");
+  const [status, setStatus] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">(
+    "ALL",
+  );
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
   const [page, setPage] = useState(1);
+
   const sorted = useMemo(
     () =>
       [...reviews].sort(
         (a, b) =>
           a.displayOrder - b.displayOrder ||
-          a.createdAt.getTime() - b.createdAt.getTime(),
+          new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime(),
       ),
     [reviews],
   );
+
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return sorted.filter((review) => {
-      const matchesStatus =
-        status === "all" ||
-        (status === "published" ? review.isActive : !review.isActive);
-      const matchesQuery =
-        !needle ||
-        [review.authorNameEn, review.authorRoleEn ?? "", review.contentEn].some(
-          (value) => value.toLowerCase().includes(needle),
-        );
-      return matchesStatus && matchesQuery;
+      const matchesStatus = status === "ALL" || review.status === status;
+      const haystack = [
+        review.authorNameEn,
+        review.authorRoleEn ?? "",
+        review.contentEn,
+        review.service?.nameEn ?? "",
+        review.application?.trackingId ?? "",
+      ]
+        .join(" ")
+        .toLowerCase();
+      return matchesStatus && (!needle || haystack.includes(needle));
     });
   }, [query, sorted, status]);
+
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -125,22 +177,35 @@ export function ReviewsPanel({
     setDraft((current) => ({ ...current, [key]: value }));
   }
 
+  function sourceLabel(source: AdminReviewItem["source"]) {
+    if (source === "GOOGLE") return labels.sourceGoogle;
+    if (source === "CUSTOMER") return labels.sourceCustomer;
+    return labels.sourceManual;
+  }
+
+  function statusLabel(value: AdminReviewItem["status"]) {
+    if (value === "APPROVED") return labels.statusApproved;
+    if (value === "REJECTED") return labels.statusRejected;
+    return labels.statusPending;
+  }
+
   function save() {
     setError(null);
+    setMessage(null);
     startTransition(async () => {
-      try {
-        const result = draft.id
-          ? await updateReviewAction(draft)
-          : await createReviewAction(draft);
-        if (!result.success) {
-          setError(result.error);
-          return;
-        }
-        setDraft(emptyDraft(nextDisplayOrder + (draft.id ? 0 : 1)));
-        router.refresh();
-      } catch (saveError) {
-        setError(saveError instanceof Error ? saveError.message : labels.saveFailed);
+      const payload = {
+        ...draft,
+        serviceId: draft.serviceId || null,
+      };
+      const result = draft.id
+        ? await updateReviewAction(payload)
+        : await createReviewAction(payload);
+      if (!result.success) {
+        setError(result.error);
+        return;
       }
+      setDraft(emptyDraft(nextDisplayOrder + (draft.id ? 0 : 1)));
+      router.refresh();
     });
   }
 
@@ -156,7 +221,38 @@ export function ReviewsPanel({
     });
   }
 
-  function toggle(review: AdminReviewItem) {
+  function approve(id: string) {
+    startTransition(async () => {
+      const result = await approveReviewAction({ id });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      router.refresh();
+    });
+  }
+
+  function reject(id: string) {
+    if (rejectReason.trim().length < 5) {
+      setError(labels.rejectReasonRequired);
+      return;
+    }
+    startTransition(async () => {
+      const result = await rejectReviewAction({
+        id,
+        moderationNote: rejectReason.trim(),
+      });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setRejectingId(null);
+      setRejectReason("");
+      router.refresh();
+    });
+  }
+
+  function togglePublish(review: AdminReviewItem) {
     startTransition(async () => {
       const result = await toggleReviewActiveAction({
         id: review.id,
@@ -169,10 +265,8 @@ export function ReviewsPanel({
 
   function move(review: AdminReviewItem, direction: "up" | "down") {
     const index = sorted.findIndex((item) => item.id === review.id);
-    const swapIndex = direction === "up" ? index - 1 : index + 1;
-    const target = sorted[swapIndex];
-    if (index < 0 || !target) return;
-
+    const target = sorted[direction === "up" ? index - 1 : index + 1];
+    if (!target) return;
     startTransition(async () => {
       const result = await reorderReviewsAction({
         items: [
@@ -185,14 +279,49 @@ export function ReviewsPanel({
     });
   }
 
+  function syncGoogle() {
+    setError(null);
+    setMessage(null);
+    startTransition(async () => {
+      const result = await syncGoogleReviewsAction();
+      if (!result.success) {
+        setError(result.error || labels.syncFailed);
+        return;
+      }
+      setMessage(
+        `${labels.syncSuccess} (+${result.data.imported} / ~${result.data.updated})`,
+      );
+      router.refresh();
+    });
+  }
+
   return (
     <div className="space-y-6">
-      <p className="rounded-xl border border-secondary/40 bg-secondary/10 p-4 text-sm leading-relaxed">
-        {labels.authenticityNotice}
-      </p>
+      <div className="flex flex-col gap-3 rounded-xl border border-secondary/40 bg-secondary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm leading-relaxed">{labels.authenticityNotice}</p>
+        <div className="space-y-2 text-sm">
+          <p className="text-muted-foreground">
+            {lastSyncedAt
+              ? labels.lastSynced.replace(
+                  "{time}",
+                  new Date(lastSyncedAt).toLocaleString(),
+                )
+              : labels.neverSynced}
+          </p>
+          <Button type="button" variant="outline" disabled={isPending} onClick={syncGoogle}>
+            {isPending ? labels.syncing : labels.syncNow}
+          </Button>
+        </div>
+      </div>
+
       {error ? (
         <p className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
+        </p>
+      ) : null}
+      {message ? (
+        <p className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-primary">
+          {message}
         </p>
       ) : null}
 
@@ -217,12 +346,14 @@ export function ReviewsPanel({
               }}
               className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
             >
-              <option value="all">{labels.allStatuses}</option>
-              <option value="published">{labels.active}</option>
-              <option value="draft">{labels.inactive}</option>
+              <option value="ALL">{labels.allStatuses}</option>
+              <option value="PENDING">{labels.statusPending}</option>
+              <option value="APPROVED">{labels.statusApproved}</option>
+              <option value="REJECTED">{labels.statusRejected}</option>
             </select>
           </div>
         </div>
+
         {visible.length === 0 ? (
           <p className="p-6 text-sm text-muted-foreground">{labels.empty}</p>
         ) : (
@@ -232,20 +363,55 @@ export function ReviewsPanel({
                 <div className="min-w-0 space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
                     <strong>{review.authorNameEn}</strong>
-                    <Badge variant={review.isActive ? "success" : "secondary"}>
-                      {review.isActive ? labels.active : labels.inactive}
+                    <Badge variant={review.status === "APPROVED" ? "success" : "secondary"}>
+                      {statusLabel(review.status)}
                     </Badge>
+                    <Badge variant="outline">{sourceLabel(review.source)}</Badge>
+                    {review.isActive ? (
+                      <Badge variant="success">{labels.active}</Badge>
+                    ) : (
+                      <Badge variant="secondary">{labels.inactive}</Badge>
+                    )}
                     <span className="inline-flex items-center gap-1 text-sm text-secondary">
                       {review.rating}
                       <Star className="size-3.5 fill-current" aria-hidden="true" />
                     </span>
                   </div>
-                  {review.authorRoleEn ? (
-                    <p className="text-xs text-muted-foreground">{review.authorRoleEn}</p>
-                  ) : null}
+                  <p className="text-xs text-muted-foreground">
+                    {[review.service?.nameEn, review.application?.trackingId]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
                   <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
                     {review.contentEn}
                   </p>
+                  {review.moderationNote ? (
+                    <p className="text-xs text-destructive">{review.moderationNote}</p>
+                  ) : null}
+                  {rejectingId === review.id ? (
+                    <div className="space-y-2 rounded-lg border p-3">
+                      <Label>{labels.rejectReason}</Label>
+                      <Input
+                        value={rejectReason}
+                        onChange={(event) => setRejectReason(event.target.value)}
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="destructive" onClick={() => reject(review.id)}>
+                          {labels.reject}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setRejectingId(null);
+                            setRejectReason("");
+                          }}
+                        >
+                          {labels.clear}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 lg:justify-end">
                   <Button size="icon" variant="outline" onClick={() => move(review, "up")} disabled={isPending} aria-label={labels.moveUp}>
@@ -254,12 +420,31 @@ export function ReviewsPanel({
                   <Button size="icon" variant="outline" onClick={() => move(review, "down")} disabled={isPending} aria-label={labels.moveDown}>
                     <ArrowDown className="size-4" />
                   </Button>
+                  {review.status !== "APPROVED" ? (
+                    <Button size="sm" onClick={() => approve(review.id)} disabled={isPending}>
+                      <Check className="size-4" />
+                      {labels.approve}
+                    </Button>
+                  ) : null}
+                  {review.status !== "REJECTED" ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setRejectingId(review.id)}
+                      disabled={isPending}
+                    >
+                      <X className="size-4" />
+                      {labels.reject}
+                    </Button>
+                  ) : null}
+                  {review.status === "APPROVED" ? (
+                    <Button size="sm" variant="outline" onClick={() => togglePublish(review)} disabled={isPending}>
+                      {review.isActive ? labels.inactive : labels.active}
+                    </Button>
+                  ) : null}
                   <Button variant="outline" onClick={() => setDraft(toDraft(review))} disabled={isPending}>
                     <Pencil className="size-4" />
                     {labels.edit}
-                  </Button>
-                  <Button variant="outline" onClick={() => toggle(review)} disabled={isPending}>
-                    {review.isActive ? labels.inactive : labels.active}
                   </Button>
                   <Button variant="destructive" onClick={() => remove(review.id)} disabled={isPending}>
                     <Trash2 className="size-4" />
@@ -270,6 +455,7 @@ export function ReviewsPanel({
             ))}
           </div>
         )}
+
         <div className="flex flex-wrap items-center justify-between gap-3 border-t p-4 text-sm text-muted-foreground">
           <span>{labels.results.replace("{count}", String(filtered.length))}</span>
           <div className="flex gap-2">
@@ -291,6 +477,20 @@ export function ReviewsPanel({
           </Field>
           <Field label={labels.context}>
             <Input value={draft.authorRoleEn} onChange={(event) => updateDraft("authorRoleEn", event.target.value)} maxLength={120} />
+          </Field>
+          <Field label={labels.service}>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              value={draft.serviceId}
+              onChange={(event) => updateDraft("serviceId", event.target.value)}
+            >
+              <option value="">—</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.nameEn}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label={labels.content} className="md:col-span-2">
             <textarea

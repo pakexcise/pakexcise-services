@@ -10,18 +10,25 @@ import {
   AboutWhoWeAreSection,
   AboutWhyChooseSection,
 } from "@/components/marketing/about-page-sections";
+import { PublicReviewsSection } from "@/components/marketing/public-reviews-section";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ABOUT_PAGE_SEO } from "@/features/about-page/lib/defaults";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
-import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { getBusinessSettings, getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
+import {
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
 import { getTranslations } from "@/lib/i18n/t";
 import { absoluteUrl } from "@/lib/utils";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import {
   getActiveSocialLinks,
   getPageContent,
+  reviewRepository,
   seoMetaRepository,
   serviceCategoryRepository,
 } from "@/server/repositories";
@@ -68,13 +75,16 @@ export default async function AboutPage() {
   const tCommon = await getTranslations("common");
   const tMarketing = await getTranslations("marketing");
 
-  const [seo, content, socialLinks, categoryGroups, business] =
+  const [seo, content, socialLinks, categoryGroups, business, featureFlags, reviews, reviewSummary] =
     await Promise.all([
       seoMetaRepository.findByPageKey("about"),
       getPageContent("about"),
       getActiveSocialLinks(),
       serviceCategoryRepository.listPublicGrouped(),
       getBusinessSettings(),
+      getFeatureFlagSettings(),
+      reviewRepository.listPublic(3),
+      reviewRepository.getPublicSummary(),
     ]);
 
   if (!content) {
@@ -86,6 +96,10 @@ export default async function AboutPage() {
   const whoWeAreParagraphs = splitParagraphs(content.contentEn ?? "");
   const breadcrumbLabel = "About";
   const serviceCardLabels = buildServiceCardLabels(tCommon, tMarketing);
+  const whatsappHref = buildWhatsAppUrl(
+    resolveWhatsappLinkNumber(business),
+    resolveWhatsappDefaultMessage(business),
+  );
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -179,6 +193,27 @@ export default async function AboutPage() {
           links={socialLinks}
           locale="en"
         />
+
+        {featureFlags.reviewsEnabled ? (
+          <PublicReviewsSection
+            reviews={reviews}
+            title={tMarketing("reviews.homeTitle")}
+            description={tMarketing("reviews.homeDescription")}
+            feedbackLabel={tMarketing("reviews.feedbackLabel")}
+            customerLabel={tMarketing("reviews.customerLabel")}
+            googleLabel={tMarketing("reviews.googleLabel")}
+            countLabel={tMarketing("reviews.ratingSummary", {
+              count: reviewSummary.count,
+            })}
+            averageRating={reviewSummary.averageRating}
+            viewAllLabel={tMarketing("reviews.viewAll")}
+            whatsappLabel={tMarketing("reviews.whatsappFastCta")}
+            whatsappHref={whatsappHref}
+            googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
+            googleReviewLabel={tMarketing("reviews.googleReviewCta")}
+            tone="muted"
+          />
+        ) : null}
 
         <AboutFinalCtaSection
           title={t("cta.title")}

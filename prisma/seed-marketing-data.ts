@@ -389,15 +389,15 @@ export const REVIEW_SEED = [
     authorNameEn: "Ahmed R.",
     authorRoleEn: "Vehicle transfer customer",
     contentEn:
-      "PakExcise helped me organize documents and track my application without confusion. Clear private service — not government.",
+      "Process was clear from start. WhatsApp updates helped, and fees only came on invoice after review. Private service, not government.",
     rating: 5,
     displayOrder: 1,
   },
   {
-    authorNameEn: "Sana K.",
+    authorNameEn: "Usman K.",
     authorRoleEn: "Token tax facilitation",
     contentEn:
-      "Responsive WhatsApp support and step-by-step guidance. Fees were only shared on invoice after review.",
+      "Bahut smooth experience. Team ne documents checklist clear kar di aur tracking dashboard pe updates milte rahe.",
     rating: 5,
     displayOrder: 2,
   },
@@ -405,9 +405,25 @@ export const REVIEW_SEED = [
     authorNameEn: "Bilal H.",
     authorRoleEn: "New registration customer",
     contentEn:
-      "Professional experience from application to completion proof download.",
+      "Professional handling from application to completion proof. Response on WhatsApp was fast.",
     rating: 5,
     displayOrder: 3,
+  },
+  {
+    authorNameEn: "Hamza A.",
+    authorRoleEn: "Driving license renewal",
+    contentEn:
+      "Mera license renewal ka kaam on time ho gaya. Steps simple the, aur private facilitation clearly mentioned thi.",
+    rating: 4,
+    displayOrder: 4,
+  },
+  {
+    authorNameEn: "Imran S.",
+    authorRoleEn: "Route permit support",
+    contentEn:
+      "Good follow-up and honest process. No fee shown on the public page, only shared after invoice.",
+    rating: 5,
+    displayOrder: 5,
   },
 ] as const;
 
@@ -687,13 +703,76 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
       where: { authorNameEn: review.authorNameEn },
     });
 
+    const payload = {
+      ...review,
+      source: "MANUAL" as const,
+      status: "PENDING" as const,
+      isActive: false,
+      customerConsent: true,
+    };
+
     if (existing) {
       await prisma.review.update({
         where: { id: existing.id },
-        data: { ...review, isActive: false },
+        data: payload,
       });
     } else {
-      await prisma.review.create({ data: { ...review, isActive: false } });
+      await prisma.review.create({ data: payload });
+    }
+  }
+
+  const activeServices = await prisma.service.findMany({
+    where: { isActive: true, deletedAt: null, parentServiceId: null },
+    orderBy: { displayOrder: "asc" },
+    select: { id: true, nameEn: true, slug: true },
+  });
+
+  const sampleMaleNames = [
+    "Ali M.",
+    "Farhan Z.",
+    "Kashif N.",
+    "Omar T.",
+    "Naveed J.",
+    "Saad W.",
+    "Zain Q.",
+    "Rehan L.",
+  ];
+
+  for (const [index, service] of activeServices.entries()) {
+    const authorNameEn = sampleMaleNames[index % sampleMaleNames.length] ?? "Customer";
+    const existingServiceReview = await prisma.review.findFirst({
+      where: {
+        serviceId: service.id,
+        source: "MANUAL",
+        authorNameEn,
+      },
+    });
+
+    const sampleContent =
+      index % 2 === 0
+        ? `${service.nameEn} ke liye support clear tha. WhatsApp pe quick reply mili aur tracking easy rahi.`
+        : `Helpful private facilitation for ${service.nameEn}. Transparent steps and invoice-only fee sharing.`;
+
+    const data = {
+      authorNameEn,
+      authorRoleEn: service.nameEn,
+      contentEn: sampleContent,
+      rating: index % 3 === 0 ? 4 : 5,
+      displayOrder: 100 + index,
+      serviceId: service.id,
+      source: "MANUAL" as const,
+      status: "PENDING" as const,
+      isActive: false,
+      customerConsent: true,
+    };
+
+    if (existingServiceReview) {
+      await prisma.review.update({
+        where: { id: existingServiceReview.id },
+        data,
+      });
+    } else {
+      await prisma.review.create({ data });
     }
   }
 

@@ -11,6 +11,7 @@ import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { RegionGroupedDocumentChecklist } from "@/components/marketing/region-grouped-document-checklist";
 import { RelatedServices } from "@/components/marketing/related-services";
+import { PublicReviewsSection } from "@/components/marketing/public-reviews-section";
 import { ServiceFieldsPreview } from "@/components/marketing/service-fields-preview";
 import { ServiceInfoSidebar } from "@/components/marketing/service-info-sidebar";
 import { ServiceOptionsSection } from "@/components/marketing/service-options-section";
@@ -39,13 +40,18 @@ import { absoluteUrl } from "@/lib/utils";
 import {
   faqRepository,
   redirectRepository,
+  reviewRepository,
   serviceRepository,
 } from "@/server/repositories";
-import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
+import {
+  getBusinessSettings,
+  getFeatureFlagSettings,
+} from "@/features/settings/lib/public-settings-cache";
 import {
   resolveWhatsappDefaultMessage,
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 export const revalidate = 3600;
 
 type ServicePageProps = {
@@ -101,14 +107,19 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const tHome = await getTranslations("home");
   const tNav = await getTranslations("nav");
 
-  const [serviceFaqs, relatedServices, businessSettings] = await Promise.all([
-    faqRepository.listByServiceId(service.id),
-    serviceRepository.listRelatedServices(service.id, 3),
-    getBusinessSettings(),
-  ]);
+  const [serviceFaqs, relatedServices, businessSettings, featureFlags, reviews, reviewSummary] =
+    await Promise.all([
+      faqRepository.listByServiceId(service.id),
+      serviceRepository.listRelatedServices(service.id, 3),
+      getBusinessSettings(),
+      getFeatureFlagSettings(),
+      reviewRepository.listPublicForService(service.id, 3),
+      reviewRepository.getPublicSummary(service.id),
+    ]);
 
   const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
   const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings, locale);
+  const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
 
   const name = service.nameEn ?? "";
   const description = service.shortDescriptionEn ?? "";
@@ -294,6 +305,29 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               items={faqItems}
               emptyMessage={t("service.faqsEmpty")}
             />
+
+            {featureFlags.reviewsEnabled ? (
+              <PublicReviewsSection
+                reviews={reviews}
+                title={t("reviews.homeTitle")}
+                description={t("reviews.homeDescription")}
+                feedbackLabel={t("reviews.feedbackLabel")}
+                customerLabel={t("reviews.customerLabel")}
+                googleLabel={t("reviews.googleLabel")}
+                countLabel={t("reviews.ratingSummary", {
+                  count: reviewSummary.count,
+                })}
+                averageRating={reviewSummary.averageRating}
+                viewAllLabel={t("reviews.viewAll")}
+                whatsappLabel={t("reviews.whatsappFastCta")}
+                whatsappHref={whatsappHref}
+                googleReviewHref={
+                  process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined
+                }
+                googleReviewLabel={t("reviews.googleReviewCta")}
+                tone="default"
+              />
+            ) : null}
 
             <RelatedServices
               title={t("service.relatedTitle")}

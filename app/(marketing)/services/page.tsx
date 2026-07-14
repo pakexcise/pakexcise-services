@@ -4,6 +4,7 @@ import { getTranslations } from "@/lib/i18n/t";
 
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
+import { PublicReviewsSection } from "@/components/marketing/public-reviews-section";
 import { ServiceCategorySection } from "@/components/marketing/service-category-section";
 import { ServicesCategoryNav } from "@/components/marketing/services-category-nav";
 import { ServicesEmptyState } from "@/components/marketing/services-empty-state";
@@ -12,8 +13,20 @@ import {
   buildItemListJsonLd} from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
+import {
+  getBusinessSettings,
+  getFeatureFlagSettings,
+} from "@/features/settings/lib/public-settings-cache";
+import {
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
 import { seoAbsoluteUrl } from "@/lib/seo-url";
-import { seoMetaRepository } from "@/server/repositories";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
+import {
+  reviewRepository,
+  seoMetaRepository,
+} from "@/server/repositories";
 import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
 
 export const revalidate = 3600;
@@ -50,6 +63,16 @@ export default async function ServicesPage() {
   const seo = await seoMetaRepository.findByPageKey("services");
 
   const categoryGroups = await serviceCategoryRepository.listPublicGrouped();
+  const [featureFlags, reviews, reviewSummary, business] = await Promise.all([
+    getFeatureFlagSettings(),
+    reviewRepository.listPublic(3),
+    reviewRepository.getPublicSummary(),
+    getBusinessSettings(),
+  ]);
+  const whatsappHref = buildWhatsAppUrl(
+    resolveWhatsappLinkNumber(business),
+    resolveWhatsappDefaultMessage(business),
+  );
 
   const title = seo?.h1En ?? t("services.title");
   const description = seo?.metaDescriptionEn ?? t("services.metaDescription");
@@ -106,6 +129,24 @@ export default async function ServicesPage() {
             ))}
           </>
         )}
+        {featureFlags.reviewsEnabled ? (
+          <PublicReviewsSection
+            reviews={reviews}
+            title={t("reviews.homeTitle")}
+            description={t("reviews.homeDescription")}
+            feedbackLabel={t("reviews.feedbackLabel")}
+            customerLabel={t("reviews.customerLabel")}
+            googleLabel={t("reviews.googleLabel")}
+            countLabel={t("reviews.ratingSummary", { count: reviewSummary.count })}
+            averageRating={reviewSummary.averageRating}
+            viewAllLabel={t("reviews.viewAll")}
+            whatsappLabel={t("reviews.whatsappFastCta")}
+            whatsappHref={whatsappHref}
+            googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
+            googleReviewLabel={t("reviews.googleReviewCta")}
+            tone="muted"
+          />
+        ) : null}
       </div>
     </>
   );

@@ -7,6 +7,7 @@ export const reviewCoreSchema = z.object({
   rating: z.coerce.number().int().min(1).max(5),
   isActive: z.boolean().default(false),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
+  serviceId: z.string().cuid().optional().nullable(),
 });
 
 export const createReviewSchema = reviewCoreSchema;
@@ -22,6 +23,15 @@ export const reviewIdSchema = z.object({
 export const toggleReviewSchema = z.object({
   id: z.string().cuid(),
   isActive: z.boolean(),
+});
+
+export const approveReviewSchema = z.object({
+  id: z.string().cuid(),
+});
+
+export const rejectReviewSchema = z.object({
+  id: z.string().cuid(),
+  moderationNote: z.string().trim().min(5).max(500),
 });
 
 export const reorderReviewsSchema = z.object({

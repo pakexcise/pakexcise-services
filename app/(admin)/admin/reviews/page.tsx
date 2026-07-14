@@ -6,9 +6,11 @@ import {
   ReviewsPanel,
   type ReviewPanelLabels,
 } from "@/features/reviews/admin/components/reviews-panel";
+import { getGoogleReviewsSyncStatus } from "@/features/reviews/google/sync-google-reviews";
 import { getTranslations } from "@/lib/i18n/t";
 import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 import { adminReviewRepository } from "@/server/repositories/admin-review-repository";
+import { prisma } from "@/server/db/client";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.reviews");
@@ -19,9 +21,16 @@ export default async function AdminReviewsPage() {
   await enforcePermissionAccess("content:manage")();
   const t = await getTranslations("admin.reviews");
 
-  const [reviews, nextDisplayOrder] = await Promise.all([
+  const [reviews, nextDisplayOrder, services, syncStatus] = await Promise.all([
     adminReviewRepository.listAll(),
     adminReviewRepository.getNextDisplayOrder(),
+    prisma.service.findMany({
+      where: { isActive: true, deletedAt: null },
+      orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
+      select: { id: true, nameEn: true },
+      take: 200,
+    }),
+    getGoogleReviewsSyncStatus(),
   ]);
 
   const labels: ReviewPanelLabels = {
@@ -46,6 +55,25 @@ export default async function AdminReviewsPage() {
     moveDown: t("moveDown"),
     searchPlaceholder: t("searchPlaceholder"),
     allStatuses: t("allStatuses"),
+    statusPending: t("statusPending"),
+    statusApproved: t("statusApproved"),
+    statusRejected: t("statusRejected"),
+    approve: t("approve"),
+    reject: t("reject"),
+    rejectReason: t("rejectReason"),
+    rejectReasonRequired: t("rejectReasonRequired"),
+    source: t("source"),
+    sourceManual: t("sourceManual"),
+    sourceCustomer: t("sourceCustomer"),
+    sourceGoogle: t("sourceGoogle"),
+    service: t("service"),
+    trackingId: t("trackingId"),
+    syncNow: t("syncNow"),
+    syncing: t("syncing"),
+    syncSuccess: t("syncSuccess"),
+    syncFailed: t("syncFailed"),
+    lastSynced: t("lastSynced"),
+    neverSynced: t("neverSynced"),
     previous: t("previous"),
     next: t("next"),
     results: t("results"),
@@ -58,6 +86,8 @@ export default async function AdminReviewsPage() {
         reviews={reviews}
         nextDisplayOrder={nextDisplayOrder}
         labels={labels}
+        services={services}
+        lastSyncedAt={syncStatus.syncedAt}
       />
     </div>
   );

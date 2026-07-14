@@ -146,6 +146,24 @@ function buildEnglishContent(
         whatsappText: `PakExcise: Payment proof rejected for ${tracking}.${input.reason ? ` Reason: ${input.reason}.` : ""} Re-upload from dashboard.`,
         smsText: `PakExcise: Payment proof rejected for ${tracking}. Re-upload required.`,
       };
+    case "REVIEW_APPROVED":
+      return {
+        subject: `Your review was published — ${tracking}`,
+        title: "Review published",
+        body: `Thank you. Your feedback for ${service} (application ${tracking}) is now published on PakExcise.\n\n${disclaimer}`,
+        ctaLabel: "View application",
+        whatsappText: `PakExcise: Your review for ${tracking} is now published. Thank you.`,
+        smsText: `PakExcise: Review for ${tracking} published. Thank you.`,
+      };
+    case "REVIEW_REJECTED":
+      return {
+        subject: `Review not published — ${tracking}`,
+        title: "Review not published",
+        body: `Your feedback for ${service} (application ${tracking}) was not published.${input.reason ? ` Reason: ${input.reason}.` : ""}\n\n${disclaimer}`,
+        ctaLabel: "View application",
+        whatsappText: `PakExcise: Your review for ${tracking} was not published.${input.reason ? ` Reason: ${input.reason}.` : ""}`,
+        smsText: `PakExcise: Review for ${tracking} not published.`,
+      };
     case "STATUS_CHANGED":
     default: {
       const statusLabel = input.toStatus

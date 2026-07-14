@@ -67,6 +67,12 @@ export {
 } from "./admin-region-plate-format-repository";
 export { cityRepository, CityRepository } from "./city-repository";
 export { reviewRepository, ReviewRepository } from "./review-repository";
+export type { PublicReview } from "./review-repository";
+export {
+  adminReviewRepository,
+  AdminReviewRepository,
+} from "./admin-review-repository";
+export type { AdminReviewItem } from "./admin-review-repository";
 export {
   getActiveSocialLinks,
   socialLinkRepository,
