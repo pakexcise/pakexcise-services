@@ -64,10 +64,6 @@ export type SettingsPanelLabels = {
     localBusinessSection: string;
   };
   tracking: {
-    ga4MeasurementId: string;
-    gtmId: string;
-    metaPixelId: string;
-    tiktokPixelId: string;
     consentMode: string;
     requireConsentBeforeScripts: string;
     showConsentBanner: string;

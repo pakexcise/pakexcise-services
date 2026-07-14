@@ -860,69 +860,6 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
           <p className="text-sm text-muted-foreground">{labels.tracking.publicIdsNote}</p>
           <p className="text-sm text-muted-foreground">{labels.secretsNote}</p>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="ga4MeasurementId">
-                {labels.tracking.ga4MeasurementId}
-              </Label>
-              <Input
-                id="ga4MeasurementId"
-                value={values.tracking.ga4MeasurementId}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    tracking: {
-                      ...current.tracking,
-                      ga4MeasurementId: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="gtmId">{labels.tracking.gtmId}</Label>
-              <Input
-                id="gtmId"
-                value={values.tracking.gtmId}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    tracking: { ...current.tracking, gtmId: event.target.value },
-                  }))
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="metaPixelId">{labels.tracking.metaPixelId}</Label>
-              <Input
-                id="metaPixelId"
-                value={values.tracking.metaPixelId}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    tracking: {
-                      ...current.tracking,
-                      metaPixelId: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="tiktokPixelId">{labels.tracking.tiktokPixelId}</Label>
-              <Input
-                id="tiktokPixelId"
-                value={values.tracking.tiktokPixelId}
-                onChange={(event) =>
-                  setValues((current) => ({
-                    ...current,
-                    tracking: {
-                      ...current.tracking,
-                      tiktokPixelId: event.target.value,
-                    },
-                  }))
-                }
-              />
-            </div>
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="consentMode">{labels.tracking.consentMode}</Label>
               <select

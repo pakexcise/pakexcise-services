@@ -2912,17 +2912,13 @@ const en = {
         "localBusinessPostalCode": "Postal code (JSON-LD)"
       },
       "tracking": {
-        "ga4MeasurementId": "GA4 measurement ID",
-        "gtmId": "Google Tag Manager ID",
-        "metaPixelId": "Meta Pixel ID",
-        "tiktokPixelId": "TikTok Pixel ID",
         "consentMode": "Analytics consent mode",
         "requireConsentBeforeScripts": "Require explicit consent before loading scripts",
         "showConsentBanner": "Show consent banner (UI placeholder)",
         "consentImplied": "Implied consent (deny via local storage)",
         "consentExplicit": "Explicit consent required",
         "consentDisabled": "Disabled (no third-party scripts)",
-        "publicIdsNote": "Public measurement IDs are stored in the database. Env vars are used only as fallback when a field is empty."
+        "publicIdsNote": "GA4, GTM, Meta Pixel, and TikTok Pixel IDs are configured in environment variables only (not editable here). They load on public marketing pages in production."
       },
       "features": {
         "agentModuleEnabled": "Agent module enabled",

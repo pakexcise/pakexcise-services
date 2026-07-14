@@ -102,10 +102,6 @@ async function buildLabels(
       localBusinessSection: t("settingsPanel.seo.localBusinessSection"),
     },
     tracking: {
-      ga4MeasurementId: t("settingsPanel.tracking.ga4MeasurementId"),
-      gtmId: t("settingsPanel.tracking.gtmId"),
-      metaPixelId: t("settingsPanel.tracking.metaPixelId"),
-      tiktokPixelId: t("settingsPanel.tracking.tiktokPixelId"),
       consentMode: t("settingsPanel.tracking.consentMode"),
       requireConsentBeforeScripts: t("settingsPanel.tracking.requireConsentBeforeScripts"),
       showConsentBanner: t("settingsPanel.tracking.showConsentBanner"),
