@@ -57,6 +57,7 @@ const en = {
     "services": "Services",
     "regions": "Regions",
     "blog": "Blog",
+    "reviews": "Reviews",
     "faqs": "FAQs",
     "track": "Track",
     "about": "About",
@@ -1333,7 +1334,22 @@ const en = {
       }
     },
     "reviews": {
-      "empty": "Reviews will appear here once published by admin."
+      "empty": "Reviews will appear here once genuine customer feedback is published.",
+      "eyebrow": "Customer feedback",
+      "sectionTitle": "Experiences shared by our customers",
+      "feedbackLabel": "Customer feedback",
+      "ratingSummary": "{count} published reviews",
+      "privateTitle": "Private facilitation",
+      "privateDescription": "Independent support without government affiliation.",
+      "transparentTitle": "Transparent process",
+      "transparentDescription": "Clear steps, status updates, and invoice-based fees.",
+      "privacyTitle": "Customer privacy",
+      "privacyDescription": "Names may be abbreviated to protect customer identity.",
+      "disclaimerTitle": "About these reviews:",
+      "disclaimer": "Reviews reflect individual customer opinions about PakExcise private facilitation. They are published with customer consent and are not government endorsements or independently verified ratings.",
+      "homeTitle": "What customers say",
+      "homeDescription": "Customer experiences with our private vehicle and excise facilitation support.",
+      "viewAll": "Read all reviews"
     },
     "faqs": {
       "title": "Frequently asked questions",
@@ -1471,6 +1487,7 @@ const en = {
       "faqs": "FAQs",
       "faqCategories": "FAQ categories",
       "social": "Social links",
+      "reviews": "Customer reviews",
       "paymentMethods": "Payment methods",
       "agents": "Agents",
       "agentPayouts": "Agent payouts",
@@ -2842,6 +2859,34 @@ const en = {
       "social": {
         "title": "Social links",
         "description": "Manage Facebook, Instagram, TikTok, YouTube, LinkedIn, X/Twitter, WhatsApp Chat, and WhatsApp Channel links shown on the public site."
+      },
+      "reviews": {
+        "title": "Customer reviews",
+        "description": "Create, edit, publish, reorder, and remove customer feedback shown on the website.",
+        "authenticityNotice": "Publish only genuine customer feedback with permission. Use abbreviated names when appropriate, never include private application details, and do not describe admin-entered reviews as independently verified.",
+        "existing": "Existing reviews",
+        "empty": "No reviews have been added yet.",
+        "add": "Add review",
+        "edit": "Edit review",
+        "author": "Customer display name",
+        "context": "Service or customer context",
+        "content": "Review text",
+        "rating": "Rating (1–5)",
+        "displayOrder": "Display order",
+        "active": "Published",
+        "inactive": "Draft",
+        "save": "Save review",
+        "clear": "Clear form",
+        "delete": "Delete",
+        "confirmDelete": "Permanently delete this review?",
+        "saveFailed": "Could not save the review.",
+        "moveUp": "Move review up",
+        "moveDown": "Move review down",
+        "searchPlaceholder": "Search customer, context, or review text",
+        "allStatuses": "All statuses",
+        "previous": "Previous",
+        "next": "Next",
+        "results": "{count} reviews"
       }
     },
     "settingsPanel": {

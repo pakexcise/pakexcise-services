@@ -688,9 +688,12 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     });
 
     if (existing) {
-      await prisma.review.update({ where: { id: existing.id }, data: review });
+      await prisma.review.update({
+        where: { id: existing.id },
+        data: { ...review, isActive: false },
+      });
     } else {
-      await prisma.review.create({ data: { ...review, isActive: true } });
+      await prisma.review.create({ data: { ...review, isActive: false } });
     }
   }
 

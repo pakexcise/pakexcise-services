@@ -159,6 +159,13 @@ export const adminNavItems: AdminNavItem[] = [
     permission: "social:manage",
   },
   {
+    href: "/admin/reviews",
+    labelKey: "reviews",
+    icon: "star",
+    section: "content",
+    permission: "content:manage",
+  },
+  {
     href: "/admin/blog",
     labelKey: "blog",
     icon: "newspaper",

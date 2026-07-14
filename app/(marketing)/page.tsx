@@ -1,4 +1,3 @@
-import { copy, createT } from "@/messages";
 import type { Metadata } from "next";
 import { getTranslations } from "@/lib/i18n/t";
 import { notFound } from "next/navigation";
@@ -14,6 +13,7 @@ import { HomeHeroSection } from "@/components/marketing/home-hero-section";
 import { HomeHowItWorksSection } from "@/components/marketing/home-how-it-works-section";
 import { HomePopularServicesSection } from "@/components/marketing/home-popular-services-section";
 import { HomeRegionsSection } from "@/components/marketing/home-regions-section";
+import { HomeReviewsSection } from "@/components/marketing/home-reviews-section";
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { HomeServicesSection } from "@/components/marketing/home-services-section";
 import { HomeVehicleVisualSection } from "@/components/marketing/home-vehicle-visual-section";
@@ -52,6 +52,7 @@ import {
   faqRepository,
   getFeaturedServices,
   regionRepository,
+  reviewRepository,
   seoMetaRepository} from "@/server/repositories";
 import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
 
@@ -123,6 +124,7 @@ const defaults = defaultHomePageSettings();
     faqs,
     documents,
     blogPosts,
+    reviews,
     tCommon,
     tMarketing] = await Promise.all([
     safeLoad("business", () => getBusinessSettings(), defaultBusinessSettings()),
@@ -154,6 +156,7 @@ const defaults = defaultHomePageSettings();
       () => blogPostRepository.listPublished(settings.limits.blogCount),
       [],
     ),
+    safeLoad("reviews", () => reviewRepository.listPublic(3), []),
     getTranslations("common"),
     getTranslations("marketing")]);
 
@@ -418,6 +421,17 @@ const defaults = defaultHomePageSettings();
         processCards={content.hero.processCards ?? []}
         processTitle={tMarketing("services.processTitle")}
       />
+
+      {featureFlags.reviewsEnabled ? (
+        <HomeReviewsSection
+          reviews={reviews}
+          title={tMarketing("reviews.homeTitle")}
+          description={tMarketing("reviews.homeDescription")}
+          feedbackLabel={tMarketing("reviews.feedbackLabel")}
+          countLabel={tMarketing("reviews.ratingSummary", { count: reviews.length })}
+          viewAllLabel={tMarketing("reviews.viewAll")}
+        />
+      ) : null}
 
       {orderedSections.map((section, index) =>
         renderSection(section.key, getSectionTone(index)),

@@ -22,6 +22,7 @@ import {
   Settings,
   Share2,
   Shield,
+  Star,
   Tags,
   UserCircle,
   UserCog,
@@ -57,6 +58,7 @@ const iconMap: Record<string, LucideIcon> = {
   newspaper: Newspaper,
   "book-open": BookOpen,
   shield: Shield,
+  star: Star,
   settings: Settings,
   "user-cog": UserCog,
 };
