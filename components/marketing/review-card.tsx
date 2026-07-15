@@ -1,6 +1,7 @@
-import { Quote, Star } from "lucide-react";
+import { Quote } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { RatingStars } from "@/components/shared/rating-stars";
 
 type ReviewCardProps = {
   review: {
@@ -38,18 +39,7 @@ export function ReviewCard({ review, feedbackLabel }: ReviewCardProps) {
             {feedbackLabel}
           </span>
         </div>
-        <div
-          className="flex items-center gap-1 text-secondary"
-          aria-label={`${rating} out of 5 stars`}
-        >
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Star
-              key={index}
-              className={`size-4 ${index < rating ? "fill-current" : "opacity-25"}`}
-              aria-hidden="true"
-            />
-          ))}
-        </div>
+        <RatingStars rating={rating} showValue />
       </CardHeader>
       <CardContent className="flex h-[calc(100%-8rem)] flex-col justify-between gap-6">
         <blockquote className="text-[15px] leading-7 text-foreground/80">

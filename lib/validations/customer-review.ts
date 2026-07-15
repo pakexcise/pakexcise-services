@@ -5,7 +5,11 @@ export const submitCustomerReviewSchema = z.object({
   serviceId: z.string().cuid(),
   authorNameEn: z.string().trim().min(2).max(100),
   contentEn: z.string().trim().min(20).max(1200),
-  rating: z.coerce.number().int().min(1).max(5),
+  rating: z.coerce
+    .number()
+    .int("Choose a whole-star rating from 1 to 5.")
+    .min(1)
+    .max(5),
   turnstileToken: z.string().min(1).max(2048),
   website: z.string().max(0),
   formStartedAt: z.coerce.number().int().positive(),

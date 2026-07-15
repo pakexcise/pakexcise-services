@@ -33,7 +33,13 @@ export async function submitCustomerReviewAction(
     return errorResult("Review submission is temporarily unavailable.");
   }
 
-  const rateLimit = await checkRateLimit(reviewSubmissionRateLimit, identifier);
+  const rateLimit = await checkRateLimit(
+    reviewSubmissionRateLimit,
+    identifier,
+  ).catch(() => null);
+  if (!rateLimit) {
+    return errorResult("Review verification is temporarily unavailable. Please try again.");
+  }
 
   if (!rateLimit.success) {
     return errorResult("Too many review attempts. Please try again later.");

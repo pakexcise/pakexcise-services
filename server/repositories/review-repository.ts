@@ -2,7 +2,10 @@ import "server-only";
 
 import type { Prisma } from "@prisma/client";
 
-import { Repository } from "@/server/repositories/base/repository";
+import {
+  Repository,
+  type PaginatedResult,
+} from "@/server/repositories/base/repository";
 
 export const publicReviewSelect = {
   id: true,
@@ -41,6 +44,24 @@ export class ReviewRepository extends Repository {
           select: publicReviewSelect,
         }),
       [],
+    );
+  }
+
+  async listPublicPaginated(
+    page = 1,
+    pageSize = 6,
+  ): Promise<PaginatedResult<PublicReview>> {
+    return this.paginateQuery(
+      ({ skip, take }) =>
+        this.db.review.findMany({
+          where: approvedPublicWhere,
+          orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+          skip,
+          take,
+          select: publicReviewSelect,
+        }),
+      () => this.db.review.count({ where: approvedPublicWhere }),
+      { page, pageSize },
     );
   }
 

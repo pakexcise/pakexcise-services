@@ -31,6 +31,7 @@ type TurnstileApi = {
     options: {
       sitekey: string;
       theme: "auto";
+      action: string;
       callback: (token: string) => void;
       "expired-callback": () => void;
       "error-callback": () => void;
@@ -60,6 +61,7 @@ export function CustomerReviewForm({
     name: string;
     content: string;
     rating: string;
+    ratingOption: string;
     consent: string;
     antiSpamUnavailable: string;
     submit: string;
@@ -105,6 +107,7 @@ export function CustomerReviewForm({
     turnstileWidgetIdRef.current = api.render(turnstileContainerRef.current, {
       sitekey: turnstileSiteKey,
       theme: "auto",
+      action: "review_submit",
       callback: setTurnstileToken,
       "expired-callback": () => setTurnstileToken(""),
       "error-callback": () => setTurnstileToken(""),
@@ -146,7 +149,8 @@ export function CustomerReviewForm({
         customerConsent: consent ? true : false,
       });
       if (!result.success) {
-        setError(result.error);
+        const fieldError = Object.values(result.fieldErrors ?? {}).flat()[0];
+        setError(fieldError ?? result.error);
         resetTurnstile();
         return;
       }
@@ -240,17 +244,31 @@ export function CustomerReviewForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="review-rating">{labels.rating}</Label>
-          <div className="flex items-center gap-2">
-            <Input
-              id="review-rating"
-              type="number"
-              min={1}
-              max={5}
-              value={rating}
-              onChange={(event) => setRating(Number(event.target.value))}
-            />
-            <Star className="size-4 fill-secondary text-secondary" aria-hidden="true" />
+          <Label>{labels.rating}</Label>
+          <div
+            className="flex items-center gap-1"
+            role="radiogroup"
+            aria-label={labels.rating}
+          >
+            {Array.from({ length: 5 }, (_, index) => index + 1).map((value) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={rating === value}
+                aria-label={labels.ratingOption.replace("{rating}", String(value))}
+                className="rounded-md p-1 text-secondary transition hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                onClick={() => setRating(value)}
+              >
+                <Star
+                  className={`size-7 ${value <= rating ? "fill-current" : "opacity-30"}`}
+                  aria-hidden="true"
+                />
+              </button>
+            ))}
+            <span className="ml-2 text-sm font-medium text-muted-foreground">
+              {rating}/5
+            </span>
           </div>
         </div>
       </div>

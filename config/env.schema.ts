@@ -23,6 +23,10 @@ export const serverEnvSchema = z
     R2_ACCESS_KEY_ID: z.string().min(1),
     R2_SECRET_ACCESS_KEY: z.string().min(1),
     R2_BUCKET_NAME: z.string().min(1),
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1).optional(),
+    TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
+    UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+    UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
   })
   .superRefine((env, ctx) => {
     const appUrl = env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
@@ -83,6 +87,21 @@ export const serverEnvSchema = z
     }
 
     if (env.APP_ENV === "production" || env.APP_ENV === "staging") {
+      for (const key of [
+        "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
+        "TURNSTILE_SECRET_KEY",
+        "UPSTASH_REDIS_REST_URL",
+        "UPSTASH_REDIS_REST_TOKEN",
+      ] as const) {
+        if (!env[key]?.trim()) {
+          ctx.addIssue({
+            code: "custom",
+            path: [key],
+            message: `${key} is required for protected public review submission.`,
+          });
+        }
+      }
+
       const sesAccessKeyId =
         process.env.AWS_SES_ACCESS_KEY_ID?.trim() ||
         process.env.AWS_ACCESS_KEY_ID?.trim();

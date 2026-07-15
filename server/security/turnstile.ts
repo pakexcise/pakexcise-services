@@ -3,6 +3,7 @@ import "server-only";
 type TurnstileResponse = {
   success: boolean;
   hostname?: string;
+  action?: string;
   "error-codes"?: string[];
 };
 
@@ -36,6 +37,7 @@ export async function verifyTurnstileToken(
         method: "POST",
         body,
         cache: "no-store",
+        signal: AbortSignal.timeout(8_000),
       },
     );
 
@@ -44,7 +46,16 @@ export async function verifyTurnstileToken(
     }
 
     const result = (await response.json()) as TurnstileResponse;
-    return result.success === true;
+    const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    const expectedHostname = configuredAppUrl
+      ? new URL(configuredAppUrl).hostname
+      : null;
+
+    return (
+      result.success === true &&
+      result.action === "review_submit" &&
+      (!expectedHostname || result.hostname === expectedHostname)
+    );
   } catch {
     return false;
   }

@@ -1,10 +1,16 @@
 import { z } from "zod";
 
+const reviewRatingSchema = z.coerce
+  .number()
+  .min(1)
+  .max(5)
+  .transform((value) => Math.round(value * 10) / 10);
+
 export const reviewCoreSchema = z.object({
   authorNameEn: z.string().trim().min(2).max(100),
   authorRoleEn: z.string().trim().max(120).optional().default(""),
   contentEn: z.string().trim().min(20).max(1200),
-  rating: z.coerce.number().int().min(1).max(5),
+  rating: reviewRatingSchema,
   isActive: z.boolean().default(false),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
   serviceId: z.string().cuid().optional().nullable(),

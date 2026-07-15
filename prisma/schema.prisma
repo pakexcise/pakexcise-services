@@ -503,7 +503,7 @@ model Review {
   authorNameEn    String
   authorRoleEn    String?
   contentEn       String       @db.Text
-  rating          Int          @default(5)
+  rating          Float        @default(5)
   status          ReviewStatus @default(PENDING)
   source          ReviewSource @default(MANUAL)
   isActive        Boolean      @default(false)

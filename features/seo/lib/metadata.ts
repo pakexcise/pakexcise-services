@@ -490,7 +490,10 @@ export function buildReviewsJsonLd(input: {
         return null;
       }
 
-      const ratingValue = Math.min(5, Math.max(1, Math.round(review.rating)));
+      const ratingValue = Math.min(
+        5,
+        Math.max(1, Math.round(review.rating * 10) / 10),
+      );
 
       return {
         "@context": "https://schema.org",

@@ -5,7 +5,6 @@ import {
   ArrowUp,
   Check,
   Pencil,
-  Star,
   Trash2,
   X,
 } from "lucide-react";
@@ -16,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RatingStars } from "@/components/shared/rating-stars";
 import {
   approveReviewAction,
   createReviewAction,
@@ -372,10 +372,7 @@ export function ReviewsPanel({
                     ) : (
                       <Badge variant="secondary">{labels.inactive}</Badge>
                     )}
-                    <span className="inline-flex items-center gap-1 text-sm text-secondary">
-                      {review.rating}
-                      <Star className="size-3.5 fill-current" aria-hidden="true" />
-                    </span>
+                    <RatingStars rating={review.rating} showValue />
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {[review.service?.nameEn, review.application?.trackingId]
@@ -502,7 +499,19 @@ export function ReviewsPanel({
             />
           </Field>
           <Field label={labels.rating}>
-            <Input type="number" min={1} max={5} value={draft.rating} onChange={(event) => updateDraft("rating", Number(event.target.value))} />
+            <div className="space-y-2">
+              <Input
+                type="number"
+                min={1}
+                max={5}
+                step="0.1"
+                value={draft.rating}
+                onChange={(event) =>
+                  updateDraft("rating", Number(event.target.value))
+                }
+              />
+              <RatingStars rating={draft.rating} showValue />
+            </div>
           </Field>
           <Field label={labels.displayOrder}>
             <Input type="number" min={0} max={9999} value={draft.displayOrder} onChange={(event) => updateDraft("displayOrder", Number(event.target.value))} />

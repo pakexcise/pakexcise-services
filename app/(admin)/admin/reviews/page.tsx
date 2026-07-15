@@ -10,7 +10,7 @@ import { getGoogleReviewsSyncStatus } from "@/features/reviews/google/sync-googl
 import { getTranslations } from "@/lib/i18n/t";
 import { enforcePermissionAccess } from "@/server/permissions/permission-access";
 import { adminReviewRepository } from "@/server/repositories/admin-review-repository";
-import { prisma } from "@/server/db/client";
+import { serviceRepository } from "@/server/repositories/service-repository";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.reviews");
@@ -24,12 +24,7 @@ export default async function AdminReviewsPage() {
   const [reviews, nextDisplayOrder, services, syncStatus] = await Promise.all([
     adminReviewRepository.listAll(),
     adminReviewRepository.getNextDisplayOrder(),
-    prisma.service.findMany({
-      where: { isActive: true, deletedAt: null },
-      orderBy: [{ displayOrder: "asc" }, { nameEn: "asc" }],
-      select: { id: true, nameEn: true },
-      take: 200,
-    }),
+    serviceRepository.listPublicReviewOptions(),
     getGoogleReviewsSyncStatus(),
   ]);
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Eye, LockKeyhole, MessageCircle, ShieldCheck, Star, Users } from "lucide-react";
+import { Eye, LockKeyhole, MessageCircle, ShieldCheck, Users } from "lucide-react";
 
 import { CTASection } from "@/components/marketing/cta-section";
 import { CustomerReviewForm } from "@/components/marketing/customer-review-form";
@@ -9,6 +9,8 @@ import { ProseContent } from "@/components/marketing/prose-content";
 import { ReviewCard } from "@/components/marketing/review-card";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
+import { RatingStars } from "@/components/shared/rating-stars";
+import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { buildBreadcrumbJsonLd, buildReviewsJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
 import { requireReviewsEnabled } from "@/features/settings/lib/feature-gates";
@@ -24,6 +26,24 @@ import {
   seoMetaRepository,
   serviceRepository,
 } from "@/server/repositories";
+
+type ReviewsPageProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+function removeDuplicatePrivateDisclaimer(content: string): string {
+  return content
+    .split(/\n{2,}/)
+    .filter(
+      (paragraph) =>
+        !(
+          paragraph.includes("PakExcise.com is a private facilitation service") &&
+          paragraph.includes("Government of Pakistan body")
+        ),
+    )
+    .join("\n\n")
+    .trim();
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = "en";
@@ -41,7 +61,9 @@ export async function generateMetadata(): Promise<Metadata> {
         en: content?.titleEn ?? "Customer Reviews",
       },
       description: {
-        en: content?.excerptEn ?? content?.contentEn?.slice(0, 160) ?? "",
+        en:
+          content?.excerptEn ??
+          removeDuplicatePrivateDisclaimer(content?.contentEn ?? "").slice(0, 160),
       },
       h1: {
         en: content?.titleEn ?? "Customer Reviews",
@@ -50,13 +72,15 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function ReviewsPage() {
+export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
   await requireReviewsEnabled();
+  const params = await searchParams;
+  const requestedPage = Math.max(1, Number(params.page ?? "1") || 1);
 
-  const [content, reviews, summary, business, tMarketing, tCommon, currentUser, services] =
+  const [content, reviewsResult, summary, business, tMarketing, tCommon, currentUser, services] =
     await Promise.all([
       getPageContent("reviews"),
-      reviewRepository.listPublic(),
+      reviewRepository.listPublicPaginated(requestedPage, 6),
       reviewRepository.getPublicSummary(),
       getBusinessSettings(),
       getTranslations("marketing"),
@@ -64,6 +88,7 @@ export default async function ReviewsPage() {
       getCurrentUser(),
       serviceRepository.listPublicReviewOptions(),
     ]);
+  const reviews = reviewsResult.items;
 
   const eligibleApplications =
     currentUser?.role === "CUSTOMER"
@@ -71,7 +96,7 @@ export default async function ReviewsPage() {
       : [];
 
   const title = content?.titleEn ?? "Customer Reviews";
-  const intro = content?.contentEn ?? "";
+  const intro = removeDuplicatePrivateDisclaimer(content?.contentEn ?? "");
   const whatsappPhone = resolveWhatsappLinkNumber(business);
   const whatsappHref = buildWhatsAppUrl(
     whatsappPhone,
@@ -114,11 +139,10 @@ export default async function ReviewsPage() {
               <p className="text-5xl font-bold tracking-tight text-primary">
                 {summary.averageRating.toFixed(1)}
               </p>
-              <div className="mt-3 flex justify-center gap-1 text-secondary">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Star key={index} className="size-5 fill-current" aria-hidden="true" />
-                ))}
-              </div>
+              <RatingStars
+                rating={summary.averageRating}
+                className="mt-3 justify-center [&_svg]:size-5"
+              />
               <p className="mt-2 text-sm font-medium">
                 {tMarketing("reviews.ratingSummary", { count: summary.count })}
               </p>
@@ -207,6 +231,11 @@ export default async function ReviewsPage() {
                 />
               ))}
             </div>
+            <PaginationControls
+              page={reviewsResult.page}
+              totalPages={reviewsResult.totalPages}
+              basePath="/reviews"
+            />
           </section>
         ) : (
           <p className="text-sm text-muted-foreground">{tMarketing("reviews.empty")}</p>
@@ -229,6 +258,7 @@ export default async function ReviewsPage() {
             name: tMarketing("reviews.formName"),
             content: tMarketing("reviews.formContent"),
             rating: tMarketing("reviews.formRating"),
+            ratingOption: tMarketing("reviews.formRatingOption"),
             consent: tMarketing("reviews.formConsent"),
             antiSpamUnavailable: tMarketing("reviews.formAntiSpamUnavailable"),
             submit: tMarketing("reviews.formSubmit"),
