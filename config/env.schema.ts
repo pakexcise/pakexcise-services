@@ -102,6 +102,27 @@ export const serverEnvSchema = z
         }
       }
 
+      const brevoApiKey = process.env.BREVO_API_KEY?.trim();
+      const brevoFromEmail = process.env.BREVO_FROM_EMAIL?.trim();
+
+      if (!brevoApiKey) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["BREVO_API_KEY"],
+          message:
+            "BREVO_API_KEY is required for transactional email (primary provider).",
+        });
+      }
+
+      if (brevoApiKey && !brevoFromEmail) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["BREVO_FROM_EMAIL"],
+          message:
+            "BREVO_FROM_EMAIL is required when BREVO_API_KEY is set (verified sender in Brevo).",
+        });
+      }
+
       const sesAccessKeyId =
         process.env.AWS_SES_ACCESS_KEY_ID?.trim() ||
         process.env.AWS_ACCESS_KEY_ID?.trim();
@@ -114,7 +135,7 @@ export const serverEnvSchema = z
           code: "custom",
           path: ["AWS_ACCESS_KEY_ID"],
           message:
-            "AWS_ACCESS_KEY_ID (or AWS_SES_ACCESS_KEY_ID) is required for transactional email (AWS SES).",
+            "AWS_ACCESS_KEY_ID (or AWS_SES_ACCESS_KEY_ID) is required for transactional email fallback (AWS SES).",
         });
       }
 
@@ -123,7 +144,7 @@ export const serverEnvSchema = z
           code: "custom",
           path: ["AWS_SECRET_ACCESS_KEY"],
           message:
-            "AWS_SECRET_ACCESS_KEY (or AWS_SES_SECRET_ACCESS_KEY) is required for transactional email (AWS SES).",
+            "AWS_SECRET_ACCESS_KEY (or AWS_SES_SECRET_ACCESS_KEY) is required for transactional email fallback (AWS SES).",
         });
       }
 
@@ -132,7 +153,7 @@ export const serverEnvSchema = z
           code: "custom",
           path: ["RESEND_API_KEY"],
           message:
-            "Remove RESEND_API_KEY. PakExcise uses AWS SES only (see .env.example).",
+            "Remove RESEND_API_KEY. PakExcise uses Brevo (primary) and AWS SES (fallback).",
         });
       }
     }

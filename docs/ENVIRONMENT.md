@@ -59,16 +59,29 @@ Validation: `config/env.schema.ts` via `pnpm env:validate` / server boot paths.
 
 Without Redis, rate limiting behavior may degrade — **Needs verification** of fail-open vs fail-closed.
 
-## Email (AWS SES)
+## Email (Brevo + AWS SES fallback)
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `AWS_ACCESS_KEY_ID` or `AWS_SES_ACCESS_KEY_ID` | **Yes** on staging/production (schema) | SES send |
+| `BREVO_API_KEY` | **Yes** on staging/production | Primary transactional email (Brevo API) |
+| `BREVO_FROM_EMAIL` | **Yes** when Brevo is used | Verified sender in Brevo |
+| `BREVO_FROM_NAME` | Optional | From display name (default `PakExcise.com`) |
+| `BREVO_REPLY_TO_EMAIL` | Optional | Reply-to (default `info@pakexcise.com`) |
+| `AWS_ACCESS_KEY_ID` or `AWS_SES_ACCESS_KEY_ID` | **Yes** on staging/production | SES fallback when Brevo fails or quota is exceeded |
 | `AWS_SECRET_ACCESS_KEY` or `AWS_SES_SECRET_ACCESS_KEY` | **Yes** staging/production | |
 | `AWS_SES_REGION` | Recommended | Default `us-east-1` in example |
-| `SES_FROM_EMAIL` | Recommended | From identity |
-| `SES_REPLY_TO_EMAIL` | Optional | Reply-to |
+| `SES_FROM_EMAIL` | Recommended | SES from identity |
+| `SES_REPLY_TO_EMAIL` | Optional | SES reply-to |
 | `SES_SANDBOX_FORWARD_TO` | Staging sandbox only | Forward OTP while SES sandbox |
+
+Delivery order: **Brevo first** → on timeout, API outage, rate limit, or credit/quota errors → **AWS SES**.
+
+Verify locally or on VPS:
+
+```bash
+pnpm email:verify-brevo you@example.com
+pnpm email:verify-ses you@example.com
+```
 
 `RESEND_API_KEY` must **not** be set (schema forbids).
 
@@ -157,7 +170,7 @@ Loaded only when `APP_ENV=production` (`lib/analytics/production-tracking.ts`) a
 |---------|-------------|---------|------------|
 | `APP_ENV` | `development` | `staging` | `production` |
 | Indexing / GA4/GTM | Off | Off (no search indexing helper) | On when IDs set |
-| SES | Optional locally | Required by schema | Required |
+| Email (Brevo + SES) | Optional locally | Brevo + SES required by schema | Brevo + SES required |
 | URLs | localhost | staging.pakexcise.com | pakexcise.com |
 | Debug OTP WhatsApp | May fallback to console | Prefer real Meta | Real Meta |
 

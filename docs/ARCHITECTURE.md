@@ -16,6 +16,7 @@ flowchart TB
   Neon[(Neon PostgreSQL)]
   R2[(Cloudflare R2)]
   Redis[(Upstash Redis)]
+  Brevo[Brevo]
   SES[AWS SES]
   WA[WhatsApp Cloud API]
 
@@ -27,6 +28,7 @@ flowchart TB
   Repos --> Prisma --> Neon
   API --> R2
   Actions --> Redis
+  Actions --> Brevo
   Actions --> SES
   Actions --> WA
 ```
@@ -118,7 +120,8 @@ sequenceDiagram
 |-------------|--------|--------------|
 | Cloudflare R2 | Private uploads, signed URLs | `server/r2/*`, `/api/upload/presign`, document/payment upload routes |
 | Upstash Redis | Rate limiting, queues hooks | `server/security/rate-limit.ts`, realtime valkey driver (optional) |
-| AWS SES | Transactional email | Notification delivery paths |
+| Brevo | Primary transactional email | `server/notifications/brevo/*`, `send-transactional-email.ts` |
+| AWS SES | Email fallback when Brevo fails or quota exceeded | `server/notifications/ses/*` |
 | WhatsApp Cloud API | OTP + notifications | Auth / notification modules |
 | Turnstile | Public form bot protection | Contact / guest forms — Needs verification of every form |
 | Sentry | Error monitoring | `sentry.*.config.ts`, Next webpack plugin |

@@ -40,6 +40,7 @@
     "db:studio": "node scripts/sync-env.mjs && prisma studio",
     "env:sync": "node scripts/sync-env.mjs",
     "env:validate": "node scripts/sync-env.mjs && tsx --env-file=.env scripts/validate-env.ts",
+    "email:verify-brevo": "node scripts/verify-brevo.mjs",
     "email:verify-ses": "node scripts/verify-ses.mjs",
     "postinstall": "prisma generate"
   },

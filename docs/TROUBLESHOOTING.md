@@ -40,7 +40,7 @@ pm2 logs pakexcise-staging --lines 80
 | Prisma P1001 connection | Check `DATABASE_URL`, Neon IP allow, SSL params |
 | `ENCRYPTION_KEY` invalid | Must be 32-byte base64 suitable for AES-256-GCM |
 | Google OAuth redirect mismatch | Console origins must include env URL |
-| SES email not sending | Verify domain/identity; check sandbox forward on staging |
+| SES email not sending | Check Brevo first (`pnpm email:verify-brevo`); fallback logs `[email:brevo] falling back to AWS SES`. Verify Brevo sender/domain; verify SES identity; check sandbox forward on staging |
 | WhatsApp OTP fails for test numbers | Meta test recipients; enable `WHATSAPP_DEV_FALLBACK_ON_ERROR` locally only |
 
 ## Build failures

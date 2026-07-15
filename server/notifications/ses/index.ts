@@ -9,4 +9,5 @@ export {
   sendTransactionalEmail,
   type SendEmailInput,
   type SendEmailResult,
-} from "@/server/notifications/ses/send-transactional-email";
+} from "@/server/notifications/send-transactional-email";
+export { deliverViaSes } from "@/server/notifications/ses/deliver-via-ses";
