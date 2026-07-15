@@ -247,7 +247,6 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
             id: service.id,
             nameEn: service.nameEn,
           }))}
-          defaultName={currentUser?.name?.trim() || ""}
           turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || ""}
           labels={{
             title: tMarketing("reviews.formTitle"),
@@ -258,6 +257,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
             name: tMarketing("reviews.formName"),
             content: tMarketing("reviews.formContent"),
             rating: tMarketing("reviews.formRating"),
+            ratingValue: tMarketing("reviews.formRatingValue"),
             ratingOption: tMarketing("reviews.formRatingOption"),
             consent: tMarketing("reviews.formConsent"),
             antiSpamUnavailable: tMarketing("reviews.formAntiSpamUnavailable"),

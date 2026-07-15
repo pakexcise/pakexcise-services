@@ -44,13 +44,11 @@ type TurnstileApi = {
 export function CustomerReviewForm({
   applications,
   services,
-  defaultName,
   turnstileSiteKey,
   labels,
 }: {
   applications: EligibleReviewApplication[];
   services: ReviewServiceOption[];
-  defaultName: string;
   turnstileSiteKey: string;
   labels: {
     title: string;
@@ -61,6 +59,7 @@ export function CustomerReviewForm({
     name: string;
     content: string;
     rating: string;
+    ratingValue: string;
     ratingOption: string;
     consent: string;
     antiSpamUnavailable: string;
@@ -73,7 +72,7 @@ export function CustomerReviewForm({
   const [isPending, startTransition] = useTransition();
   const [applicationId, setApplicationId] = useState("");
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
-  const [authorNameEn, setAuthorNameEn] = useState(defaultName);
+  const [authorNameEn, setAuthorNameEn] = useState("");
   const [contentEn, setContentEn] = useState("");
   const [rating, setRating] = useState(5);
   const [consent, setConsent] = useState(false);
@@ -155,6 +154,7 @@ export function CustomerReviewForm({
         return;
       }
       setSuccess(labels.success);
+      setAuthorNameEn("");
       setContentEn("");
       setConsent(false);
       setFormStartedAt(Date.now());
@@ -229,6 +229,8 @@ export function CustomerReviewForm({
             id="review-name"
             value={authorNameEn}
             onChange={(event) => setAuthorNameEn(event.target.value)}
+            required
+            aria-required="true"
             maxLength={100}
           />
         </div>
@@ -238,6 +240,8 @@ export function CustomerReviewForm({
             id="review-content"
             value={contentEn}
             onChange={(event) => setContentEn(event.target.value)}
+            required
+            aria-required="true"
             maxLength={1200}
             rows={5}
             className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -245,29 +249,65 @@ export function CustomerReviewForm({
         </div>
         <div className="space-y-2">
           <Label>{labels.rating}</Label>
-          <div
-            className="flex items-center gap-1"
-            role="radiogroup"
-            aria-label={labels.rating}
-          >
-            {Array.from({ length: 5 }, (_, index) => index + 1).map((value) => (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={rating === value}
-                aria-label={labels.ratingOption.replace("{rating}", String(value))}
-                className="rounded-md p-1 text-secondary transition hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                onClick={() => setRating(value)}
-              >
-                <Star
-                  className={`size-7 ${value <= rating ? "fill-current" : "opacity-30"}`}
-                  aria-hidden="true"
-                />
-              </button>
-            ))}
-            <span className="ml-2 text-sm font-medium text-muted-foreground">
-              {rating}/5
+          <div className="flex flex-wrap items-end gap-4">
+            <div
+              className="flex items-center gap-1"
+              role="radiogroup"
+              aria-label={labels.rating}
+            >
+              {Array.from({ length: 5 }, (_, index) => index + 1).map((value) => {
+                const fillPercent = Math.min(
+                  100,
+                  Math.max(0, (rating - (value - 1)) * 100),
+                );
+
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={rating === value}
+                    aria-label={labels.ratingOption.replace(
+                      "{rating}",
+                      String(value),
+                    )}
+                    className="relative rounded-md p-1 text-secondary transition hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => setRating(value)}
+                  >
+                    <span className="relative inline-flex">
+                      <Star className="size-7 opacity-30" aria-hidden="true" />
+                      <span
+                        className="absolute inset-y-0 left-0 overflow-hidden"
+                        style={{ width: `${fillPercent}%` }}
+                      >
+                        <Star className="size-7 fill-current" aria-hidden="true" />
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="w-28 space-y-1">
+              <Label htmlFor="review-rating-value" className="text-xs">
+                {labels.ratingValue}
+              </Label>
+              <Input
+                id="review-rating-value"
+                type="number"
+                min={1}
+                max={5}
+                step="0.1"
+                value={rating}
+                onChange={(event) => setRating(Number(event.target.value))}
+                onBlur={() =>
+                  setRating((value) =>
+                    Math.min(5, Math.max(1, Math.round(value * 10) / 10)),
+                  )
+                }
+              />
+            </div>
+            <span className="pb-2 text-sm font-medium text-muted-foreground">
+              {Number.isFinite(rating) ? rating.toFixed(1) : "0.0"}/5
             </span>
           </div>
         </div>
@@ -308,6 +348,11 @@ export function CustomerReviewForm({
           isPending ||
           !consent ||
           !serviceId ||
+          authorNameEn.trim().length < 2 ||
+          contentEn.trim().length < 20 ||
+          !Number.isFinite(rating) ||
+          rating < 1 ||
+          rating > 5 ||
           !turnstileSiteKey ||
           !turnstileToken
         }

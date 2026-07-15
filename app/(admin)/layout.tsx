@@ -20,6 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const EMPTY_BADGES = {
   unreadNotifications: 0,
   pendingApplications: 0,
+  pendingReviews: 0,
 } as const;
 
 const LOGIN_HREF = buildLoginRedirectUrl("/admin/dashboard") as Route;
@@ -89,7 +90,7 @@ export default async function AdminLayout({
       "effective-permissions",
     ),
     withTimeout(
-      getAdminNavBadgeCounts(user.id),
+      getAdminNavBadgeCounts(user.id, user.role),
       5000,
       { ...EMPTY_BADGES },
       "nav-badges",

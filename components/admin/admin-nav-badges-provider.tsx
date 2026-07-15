@@ -30,6 +30,9 @@ export function AdminNavBadgesProvider({
   const [pendingApplications, setPendingApplications] = useState(
     initialCounts.pendingApplications,
   );
+  const [pendingReviews, setPendingReviews] = useState(
+    initialCounts.pendingReviews,
+  );
 
   const refreshCounts = useCallback(async () => {
     try {
@@ -44,6 +47,7 @@ export function AdminNavBadgesProvider({
 
       const payload = (await response.json()) as AdminNavBadgeCounts;
       setPendingApplications(payload.pendingApplications);
+      setPendingReviews(payload.pendingReviews);
     } catch {
       // Badge counts are optional UX; ignore transient failures.
     }
@@ -68,12 +72,21 @@ export function AdminNavBadgesProvider({
     };
   }, [refreshCounts, refreshNotifications]);
 
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      void refreshCounts();
+    }, 30_000);
+
+    return () => window.clearInterval(interval);
+  }, [refreshCounts]);
+
   const counts = useMemo<AdminNavBadgeCounts>(
     () => ({
       unreadNotifications: unreadCount,
       pendingApplications,
+      pendingReviews,
     }),
-    [pendingApplications, unreadCount],
+    [pendingApplications, pendingReviews, unreadCount],
   );
 
   return (
@@ -90,6 +103,7 @@ export function useAdminNavBadges(): AdminNavBadgeCounts {
     return {
       unreadNotifications: 0,
       pendingApplications: 0,
+      pendingReviews: 0,
     };
   }
 

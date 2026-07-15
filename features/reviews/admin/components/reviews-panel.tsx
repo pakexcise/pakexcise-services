@@ -26,6 +26,7 @@ import {
   toggleReviewActiveAction,
   updateReviewAction,
 } from "@/features/reviews/admin/actions/review-actions";
+import { dispatchAdminBadgesRefresh } from "@/lib/admin/admin-badges-refresh";
 import type { AdminReviewItem } from "@/server/repositories/admin-review-repository";
 
 export type ReviewPanelLabels = {
@@ -189,6 +190,11 @@ export function ReviewsPanel({
     return labels.statusPending;
   }
 
+  function refreshReviewUi() {
+    dispatchAdminBadgesRefresh();
+    router.refresh();
+  }
+
   function save() {
     setError(null);
     setMessage(null);
@@ -205,7 +211,7 @@ export function ReviewsPanel({
         return;
       }
       setDraft(emptyDraft(nextDisplayOrder + (draft.id ? 0 : 1)));
-      router.refresh();
+      refreshReviewUi();
     });
   }
 
@@ -217,7 +223,7 @@ export function ReviewsPanel({
         setError(result.error);
         return;
       }
-      router.refresh();
+      refreshReviewUi();
     });
   }
 
@@ -228,7 +234,7 @@ export function ReviewsPanel({
         setError(result.error);
         return;
       }
-      router.refresh();
+      refreshReviewUi();
     });
   }
 
@@ -248,7 +254,7 @@ export function ReviewsPanel({
       }
       setRejectingId(null);
       setRejectReason("");
-      router.refresh();
+      refreshReviewUi();
     });
   }
 
@@ -258,8 +264,11 @@ export function ReviewsPanel({
         id: review.id,
         isActive: !review.isActive,
       });
-      if (!result.success) setError(result.error);
-      router.refresh();
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      refreshReviewUi();
     });
   }
 
@@ -274,8 +283,11 @@ export function ReviewsPanel({
           { id: target.id, displayOrder: review.displayOrder },
         ],
       });
-      if (!result.success) setError(result.error);
-      router.refresh();
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      refreshReviewUi();
     });
   }
 
@@ -291,7 +303,7 @@ export function ReviewsPanel({
       setMessage(
         `${labels.syncSuccess} (+${result.data.imported} / ~${result.data.updated})`,
       );
-      router.refresh();
+      refreshReviewUi();
     });
   }
 

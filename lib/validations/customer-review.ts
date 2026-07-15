@@ -7,9 +7,9 @@ export const submitCustomerReviewSchema = z.object({
   contentEn: z.string().trim().min(20).max(1200),
   rating: z.coerce
     .number()
-    .int("Choose a whole-star rating from 1 to 5.")
-    .min(1)
-    .max(5),
+    .min(1, "Choose a rating from 1.0 to 5.0.")
+    .max(5, "Choose a rating from 1.0 to 5.0.")
+    .transform((value) => Math.round(value * 10) / 10),
   turnstileToken: z.string().min(1).max(2048),
   website: z.string().max(0),
   formStartedAt: z.coerce.number().int().positive(),

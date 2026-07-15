@@ -21,7 +21,7 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const counts = await getAdminNavBadgeCounts(user.id);
+  const counts = await getAdminNavBadgeCounts(user.id, user.role);
 
   return NextResponse.json(counts);
 }

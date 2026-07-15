@@ -2,8 +2,6 @@
 
 import { copy, createT } from "@/messages";
 
-import { useTranslations } from "@/lib/i18n/t";
-
 import { AdminNavIcon } from "@/components/admin/admin-nav-icons";
 import { useAdminNavBadges } from "@/components/admin/admin-nav-badges-provider";
 import {
@@ -46,6 +44,10 @@ function resolveBadgeCount(
 
   if (href === "/admin/applications") {
     return counts.pendingApplications;
+  }
+
+  if (href === "/admin/reviews") {
+    return counts.pendingReviews;
   }
 
   return 0;
