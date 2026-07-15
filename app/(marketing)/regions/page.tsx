@@ -2,10 +2,25 @@ import type { Metadata } from "next";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProvinceCard } from "@/components/marketing/province-card";
+import { PublicReviewsSection } from "@/components/marketing/public-reviews-section";
 import { buildBreadcrumbJsonLd } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import {
+  getBusinessSettings,
+  getFeatureFlagSettings,
+} from "@/features/settings/lib/public-settings-cache";
+import {
+  resolveWhatsappDefaultMessage,
+  resolveWhatsappLinkNumber,
+} from "@/features/settings/lib/resolve-public-contact";
+import { getTranslations } from "@/lib/i18n/t";
 import { absoluteUrl } from "@/lib/utils";
-import { regionRepository, seoMetaRepository } from "@/server/repositories";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
+import {
+  regionRepository,
+  reviewRepository,
+  seoMetaRepository,
+} from "@/server/repositories";
 
 export const revalidate = 3600;
 
@@ -28,8 +43,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RegionsPage() {
   const locale = "en";
-const seo = await seoMetaRepository.findByPageKey("regions");
-  const regions = await regionRepository.listPublic();
+  const [seo, regions, reviews, reviewSummary, business, featureFlags, t] =
+    await Promise.all([
+      seoMetaRepository.findByPageKey("regions"),
+      regionRepository.listPublic(),
+      reviewRepository.listPublic(3),
+      reviewRepository.getPublicSummary(),
+      getBusinessSettings(),
+      getFeatureFlagSettings(),
+      getTranslations("marketing"),
+    ]);
+  const whatsappHref = buildWhatsAppUrl(
+    resolveWhatsappLinkNumber(business),
+    resolveWhatsappDefaultMessage(business),
+  );
 
   const title = seo?.h1En ?? "Regions";
   const description = seo?.metaDescriptionEn ?? "Explore excise facilitation services by region across Pakistan.";
@@ -63,6 +90,24 @@ const seo = await seoMetaRepository.findByPageKey("regions");
             ))}
           </div>
         )}
+        {featureFlags.reviewsEnabled ? (
+          <PublicReviewsSection
+            reviews={reviews}
+            title={t("reviews.homeTitle")}
+            description={t("reviews.homeDescription")}
+            feedbackLabel={t("reviews.feedbackLabel")}
+            customerLabel={t("reviews.customerLabel")}
+            googleLabel={t("reviews.googleLabel")}
+            countLabel={t("reviews.ratingSummary", { count: reviewSummary.count })}
+            averageRating={reviewSummary.averageRating}
+            viewAllLabel={t("reviews.viewAll")}
+            whatsappLabel={t("reviews.whatsappFastCta")}
+            whatsappHref={whatsappHref}
+            googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
+            googleReviewLabel={t("reviews.googleReviewCta")}
+            tone="muted"
+          />
+        ) : null}
       </div>
     </>
   );

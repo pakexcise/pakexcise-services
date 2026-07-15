@@ -295,6 +295,28 @@ export class ServiceRepository extends Repository {
     );
   }
 
+  async listPublicReviewOptions(): Promise<Array<{ id: string; nameEn: string }>> {
+    return this.query(
+      () =>
+        this.db.service.findMany({
+          where: {
+            isActive: true,
+            deletedAt: null,
+          },
+          orderBy: [
+            { parentServiceId: "asc" },
+            { displayOrder: "asc" },
+            { nameEn: "asc" },
+          ],
+          select: {
+            id: true,
+            nameEn: true,
+          },
+        }),
+      [],
+    );
+  }
+
   async listPublicPaginated(
     page = 1,
     pageSize = 12,

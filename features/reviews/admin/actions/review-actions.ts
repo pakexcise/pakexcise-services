@@ -30,6 +30,9 @@ function revalidateReviewPaths(serviceSlug?: string | null) {
   revalidatePath("/reviews");
   revalidatePath("/");
   revalidatePath("/services");
+  revalidatePath("/regions");
+  revalidatePath("/regions/[regionSlug]", "page");
+  revalidatePath("/regions/[regionSlug]/[citySlug]", "page");
   revalidatePath("/about");
   if (serviceSlug) {
     revalidatePath(`/services/${serviceSlug}`);

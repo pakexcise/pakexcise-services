@@ -377,39 +377,17 @@ const defaults = defaultHomePageSettings();
 
         case "finalCta":
           sectionNode = (
-            <>
-              {featureFlags.reviewsEnabled ? (
-                <PublicReviewsSection
-                  reviews={reviews}
-                  title={tMarketing("reviews.homeTitle")}
-                  description={tMarketing("reviews.homeDescription")}
-                  feedbackLabel={tMarketing("reviews.feedbackLabel")}
-                  customerLabel={tMarketing("reviews.customerLabel")}
-                  googleLabel={tMarketing("reviews.googleLabel")}
-                  countLabel={tMarketing("reviews.ratingSummary", {
-                    count: reviewSummary.count,
-                  })}
-                  averageRating={reviewSummary.averageRating}
-                  viewAllLabel={tMarketing("reviews.viewAll")}
-                  whatsappLabel={tMarketing("reviews.whatsappFastCta")}
-                  whatsappHref={whatsappHref}
-                  googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
-                  googleReviewLabel={tMarketing("reviews.googleReviewCta")}
-                  tone={tone}
-                />
-              ) : null}
-              <HomeSectionShell tone={tone} containerClassName="pb-8 md:pb-12">
-                <HomeFinalCtaSection
-                  title={content.sections.finalCta.title}
-                  description={content.sections.finalCta.description}
-                  browseLabel={content.hero.browseCta}
-                  whatsappLabel={content.hero.whatsappCta}
-                  requestLabel={content.hero.requestCta}
-                  accountLabel={tMarketing("serviceOptions.accountCta")}
-                  whatsappHref={whatsappHref}
-                />
-              </HomeSectionShell>
-            </>
+            <HomeSectionShell tone={tone} containerClassName="pb-8 md:pb-12">
+              <HomeFinalCtaSection
+                title={content.sections.finalCta.title}
+                description={content.sections.finalCta.description}
+                browseLabel={content.hero.browseCta}
+                whatsappLabel={content.hero.whatsappCta}
+                requestLabel={content.hero.requestCta}
+                accountLabel={tMarketing("serviceOptions.accountCta")}
+                whatsappHref={whatsappHref}
+              />
+            </HomeSectionShell>
           );
           break;
 
@@ -452,6 +430,27 @@ const defaults = defaultHomePageSettings();
       {orderedSections.map((section, index) =>
         renderSection(section.key, getSectionTone(index)),
       )}
+
+      {featureFlags.reviewsEnabled ? (
+        <PublicReviewsSection
+          reviews={reviews ?? []}
+          title={tMarketing("reviews.homeTitle")}
+          description={tMarketing("reviews.homeDescription")}
+          feedbackLabel={tMarketing("reviews.feedbackLabel")}
+          customerLabel={tMarketing("reviews.customerLabel")}
+          googleLabel={tMarketing("reviews.googleLabel")}
+          countLabel={tMarketing("reviews.ratingSummary", {
+            count: reviewSummary.count,
+          })}
+          averageRating={reviewSummary.averageRating}
+          viewAllLabel={tMarketing("reviews.viewAll")}
+          whatsappLabel={tMarketing("reviews.whatsappFastCta")}
+          whatsappHref={whatsappHref}
+          googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
+          googleReviewLabel={tMarketing("reviews.googleReviewCta")}
+          tone="muted"
+        />
+      ) : null}
     </>
   );
 }

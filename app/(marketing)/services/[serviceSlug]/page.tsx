@@ -107,7 +107,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const tHome = await getTranslations("home");
   const tNav = await getTranslations("nav");
 
-  const [serviceFaqs, relatedServices, businessSettings, featureFlags, reviews, reviewSummary] =
+  const [serviceFaqs, relatedServices, businessSettings, featureFlags, serviceReviews, serviceReviewSummary] =
     await Promise.all([
       faqRepository.listByServiceId(service.id),
       serviceRepository.listRelatedServices(service.id, 3),
@@ -116,6 +116,14 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       reviewRepository.listPublicForService(service.id, 3),
       reviewRepository.getPublicSummary(service.id),
     ]);
+
+  const [reviews, reviewSummary] =
+    serviceReviews.length > 0
+      ? [serviceReviews, serviceReviewSummary]
+      : await Promise.all([
+          reviewRepository.listPublic(3),
+          reviewRepository.getPublicSummary(),
+        ]);
 
   const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
   const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings, locale);

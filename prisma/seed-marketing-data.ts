@@ -386,6 +386,7 @@ export const SOCIAL_SEED = [
 
 export const REVIEW_SEED = [
   {
+    externalId: "seed:generic:ahmed-r",
     authorNameEn: "Ahmed R.",
     authorRoleEn: "Vehicle transfer customer",
     contentEn:
@@ -394,14 +395,16 @@ export const REVIEW_SEED = [
     displayOrder: 1,
   },
   {
+    externalId: "seed:generic:usman-k",
     authorNameEn: "Usman K.",
     authorRoleEn: "Token tax facilitation",
     contentEn:
-      "Bahut smooth experience. Team ne documents checklist clear kar di aur tracking dashboard pe updates milte rahe.",
+      "Very smooth experience. The team shared a clear document checklist, and tracking updates stayed visible on the dashboard.",
     rating: 5,
     displayOrder: 2,
   },
   {
+    externalId: "seed:generic:bilal-h",
     authorNameEn: "Bilal H.",
     authorRoleEn: "New registration customer",
     contentEn:
@@ -410,14 +413,16 @@ export const REVIEW_SEED = [
     displayOrder: 3,
   },
   {
+    externalId: "seed:generic:hamza-a",
     authorNameEn: "Hamza A.",
     authorRoleEn: "Driving license renewal",
     contentEn:
-      "Mera license renewal ka kaam on time ho gaya. Steps simple the, aur private facilitation clearly mentioned thi.",
+      "My license renewal was completed on time. The steps were simple, and private facilitation was clearly mentioned.",
     rating: 4,
     displayOrder: 4,
   },
   {
+    externalId: "seed:generic:imran-s",
     authorNameEn: "Imran S.",
     authorRoleEn: "Route permit support",
     contentEn:
@@ -434,6 +439,108 @@ function serviceContent(shortEn: string) {
   };
 }
 
+
+async function upsertSeedReview(
+  prisma: PrismaClient,
+  input: {
+    externalId: string;
+    authorNameEn: string;
+    authorRoleEn: string;
+    contentEn: string;
+    rating: number;
+    displayOrder: number;
+    serviceId?: string;
+  },
+): Promise<void> {
+  const existing =
+    (await prisma.review.findUnique({
+      where: {
+        source_externalId: {
+          source: "MANUAL",
+          externalId: input.externalId,
+        },
+      },
+      select: { id: true },
+    })) ??
+    (await prisma.review.findFirst({
+      where: {
+        source: "MANUAL",
+        externalId: null,
+        authorNameEn: input.authorNameEn,
+        ...(input.serviceId ? { serviceId: input.serviceId } : { serviceId: null }),
+      },
+      select: { id: true },
+    }));
+
+  const contentData = {
+    authorNameEn: input.authorNameEn,
+    authorRoleEn: input.authorRoleEn,
+    contentEn: input.contentEn,
+    rating: input.rating,
+    displayOrder: input.displayOrder,
+    serviceId: input.serviceId ?? null,
+    externalId: input.externalId,
+  };
+
+  if (existing) {
+    await prisma.review.update({
+      where: { id: existing.id },
+      data: contentData,
+    });
+    return;
+  }
+
+  await prisma.review.create({
+    data: {
+      ...contentData,
+      source: "MANUAL",
+      status: "PENDING",
+      isActive: false,
+      customerConsent: true,
+    },
+  });
+}
+
+export async function seedReviews(prisma: PrismaClient): Promise<void> {
+  for (const review of REVIEW_SEED) {
+    await upsertSeedReview(prisma, review);
+  }
+
+  const activeServices = await prisma.service.findMany({
+    where: { isActive: true, deletedAt: null },
+    orderBy: [{ displayOrder: "asc" }, { slug: "asc" }],
+    select: { id: true, nameEn: true, slug: true },
+  });
+
+  const sampleMaleNames = [
+    "Ali M.",
+    "Farhan Z.",
+    "Kashif N.",
+    "Omar T.",
+    "Naveed J.",
+    "Saad W.",
+    "Zain Q.",
+    "Rehan L.",
+  ];
+
+  for (const [index, service] of activeServices.entries()) {
+    const authorNameEn = sampleMaleNames[index % sampleMaleNames.length] ?? "Customer";
+    const sampleContent =
+      index % 2 === 0
+        ? `Support for ${service.nameEn} was clear. WhatsApp replies were quick and tracking stayed easy.`
+        : `Helpful private facilitation for ${service.nameEn}. Transparent steps and invoice-only fee sharing.`;
+
+    await upsertSeedReview(prisma, {
+      externalId: `seed:service:${service.slug}`,
+      authorNameEn,
+      authorRoleEn: service.nameEn,
+      contentEn: sampleContent,
+      rating: index % 3 === 0 ? 4 : 5,
+      displayOrder: 100 + index,
+      serviceId: service.id,
+    });
+  }
+}
 
 export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   console.log("Seeding marketing content...");
@@ -698,83 +805,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     }
   }
 
-  for (const review of REVIEW_SEED) {
-    const existing = await prisma.review.findFirst({
-      where: { authorNameEn: review.authorNameEn },
-    });
-
-    const payload = {
-      ...review,
-      source: "MANUAL" as const,
-      status: "PENDING" as const,
-      isActive: false,
-      customerConsent: true,
-    };
-
-    if (existing) {
-      await prisma.review.update({
-        where: { id: existing.id },
-        data: payload,
-      });
-    } else {
-      await prisma.review.create({ data: payload });
-    }
-  }
-
-  const activeServices = await prisma.service.findMany({
-    where: { isActive: true, deletedAt: null, parentServiceId: null },
-    orderBy: { displayOrder: "asc" },
-    select: { id: true, nameEn: true, slug: true },
-  });
-
-  const sampleMaleNames = [
-    "Ali M.",
-    "Farhan Z.",
-    "Kashif N.",
-    "Omar T.",
-    "Naveed J.",
-    "Saad W.",
-    "Zain Q.",
-    "Rehan L.",
-  ];
-
-  for (const [index, service] of activeServices.entries()) {
-    const authorNameEn = sampleMaleNames[index % sampleMaleNames.length] ?? "Customer";
-    const existingServiceReview = await prisma.review.findFirst({
-      where: {
-        serviceId: service.id,
-        source: "MANUAL",
-        authorNameEn,
-      },
-    });
-
-    const sampleContent =
-      index % 2 === 0
-        ? `${service.nameEn} ke liye support clear tha. WhatsApp pe quick reply mili aur tracking easy rahi.`
-        : `Helpful private facilitation for ${service.nameEn}. Transparent steps and invoice-only fee sharing.`;
-
-    const data = {
-      authorNameEn,
-      authorRoleEn: service.nameEn,
-      contentEn: sampleContent,
-      rating: index % 3 === 0 ? 4 : 5,
-      displayOrder: 100 + index,
-      serviceId: service.id,
-      source: "MANUAL" as const,
-      status: "PENDING" as const,
-      isActive: false,
-      customerConsent: true,
-    };
-
-    if (existingServiceReview) {
-      await prisma.review.update({
-        where: { id: existingServiceReview.id },
-        data,
-      });
-    } else {
-      await prisma.review.create({ data });
-    }
-  }
+  await seedReviews(prisma);
 
   await prisma.service.updateMany({
     where: { slug: { in: [...LEGACY_SERVICE_SLUGS_TO_DEACTIVATE] } },
@@ -835,9 +866,7 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
     {
       key: "reviews",
       titleEn: "Customer Reviews",
-      contentEn:
-        "Read what customers say about PakExcise private facilitation support.\n\n" +
-        PRIVATE_DISCLAIMER_EN,
+      contentEn: "Read what customers say about PakExcise private facilitation support.",
     },
     {
       key: "privacy-policy",

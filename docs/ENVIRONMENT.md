@@ -54,8 +54,8 @@ Validation: `config/env.schema.ts` via `pnpm env:validate` / server boot paths.
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `UPSTASH_REDIS_REST_URL` | Strongly recommended | Rate limits / cache |
-| `UPSTASH_REDIS_REST_TOKEN` | Strongly recommended | |
+| `UPSTASH_REDIS_REST_URL` | Required for public review submission | Rate limits / cache |
+| `UPSTASH_REDIS_REST_TOKEN` | Required for public review submission | |
 
 Without Redis, rate limiting behavior may degrade — **Needs verification** of fail-open vs fail-closed.
 
@@ -111,8 +111,15 @@ Reference only (not substitutes for API IDs): Business Profile ID `8066285004634
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Recommended public forms | Client |
-| `TURNSTILE_SECRET_KEY` | Recommended | Server verify |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Required for public review submission | Client widget |
+| `TURNSTILE_SECRET_KEY` | Required for public review submission | Server verification |
+
+Guest reviews fail closed in production when Turnstile is not configured. They are also
+protected by an IP rate limit, a honeypot field, minimum form-completion time, duplicate
+detection, and mandatory admin moderation.
+
+Run `pnpm db:seed-reviews` to create or refresh unpublished review drafts for every
+active service. Existing moderation and publication states are preserved.
 
 ## Analytics (production only)
 

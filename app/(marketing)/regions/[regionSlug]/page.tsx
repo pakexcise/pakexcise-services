@@ -11,6 +11,7 @@ import { RegionCitiesSection } from "@/components/marketing/region-cities-sectio
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
+import { PublicReviewsSection } from "@/components/marketing/public-reviews-section";
 import { RelatedServices } from "@/components/marketing/related-services";
 import { mapRegionPlateFormatsSection } from "@/features/regions/lib/map-region-plate-formats";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
@@ -20,17 +21,22 @@ import {
   buildFaqJsonLd,
 } from "@/features/seo/lib/metadata";
 import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
-import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
+import {
+  getBusinessSettings,
+  getFeatureFlagSettings,
+} from "@/features/settings/lib/public-settings-cache";
 import {
   resolveWhatsappDefaultMessage,
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
 import { absoluteUrl } from "@/lib/utils";
+import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import {
   cityRepository,
   faqRepository,
   regionRepository,
   regionPlateFormatRepository,
+  reviewRepository,
   serviceRepository,
 } from "@/server/repositories";
 export const revalidate = 3600;
@@ -86,16 +92,23 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
 
   const t = await getTranslations("marketing");
   const tCommon = await getTranslations("common");
-  const [services, cities, faqs, business, plateBundle] = await Promise.all([
+  const [services, cities, faqs, business, plateBundle, featureFlags] = await Promise.all([
     serviceRepository.listPublicByRegionId(region.id),
     cityRepository.listPublicByRegionId(region.id),
     faqRepository.listPublic(),
     getBusinessSettings(),
     regionPlateFormatRepository.findPublicByRegionId(region.id),
+    getFeatureFlagSettings(),
+  ]);
+  const serviceIds = services.map((service) => service.id);
+  const [reviews, reviewSummary] = await Promise.all([
+    reviewRepository.listPublicForServices(serviceIds, 3),
+    reviewRepository.getPublicSummaryForServices(serviceIds),
   ]);
 
   const whatsappLinkNumber = resolveWhatsappLinkNumber(business);
   const whatsappMessage = resolveWhatsappDefaultMessage(business, locale);
+  const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
 
   const name = region.nameEn ?? "";
   const description = region.descriptionEn ?? "";
@@ -203,6 +216,25 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
           items={combinedFaqItems}
           emptyMessage={t("faqs.empty")}
         />
+
+        {featureFlags.reviewsEnabled ? (
+          <PublicReviewsSection
+            reviews={reviews}
+            title={t("reviews.homeTitle")}
+            description={t("reviews.homeDescription")}
+            feedbackLabel={t("reviews.feedbackLabel")}
+            customerLabel={t("reviews.customerLabel")}
+            googleLabel={t("reviews.googleLabel")}
+            countLabel={t("reviews.ratingSummary", { count: reviewSummary.count })}
+            averageRating={reviewSummary.averageRating}
+            viewAllLabel={t("reviews.viewAll")}
+            whatsappLabel={t("reviews.whatsappFastCta")}
+            whatsappHref={whatsappHref}
+            googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
+            googleReviewLabel={t("reviews.googleReviewCta")}
+            tone="muted"
+          />
+        ) : null}
 
         <RegionHelpSection
           regionName={name}

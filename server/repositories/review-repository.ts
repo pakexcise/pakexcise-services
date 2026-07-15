@@ -60,12 +60,58 @@ export class ReviewRepository extends Repository {
     );
   }
 
+  async listPublicForServices(
+    serviceIds: string[],
+    limit = 6,
+  ): Promise<PublicReview[]> {
+    if (serviceIds.length === 0) {
+      return [];
+    }
+
+    return this.query(
+      () =>
+        this.db.review.findMany({
+          where: {
+            ...approvedPublicWhere,
+            serviceId: { in: serviceIds },
+          },
+          orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+          take: limit,
+          select: publicReviewSelect,
+        }),
+      [],
+    );
+  }
+
   async getPublicSummary(serviceId?: string) {
     const where: Prisma.ReviewWhereInput = {
       ...approvedPublicWhere,
       ...(serviceId ? { serviceId } : {}),
     };
 
+    const [count, aggregate] = await Promise.all([
+      this.db.review.count({ where }),
+      this.db.review.aggregate({
+        where,
+        _avg: { rating: true },
+      }),
+    ]);
+
+    return {
+      count,
+      averageRating: aggregate._avg.rating ?? 0,
+    };
+  }
+
+  async getPublicSummaryForServices(serviceIds: string[]) {
+    if (serviceIds.length === 0) {
+      return { count: 0, averageRating: 0 };
+    }
+
+    const where: Prisma.ReviewWhereInput = {
+      ...approvedPublicWhere,
+      serviceId: { in: serviceIds },
+    };
     const [count, aggregate] = await Promise.all([
       this.db.review.count({ where }),
       this.db.review.aggregate({

@@ -22,6 +22,7 @@ import {
   getPageContent,
   reviewRepository,
   seoMetaRepository,
+  serviceRepository,
 } from "@/server/repositories";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ReviewsPage() {
   await requireReviewsEnabled();
 
-  const [content, reviews, summary, business, tMarketing, tCommon, currentUser] =
+  const [content, reviews, summary, business, tMarketing, tCommon, currentUser, services] =
     await Promise.all([
       getPageContent("reviews"),
       reviewRepository.listPublic(),
@@ -61,6 +62,7 @@ export default async function ReviewsPage() {
       getTranslations("marketing"),
       getTranslations("common"),
       getCurrentUser(),
+      serviceRepository.listPublicReviewOptions(),
     ]);
 
   const eligibleApplications =
@@ -162,9 +164,6 @@ export default async function ReviewsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold">{tMarketing("reviews.googleReviewCta")}</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {tMarketing("reviews.disclaimer")}
-            </p>
             {googleReviewHref ? (
               <Button asChild className="mt-4" variant="secondary">
                 <a href={googleReviewHref} target="_blank" rel="noopener noreferrer">
@@ -215,29 +214,28 @@ export default async function ReviewsPage() {
 
         <CustomerReviewForm
           applications={eligibleApplications}
+          services={services.map((service) => ({
+            id: service.id,
+            nameEn: service.nameEn,
+          }))}
           defaultName={currentUser?.name?.trim() || ""}
-          isAuthenticated={currentUser?.role === "CUSTOMER"}
+          turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || ""}
           labels={{
             title: tMarketing("reviews.formTitle"),
             description: tMarketing("reviews.formDescription"),
-            loginPrompt: tMarketing("reviews.formLoginPrompt"),
-            loginCta: tMarketing("reviews.formLoginCta"),
-            noEligible: tMarketing("reviews.formNoEligible"),
             application: tMarketing("reviews.formApplication"),
+            applicationOptional: tMarketing("reviews.formApplicationOptional"),
+            service: tMarketing("reviews.formService"),
             name: tMarketing("reviews.formName"),
             content: tMarketing("reviews.formContent"),
             rating: tMarketing("reviews.formRating"),
             consent: tMarketing("reviews.formConsent"),
+            antiSpamUnavailable: tMarketing("reviews.formAntiSpamUnavailable"),
             submit: tMarketing("reviews.formSubmit"),
             submitting: tMarketing("reviews.formSubmitting"),
             success: tMarketing("reviews.formSuccess"),
           }}
         />
-
-        <p className="rounded-2xl border border-secondary/40 bg-secondary/10 p-4 text-sm leading-relaxed text-muted-foreground">
-          <strong className="text-foreground">{tMarketing("reviews.disclaimerTitle")}</strong>{" "}
-          {tMarketing("reviews.disclaimer")}
-        </p>
 
         <CTASection
           title={tMarketing("service.ctaTitle")}
