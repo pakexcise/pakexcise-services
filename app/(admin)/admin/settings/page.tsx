@@ -42,6 +42,7 @@ async function buildLabels(
       payment: t("settingsPanel.tabs.payment"),
       seo: t("settingsPanel.tabs.seo"),
       tracking: t("settingsPanel.tabs.tracking"),
+      email: t("settingsPanel.tabs.email"),
       features: t("settingsPanel.tabs.features"),
     },
     save: t("settingsPanel.save"),
@@ -109,6 +110,25 @@ async function buildLabels(
       consentExplicit: t("settingsPanel.tracking.consentExplicit"),
       consentDisabled: t("settingsPanel.tracking.consentDisabled"),
       publicIdsNote: t("settingsPanel.tracking.publicIdsNote"),
+    },
+    email: {
+      note: t("settingsPanel.email.note"),
+      securityNote: t("settingsPanel.email.securityNote"),
+      emailNotificationsEnabled: t(
+        "settingsPanel.email.emailNotificationsEnabled",
+      ),
+      applicationSubmissionEmailsEnabled: t(
+        "settingsPanel.email.applicationSubmissionEmailsEnabled",
+      ),
+      applicationStatusEmailsEnabled: t(
+        "settingsPanel.email.applicationStatusEmailsEnabled",
+      ),
+      invoicePaymentEmailsEnabled: t(
+        "settingsPanel.email.invoicePaymentEmailsEnabled",
+      ),
+      reviewDecisionEmailsEnabled: t(
+        "settingsPanel.email.reviewDecisionEmailsEnabled",
+      ),
     },
     features: {
       agentModuleEnabled: t("settingsPanel.features.agentModuleEnabled"),

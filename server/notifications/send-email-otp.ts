@@ -1,21 +1,38 @@
 import "server-only";
 
+import { render } from "@react-email/render";
+
+import { getEmailBranding } from "@/features/notifications/lib/email-branding";
+import { OtpEmail } from "@/features/notifications/templates/emails/otp-email";
+import en from "@/messages/en";
 import { rememberOtpDelivery } from "@/server/notifications/otp-delivery-cache";
 import { sendTransactionalEmail } from "@/server/notifications/send-email";
 import { enforceRateLimit, otpRateLimit } from "@/server/security/rate-limit";
 
 type EmailOtpType = "sign-in" | "email-verification" | "forget-password";
+const copy = en.emailTemplates.otp;
 
 function getSubject(type: EmailOtpType): string {
   switch (type) {
     case "sign-in":
-      return "Your PakExcise.com sign-in code";
+      return copy.signInSubject;
     case "email-verification":
-      return "Verify your PakExcise.com email";
+      return copy.emailVerificationSubject;
     case "forget-password":
-      return "Your PakExcise.com password reset code";
+      return copy.passwordResetSubject;
     default:
-      return "Your PakExcise.com verification code";
+      return copy.emailVerificationSubject;
+  }
+}
+
+function getTitle(type: EmailOtpType): string {
+  switch (type) {
+    case "sign-in":
+      return copy.signInTitle;
+    case "email-verification":
+      return copy.emailVerificationTitle;
+    case "forget-password":
+      return copy.passwordResetTitle;
   }
 }
 
@@ -35,18 +52,20 @@ export async function sendEmailOtp(
   }
 
   const subject = getSubject(type);
+  const branding = await getEmailBranding();
+  const html = await render(
+    OtpEmail({
+      branding,
+      otp,
+      title: getTitle(type),
+    }),
+  );
 
   const delivery = await sendTransactionalEmail({
     to: email,
     subject,
-    text: `Your PakExcise.com verification code is ${otp}. It expires in 5 minutes. Do not share this code. PakExcise.com is a private facilitation service — not a government website.`,
-    html: `
-      <p>Your PakExcise.com verification code is:</p>
-      <p style="font-size:28px;font-weight:700;letter-spacing:4px;">${otp}</p>
-      <p>This code expires in 5 minutes. Do not share it with anyone.</p>
-      <p>If you did not request this code, you can ignore this email.</p>
-      <p><small>PakExcise.com is a private facilitation service — not a government website.</small></p>
-    `,
+    text: `Your ${branding.siteName} verification code is ${otp}. It expires in 5 minutes. Do not share this code. ${branding.disclaimer}`,
+    html,
   });
 
   rememberOtpDelivery(email, delivery);

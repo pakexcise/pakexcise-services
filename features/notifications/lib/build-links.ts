@@ -5,18 +5,21 @@ import { absoluteUrl } from "@/lib/utils";
 import type { NotificationLocale } from "@/features/notifications/types";
 
 export function buildCustomerApplicationPath(
-  locale: NotificationLocale,
+  _locale: NotificationLocale,
   applicationId: string,
 ): string {
-  return `/${locale}/customer/applications/${applicationId}`;
+  void _locale;
+  return `/customer/applications/${applicationId}`;
 }
 
-export function buildCustomerDashboardPath(locale: NotificationLocale): string {
-  return `/${locale}/customer/dashboard`;
+export function buildCustomerDashboardPath(_locale: NotificationLocale): string {
+  void _locale;
+  return `/customer/dashboard`;
 }
 
-export function buildTrackPath(locale: NotificationLocale): string {
-  return `/${locale}/track`;
+export function buildTrackPath(_locale: NotificationLocale): string {
+  void _locale;
+  return `/track`;
 }
 
 export function buildSignedCustomerLinks(
@@ -28,7 +31,9 @@ export function buildSignedCustomerLinks(
   trackUrl: string;
 } {
   return {
-    applicationUrl: absoluteUrl(buildCustomerApplicationPath(locale, applicationId)),
+    applicationUrl: absoluteUrl(
+      buildCustomerApplicationPath(locale, applicationId),
+    ),
     dashboardUrl: absoluteUrl(buildCustomerDashboardPath(locale)),
     trackUrl: absoluteUrl(buildTrackPath(locale)),
   };

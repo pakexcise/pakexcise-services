@@ -62,6 +62,7 @@ export type SiteSettingsPanelLabels = {
     submitRequestSuccessMessageEn: string;
     submitRequestSaveToSupportRequests: string;
     submitRequestNotifyAdminEnabled: string;
+    submitRequestAutoReplyEnabled: string;
     featureFlagNote: string;
   };
   footer: {
@@ -542,6 +543,20 @@ export function SiteSettingsPanel({
                   forms: {
                     ...current.forms,
                     submitRequestNotifyAdminEnabled: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="submitRequestAutoReplyEnabled"
+              label={labels.submitRequest.submitRequestAutoReplyEnabled}
+              checked={values.forms.submitRequestAutoReplyEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  forms: {
+                    ...current.forms,
+                    submitRequestAutoReplyEnabled: checked,
                   },
                 }))
               }

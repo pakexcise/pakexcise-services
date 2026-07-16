@@ -40,6 +40,7 @@ export type FormsSettings = {
   submitRequestSuccessMessageEn: string;
   submitRequestSaveToSupportRequests: boolean;
   submitRequestNotifyAdminEnabled: boolean;
+  submitRequestAutoReplyEnabled: boolean;
 };
 
 export type BrandingSettings = {
@@ -133,6 +134,11 @@ export type FeatureFlagSettings = {
   whatsappChannelEnabled: boolean;
   whatsappNotificationsEnabled: boolean;
   smsFallbackEnabled: boolean;
+  emailNotificationsEnabled: boolean;
+  applicationSubmissionEmailsEnabled: boolean;
+  applicationStatusEmailsEnabled: boolean;
+  invoicePaymentEmailsEnabled: boolean;
+  reviewDecisionEmailsEnabled: boolean;
   maintenanceMode: boolean;
   maintenanceMessageEn: string;
 };

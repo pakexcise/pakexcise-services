@@ -68,11 +68,12 @@ export function defaultFormsSettings(): FormsSettings {
     contactSuccessMessageEn:
       "Thank you. Our support team will contact you shortly.",
     contactAdminNotificationEnabled: true,
-    contactAutoReplyEnabled: false,
+    contactAutoReplyEnabled: true,
     submitRequestSuccessMessageEn:
       "Your support request was submitted. We will contact you soon.",
     submitRequestSaveToSupportRequests: true,
     submitRequestNotifyAdminEnabled: true,
+    submitRequestAutoReplyEnabled: true,
   };
 }
 
@@ -169,6 +170,11 @@ export function defaultFeatureFlagSettings(): FeatureFlagSettings {
     whatsappChannelEnabled: true,
     whatsappNotificationsEnabled: true,
     smsFallbackEnabled: true,
+    emailNotificationsEnabled: true,
+    applicationSubmissionEmailsEnabled: true,
+    applicationStatusEmailsEnabled: false,
+    invoicePaymentEmailsEnabled: false,
+    reviewDecisionEmailsEnabled: false,
     maintenanceMode: false,
     maintenanceMessageEn:
       "PakExcise.com is temporarily unavailable for maintenance. Please check back soon.",

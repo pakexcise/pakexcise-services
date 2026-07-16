@@ -3,7 +3,10 @@
 import { headers } from "next/headers";
 
 import { generateContactInquiryReferenceId } from "@/features/contact-inquiries/lib/reference-id";
-import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
+import {
+  getFeatureFlagSettings,
+  getFormsSettings,
+} from "@/features/settings/lib/public-settings-cache";
 import {
   errorResult,
   parseInput,
@@ -15,6 +18,7 @@ import { formatPhoneForDisplay } from "@/lib/validations/phone";
 import { getRequestMetaFromHeaders } from "@/server/auth/session";
 import { contactInquiryRepository } from "@/server/repositories/contact-inquiry-repository";
 import { hashIpAddress } from "@/server/security/hash";
+import { sendFormSubmissionConfirmation } from "@/server/notifications/send-form-submission-confirmation";
 import { trackActivityFromRequest } from "@/server/tracking/track-activity";
 import {
   enforceRateLimit,
@@ -70,6 +74,26 @@ export async function submitContactInquiryAction(
       has_email: Boolean(parsed.data.email?.trim()),
     },
   });
+
+  if (inquiry.email) {
+    const forms = await getFormsSettings();
+
+    if (
+      featureFlags.emailNotificationsEnabled &&
+      forms.contactAutoReplyEnabled
+    ) {
+      try {
+        await sendFormSubmissionConfirmation({
+          to: inquiry.email,
+          customerName: inquiry.fullName,
+          referenceId: inquiry.referenceId,
+          submissionLabel: "Contact inquiry",
+        });
+      } catch {
+        console.error("[email:contact-confirmation] delivery failed");
+      }
+    }
+  }
 
   return successResult({
     referenceId: inquiry.referenceId,

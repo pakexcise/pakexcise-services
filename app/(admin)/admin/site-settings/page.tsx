@@ -19,8 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminSiteSettingsPage() {
   await requireSuperAdmin();
 
-  const locale = "en";
-    const t = await getTranslations("admin.siteSettings");
+  const t = await getTranslations("admin.siteSettings");
 
   const [settings, links, nextDisplayOrder, socialLabels] = await Promise.all([
     loadAdminSettingsSnapshot(),
@@ -91,6 +90,9 @@ export default async function AdminSiteSettingsPage() {
               ),
               submitRequestNotifyAdminEnabled: t(
                 "submitRequest.submitRequestNotifyAdminEnabled",
+              ),
+              submitRequestAutoReplyEnabled: t(
+                "submitRequest.submitRequestAutoReplyEnabled",
               ),
               featureFlagNote: t("submitRequest.featureFlagNote"),
             },

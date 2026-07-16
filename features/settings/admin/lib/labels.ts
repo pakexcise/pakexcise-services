@@ -4,6 +4,7 @@ export type SettingsPanelLabels = {
     payment: string;
     seo: string;
     tracking: string;
+    email: string;
     features: string;
   };
   save: string;
@@ -71,6 +72,15 @@ export type SettingsPanelLabels = {
     consentExplicit: string;
     consentDisabled: string;
     publicIdsNote: string;
+  };
+  email: {
+    note: string;
+    securityNote: string;
+    emailNotificationsEnabled: string;
+    applicationSubmissionEmailsEnabled: string;
+    applicationStatusEmailsEnabled: string;
+    invoicePaymentEmailsEnabled: string;
+    reviewDecisionEmailsEnabled: string;
   };
   features: {
     agentModuleEnabled: string;

@@ -5,9 +5,12 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin, emailOTP } from "better-auth/plugins";
 import { adminAc } from "better-auth/plugins/admin/access";
+import { render } from "@react-email/render";
 
 import { authConfig } from "@/config/auth";
 import { getPublicAppUrl } from "@/config/env.shared";
+import { getEmailBranding } from "@/features/notifications/lib/email-branding";
+import { PasswordResetEmail } from "@/features/notifications/templates/emails/password-reset-email";
 import { prisma } from "@/server/db/client";
 import { sendEmailOtp } from "@/server/notifications/send-email-otp";
 import { sendTransactionalEmail } from "@/server/notifications/send-email";
@@ -47,17 +50,20 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     revokeSessionsOnPasswordReset: true,
     sendResetPassword: async ({ user, url }) => {
+      const branding = await getEmailBranding();
+      const html = await render(
+        PasswordResetEmail({
+          branding,
+          name: user.name,
+          resetUrl: url,
+        }),
+      );
+
       await sendTransactionalEmail({
         to: user.email,
         subject: "Reset your PakExcise.com password",
-        text: `Click the link to reset your password: ${url}`,
-        html: `
-          <p>Hello${user.name ? ` ${user.name}` : ""},</p>
-          <p>We received a request to reset your PakExcise.com password.</p>
-          <p><a href="${url}">Reset your password</a></p>
-          <p>If you did not request this, you can ignore this email.</p>
-          <p>PakExcise.com is a private facilitation service — not a government website.</p>
-        `,
+        text: `Reset your ${branding.siteName} password: ${url}\n\nIf you did not request this, ignore this email.\n\n${branding.disclaimer}`,
+        html,
       });
     },
   },

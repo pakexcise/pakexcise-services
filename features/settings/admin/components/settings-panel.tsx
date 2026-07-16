@@ -65,6 +65,7 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
     "payment",
     "seo",
     "tracking",
+    "email",
     "features",
   ];
 
@@ -87,6 +88,9 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
           break;
         case "tracking":
           result = await updateTrackingSettingsAction(values.tracking);
+          break;
+        case "email":
+          result = await updateFeatureFlagSettingsAction(values.features);
           break;
         case "features":
           result = await updateFeatureFlagSettingsAction(values.features);
@@ -907,6 +911,89 @@ export function SettingsPanel({ initialValues, labels }: SettingsPanelProps) {
                   tracking: {
                     ...current.tracking,
                     showConsentBanner: checked,
+                  },
+                }))
+              }
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === "email" ? (
+        <div className="space-y-5">
+          <p className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+            {labels.email.note}
+          </p>
+          <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-800 dark:text-amber-300">
+            {labels.email.securityNote}
+          </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <CheckboxField
+              id="emailNotificationsEnabled"
+              label={labels.email.emailNotificationsEnabled}
+              checked={values.features.emailNotificationsEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  features: {
+                    ...current.features,
+                    emailNotificationsEnabled: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="applicationSubmissionEmailsEnabled"
+              label={labels.email.applicationSubmissionEmailsEnabled}
+              checked={values.features.applicationSubmissionEmailsEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  features: {
+                    ...current.features,
+                    applicationSubmissionEmailsEnabled: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="applicationStatusEmailsEnabled"
+              label={labels.email.applicationStatusEmailsEnabled}
+              checked={values.features.applicationStatusEmailsEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  features: {
+                    ...current.features,
+                    applicationStatusEmailsEnabled: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="invoicePaymentEmailsEnabled"
+              label={labels.email.invoicePaymentEmailsEnabled}
+              checked={values.features.invoicePaymentEmailsEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  features: {
+                    ...current.features,
+                    invoicePaymentEmailsEnabled: checked,
+                  },
+                }))
+              }
+            />
+            <CheckboxField
+              id="reviewDecisionEmailsEnabled"
+              label={labels.email.reviewDecisionEmailsEnabled}
+              checked={values.features.reviewDecisionEmailsEnabled}
+              onChange={(checked) =>
+                setValues((current) => ({
+                  ...current,
+                  features: {
+                    ...current.features,
+                    reviewDecisionEmailsEnabled: checked,
                   },
                 }))
               }

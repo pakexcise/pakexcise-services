@@ -61,15 +61,12 @@ function buildEnglishContent(
   service: string,
   tracking: string,
 ): TemplateContent {
-  const disclaimer =
-    "PakExcise.com is a private facilitation service. Not affiliated with any government body.";
-
   switch (input.eventType) {
     case "APPLICATION_SUBMITTED":
       return {
         subject: `Application submitted — ${tracking}`,
         title: "Application submitted",
-        body: `Your PakExcise application ${tracking} for ${service} has been submitted. We will review it shortly.\n\n${disclaimer}`,
+        body: `Your PakExcise application ${tracking} for ${service} has been submitted. We will review it shortly.`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Your application ${tracking} for ${service} has been submitted. Track it in your dashboard.`,
         smsText: `PakExcise: Application ${tracking} submitted. Log in to your dashboard for updates.`,
@@ -78,7 +75,7 @@ function buildEnglishContent(
       return {
         subject: `Documents required — ${tracking}`,
         title: "Additional documents required",
-        body: `Your application ${tracking} for ${service} needs additional documents.${input.note ? ` ${input.note}` : ""}\n\n${disclaimer}`,
+        body: `Your application ${tracking} for ${service} needs additional documents.${input.note ? ` ${input.note}` : ""}`,
         ctaLabel: "Upload documents",
         whatsappText: `PakExcise: Documents required for application ${tracking}. Please upload from your dashboard.`,
         smsText: `PakExcise: Documents required for ${tracking}. Check your dashboard.`,
@@ -87,7 +84,7 @@ function buildEnglishContent(
       return {
         subject: `Invoice ready — ${tracking}`,
         title: "Invoice sent",
-        body: `Your invoice${input.invoiceNumber ? ` ${input.invoiceNumber}` : ""} for application ${tracking} is ready.${input.total ? ` Total due: ${input.total}.` : ""} Review it in your dashboard and upload payment proof.\n\n${disclaimer}`,
+        body: `Your invoice${input.invoiceNumber ? ` ${input.invoiceNumber}` : ""} for application ${tracking} is ready.${input.total ? ` Total due: ${input.total}.` : ""} Review it in your dashboard and upload payment proof.`,
         ctaLabel: "View invoice",
         whatsappText: `PakExcise: Invoice ready for application ${tracking}.${input.total ? ` Amount: ${input.total}.` : ""} Open your dashboard to pay.`,
         smsText: `PakExcise: Invoice ready for ${tracking}. View details in your dashboard.`,
@@ -96,7 +93,7 @@ function buildEnglishContent(
       return {
         subject: `Payment proof received — ${tracking}`,
         title: "Payment screenshot uploaded",
-        body: `We received your payment proof for application ${tracking}. Our team will verify it shortly.\n\n${disclaimer}`,
+        body: `We received your payment proof for application ${tracking}. Our team will verify it shortly.`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Payment proof received for ${tracking}. Verification in progress.`,
         smsText: `PakExcise: Payment proof received for ${tracking}.`,
@@ -105,7 +102,7 @@ function buildEnglishContent(
       return {
         subject: `Payment verified — ${tracking}`,
         title: "Payment verified",
-        body: `Your payment for application ${tracking} has been verified. We are processing your request.${input.note ? ` ${input.note}` : ""}\n\n${disclaimer}`,
+        body: `Your payment for application ${tracking} has been verified. We are processing your request.${input.note ? ` ${input.note}` : ""}`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Payment verified for ${tracking}. Processing continues.`,
         smsText: `PakExcise: Payment verified for ${tracking}.`,
@@ -114,7 +111,7 @@ function buildEnglishContent(
       return {
         subject: `Application completed — ${tracking}`,
         title: "Application completed",
-        body: `Your application ${tracking} for ${service} is complete.${input.note ? ` ${input.note}` : ""} Download any proof from your dashboard.\n\n${disclaimer}`,
+        body: `Your application ${tracking} for ${service} is complete.${input.note ? ` ${input.note}` : ""} Download any proof from your dashboard.`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Application ${tracking} completed. Check your dashboard for proof.`,
         smsText: `PakExcise: Application ${tracking} completed.`,
@@ -123,7 +120,7 @@ function buildEnglishContent(
       return {
         subject: `Application rejected — ${tracking}`,
         title: "Application rejected",
-        body: `Your application ${tracking} for ${service} was rejected.${input.note ? ` ${input.note}` : ""}\n\n${disclaimer}`,
+        body: `Your application ${tracking} for ${service} was rejected.${input.note ? ` ${input.note}` : ""}`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Application ${tracking} was rejected. See your dashboard for details.`,
         smsText: `PakExcise: Application ${tracking} rejected.`,
@@ -132,7 +129,7 @@ function buildEnglishContent(
       return {
         subject: `Application cancelled — ${tracking}`,
         title: "Application cancelled",
-        body: `Your application ${tracking} for ${service} was cancelled.${input.note ? ` ${input.note}` : ""}\n\n${disclaimer}`,
+        body: `Your application ${tracking} for ${service} was cancelled.${input.note ? ` ${input.note}` : ""}`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Application ${tracking} cancelled.`,
         smsText: `PakExcise: Application ${tracking} cancelled.`,
@@ -141,7 +138,7 @@ function buildEnglishContent(
       return {
         subject: `Payment proof rejected — ${tracking}`,
         title: "Payment screenshot rejected",
-        body: `Your payment proof for application ${tracking} was rejected.${input.reason ? ` Reason: ${input.reason}.` : ""} Please upload a new screenshot from your dashboard.\n\n${disclaimer}`,
+        body: `Your payment proof for application ${tracking} was rejected.${input.reason ? ` Reason: ${input.reason}.` : ""} Please upload a new screenshot from your dashboard.`,
         ctaLabel: "Upload payment proof",
         whatsappText: `PakExcise: Payment proof rejected for ${tracking}.${input.reason ? ` Reason: ${input.reason}.` : ""} Re-upload from dashboard.`,
         smsText: `PakExcise: Payment proof rejected for ${tracking}. Re-upload required.`,
@@ -150,7 +147,7 @@ function buildEnglishContent(
       return {
         subject: `Your review was published — ${tracking}`,
         title: "Review published",
-        body: `Thank you. Your feedback for ${service} (application ${tracking}) is now published on PakExcise.\n\n${disclaimer}`,
+        body: `Thank you. Your feedback for ${service} (application ${tracking}) is now published on PakExcise.`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Your review for ${tracking} is now published. Thank you.`,
         smsText: `PakExcise: Review for ${tracking} published. Thank you.`,
@@ -159,7 +156,7 @@ function buildEnglishContent(
       return {
         subject: `Review not published — ${tracking}`,
         title: "Review not published",
-        body: `Your feedback for ${service} (application ${tracking}) was not published.${input.reason ? ` Reason: ${input.reason}.` : ""}\n\n${disclaimer}`,
+        body: `Your feedback for ${service} (application ${tracking}) was not published.${input.reason ? ` Reason: ${input.reason}.` : ""}`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Your review for ${tracking} was not published.${input.reason ? ` Reason: ${input.reason}.` : ""}`,
         smsText: `PakExcise: Review for ${tracking} not published.`,
@@ -172,7 +169,7 @@ function buildEnglishContent(
       return {
         subject: `Status update — ${tracking}`,
         title: `Application ${statusLabel}`,
-        body: `Your application ${tracking} for ${service} is now ${statusLabel}.${input.note ? ` ${input.note}` : ""}\n\n${disclaimer}`,
+        body: `Your application ${tracking} for ${service} is now ${statusLabel}.${input.note ? ` ${input.note}` : ""}`,
         ctaLabel: "View application",
         whatsappText: `PakExcise: Application ${tracking} is now ${statusLabel}.`,
         smsText: `PakExcise: ${tracking} status: ${statusLabel}.`,

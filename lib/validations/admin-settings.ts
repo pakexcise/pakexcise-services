@@ -97,6 +97,11 @@ const featureFlagSettingsSchema = z
   whatsappChannelEnabled: z.boolean(),
   whatsappNotificationsEnabled: z.boolean(),
   smsFallbackEnabled: z.boolean(),
+  emailNotificationsEnabled: z.boolean(),
+  applicationSubmissionEmailsEnabled: z.boolean(),
+  applicationStatusEmailsEnabled: z.boolean(),
+  invoicePaymentEmailsEnabled: z.boolean(),
+  reviewDecisionEmailsEnabled: z.boolean(),
   maintenanceMode: z.boolean(),
   maintenanceMessageEn: z.string().trim().min(5).max(500),
 })

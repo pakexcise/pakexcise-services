@@ -46,6 +46,7 @@ export const formsSettingsSchema = z.object({
   submitRequestSuccessMessageEn: localizedText,
   submitRequestSaveToSupportRequests: z.boolean(),
   submitRequestNotifyAdminEnabled: z.boolean(),
+  submitRequestAutoReplyEnabled: z.boolean(),
 });
 
 const assetPathSchema = z

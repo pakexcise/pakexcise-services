@@ -4,6 +4,7 @@ import type { NotificationEventType } from "@prisma/client";
 import { render } from "@react-email/render";
 
 import { ApplicationEventEmail } from "@/features/notifications/templates/emails/application-event-email";
+import { getEmailBranding } from "@/features/notifications/lib/email-branding";
 import {
   buildNotificationContent,
   type TemplateContentInput} from "@/features/notifications/templates/content";
@@ -14,6 +15,7 @@ import type { NotificationLocale, NotificationPayload } from "@/features/notific
 export type BuiltNotificationTemplate = {
   title: string;
   body: string;
+  emailText: string;
   subject: string;
   html: string;
   whatsappText: string;
@@ -43,6 +45,7 @@ export async function buildNotificationTemplate(input: {
       : undefined};
 
   const content = buildNotificationContent(contentInput);
+  const branding = await getEmailBranding();
 
   const html = await render(
     ApplicationEventEmail({
@@ -50,12 +53,14 @@ export async function buildNotificationTemplate(input: {
       body: content.body,
       ctaLabel: content.ctaLabel,
       ctaUrl: links.applicationUrl,
-      locale: input.locale}),
+      locale: input.locale,
+      branding}),
   );
 
   return {
     title: content.title,
     body: content.body,
+    emailText: `${content.body}\n\n${branding.disclaimer}`,
     subject: content.subject,
     html,
     whatsappText: content.whatsappText,

@@ -3,7 +3,10 @@
 import { headers } from "next/headers";
 
 import { generateGuestLeadReferenceId } from "@/features/guest-leads/lib/reference-id";
-import { getFeatureFlagSettings } from "@/features/settings/lib/public-settings-cache";
+import {
+  getFeatureFlagSettings,
+  getFormsSettings,
+} from "@/features/settings/lib/public-settings-cache";
 import {
   errorResult,
   parseInput,
@@ -16,6 +19,7 @@ import { getRequestMetaFromHeaders } from "@/server/auth/session";
 import { guestLeadRepository } from "@/server/repositories/guest-lead-repository";
 import { serviceRepository } from "@/server/repositories/service-repository";
 import { hashIpAddress } from "@/server/security/hash";
+import { sendFormSubmissionConfirmation } from "@/server/notifications/send-form-submission-confirmation";
 import {
   enforceRateLimit,
   publicFormRateLimit,
@@ -85,6 +89,26 @@ export async function submitGuestLeadAction(
       service_slug: service.slug,
     },
   });
+
+  if (lead.email) {
+    const forms = await getFormsSettings();
+
+    if (
+      featureFlags.emailNotificationsEnabled &&
+      forms.submitRequestAutoReplyEnabled
+    ) {
+      try {
+        await sendFormSubmissionConfirmation({
+          to: lead.email,
+          customerName: lead.fullName,
+          referenceId: lead.referenceId,
+          submissionLabel: "Service request",
+        });
+      } catch {
+        console.error("[email:service-request-confirmation] delivery failed");
+      }
+    }
+  }
 
   return successResult({
     referenceId: lead.referenceId,

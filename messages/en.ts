@@ -2842,6 +2842,7 @@ const en = {
         "submitRequestSuccessMessageEn": "Success message (English)",
         "submitRequestSaveToSupportRequests": "Save submissions to support requests",
         "submitRequestNotifyAdminEnabled": "Notify admin on submission",
+        "submitRequestAutoReplyEnabled": "Send confirmation email to customer (when an email is provided)",
         "featureFlagNote": "Enable or disable guest service requests in System settings → Feature flags."
       },
       "footer": {
@@ -2940,6 +2941,7 @@ const en = {
         "payment": "Payment",
         "seo": "SEO",
         "tracking": "Social & tracking",
+        "email": "Email notifications",
         "features": "Feature flags"
       },
       "business": {
@@ -3002,6 +3004,15 @@ const en = {
         "consentExplicit": "Explicit consent required",
         "consentDisabled": "Disabled (no third-party scripts)",
         "publicIdsNote": "GA4, GTM, Meta Pixel, and TikTok Pixel IDs are configured in environment variables only (not editable here). They load on public marketing pages in production."
+      },
+      "email": {
+        "note": "Choose which non-security emails customers receive. Disabled categories continue to appear as in-app updates and can still use enabled WhatsApp channels.",
+        "securityNote": "OTP, email verification, and password-reset emails are security-critical and always remain enabled.",
+        "emailNotificationsEnabled": "Enable customer notification emails",
+        "applicationSubmissionEmailsEnabled": "Application submission confirmations",
+        "applicationStatusEmailsEnabled": "Application status, document, completion, rejection, and cancellation updates",
+        "invoicePaymentEmailsEnabled": "Invoice and payment updates",
+        "reviewDecisionEmailsEnabled": "Review approval and rejection updates"
       },
       "features": {
         "agentModuleEnabled": "Agent module enabled",
@@ -3808,6 +3819,47 @@ const en = {
       "nextStep3": "Keep your tracking ID safe — you can use it on the track page or in your dashboard.",
       "viewDashboard": "View my applications",
       "trackApplication": "Track this application"
+    }
+  },
+  "emailTemplates": {
+    "footer": {
+      "help": "Need help?",
+      "automatedNotice": "This is an automated service email. Please do not share verification codes or sensitive documents by reply."
+    },
+    "application": {
+      "eyebrow": "Application update",
+      "securityNotice": "For your security, open application details only from your account dashboard."
+    },
+    "otp": {
+      "eyebrow": "Secure verification",
+      "signInTitle": "Sign in to your account",
+      "emailVerificationTitle": "Verify your email address",
+      "passwordResetTitle": "Verify your password reset",
+      "signInSubject": "Your PakExcise.com sign-in code",
+      "emailVerificationSubject": "Verify your PakExcise.com email",
+      "passwordResetSubject": "Your PakExcise.com password reset code",
+      "instruction": "Enter this one-time code to continue. The code expires in 5 minutes.",
+      "codeLabel": "Your verification code",
+      "expiry": "Valid for 5 minutes",
+      "securityNotice": "Never share this code with anyone. Our team will never ask for your OTP by phone, WhatsApp, or email.",
+      "ignoreNotice": "If you did not request this code, you can safely ignore this email."
+    },
+    "passwordReset": {
+      "eyebrow": "Account security",
+      "title": "Reset your password",
+      "greeting": "Hello",
+      "instruction": "We received a request to reset your password. Use the secure button below to choose a new one.",
+      "button": "Reset password",
+      "ignoreNotice": "If you did not request a password reset, ignore this email. Your password will remain unchanged."
+    },
+    "submission": {
+      "eyebrow": "Submission received",
+      "title": "Thank you — we received your request",
+      "greeting": "Hello",
+      "instruction": "Your request has been received successfully. Our support team will review it and contact you if more information is needed.",
+      "referenceLabel": "Reference number",
+      "visitSite": "Visit",
+      "keepReference": "Keep this reference number for future communication. Please do not send sensitive documents by replying to this email."
     }
   }
 } as const;

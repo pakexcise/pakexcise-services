@@ -3,6 +3,7 @@ import "server-only";
 import type { Notification } from "@prisma/client";
 
 import { buildNotificationTemplate } from "@/features/notifications/lib/build-template";
+import { shouldSendNotificationEmail } from "@/features/notifications/lib/email-delivery-policy";
 import { normalizeNotificationLocale } from "@/features/notifications/lib/resolve-locale";
 import { resolveNotificationRecipient } from "@/features/notifications/lib/resolve-recipient";
 import { sendEmailNotification } from "@/features/notifications/dispatcher/channels/email-channel";
@@ -42,6 +43,15 @@ export async function processNotificationRecord(
   }
 
   const locale = normalizeNotificationLocale(notification.locale);
+  const featureFlags = await getFeatureFlagSettings();
+
+  if (
+    notification.channel === "EMAIL" &&
+    !shouldSendNotificationEmail(notification.eventType, featureFlags)
+  ) {
+    return { ok: true };
+  }
+
   const template = await buildNotificationTemplate({
     eventType: notification.eventType,
     locale,
@@ -63,7 +73,7 @@ export async function processNotificationRecord(
     const result = await sendEmailNotification({
       to: recipient,
       subject: template.subject,
-      text: template.body,
+      text: template.emailText,
       html: template.html,
     });
 
@@ -73,8 +83,6 @@ export async function processNotificationRecord(
 
     return { ok: true };
   }
-
-  const featureFlags = await getFeatureFlagSettings();
 
   if (notification.channel === "WHATSAPP") {
     if (!featureFlags.whatsappNotificationsEnabled) {

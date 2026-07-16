@@ -7,50 +7,43 @@ import {
 } from "@/features/notifications/templates/emails/branded-email-layout";
 import en from "@/messages/en";
 
-const copy = en.emailTemplates.application;
+const copy = en.emailTemplates.passwordReset;
 
-type ApplicationEventEmailProps = {
-  title: string;
-  body: string;
-  ctaLabel: string;
-  ctaUrl: string;
-  locale: "en";
+type PasswordResetEmailProps = {
   branding: EmailBranding;
+  name?: string | null;
+  resetUrl: string;
 };
 
-export function ApplicationEventEmail({
-  title,
-  body,
-  ctaLabel,
-  ctaUrl,
-  locale,
+export function PasswordResetEmail({
   branding,
-}: ApplicationEventEmailProps) {
-  void locale;
-  const paragraphs = body.split("\n").filter(Boolean);
-
+  name,
+  resetUrl,
+}: PasswordResetEmailProps) {
   return (
     <BrandedEmailLayout
       branding={branding}
-      preview={title}
+      preview={`Reset your ${branding.siteName} password`}
       eyebrow={copy.eyebrow}
-      title={title}
+      title={copy.title}
     >
-      {paragraphs.map((paragraph) => (
-        <Text key={paragraph} style={emailStyles.paragraph}>
-          {paragraph}
-        </Text>
-      ))}
+      <Text style={emailStyles.paragraph}>
+        {copy.greeting}
+        {name?.trim() ? ` ${name.trim()}` : ""},
+      </Text>
+      <Text style={emailStyles.paragraph}>
+        {copy.instruction}
+      </Text>
       <Section style={emailStyles.buttonSection}>
         <Button
-          href={ctaUrl}
+          href={resetUrl}
           style={{ ...emailStyles.button, backgroundColor: branding.primaryColor }}
         >
-          {ctaLabel}
+          {copy.button}
         </Button>
       </Section>
       <Text style={emailStyles.muted}>
-        {copy.securityNotice}
+        {copy.ignoreNotice}
       </Text>
     </BrandedEmailLayout>
   );
