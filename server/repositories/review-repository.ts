@@ -47,6 +47,43 @@ export class ReviewRepository extends Repository {
     );
   }
 
+  async listPublicFeatured(limit = 6): Promise<PublicReview[]> {
+    const [googleReviews, otherReviews] = await Promise.all([
+      this.query(
+        () =>
+          this.db.review.findMany({
+            where: { ...approvedPublicWhere, source: "GOOGLE" },
+            orderBy: [{ submittedAt: "desc" }, { displayOrder: "asc" }],
+            take: limit,
+            select: publicReviewSelect,
+          }),
+        [],
+      ),
+      this.query(
+        () =>
+          this.db.review.findMany({
+            where: { ...approvedPublicWhere, source: { not: "GOOGLE" } },
+            orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+            take: limit,
+            select: publicReviewSelect,
+          }),
+        [],
+      ),
+    ]);
+
+    const merged: PublicReview[] = [];
+    const seen = new Set<string>();
+
+    for (const review of [...googleReviews, ...otherReviews]) {
+      if (seen.has(review.id)) continue;
+      seen.add(review.id);
+      merged.push(review);
+      if (merged.length >= limit) break;
+    }
+
+    return merged;
+  }
+
   async listPublicPaginated(
     page = 1,
     pageSize = 6,

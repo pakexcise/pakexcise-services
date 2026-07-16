@@ -4,7 +4,6 @@ import { ArrowRight, MessageCircle, Star } from "lucide-react";
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { ReviewCard } from "@/components/marketing/review-card";
 import { Button } from "@/components/ui/button";
-import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import type { PublicReview } from "@/server/repositories/review-repository";
 
 export function PublicReviewsSection({
@@ -17,8 +16,6 @@ export function PublicReviewsSection({
   countLabel,
   averageRating,
   viewAllLabel,
-  whatsappLabel,
-  whatsappHref,
   googleReviewHref,
   googleReviewLabel,
   tone = "muted",
@@ -32,8 +29,6 @@ export function PublicReviewsSection({
   countLabel: string;
   averageRating: number;
   viewAllLabel: string;
-  whatsappLabel: string;
-  whatsappHref?: string;
   googleReviewHref?: string;
   googleReviewLabel?: string;
   tone?: "default" | "muted" | "accent";
@@ -72,20 +67,6 @@ export function PublicReviewsSection({
             <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
         </Button>
-        {whatsappHref ? (
-          <Button asChild size="lg" variant="outline" className="border-[#25D366]/40 text-[#128C7E]">
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-analytics-event="click_whatsapp"
-              data-analytics-placement="reviews_whatsapp"
-            >
-              <WhatsAppIcon className="size-4" />
-              {whatsappLabel}
-            </a>
-          </Button>
-        ) : null}
         {googleReviewHref && googleReviewLabel ? (
           <Button asChild size="lg" variant="secondary">
             <a href={googleReviewHref} target="_blank" rel="noopener noreferrer">

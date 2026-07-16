@@ -83,7 +83,7 @@ export default async function AboutPage() {
       serviceCategoryRepository.listPublicGrouped(),
       getBusinessSettings(),
       getFeatureFlagSettings(),
-      reviewRepository.listPublic(3),
+      reviewRepository.listPublicFeatured(6),
       reviewRepository.getPublicSummary(),
     ]);
 
@@ -207,8 +207,6 @@ export default async function AboutPage() {
             })}
             averageRating={reviewSummary.averageRating}
             viewAllLabel={tMarketing("reviews.viewAll")}
-            whatsappLabel={tMarketing("reviews.whatsappFastCta")}
-            whatsappHref={whatsappHref}
             googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
             googleReviewLabel={tMarketing("reviews.googleReviewCta")}
             tone="muted"

@@ -1351,6 +1351,7 @@ const en = {
       "whatsappFastDescription": "Message PakExcise for guided private facilitation support.",
       "whatsappFastCta": "Fast service via WhatsApp",
       "googleReviewCta": "Review us on Google",
+      "googleReviewDescription": "Share your experience on Google so other customers can find trusted PakExcise facilitation support.",
       "homeTitle": "What customers say",
       "homeDescription": "Customer experiences with our private vehicle and excise facilitation support.",
       "viewAll": "Read all reviews",

@@ -8,7 +8,6 @@ import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
 import { ReviewCard } from "@/components/marketing/review-card";
 import { Button } from "@/components/ui/button";
-import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { RatingStars } from "@/components/shared/rating-stars";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { buildBreadcrumbJsonLd, buildReviewsJsonLd } from "@/features/seo/lib/metadata";
@@ -18,7 +17,6 @@ import { getBusinessSettings } from "@/features/settings/lib/public-settings-cac
 import { resolveWhatsappLinkNumber } from "@/features/settings/lib/resolve-public-contact";
 import { getTranslations } from "@/lib/i18n/t";
 import { absoluteUrl } from "@/lib/utils";
-import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import { getCurrentUser } from "@/server/auth/current-user";
 import {
   getPageContent,
@@ -98,10 +96,6 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
   const title = content?.titleEn ?? "Customer Reviews";
   const intro = removeDuplicatePrivateDisclaimer(content?.contentEn ?? "");
   const whatsappPhone = resolveWhatsappLinkNumber(business);
-  const whatsappHref = buildWhatsAppUrl(
-    whatsappPhone,
-    business.whatsappDefaultMessageEn || business.whatsappDefaultMessage || "",
-  );
   const googleReviewHref = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || "";
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -167,37 +161,20 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
           </div>
         </section>
 
-        <section className="grid gap-4 rounded-2xl border bg-card p-5 md:grid-cols-2 md:p-6">
-          <div>
-            <h2 className="text-lg font-semibold">{tMarketing("reviews.whatsappFastTitle")}</h2>
+        {googleReviewHref ? (
+          <section className="rounded-2xl border bg-card p-5 md:p-6">
+            <h2 className="text-lg font-semibold">{tMarketing("reviews.googleReviewCta")}</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              {tMarketing("reviews.whatsappFastDescription")}
+              {tMarketing("reviews.googleReviewDescription")}
             </p>
-            <Button asChild className="mt-4" variant="outline">
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-analytics-event="click_whatsapp"
-                data-analytics-placement="reviews_fast_whatsapp"
-              >
-                <WhatsAppIcon className="size-4" />
-                {tMarketing("reviews.whatsappFastCta")}
+            <Button asChild className="mt-4" variant="secondary">
+              <a href={googleReviewHref} target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="size-4" aria-hidden="true" />
+                {tMarketing("reviews.googleReviewCta")}
               </a>
             </Button>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold">{tMarketing("reviews.googleReviewCta")}</h2>
-            {googleReviewHref ? (
-              <Button asChild className="mt-4" variant="secondary">
-                <a href={googleReviewHref} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="size-4" aria-hidden="true" />
-                  {tMarketing("reviews.googleReviewCta")}
-                </a>
-              </Button>
-            ) : null}
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {intro ? (
           <div className="mx-auto max-w-3xl text-center">

@@ -157,7 +157,7 @@ const defaults = defaultHomePageSettings();
       () => blogPostRepository.listPublished(settings.limits.blogCount),
       [],
     ),
-    safeLoad("reviews", () => reviewRepository.listPublic(3), []),
+    safeLoad("reviews", () => reviewRepository.listPublicFeatured(6), []),
     safeLoad("reviewSummary", () => reviewRepository.getPublicSummary(), {
       count: 0,
       averageRating: 0,
@@ -444,8 +444,6 @@ const defaults = defaultHomePageSettings();
           })}
           averageRating={reviewSummary.averageRating}
           viewAllLabel={tMarketing("reviews.viewAll")}
-          whatsappLabel={tMarketing("reviews.whatsappFastCta")}
-          whatsappHref={whatsappHref}
           googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
           googleReviewLabel={tMarketing("reviews.googleReviewCta")}
           tone="muted"

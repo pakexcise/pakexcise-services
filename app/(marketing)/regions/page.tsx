@@ -47,7 +47,7 @@ export default async function RegionsPage() {
     await Promise.all([
       seoMetaRepository.findByPageKey("regions"),
       regionRepository.listPublic(),
-      reviewRepository.listPublic(3),
+      reviewRepository.listPublicFeatured(6),
       reviewRepository.getPublicSummary(),
       getBusinessSettings(),
       getFeatureFlagSettings(),
@@ -101,8 +101,6 @@ export default async function RegionsPage() {
             countLabel={t("reviews.ratingSummary", { count: reviewSummary.count })}
             averageRating={reviewSummary.averageRating}
             viewAllLabel={t("reviews.viewAll")}
-            whatsappLabel={t("reviews.whatsappFastCta")}
-            whatsappHref={whatsappHref}
             googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
             googleReviewLabel={t("reviews.googleReviewCta")}
             tone="muted"

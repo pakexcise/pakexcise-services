@@ -185,10 +185,10 @@ export async function syncGoogleBusinessReviews(options?: {
   const nextOrderBase =
     ((
       await prisma.review.findFirst({
-        orderBy: { displayOrder: "desc" },
+        orderBy: { displayOrder: "asc" },
         select: { displayOrder: true },
       })
-    )?.displayOrder ?? 0) + 1;
+    )?.displayOrder ?? 1) - 1;
 
   let orderOffset = 0;
 
@@ -250,7 +250,7 @@ export async function syncGoogleBusinessReviews(options?: {
         status: "APPROVED",
         isActive: true,
         customerConsent: true,
-        displayOrder: nextOrderBase + orderOffset,
+        displayOrder: nextOrderBase - orderOffset,
         externalId,
         externalUpdatedAt,
         reviewerPhotoUrl: remote.reviewer?.profilePhotoUrl ?? null,

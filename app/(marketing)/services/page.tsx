@@ -65,7 +65,7 @@ export default async function ServicesPage() {
   const categoryGroups = await serviceCategoryRepository.listPublicGrouped();
   const [featureFlags, reviews, reviewSummary, business] = await Promise.all([
     getFeatureFlagSettings(),
-    reviewRepository.listPublic(3),
+    reviewRepository.listPublicFeatured(6),
     reviewRepository.getPublicSummary(),
     getBusinessSettings(),
   ]);
@@ -140,8 +140,6 @@ export default async function ServicesPage() {
             countLabel={t("reviews.ratingSummary", { count: reviewSummary.count })}
             averageRating={reviewSummary.averageRating}
             viewAllLabel={t("reviews.viewAll")}
-            whatsappLabel={t("reviews.whatsappFastCta")}
-            whatsappHref={whatsappHref}
             googleReviewHref={process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined}
             googleReviewLabel={t("reviews.googleReviewCta")}
             tone="muted"

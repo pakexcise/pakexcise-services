@@ -121,7 +121,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     serviceReviews.length > 0
       ? [serviceReviews, serviceReviewSummary]
       : await Promise.all([
-          reviewRepository.listPublic(3),
+          reviewRepository.listPublicFeatured(6),
           reviewRepository.getPublicSummary(),
         ]);
 
@@ -327,8 +327,6 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 })}
                 averageRating={reviewSummary.averageRating}
                 viewAllLabel={t("reviews.viewAll")}
-                whatsappLabel={t("reviews.whatsappFastCta")}
-                whatsappHref={whatsappHref}
                 googleReviewHref={
                   process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || undefined
                 }
