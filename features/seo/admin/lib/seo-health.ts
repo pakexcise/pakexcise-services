@@ -21,24 +21,34 @@ export type SeoHealthSnapshot = {
   seoRecordCount: number;
   missingMetaTitleCount: number;
   missingMetaDescriptionCount: number;
+  missingH1Count: number;
 };
 
 export async function getSeoHealthSnapshot(): Promise<SeoHealthSnapshot> {
   const seoSettings = await getSeoSettings();
-  const [seoRecordCount, missingMetaTitleCount, missingMetaDescriptionCount] =
-    await Promise.all([
-      prisma.seoMeta.count(),
-      prisma.seoMeta.count({
-        where: {
-          OR: [{ metaTitleEn: null }, { metaTitleEn: "" }],
-        },
-      }),
-      prisma.seoMeta.count({
-        where: {
-          OR: [{ metaDescriptionEn: null }, { metaDescriptionEn: "" }],
-        },
-      }),
-    ]);
+  const [
+    seoRecordCount,
+    missingMetaTitleCount,
+    missingMetaDescriptionCount,
+    missingH1Count,
+  ] = await Promise.all([
+    prisma.seoMeta.count(),
+    prisma.seoMeta.count({
+      where: {
+        OR: [{ metaTitleEn: null }, { metaTitleEn: "" }],
+      },
+    }),
+    prisma.seoMeta.count({
+      where: {
+        OR: [{ metaDescriptionEn: null }, { metaDescriptionEn: "" }],
+      },
+    }),
+    prisma.seoMeta.count({
+      where: {
+        OR: [{ h1En: null }, { h1En: "" }],
+      },
+    }),
+  ]);
 
   return {
     appEnv: getAppEnv(),
@@ -59,5 +69,6 @@ export async function getSeoHealthSnapshot(): Promise<SeoHealthSnapshot> {
     seoRecordCount,
     missingMetaTitleCount,
     missingMetaDescriptionCount,
+    missingH1Count,
   };
 }

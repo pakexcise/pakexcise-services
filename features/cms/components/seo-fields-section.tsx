@@ -9,11 +9,14 @@ type SeoFieldsSectionProps = {
   value: SeoMetaInput;
   onChange: (value: SeoMetaInput) => void;
   hideOgImage?: boolean;
+  showFocusKeywords?: boolean;
   labels: {
     title: string;
     metaTitleEn: string;
     metaDescriptionEn: string;
     h1En: string;
+    focusKeywords?: string;
+    focusKeywordsHint?: string;
     canonicalUrl: string;
     ogTitleEn: string;
     ogDescriptionEn: string;
@@ -28,6 +31,7 @@ export function SeoFieldsSection({
   value,
   onChange,
   hideOgImage = false,
+  showFocusKeywords = false,
   labels,
 }: SeoFieldsSectionProps) {
   function update<K extends keyof SeoMetaInput>(key: K, next: SeoMetaInput[K]) {
@@ -63,6 +67,22 @@ export function SeoFieldsSection({
             onChange={(e) => update("h1En", e.target.value)}
           />
         </div>
+        {showFocusKeywords && labels.focusKeywords ? (
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="focusKeywords">{labels.focusKeywords}</Label>
+            <Input
+              id="focusKeywords"
+              value={value.focusKeywords ?? ""}
+              onChange={(e) => update("focusKeywords", e.target.value)}
+              placeholder={labels.focusKeywordsHint}
+            />
+            {labels.focusKeywordsHint ? (
+              <p className="text-xs text-muted-foreground">
+                {labels.focusKeywordsHint}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="canonicalUrl">{labels.canonicalUrl}</Label>
           <Input

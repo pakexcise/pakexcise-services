@@ -20,6 +20,7 @@ export const seoMetaInputSchema = z.object({
   metaTitleEn: z.string().trim().max(200).optional().nullable(),
   metaDescriptionEn: z.string().trim().max(5000).optional().nullable(),
   h1En: z.string().trim().max(200).optional().nullable(),
+  focusKeywords: z.string().trim().max(500).optional().nullable(),
   canonicalUrl: seoPathOrUrlSchema.optional().nullable().or(z.literal("")),
   ogTitleEn: z.string().trim().max(200).optional().nullable(),
   ogDescriptionEn: z.string().trim().max(5000).optional().nullable(),
@@ -29,6 +30,11 @@ export const seoMetaInputSchema = z.object({
   robotsFollow: z.boolean().default(true),
   faqSchemaJson: jsonObjectSchema,
   breadcrumbJson: jsonObjectSchema,
+});
+
+export const updateSeoMetaSchema = z.object({
+  id: z.string().cuid(),
+  seo: seoMetaInputSchema,
 });
 
 export type SeoMetaInput = z.infer<typeof seoMetaInputSchema>;

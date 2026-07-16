@@ -9,6 +9,7 @@ function normalizeSeoInput(seo: SeoMetaInput) {
     metaTitleEn: seo.metaTitleEn || null,
     metaDescriptionEn: seo.metaDescriptionEn || null,
     h1En: seo.h1En || null,
+    focusKeywords: seo.focusKeywords || null,
     canonicalUrl: seo.canonicalUrl || null,
     ogTitleEn: seo.ogTitleEn || null,
     ogDescriptionEn: seo.ogDescriptionEn || null,
@@ -17,7 +18,8 @@ function normalizeSeoInput(seo: SeoMetaInput) {
     robotsIndex: seo.robotsIndex,
     robotsFollow: seo.robotsFollow,
     faqSchemaJson: toPrismaNullableJson(seo.faqSchemaJson),
-    breadcrumbJson: toPrismaNullableJson(seo.breadcrumbJson)};
+    breadcrumbJson: toPrismaNullableJson(seo.breadcrumbJson),
+  };
 }
 
 export async function upsertBlogSeo(

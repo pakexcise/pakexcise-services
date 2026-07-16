@@ -2595,12 +2595,61 @@ const en = {
       },
       "seo": {
         "title": "SEO metadata",
-        "description": "Manage page SEO fields, schema data, and robots settings.",
+        "description": "Edit meta titles, descriptions, H1s, focus keywords, and robots settings for every public page.",
         "emptyTitle": "No SEO records to manage",
         "emptyDescription": "SEO metadata entries will appear here.",
+        "editTitle": "Edit SEO metadata",
+        "editDescription": "Update the meta title, meta description, H1, focus keywords, and related SEO fields for this page.",
+        "edit": "Edit",
+        "save": "Save changes",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "openSource": "Open linked editor",
+        "searchLabel": "Search",
+        "searchPlaceholder": "Search page key, title, H1, or keywords",
+        "filter": "Filter",
         "legalPagesLinkTitle": "Legal pages",
         "legalPagesLinkDescription": "Manage privacy, terms, disclaimer, refund, payment, and cookie policies from the dedicated Legal Pages module.",
         "manageLegalPages": "Open legal pages",
+        "columns": {
+          "pageKey": "Page key",
+          "metaTitle": "Meta title",
+          "metaDescription": "Meta description",
+          "h1": "H1",
+          "focusKeywords": "Focus keywords",
+          "linkedEntity": "Linked entity",
+          "updated": "Updated",
+          "actions": "Actions"
+        },
+        "filters": {
+          "label": "Coverage",
+          "all": "All records",
+          "missingTitle": "Missing title",
+          "missingDescription": "Missing description",
+          "missingH1": "Missing H1",
+          "missingKeywords": "Missing keywords"
+        },
+        "gaps": {
+          "title": "No title",
+          "description": "No description",
+          "h1": "No H1",
+          "keywords": "No keywords"
+        },
+        "form": {
+          "sectionTitle": "SEO fields",
+          "metaTitleEn": "Meta title",
+          "metaDescriptionEn": "Meta description",
+          "h1En": "H1",
+          "focusKeywords": "Focus keywords",
+          "focusKeywordsHint": "Comma-separated keywords for search relevance",
+          "canonicalUrl": "Canonical URL",
+          "ogTitleEn": "Open Graph title",
+          "ogDescriptionEn": "Open Graph description",
+          "ogImage": "Open Graph image URL",
+          "twitterCard": "Twitter card",
+          "robotsIndex": "Allow search indexing",
+          "robotsFollow": "Allow following links"
+        },
         "health": {
           "title": "SEO health",
           "description": "Environment-aware indexing, verification, and metadata coverage for PakExcise.",
@@ -2622,7 +2671,8 @@ const en = {
           "missing": "Not set",
           "seoRecords": "SEO records",
           "missingTitles": "Missing English titles",
-          "missingDescriptions": "Missing English descriptions"
+          "missingDescriptions": "Missing English descriptions",
+          "missingH1s": "Missing H1s"
         }
       },
       "redirects": {

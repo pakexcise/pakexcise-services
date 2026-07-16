@@ -1087,6 +1087,7 @@ model SeoMeta {
   metaTitleEn       String?
   metaDescriptionEn String?  @db.Text
   h1En              String?
+  focusKeywords     String?
   canonicalUrl      String?
   ogTitleEn         String?
   ogDescriptionEn   String?  @db.Text

@@ -58,6 +58,7 @@ export async function resolveMetadataFromSeo(input: {
     locale: input.locale,
     path: input.path,
     canonical: input.seo?.canonicalUrl ?? undefined,
+    keywords: input.seo?.focusKeywords ?? undefined,
     ogTitle: input.seo?.ogTitleEn ?? resolved.title,
     ogDescription: input.seo?.ogDescriptionEn ?? resolved.description,
     ogImage: input.ogImage ?? input.seo?.ogImage ?? brandingDefaults.ogImage,

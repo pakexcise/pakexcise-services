@@ -31,6 +31,7 @@ export type SeoInput = {
   locale: string;
   path: string;
   canonical?: string;
+  keywords?: string | null;
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string | null;
@@ -85,10 +86,12 @@ export function buildMetadata(input: SeoInput): Metadata {
   const ogImage = resolveSeoImageUrl(input.ogImage);
   const twitterImage = resolveSeoImageUrl(input.twitterImage) ?? ogImage;
   const siteName = input.siteName ?? "PakExcise.com";
+  const keywords = input.keywords?.trim() || undefined;
 
   return {
     title: input.title,
     description: input.description,
+    ...(keywords ? { keywords } : {}),
     alternates: {
       canonical,
     },

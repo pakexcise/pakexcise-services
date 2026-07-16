@@ -27,6 +27,7 @@ type SeoHealthPanelProps = {
     seoRecords: string;
     missingTitles: string;
     missingDescriptions: string;
+    missingH1s: string;
   };
 };
 
@@ -160,6 +161,10 @@ export function SeoHealthPanel({ health, labels }: SeoHealthPanelProps) {
     {
       label: labels.missingDescriptions,
       value: <span className="text-sm">{health.missingMetaDescriptionCount}</span>,
+    },
+    {
+      label: labels.missingH1s,
+      value: <span className="text-sm">{health.missingH1Count}</span>,
     },
   ];
 

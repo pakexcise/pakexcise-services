@@ -91,6 +91,7 @@ async function prepareBlogSeoInput(
   slug: string,
   seo: SeoMetaInput | undefined,
   featuredImagePath?: string | null,
+  focusKeywords?: string | null,
 ): Promise<SeoMetaInput | undefined> {
   if (!seo) {
     return undefined;
@@ -102,6 +103,7 @@ async function prepareBlogSeoInput(
 
   return {
     ...seo,
+    focusKeywords: focusKeywords ?? seo.focusKeywords,
     canonicalUrl,
     ogImage,
   };
@@ -157,7 +159,12 @@ export async function createBlogPostAction(
   await upsertBlogSeo(
     post.id,
     post.slug,
-    await prepareBlogSeoInput(post.slug, data.seo, blogFields.featuredImagePath),
+    await prepareBlogSeoInput(
+      post.slug,
+      data.seo,
+      blogFields.featuredImagePath,
+      blogFields.focusKeywords,
+    ),
   );
 
   await auditAdminAction({
@@ -242,7 +249,12 @@ export async function updateBlogPostAction(
   await upsertBlogSeo(
     post.id,
     post.slug,
-    await prepareBlogSeoInput(post.slug, data.seo, blogFields.featuredImagePath),
+    await prepareBlogSeoInput(
+      post.slug,
+      data.seo,
+      blogFields.featuredImagePath,
+      blogFields.focusKeywords,
+    ),
   );
 
   await auditAdminAction({

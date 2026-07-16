@@ -4,6 +4,7 @@ export const emptySeoInput: SeoMetaInput = {
   metaTitleEn: "",
   metaDescriptionEn: "",
   h1En: "",
+  focusKeywords: "",
   canonicalUrl: "",
   ogTitleEn: "",
   ogDescriptionEn: "",
@@ -12,13 +13,15 @@ export const emptySeoInput: SeoMetaInput = {
   robotsIndex: true,
   robotsFollow: true,
   faqSchemaJson: null,
-  breadcrumbJson: null};
+  breadcrumbJson: null,
+};
 
 export function seoFromRecord(
   seo?: {
     metaTitleEn?: string | null;
     metaDescriptionEn?: string | null;
     h1En?: string | null;
+    focusKeywords?: string | null;
     canonicalUrl?: string | null;
     ogTitleEn?: string | null;
     ogDescriptionEn?: string | null;
@@ -35,6 +38,7 @@ export function seoFromRecord(
     metaTitleEn: seo.metaTitleEn ?? "",
     metaDescriptionEn: seo.metaDescriptionEn ?? "",
     h1En: seo.h1En ?? "",
+    focusKeywords: seo.focusKeywords ?? "",
     canonicalUrl: seo.canonicalUrl ?? "",
     ogTitleEn: seo.ogTitleEn ?? "",
     ogDescriptionEn: seo.ogDescriptionEn ?? "",
@@ -44,5 +48,7 @@ export function seoFromRecord(
     robotsIndex: seo.robotsIndex ?? true,
     robotsFollow: seo.robotsFollow ?? true,
     faqSchemaJson: (seo.faqSchemaJson ?? null) as SeoMetaInput["faqSchemaJson"],
-    breadcrumbJson: (seo.breadcrumbJson ?? null) as SeoMetaInput["breadcrumbJson"]};
+    breadcrumbJson: (seo.breadcrumbJson ??
+      null) as SeoMetaInput["breadcrumbJson"],
+  };
 }

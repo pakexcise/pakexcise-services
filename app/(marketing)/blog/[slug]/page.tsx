@@ -80,10 +80,13 @@ export async function generateMetadata({
     },
   });
 
-  if (post.focusKeywords?.trim()) {
+  const focusKeywords =
+    post.seoMeta?.focusKeywords?.trim() || post.focusKeywords?.trim() || "";
+
+  if (focusKeywords) {
     return {
       ...metadata,
-      keywords: post.focusKeywords
+      keywords: focusKeywords
         .split(",")
         .map((keyword) => keyword.trim())
         .filter(Boolean),

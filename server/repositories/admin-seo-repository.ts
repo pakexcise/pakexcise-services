@@ -12,13 +12,29 @@ export const adminSeoListSelect = {
   id: true,
   pageKey: true,
   metaTitleEn: true,
+  metaDescriptionEn: true,
+  h1En: true,
+  focusKeywords: true,
   canonicalUrl: true,
   robotsIndex: true,
   robotsFollow: true,
   updatedAt: true,
+  serviceId: true,
+  regionId: true,
+  cityId: true,
+  blogPostId: true,
+  legalPageId: true,
   service: { select: { slug: true, nameEn: true } },
   region: { select: { slug: true, nameEn: true } },
-  blogPost: { select: { slug: true, titleEn: true } },
+  city: {
+    select: {
+      slug: true,
+      nameEn: true,
+      region: { select: { slug: true } },
+    },
+  },
+  blogPost: { select: { slug: true, titleEn: true, focusKeywords: true } },
+  legalPage: { select: { slug: true, titleEn: true } },
 } as const satisfies Prisma.SeoMetaSelect;
 
 export type AdminSeoListItem = Prisma.SeoMetaGetPayload<{
@@ -29,6 +45,7 @@ export type AdminSeoListFilters = {
   page?: number;
   pageSize?: number;
   q?: string;
+  missing?: "title" | "description" | "h1" | "keywords";
 };
 
 export class AdminSeoRepository extends Repository {
@@ -42,7 +59,31 @@ export class AdminSeoRepository extends Repository {
       where.OR = [
         { pageKey: { contains: q, mode: "insensitive" } },
         { metaTitleEn: { contains: q, mode: "insensitive" } },
+        { metaDescriptionEn: { contains: q, mode: "insensitive" } },
+        { h1En: { contains: q, mode: "insensitive" } },
+        { focusKeywords: { contains: q, mode: "insensitive" } },
+      ];
+    }
 
+    if (filters.missing === "title") {
+      where.AND = [
+        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        { OR: [{ metaTitleEn: null }, { metaTitleEn: "" }] },
+      ];
+    } else if (filters.missing === "description") {
+      where.AND = [
+        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        { OR: [{ metaDescriptionEn: null }, { metaDescriptionEn: "" }] },
+      ];
+    } else if (filters.missing === "h1") {
+      where.AND = [
+        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        { OR: [{ h1En: null }, { h1En: "" }] },
+      ];
+    } else if (filters.missing === "keywords") {
+      where.AND = [
+        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        { OR: [{ focusKeywords: null }, { focusKeywords: "" }] },
       ];
     }
 
@@ -64,6 +105,25 @@ export class AdminSeoRepository extends Repository {
 
   async findById(id: string) {
     return this.db.seoMeta.findUnique({ where: { id } });
+  }
+
+  async findByIdForEdit(id: string) {
+    return this.db.seoMeta.findUnique({
+      where: { id },
+      include: {
+        service: { select: { slug: true, nameEn: true } },
+        region: { select: { slug: true, nameEn: true } },
+        city: {
+          select: {
+            slug: true,
+            nameEn: true,
+            region: { select: { slug: true } },
+          },
+        },
+        blogPost: { select: { slug: true, titleEn: true, focusKeywords: true } },
+        legalPage: { select: { slug: true, titleEn: true } },
+      },
+    });
   }
 
   async findByPageKey(pageKey: string) {
