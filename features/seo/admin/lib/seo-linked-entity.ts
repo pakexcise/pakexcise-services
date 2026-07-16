@@ -16,7 +16,7 @@ type SeoLinkSource = {
 
 export function resolveSeoLinkedEntity(record: SeoLinkSource): {
   label: string;
-  href: string | null;
+  href: Route | null;
   kind: "service" | "region" | "city" | "blog" | "legal" | "static";
 } {
   if (record.serviceId && record.service) {

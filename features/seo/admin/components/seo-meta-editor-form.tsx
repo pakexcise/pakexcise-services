@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
@@ -13,7 +14,7 @@ type SeoMetaEditorFormProps = {
   seoId: string;
   pageKey: string;
   linkedEntityLabel: string;
-  sourceEditHref: string | null;
+  sourceEditHref: Route | null;
   initialValues: SeoMetaInput;
   labels: {
     save: string;
@@ -78,7 +79,7 @@ export function SeoMetaEditorForm({
               <span>{linkedEntityLabel}</span>
               {sourceEditHref ? (
                 <Button size="sm" variant="outline" asChild>
-                  <Link href={sourceEditHref}>{labels.openSource}</Link>
+                  <Link href={sourceEditHref as Route}>{labels.openSource}</Link>
                 </Button>
               ) : null}
             </dd>
