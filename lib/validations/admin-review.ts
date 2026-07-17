@@ -40,6 +40,14 @@ export const rejectReviewSchema = z.object({
   moderationNote: z.string().trim().min(5).max(500),
 });
 
+export const bulkReviewIdsSchema = z.object({
+  ids: z.array(z.string().cuid()).min(1).max(200),
+});
+
+export const bulkRejectReviewsSchema = bulkReviewIdsSchema.extend({
+  moderationNote: z.string().trim().min(5).max(500),
+});
+
 export const reorderReviewsSchema = z.object({
   items: z
     .array(

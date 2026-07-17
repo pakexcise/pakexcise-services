@@ -6,6 +6,8 @@ import { reviewAuditSnapshot } from "@/features/reviews/admin/lib/review-snapsho
 import { syncGoogleBusinessReviews } from "@/features/reviews/google/sync-google-reviews";
 import {
   approveReviewSchema,
+  bulkRejectReviewsSchema,
+  bulkReviewIdsSchema,
   createReviewSchema,
   rejectReviewSchema,
   reorderReviewsSchema,
@@ -308,6 +310,96 @@ export async function rejectReviewAction(
 
   revalidateReviewPaths(existing.service?.slug);
   return successResult({ id: parsed.data.id });
+}
+
+export async function bulkApproveReviewsAction(
+  input: unknown,
+): Promise<ActionResult<{ count: number }>> {
+  const user = await requirePermission("content:manage");
+  const parsed = parseInput(bulkReviewIdsSchema, input);
+  if (!parsed.success) return parsed;
+
+  const ids = [...new Set(parsed.data.ids)];
+  const result = await prisma.review.updateMany({
+    where: { id: { in: ids } },
+    data: {
+      status: "APPROVED",
+      isActive: true,
+      moderationNote: null,
+      moderatedById: user.id,
+      moderatedAt: new Date(),
+    },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "UPDATE",
+    entityType: "review",
+    entityId: "bulk-approve",
+    after: { ids, count: result.count },
+  });
+
+  revalidateReviewPaths();
+  return successResult({ count: result.count });
+}
+
+export async function bulkRejectReviewsAction(
+  input: unknown,
+): Promise<ActionResult<{ count: number }>> {
+  const user = await requirePermission("content:manage");
+  const parsed = parseInput(bulkRejectReviewsSchema, input);
+  if (!parsed.success) return parsed;
+
+  const ids = [...new Set(parsed.data.ids)];
+  const result = await prisma.review.updateMany({
+    where: { id: { in: ids } },
+    data: {
+      status: "REJECTED",
+      isActive: false,
+      moderationNote: parsed.data.moderationNote,
+      moderatedById: user.id,
+      moderatedAt: new Date(),
+    },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "UPDATE",
+    entityType: "review",
+    entityId: "bulk-reject",
+    after: {
+      ids,
+      count: result.count,
+      moderationNote: parsed.data.moderationNote,
+    },
+  });
+
+  revalidateReviewPaths();
+  return successResult({ count: result.count });
+}
+
+export async function bulkDeleteReviewsAction(
+  input: unknown,
+): Promise<ActionResult<{ count: number }>> {
+  const user = await requirePermission("content:manage");
+  const parsed = parseInput(bulkReviewIdsSchema, input);
+  if (!parsed.success) return parsed;
+
+  const ids = [...new Set(parsed.data.ids)];
+  const result = await prisma.review.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "DELETE",
+    entityType: "review",
+    entityId: "bulk-delete",
+    after: { ids, count: result.count },
+  });
+
+  revalidateReviewPaths();
+  return successResult({ count: result.count });
 }
 
 export async function reorderReviewsAction(

@@ -2989,7 +2989,15 @@ const en = {
       "neverSynced": "Google reviews have not been synced yet.",
       "previous": "Previous",
       "next": "Next",
-      "results": "{count} reviews"
+      "results": "{count} reviews",
+      "selectAllPage": "Select page",
+      "selectedCount": "{count} selected",
+      "bulkApprove": "Approve selected",
+      "bulkReject": "Reject selected",
+      "bulkDelete": "Delete selected",
+      "bulkRejectReason": "Bulk rejection reason",
+      "confirmBulkDelete": "Permanently delete all selected reviews?",
+      "clearSelection": "Clear selection"
     },
     "settingsPanel": {
       "title": "System settings",

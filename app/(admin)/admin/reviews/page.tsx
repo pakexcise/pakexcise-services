@@ -72,6 +72,14 @@ export default async function AdminReviewsPage() {
     previous: t("previous"),
     next: t("next"),
     results: t("results"),
+    selectAllPage: t("selectAllPage"),
+    selectedCount: t("selectedCount"),
+    bulkApprove: t("bulkApprove"),
+    bulkReject: t("bulkReject"),
+    bulkDelete: t("bulkDelete"),
+    bulkRejectReason: t("bulkRejectReason"),
+    confirmBulkDelete: t("confirmBulkDelete"),
+    clearSelection: t("clearSelection"),
   };
 
   return (

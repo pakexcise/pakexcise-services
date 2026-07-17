@@ -18,6 +18,9 @@ import { Label } from "@/components/ui/label";
 import { RatingStars } from "@/components/shared/rating-stars";
 import {
   approveReviewAction,
+  bulkApproveReviewsAction,
+  bulkDeleteReviewsAction,
+  bulkRejectReviewsAction,
   createReviewAction,
   deleteReviewAction,
   rejectReviewAction,
@@ -73,6 +76,14 @@ export type ReviewPanelLabels = {
   previous: string;
   next: string;
   results: string;
+  selectAllPage: string;
+  selectedCount: string;
+  bulkApprove: string;
+  bulkReject: string;
+  bulkDelete: string;
+  bulkRejectReason: string;
+  confirmBulkDelete: string;
+  clearSelection: string;
 };
 
 type ServiceOption = {
@@ -141,6 +152,9 @@ export function ReviewsPanel({
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [page, setPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkRejectReason, setBulkRejectReason] = useState("");
+  const [showBulkReject, setShowBulkReject] = useState(false);
 
   const sorted = useMemo(
     () =>
@@ -173,6 +187,80 @@ export function ReviewsPanel({
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
   const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const visibleIds = visible.map((review) => review.id);
+  const allVisibleSelected =
+    visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
+
+  function toggleSelectOne(id: string) {
+    setSelectedIds((current) =>
+      current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+    );
+  }
+
+  function toggleSelectPage() {
+    setSelectedIds((current) => {
+      if (allVisibleSelected) {
+        return current.filter((id) => !visibleIds.includes(id));
+      }
+      return [...new Set([...current, ...visibleIds])];
+    });
+  }
+
+  function clearSelection() {
+    setSelectedIds([]);
+    setShowBulkReject(false);
+    setBulkRejectReason("");
+  }
+
+  function runBulkApprove() {
+    if (selectedIds.length === 0) return;
+    setError(null);
+    startTransition(async () => {
+      const result = await bulkApproveReviewsAction({ ids: selectedIds });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      clearSelection();
+      refreshReviewUi();
+    });
+  }
+
+  function runBulkReject() {
+    if (selectedIds.length === 0) return;
+    if (bulkRejectReason.trim().length < 5) {
+      setError(labels.rejectReasonRequired);
+      return;
+    }
+    setError(null);
+    startTransition(async () => {
+      const result = await bulkRejectReviewsAction({
+        ids: selectedIds,
+        moderationNote: bulkRejectReason.trim(),
+      });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      clearSelection();
+      refreshReviewUi();
+    });
+  }
+
+  function runBulkDelete() {
+    if (selectedIds.length === 0) return;
+    if (!window.confirm(labels.confirmBulkDelete)) return;
+    setError(null);
+    startTransition(async () => {
+      const result = await bulkDeleteReviewsAction({ ids: selectedIds });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      clearSelection();
+      refreshReviewUi();
+    });
+  }
 
   function updateDraft<K extends keyof ReviewDraft>(key: K, value: ReviewDraft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -348,6 +436,7 @@ export function ReviewsPanel({
               onChange={(event) => {
                 setQuery(event.target.value);
                 setPage(1);
+                clearSelection();
               }}
             />
             <select
@@ -355,6 +444,7 @@ export function ReviewsPanel({
               onChange={(event) => {
                 setStatus(event.target.value as typeof status);
                 setPage(1);
+                clearSelection();
               }}
               className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
             >
@@ -364,6 +454,91 @@ export function ReviewsPanel({
               <option value="REJECTED">{labels.statusRejected}</option>
             </select>
           </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={allVisibleSelected}
+                onChange={toggleSelectPage}
+                disabled={visible.length === 0 || isPending}
+              />
+              {labels.selectAllPage}
+            </label>
+            {selectedIds.length > 0 ? (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  {labels.selectedCount.replace("{count}", String(selectedIds.length))}
+                </span>
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={isPending}
+                  onClick={runBulkApprove}
+                >
+                  {labels.bulkApprove}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={isPending}
+                  onClick={() => setShowBulkReject((value) => !value)}
+                >
+                  {labels.bulkReject}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="destructive"
+                  disabled={isPending}
+                  onClick={runBulkDelete}
+                >
+                  {labels.bulkDelete}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  disabled={isPending}
+                  onClick={clearSelection}
+                >
+                  {labels.clearSelection}
+                </Button>
+              </>
+            ) : null}
+          </div>
+
+          {showBulkReject && selectedIds.length > 0 ? (
+            <div className="space-y-2 rounded-lg border p-3">
+              <Label>{labels.bulkRejectReason}</Label>
+              <Input
+                value={bulkRejectReason}
+                onChange={(event) => setBulkRejectReason(event.target.value)}
+                placeholder={labels.rejectReason}
+              />
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={isPending}
+                  onClick={runBulkReject}
+                >
+                  {labels.bulkReject}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setShowBulkReject(false);
+                    setBulkRejectReason("");
+                  }}
+                >
+                  {labels.clear}
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {visible.length === 0 ? (
@@ -371,7 +546,16 @@ export function ReviewsPanel({
         ) : (
           <div className="divide-y">
             {visible.map((review) => (
-              <article key={review.id} className="grid gap-4 p-4 lg:grid-cols-[1fr_auto]">
+              <article key={review.id} className="grid gap-4 p-4 lg:grid-cols-[auto_1fr_auto]">
+                <div className="pt-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(review.id)}
+                    onChange={() => toggleSelectOne(review.id)}
+                    aria-label={review.authorNameEn}
+                    disabled={isPending}
+                  />
+                </div>
                 <div className="min-w-0 space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
                     <strong>{review.authorNameEn}</strong>
