@@ -86,6 +86,7 @@ export default async function AdminReviewsPage() {
     bulkRejectReason: t("bulkRejectReason"),
     selectAll: t("selectAll"),
     clearSelection: t("clearSelection"),
+    downloadCsv: t("downloadCsv"),
   };
 
   return (

@@ -4,27 +4,22 @@ import { ArrowRight, Star } from "lucide-react";
 import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { ReviewCard } from "@/components/marketing/review-card";
 import { Button } from "@/components/ui/button";
-
-type HomeReview = {
-  id: string;
-  authorNameEn: string;
-  authorRoleEn: string | null;
-  contentEn: string;
-  rating: number;
-};
+import type { PublicReview } from "@/server/repositories/review-repository";
 
 export function HomeReviewsSection({
   reviews,
   title,
   description,
   feedbackLabel,
+  googleLabel,
   countLabel,
   viewAllLabel,
 }: {
-  reviews: HomeReview[];
+  reviews: PublicReview[];
   title: string;
   description: string;
   feedbackLabel: string;
+  googleLabel?: string;
   countLabel: string;
   viewAllLabel: string;
 }) {
@@ -45,7 +40,15 @@ export function HomeReviewsSection({
       </div>
       <div className="mt-8 grid gap-5 md:grid-cols-3">
         {reviews.slice(0, 3).map((review) => (
-          <ReviewCard key={review.id} review={review} feedbackLabel={feedbackLabel} />
+          <ReviewCard
+            key={review.id}
+            review={review}
+            fallbackLabel={
+              review.source === "GOOGLE"
+                ? googleLabel || feedbackLabel
+                : feedbackLabel
+            }
+          />
         ))}
       </div>
       <div className="mt-8 text-center">

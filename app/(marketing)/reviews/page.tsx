@@ -204,7 +204,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
                 <ReviewCard
                   key={review.id}
                   review={review}
-                  feedbackLabel={
+                  fallbackLabel={
                     review.source === "GOOGLE"
                       ? tMarketing("reviews.googleLabel")
                       : tMarketing("reviews.customerLabel")

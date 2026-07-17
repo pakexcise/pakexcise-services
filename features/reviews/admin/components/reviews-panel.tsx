@@ -90,6 +90,7 @@ export type ReviewPanelLabels = {
   bulkRejectReason: string;
   selectAll: string;
   clearSelection: string;
+  downloadCsv: string;
 };
 
 type ServiceOption = {
@@ -417,9 +418,14 @@ export function ReviewsPanel({
                 )
               : labels.neverSynced}
           </p>
-          <Button type="button" variant="outline" disabled={isPending} onClick={syncGoogle}>
-            {isPending ? labels.syncing : labels.syncNow}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" asChild>
+              <a href="/api/admin/reviews/export">{labels.downloadCsv}</a>
+            </Button>
+            <Button type="button" variant="outline" disabled={isPending} onClick={syncGoogle}>
+              {isPending ? labels.syncing : labels.syncNow}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -660,9 +666,6 @@ export function ReviewsPanel({
         <div className="grid gap-4 md:grid-cols-2">
           <Field label={labels.author}>
             <Input value={draft.authorNameEn} onChange={(event) => updateDraft("authorNameEn", event.target.value)} maxLength={100} />
-          </Field>
-          <Field label={labels.context}>
-            <Input value={draft.authorRoleEn} onChange={(event) => updateDraft("authorRoleEn", event.target.value)} maxLength={120} />
           </Field>
           <Field label={labels.service}>
             <select

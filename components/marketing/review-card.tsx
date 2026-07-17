@@ -7,13 +7,17 @@ import { formatRelativeTime } from "@/lib/format-relative-time";
 type ReviewCardProps = {
   review: {
     authorNameEn: string;
-    authorRoleEn?: string | null;
     contentEn: string;
     rating: number;
     moderatedAt?: Date | string | null;
     submittedAt?: Date | string | null;
+    source?: string | null;
+    service?: {
+      nameEn?: string | null;
+    } | null;
   };
-  feedbackLabel: string;
+  /** Fallback badge when the review has no linked service (e.g. Google). */
+  fallbackLabel: string;
 };
 
 function initials(name: string): string {
@@ -25,10 +29,10 @@ function initials(name: string): string {
     .join("");
 }
 
-export function ReviewCard({ review, feedbackLabel }: ReviewCardProps) {
+export function ReviewCard({ review, fallbackLabel }: ReviewCardProps) {
   const authorName = review.authorNameEn;
-  const authorRole = review.authorRoleEn ?? "";
   const rating = Math.max(1, Math.min(5, review.rating));
+  const serviceLabel = review.service?.nameEn?.trim() || fallbackLabel;
   const publishedAt = review.moderatedAt ?? review.submittedAt ?? null;
   const relativePublished = formatRelativeTime(publishedAt);
   const absolutePublished =
@@ -47,8 +51,11 @@ export function ReviewCard({ review, feedbackLabel }: ReviewCardProps) {
           <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Quote className="size-5" aria-hidden="true" />
           </span>
-          <span className="rounded-full bg-primary/8 px-2.5 py-1 text-xs font-medium text-primary">
-            {feedbackLabel}
+          <span
+            className="max-w-[12rem] truncate rounded-full bg-primary/8 px-2.5 py-1 text-xs font-medium text-primary"
+            title={serviceLabel}
+          >
+            {serviceLabel}
           </span>
         </div>
         <RatingStars rating={rating} showValue />
@@ -63,9 +70,6 @@ export function ReviewCard({ review, feedbackLabel }: ReviewCardProps) {
           </span>
           <div className="min-w-0">
             <p className="truncate font-semibold">{authorName}</p>
-            {authorRole ? (
-              <p className="truncate text-sm text-muted-foreground">{authorRole}</p>
-            ) : null}
             {relativePublished ? (
               <time
                 className="mt-0.5 block text-xs text-muted-foreground"

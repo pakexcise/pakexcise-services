@@ -3003,7 +3003,8 @@ const en = {
       "confirmBulkDelete": "Permanently delete all selected reviews?",
       "bulkRejectReason": "Rejection reason for selected reviews",
       "selectAll": "Select page",
-      "clearSelection": "Clear selection"
+      "clearSelection": "Clear selection",
+      "downloadCsv": "Download CSV"
     },
     "settingsPanel": {
       "title": "System settings",

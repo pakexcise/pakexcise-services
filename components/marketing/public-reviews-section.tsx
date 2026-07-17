@@ -53,7 +53,7 @@ export function PublicReviewsSection({
           <ReviewCard
             key={review.id}
             review={review}
-            feedbackLabel={
+            fallbackLabel={
               review.source === "GOOGLE" ? googleLabel : customerLabel || feedbackLabel
             }
           />
