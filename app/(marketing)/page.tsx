@@ -57,7 +57,8 @@ import {
 import { serviceCategoryRepository } from "@/server/repositories/service-category-repository";
 
 import Link from "next/link";
-export const dynamic = "force-dynamic";
+/** Cache the homepage for an hour so TTFB stays low without breaking admin-driven content freshness. */
+export const revalidate = 3600;
 
 type HomeSectionTone = "default" | "muted" | "accent";
 

@@ -141,7 +141,11 @@ export function HomeVehicleVisualSection({
                   alt={imageAlt || title}
                   width={HOME_VEHICLE_VISUAL_IMAGE_WIDTH}
                   height={HOME_VEHICLE_VISUAL_IMAGE_HEIGHT}
-                  unoptimized
+                  unoptimized={
+                    resolvedImagePath.startsWith("http://") ||
+                    resolvedImagePath.startsWith("https://") ||
+                    resolvedImagePath.startsWith("//")
+                  }
                   sizes="(max-width: 1024px) min(100vw, 640px), 560px"
                   className="h-auto w-full max-w-[1024px] object-contain"
                   priority={false}

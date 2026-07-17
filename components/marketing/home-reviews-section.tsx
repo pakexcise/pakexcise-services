@@ -53,7 +53,7 @@ export function HomeReviewsSection({
       </div>
       <div className="mt-8 text-center">
         <Button asChild size="lg">
-          <Link href="/reviews">
+          <Link href="/reviews" prefetch={false}>
             {viewAllLabel}
             <ArrowRight className="size-4" aria-hidden="true" />
           </Link>

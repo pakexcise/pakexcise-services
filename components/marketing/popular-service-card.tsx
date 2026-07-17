@@ -41,6 +41,7 @@ export function PopularServiceCard({
   return (
     <Link
       href={`/services/${service.slug}`}
+      prefetch={false}
       className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
       <article

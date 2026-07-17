@@ -25,7 +25,7 @@ export function AuthHeaderButton({
       className={cn(fullWidth && "w-full justify-center", className)}
       onClick={onNavigate}
     >
-      <Link href="/login">
+      <Link href="/login" prefetch={false}>
         <LogIn className="size-4" aria-hidden="true" />
         {loginLabel}
       </Link>

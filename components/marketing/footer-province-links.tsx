@@ -1,5 +1,6 @@
+import Link from "next/link";
 
-import Link from "next/link";export type FooterProvinceLink = {
+export type FooterProvinceLink = {
   id: string;
   slug: string;
   name: string;
@@ -32,6 +33,7 @@ export function FooterProvinceLinks({
             <li key={province.id}>
               <Link
                 href={`/regions/${province.slug}`}
+                prefetch={false}
                 title={province.name}
                 aria-label={province.name}
                 className="inline-block text-sm leading-snug text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"

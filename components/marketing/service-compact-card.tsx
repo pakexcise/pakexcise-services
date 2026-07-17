@@ -34,6 +34,7 @@ export function ServiceCompactCard({
   return (
     <Link
       href={`/services/${service.slug}`}
+      prefetch={false}
       className="group block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
       <article

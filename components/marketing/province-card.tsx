@@ -46,6 +46,7 @@ export function ProvinceCard({
       <CardContent>
         <Link
           href={`/regions/${region.slug}`}
+          prefetch={false}
           className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
           {viewLabel}

@@ -41,6 +41,7 @@ export function ContentDetailExtras({
               <Link
                 key={service.id}
                 href={`/services/${service.slug}`}
+                prefetch={false}
                 className="rounded-xl border p-4 transition-colors hover:bg-muted/40"
               >
                 <h3 className="font-medium text-primary">

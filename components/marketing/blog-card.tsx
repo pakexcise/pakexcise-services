@@ -49,7 +49,11 @@ export function BlogCard({
         featured ? "border-primary/30 shadow-md" : ""
       }`}
     >
-      <Link href={`/blog/${post.slug}`} className="flex h-full flex-col">
+      <Link
+        href={`/blog/${post.slug}`}
+        prefetch={false}
+        className="flex h-full flex-col"
+      >
         <BlogCardImage post={post} title={title} />
         <CardContent className="flex flex-1 flex-col gap-3 p-5">
           <div className="flex flex-wrap items-center gap-2">

@@ -26,6 +26,7 @@ export function ServiceRegionsList({
           <li key={region.slug}>
             <Link
               href={`/regions/${region.slug}`}
+              prefetch={false}
               className="inline-flex rounded-full border bg-muted/40 px-3 py-1 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
             >
               {region.nameEn ?? ""}

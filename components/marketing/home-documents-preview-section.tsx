@@ -60,6 +60,7 @@ export function HomeDocumentsPreviewSection({
               <Link
                 key={document.id}
                 href={`/services/${document.service.slug}`}
+                prefetch={false}
                 className={cn(
                   "group rounded-xl border border-border/70 bg-background/80 p-4",
                   "transition-colors hover:border-primary/25 hover:bg-primary/[0.03]",

@@ -61,7 +61,12 @@ function FooterLink({
   }
 
   return (
-    <Link href={href as Route} className={className} aria-label={ariaLabel}>
+    <Link
+      href={href as Route}
+      prefetch={false}
+      className={className}
+      aria-label={ariaLabel}
+    >
       {children}
     </Link>
   );

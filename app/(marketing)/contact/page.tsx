@@ -21,7 +21,8 @@ import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/res
 import { absoluteUrl } from "@/lib/utils";
 import { getActiveSocialLinks, regionRepository, seoMetaRepository } from "@/server/repositories";
 
-export const dynamic = "force-dynamic";
+/** Contact page settings are cached; ISR keeps TTFB low while admin changes refresh hourly. */
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = "en";

@@ -108,6 +108,7 @@ export function RegionCitiesSection({
             <li key={city.id}>
               <Link
                 href={`/regions/${regionSlug}/${city.slug}`}
+                prefetch={false}
                 aria-label={`${labels.viewCity}: ${city.name}`}
                 className="group flex min-h-10 items-center gap-2 rounded-lg border border-border/80 bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
               >

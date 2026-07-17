@@ -125,6 +125,7 @@ export function RegionNumberPlateFormatsSection({
                         <li key={service.slug}>
                           <Link
                             href={`/services/${service.slug}`}
+                            prefetch={false}
                             className="text-sm font-medium text-primary hover:underline"
                           >
                             {service.name}

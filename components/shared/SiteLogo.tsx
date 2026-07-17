@@ -14,6 +14,15 @@ import {
   type SiteLogoSize,
 } from "@/lib/styles/logo-sizes";
 
+function isRemoteImageSrc(src: string): boolean {
+  return (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("//") ||
+    src.startsWith("data:")
+  );
+}
+
 type SiteLogoProps = {
   variant?: "full" | "icon" | "onPrimary";
   size?: SiteLogoSize;
@@ -58,7 +67,7 @@ export function SiteLogo({
         alt={altName}
         width={LOGO_ICON_INTRINSIC_SIZE}
         height={LOGO_ICON_INTRINSIC_SIZE}
-        unoptimized
+        unoptimized={isRemoteImageSrc(iconLogo)}
         className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
       />
@@ -72,21 +81,23 @@ export function SiteLogo({
         alt={altName}
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
-        unoptimized
+        unoptimized={isRemoteImageSrc(darkLogo)}
         className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
       />
     );
   }
 
+  const primaryLogo = footerLogoPath ? footerLogo : lightLogo;
+
   return (
     <span className={cn("relative inline-flex max-w-full items-center", className)}>
       <Image
-        src={footerLogoPath ? footerLogo : lightLogo}
+        src={primaryLogo}
         alt={altName}
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
-        unoptimized
+        unoptimized={isRemoteImageSrc(primaryLogo)}
         className={cn(sizeClassName, "dark:hidden", imageClassName)}
         priority={priority}
       />
@@ -95,7 +106,7 @@ export function SiteLogo({
         alt={altName}
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
-        unoptimized
+        unoptimized={isRemoteImageSrc(darkLogo)}
         className={cn(sizeClassName, "hidden dark:block", imageClassName)}
         priority={priority}
       />

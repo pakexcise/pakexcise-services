@@ -102,7 +102,9 @@ export function HomeHeroSection({
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="h-12 px-6 text-base">
-              <Link href="/contact#contact-form">{requestCta}</Link>
+              <Link href="/contact#contact-form" prefetch={false}>
+                {requestCta}
+              </Link>
             </Button>
           </div>
         </div>

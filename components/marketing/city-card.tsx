@@ -29,6 +29,7 @@ export function CityCard({
       <CardContent>
         <Link
           href={`/regions/${regionSlug}/${city.slug}`}
+          prefetch={false}
           className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
           {viewLabel}

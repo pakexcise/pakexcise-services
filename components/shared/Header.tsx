@@ -100,10 +100,10 @@ export function Header({
       <div className="container-site flex min-h-[4.25rem] items-center justify-between gap-3 py-2.5 sm:min-h-[4.5rem]">
         <Link
           href="/"
+          prefetch={false}
           className="flex min-w-0 max-w-[62%] shrink-0 items-center text-start sm:max-w-none"
         >
           <SiteLogo
-            priority
             size="header"
             logoPath={logoPath}
             logoDarkPath={logoDarkPath}
@@ -118,6 +118,7 @@ export function Header({
             <Link
               key={item.href}
               href={item.href}
+              prefetch={false}
               className={cn(
                 "rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground xl:px-3",
                 pathname === item.href || pathname.startsWith(`${item.href}/`)
@@ -185,6 +186,7 @@ export function Header({
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "rounded-md px-3 py-2.5 text-sm font-medium text-start",

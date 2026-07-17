@@ -62,7 +62,7 @@ export function PublicReviewsSection({
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button asChild size="lg">
-          <Link href="/reviews">
+          <Link href="/reviews" prefetch={false}>
             {viewAllLabel}
             <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
