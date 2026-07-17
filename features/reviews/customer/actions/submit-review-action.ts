@@ -141,6 +141,7 @@ export async function submitCustomerReviewAction(
         source: "CUSTOMER",
         status: "PENDING",
         isActive: false,
+        isDummy: false,
         customerConsent: true,
         displayOrder,
         userId: reviewAuthorId,

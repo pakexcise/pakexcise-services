@@ -14,6 +14,7 @@ export function reviewAuditSnapshot(review: AdminReviewItem | null) {
     status: review.status,
     source: review.source,
     isActive: review.isActive,
+    isDummy: review.isDummy,
     displayOrder: review.displayOrder,
     customerConsent: review.customerConsent,
     moderationNote: review.moderationNote,

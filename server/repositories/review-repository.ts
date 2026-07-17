@@ -15,6 +15,7 @@ export const publicReviewSelect = {
   rating: true,
   source: true,
   submittedAt: true,
+  moderatedAt: true,
   service: {
     select: {
       id: true,

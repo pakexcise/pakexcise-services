@@ -2,6 +2,7 @@ import { Quote } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { RatingStars } from "@/components/shared/rating-stars";
+import { formatRelativeTime } from "@/lib/format-relative-time";
 
 type ReviewCardProps = {
   review: {
@@ -9,6 +10,8 @@ type ReviewCardProps = {
     authorRoleEn?: string | null;
     contentEn: string;
     rating: number;
+    moderatedAt?: Date | string | null;
+    submittedAt?: Date | string | null;
   };
   feedbackLabel: string;
 };
@@ -26,6 +29,15 @@ export function ReviewCard({ review, feedbackLabel }: ReviewCardProps) {
   const authorName = review.authorNameEn;
   const authorRole = review.authorRoleEn ?? "";
   const rating = Math.max(1, Math.min(5, review.rating));
+  const publishedAt = review.moderatedAt ?? review.submittedAt ?? null;
+  const relativePublished = formatRelativeTime(publishedAt);
+  const absolutePublished =
+    publishedAt != null
+      ? new Date(publishedAt).toLocaleString("en-PK", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })
+      : null;
 
   return (
     <Card className="group relative h-full overflow-hidden border-border/70 bg-card shadow-sm transition duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-lg">
@@ -53,6 +65,19 @@ export function ReviewCard({ review, feedbackLabel }: ReviewCardProps) {
             <p className="truncate font-semibold">{authorName}</p>
             {authorRole ? (
               <p className="truncate text-sm text-muted-foreground">{authorRole}</p>
+            ) : null}
+            {relativePublished ? (
+              <time
+                className="mt-0.5 block text-xs text-muted-foreground"
+                dateTime={
+                  publishedAt instanceof Date
+                    ? publishedAt.toISOString()
+                    : new Date(publishedAt!).toISOString()
+                }
+                title={absolutePublished ?? undefined}
+              >
+                {relativePublished}
+              </time>
             ) : null}
           </div>
         </div>

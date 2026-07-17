@@ -232,8 +232,10 @@ export async function syncGoogleBusinessReviews(options?: {
           submittedAt,
           status: "APPROVED",
           isActive: true,
+          isDummy: false,
           customerConsent: true,
           authorRoleEn: "Google review",
+          moderatedAt: externalUpdatedAt ?? submittedAt ?? new Date(),
         },
       });
       updated += 1;
@@ -249,12 +251,14 @@ export async function syncGoogleBusinessReviews(options?: {
         source: "GOOGLE",
         status: "APPROVED",
         isActive: true,
+        isDummy: false,
         customerConsent: true,
         displayOrder: nextOrderBase - orderOffset,
         externalId,
         externalUpdatedAt,
         reviewerPhotoUrl: remote.reviewer?.profilePhotoUrl ?? null,
         submittedAt,
+        moderatedAt: externalUpdatedAt ?? submittedAt ?? new Date(),
       },
     });
     orderOffset += 1;

@@ -507,6 +507,7 @@ model Review {
   status          ReviewStatus @default(PENDING)
   source          ReviewSource @default(MANUAL)
   isActive        Boolean      @default(false)
+  isDummy         Boolean      @default(false)
   displayOrder    Int          @default(0)
   customerConsent Boolean      @default(false)
   moderationNote  String?      @db.Text
@@ -529,6 +530,7 @@ model Review {
 
   @@unique([source, externalId])
   @@index([status, isActive, displayOrder])
+  @@index([isDummy, status])
   @@index([userId, createdAt])
   @@index([serviceId, status])
   @@index([source, externalUpdatedAt])

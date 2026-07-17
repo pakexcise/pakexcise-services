@@ -13,6 +13,7 @@ export const adminReviewSelect = {
   status: true,
   source: true,
   isActive: true,
+  isDummy: true,
   displayOrder: true,
   customerConsent: true,
   moderationNote: true,
@@ -57,6 +58,7 @@ export type AdminReviewListFilters = {
   query?: string;
   status?: ReviewStatus | "ALL";
   source?: ReviewSource | "ALL";
+  recordType?: "ALL" | "DUMMY" | "REAL";
 };
 
 export class AdminReviewRepository extends Repository {
@@ -69,6 +71,12 @@ export class AdminReviewRepository extends Repository {
 
     if (filters.source && filters.source !== "ALL") {
       where.source = filters.source;
+    }
+
+    if (filters.recordType === "DUMMY") {
+      where.isDummy = true;
+    } else if (filters.recordType === "REAL") {
+      where.isDummy = false;
     }
 
     const query = filters.query?.trim();

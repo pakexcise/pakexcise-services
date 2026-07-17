@@ -76,13 +76,19 @@ export type ReviewPanelLabels = {
   previous: string;
   next: string;
   results: string;
-  selectAllPage: string;
+  allRecordTypes: string;
+  recordTypeDummy: string;
+  recordTypeReal: string;
+  labelDummy: string;
+  labelReal: string;
+  isDummy: string;
   selectedCount: string;
   bulkApprove: string;
   bulkReject: string;
   bulkDelete: string;
-  bulkRejectReason: string;
   confirmBulkDelete: string;
+  bulkRejectReason: string;
+  selectAll: string;
   clearSelection: string;
 };
 
@@ -98,6 +104,7 @@ type ReviewDraft = {
   contentEn: string;
   rating: number;
   isActive: boolean;
+  isDummy: boolean;
   displayOrder: number;
   serviceId: string;
 };
@@ -109,6 +116,7 @@ function emptyDraft(displayOrder: number): ReviewDraft {
     contentEn: "",
     rating: 5,
     isActive: false,
+    isDummy: true,
     displayOrder,
     serviceId: "",
   };
@@ -122,6 +130,7 @@ function toDraft(review: AdminReviewItem): ReviewDraft {
     contentEn: review.contentEn,
     rating: review.rating,
     isActive: review.isActive,
+    isDummy: review.isDummy,
     displayOrder: review.displayOrder,
     serviceId: review.serviceId ?? "",
   };
@@ -149,12 +158,13 @@ export function ReviewsPanel({
   const [status, setStatus] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">(
     "ALL",
   );
+  const [recordType, setRecordType] = useState<"ALL" | "DUMMY" | "REAL">("ALL");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkRejectOpen, setBulkRejectOpen] = useState(false);
+  const [bulkRejectReason, setBulkRejectReason] = useState("");
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [page, setPage] = useState(1);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [bulkRejectReason, setBulkRejectReason] = useState("");
-  const [showBulkReject, setShowBulkReject] = useState(false);
 
   const sorted = useMemo(
     () =>
@@ -170,6 +180,9 @@ export function ReviewsPanel({
     const needle = query.trim().toLowerCase();
     return sorted.filter((review) => {
       const matchesStatus = status === "ALL" || review.status === status;
+      const matchesType =
+        recordType === "ALL" ||
+        (recordType === "DUMMY" ? review.isDummy : !review.isDummy);
       const haystack = [
         review.authorNameEn,
         review.authorRoleEn ?? "",
@@ -179,9 +192,13 @@ export function ReviewsPanel({
       ]
         .join(" ")
         .toLowerCase();
-      return matchesStatus && (!needle || haystack.includes(needle));
+      return (
+        matchesStatus &&
+        matchesType &&
+        (!needle || haystack.includes(needle))
+      );
     });
-  }, [query, sorted, status]);
+  }, [query, recordType, sorted, status]);
 
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -191,75 +208,18 @@ export function ReviewsPanel({
   const allVisibleSelected =
     visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
 
-  function toggleSelectOne(id: string) {
+  function toggleSelect(id: string) {
     setSelectedIds((current) =>
-      current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+      current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
     );
   }
 
-  function toggleSelectPage() {
-    setSelectedIds((current) => {
-      if (allVisibleSelected) {
-        return current.filter((id) => !visibleIds.includes(id));
-      }
-      return [...new Set([...current, ...visibleIds])];
-    });
-  }
-
-  function clearSelection() {
-    setSelectedIds([]);
-    setShowBulkReject(false);
-    setBulkRejectReason("");
-  }
-
-  function runBulkApprove() {
-    if (selectedIds.length === 0) return;
-    setError(null);
-    startTransition(async () => {
-      const result = await bulkApproveReviewsAction({ ids: selectedIds });
-      if (!result.success) {
-        setError(result.error);
-        return;
-      }
-      clearSelection();
-      refreshReviewUi();
-    });
-  }
-
-  function runBulkReject() {
-    if (selectedIds.length === 0) return;
-    if (bulkRejectReason.trim().length < 5) {
-      setError(labels.rejectReasonRequired);
+  function toggleSelectAllVisible() {
+    if (allVisibleSelected) {
+      setSelectedIds((current) => current.filter((id) => !visibleIds.includes(id)));
       return;
     }
-    setError(null);
-    startTransition(async () => {
-      const result = await bulkRejectReviewsAction({
-        ids: selectedIds,
-        moderationNote: bulkRejectReason.trim(),
-      });
-      if (!result.success) {
-        setError(result.error);
-        return;
-      }
-      clearSelection();
-      refreshReviewUi();
-    });
-  }
-
-  function runBulkDelete() {
-    if (selectedIds.length === 0) return;
-    if (!window.confirm(labels.confirmBulkDelete)) return;
-    setError(null);
-    startTransition(async () => {
-      const result = await bulkDeleteReviewsAction({ ids: selectedIds });
-      if (!result.success) {
-        setError(result.error);
-        return;
-      }
-      clearSelection();
-      refreshReviewUi();
-    });
+    setSelectedIds((current) => Array.from(new Set([...current, ...visibleIds])));
   }
 
   function updateDraft<K extends keyof ReviewDraft>(key: K, value: ReviewDraft[K]) {
@@ -395,6 +355,55 @@ export function ReviewsPanel({
     });
   }
 
+  function runBulkApprove() {
+    if (selectedIds.length === 0) return;
+    startTransition(async () => {
+      const result = await bulkApproveReviewsAction({ ids: selectedIds });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setSelectedIds([]);
+      refreshReviewUi();
+    });
+  }
+
+  function runBulkReject() {
+    if (selectedIds.length === 0) return;
+    if (bulkRejectReason.trim().length < 5) {
+      setError(labels.rejectReasonRequired);
+      return;
+    }
+    startTransition(async () => {
+      const result = await bulkRejectReviewsAction({
+        ids: selectedIds,
+        moderationNote: bulkRejectReason.trim(),
+      });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setSelectedIds([]);
+      setBulkRejectOpen(false);
+      setBulkRejectReason("");
+      refreshReviewUi();
+    });
+  }
+
+  function runBulkDelete() {
+    if (selectedIds.length === 0) return;
+    if (!window.confirm(labels.confirmBulkDelete)) return;
+    startTransition(async () => {
+      const result = await bulkDeleteReviewsAction({ ids: selectedIds });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setSelectedIds([]);
+      refreshReviewUi();
+    });
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 rounded-xl border border-secondary/40 bg-secondary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -428,7 +437,7 @@ export function ReviewsPanel({
       <section className="overflow-hidden rounded-xl border bg-card">
         <div className="space-y-3 border-b p-4">
           <h2 className="font-semibold">{labels.existing}</h2>
-          <div className="grid gap-3 sm:grid-cols-[1fr_180px]">
+          <div className="grid gap-3 sm:grid-cols-[1fr_160px_160px]">
             <Input
               type="search"
               value={query}
@@ -436,7 +445,6 @@ export function ReviewsPanel({
               onChange={(event) => {
                 setQuery(event.target.value);
                 setPage(1);
-                clearSelection();
               }}
             />
             <select
@@ -444,7 +452,6 @@ export function ReviewsPanel({
               onChange={(event) => {
                 setStatus(event.target.value as typeof status);
                 setPage(1);
-                clearSelection();
               }}
               className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
             >
@@ -453,90 +460,65 @@ export function ReviewsPanel({
               <option value="APPROVED">{labels.statusApproved}</option>
               <option value="REJECTED">{labels.statusRejected}</option>
             </select>
+            <select
+              value={recordType}
+              onChange={(event) => {
+                setRecordType(event.target.value as typeof recordType);
+                setPage(1);
+              }}
+              className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="ALL">{labels.allRecordTypes}</option>
+              <option value="DUMMY">{labels.recordTypeDummy}</option>
+              <option value="REAL">{labels.recordTypeReal}</option>
+            </select>
           </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={allVisibleSelected}
-                onChange={toggleSelectPage}
-                disabled={visible.length === 0 || isPending}
-              />
-              {labels.selectAllPage}
-            </label>
-            {selectedIds.length > 0 ? (
-              <>
-                <span className="text-sm text-muted-foreground">
+          {selectedIds.length > 0 ? (
+            <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-medium">
                   {labels.selectedCount.replace("{count}", String(selectedIds.length))}
                 </span>
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={isPending}
-                  onClick={runBulkApprove}
-                >
+                <Button size="sm" onClick={runBulkApprove} disabled={isPending}>
                   {labels.bulkApprove}
                 </Button>
                 <Button
-                  type="button"
                   size="sm"
                   variant="outline"
+                  onClick={() => setBulkRejectOpen((open) => !open)}
                   disabled={isPending}
-                  onClick={() => setShowBulkReject((value) => !value)}
                 >
                   {labels.bulkReject}
                 </Button>
                 <Button
-                  type="button"
                   size="sm"
                   variant="destructive"
-                  disabled={isPending}
                   onClick={runBulkDelete}
+                  disabled={isPending}
                 >
                   {labels.bulkDelete}
                 </Button>
                 <Button
-                  type="button"
                   size="sm"
                   variant="ghost"
+                  onClick={() => setSelectedIds([])}
                   disabled={isPending}
-                  onClick={clearSelection}
                 >
                   {labels.clearSelection}
                 </Button>
-              </>
-            ) : null}
-          </div>
-
-          {showBulkReject && selectedIds.length > 0 ? (
-            <div className="space-y-2 rounded-lg border p-3">
-              <Label>{labels.bulkRejectReason}</Label>
-              <Input
-                value={bulkRejectReason}
-                onChange={(event) => setBulkRejectReason(event.target.value)}
-                placeholder={labels.rejectReason}
-              />
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  disabled={isPending}
-                  onClick={runBulkReject}
-                >
-                  {labels.bulkReject}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setShowBulkReject(false);
-                    setBulkRejectReason("");
-                  }}
-                >
-                  {labels.clear}
-                </Button>
               </div>
+              {bulkRejectOpen ? (
+                <div className="space-y-2">
+                  <Label>{labels.bulkRejectReason}</Label>
+                  <Input
+                    value={bulkRejectReason}
+                    onChange={(event) => setBulkRejectReason(event.target.value)}
+                  />
+                  <Button size="sm" variant="destructive" onClick={runBulkReject} disabled={isPending}>
+                    {labels.bulkReject}
+                  </Button>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -545,15 +527,23 @@ export function ReviewsPanel({
           <p className="p-6 text-sm text-muted-foreground">{labels.empty}</p>
         ) : (
           <div className="divide-y">
+            <div className="flex items-center gap-2 border-b bg-muted/20 px-4 py-2 text-sm">
+              <input
+                type="checkbox"
+                checked={allVisibleSelected}
+                onChange={toggleSelectAllVisible}
+                aria-label={labels.selectAll}
+              />
+              <span className="text-muted-foreground">{labels.selectAll}</span>
+            </div>
             {visible.map((review) => (
               <article key={review.id} className="grid gap-4 p-4 lg:grid-cols-[auto_1fr_auto]">
                 <div className="pt-1">
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(review.id)}
-                    onChange={() => toggleSelectOne(review.id)}
-                    aria-label={review.authorNameEn}
-                    disabled={isPending}
+                    onChange={() => toggleSelect(review.id)}
+                    aria-label={`Select ${review.authorNameEn}`}
                   />
                 </div>
                 <div className="min-w-0 space-y-2">
@@ -563,6 +553,9 @@ export function ReviewsPanel({
                       {statusLabel(review.status)}
                     </Badge>
                     <Badge variant="outline">{sourceLabel(review.source)}</Badge>
+                    <Badge variant={review.isDummy ? "secondary" : "outline"}>
+                      {review.isDummy ? labels.labelDummy : labels.labelReal}
+                    </Badge>
                     {review.isActive ? (
                       <Badge variant="success">{labels.active}</Badge>
                     ) : (
@@ -715,6 +708,10 @@ export function ReviewsPanel({
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={draft.isActive} onChange={(event) => updateDraft("isActive", event.target.checked)} />
             {labels.active}
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={draft.isDummy} onChange={(event) => updateDraft("isDummy", event.target.checked)} />
+            {labels.isDummy}
           </label>
         </div>
         <div className="flex gap-3 border-t pt-4">

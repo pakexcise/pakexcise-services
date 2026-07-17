@@ -1,12 +1,15 @@
 /**
- * Wipe all reviews, then import from CSV.
+ * Wipe all reviews and import from scripts/data/pakexcise-reviews-final.csv.
  *
- * First 5 rows → APPROVED + published (isActive true).
- * Remaining rows → PENDING + unpublished for later admin approval.
+ * - Deletes every existing review first
+ * - Imports CSV rows as MANUAL + isDummy=true
+ * - Publishes only the first 5 (--publish=N to change)
+ * - Remaining rows stay PENDING / unpublished for admin approval
  *
  * Usage:
  *   pnpm db:import-reviews
- *   pnpm db:import-reviews -- --file=path/to/file.csv --publish=5
+ *   pnpm db:import-reviews -- --publish=5
+ *   pnpm db:import-reviews -- --file=path/to/file.csv
  */
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -30,7 +33,7 @@ type ReviewCsvRow = {
 };
 
 function parseArgs(argv: string[]) {
-  let file = resolve(process.cwd(), "scripts/data/pakexcise-reviews.csv");
+  let file = resolve(process.cwd(), "scripts/data/pakexcise-reviews-final.csv");
   let publishCount = 5;
 
   for (const arg of argv) {
@@ -97,7 +100,6 @@ function parseCsv(text: string): string[][] {
 function rowsFromCsv(text: string): ReviewCsvRow[] {
   const matrix = parseCsv(text);
   if (matrix.length < 2) return [];
-
   const headers = matrix[0]!.map((h) => h.trim());
   const index = (name: string) => headers.indexOf(name);
 
@@ -116,9 +118,7 @@ function rowsFromCsv(text: string): ReviewCsvRow[] {
   ] as const;
 
   for (const key of required) {
-    if (index(key) < 0) {
-      throw new Error(`CSV missing required column: ${key}`);
-    }
+    if (index(key) < 0) throw new Error(`CSV missing required column: ${key}`);
   }
 
   return matrix.slice(1).map((cols) => ({
@@ -136,117 +136,126 @@ function rowsFromCsv(text: string): ReviewCsvRow[] {
   }));
 }
 
-function serviceSlugFromKey(serviceKey: string): string | null {
-  if (!serviceKey) return null;
-  if (serviceKey.startsWith("service:")) {
-    return serviceKey.slice("service:".length) || null;
-  }
-  return serviceKey;
+function serviceSlugFromKey(serviceKey: string): string {
+  return serviceKey.replace(/^service:/, "").trim();
 }
 
 function buildAuthorRole(row: ReviewCsvRow): string {
-  const parts: string[] = [];
-  if (row.location) parts.push(row.location);
-  else if (row.country) parts.push(row.country);
+  const typeLabel =
+    row.reviewerType === "overseas-pakistani"
+      ? "Overseas Pakistani"
+      : row.reviewerType === "local"
+        ? "Local customer"
+        : row.reviewerType || "Customer";
 
-  if (row.reviewerType === "overseas-pakistani") {
-    parts.push("Overseas Pakistani");
-  } else if (row.reviewerType === "local") {
-    parts.push("Pakistan");
-  } else if (row.reviewerType) {
-    parts.push(row.reviewerType);
-  }
-
-  return parts.filter(Boolean).join(" · ").slice(0, 120);
+  const place = row.location || row.country;
+  if (place) return `${typeLabel} · ${place}`;
+  return typeLabel;
 }
 
-function clampRating(value: string): number {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return 5;
-  return Math.min(5, Math.max(1, Math.round(n * 10) / 10));
+function clampRating(raw: string): number {
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return 5;
+  return Math.min(5, Math.max(1, Math.round(value * 10) / 10));
+}
+
+function publishedAtForIndex(index: number, now: Date): Date {
+  // Stagger published dates so relative labels look natural (2d, 5d, 1w, …).
+  const dayOffsets = [2, 5, 8, 14, 21];
+  const days = dayOffsets[index] ?? 2 + index * 3;
+  return new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 }
 
 async function main() {
   const { file, publishCount } = parseArgs(process.argv.slice(2));
-  const text = readFileSync(file, "utf8");
-  const rows = rowsFromCsv(text).filter(
+  const rows = rowsFromCsv(readFileSync(file, "utf8")).filter(
     (row) => row.reviewId && row.reviewerName && row.reviewContent.length >= 10,
   );
 
-  console.log(`Loaded ${rows.length} reviews from ${file}`);
-  console.log(`Publishing first ${publishCount}; rest stay PENDING`);
-
+  console.log(`Loading services…`);
   const services = await prisma.service.findMany({
     select: { id: true, slug: true, nameEn: true },
   });
   const serviceBySlug = new Map(services.map((s) => [s.slug, s]));
 
-  const deleted = await prisma.review.deleteMany({});
-  console.log(`Deleted existing reviews: ${deleted.count}`);
-
-  let created = 0;
-  let missingService = 0;
-  const batchSize = 25;
-
-  async function createBatch(
-    chunk: ReviewCsvRow[],
-    offset: number,
-    attempt = 1,
-  ): Promise<void> {
-    try {
-      const data = chunk.map((row, chunkIndex) => {
-        const index = offset + chunkIndex;
-        const slug = serviceSlugFromKey(row.serviceKey);
-        const service = slug ? serviceBySlug.get(slug) : undefined;
-        if (!service) missingService += 1;
-
-        const publish = index < publishCount;
-
-        return {
-          authorNameEn: row.reviewerName.slice(0, 100),
-          authorRoleEn: buildAuthorRole(row) || null,
-          contentEn: row.reviewContent,
-          rating: clampRating(row.rating),
-          source: "MANUAL" as const,
-          status: (publish ? "APPROVED" : "PENDING") as "APPROVED" | "PENDING",
-          isActive: publish,
-          displayOrder: index + 1,
-          customerConsent: true,
-          externalId: `csv:${row.reviewId}`,
-          serviceId: service?.id ?? null,
-          moderatedAt: publish ? new Date() : null,
-          submittedAt: new Date(),
-        };
-      });
-
-      await prisma.review.createMany({ data });
-    } catch (error) {
-      if (attempt >= 4) throw error;
-      const delayMs = attempt * 1500;
-      console.warn(
-        `Batch at ${offset} failed (attempt ${attempt}). Retrying in ${delayMs}ms…`,
-      );
-      await new Promise((resolveDelay) => setTimeout(resolveDelay, delayMs));
-      // Recreate client-friendly delay; Prisma may recover on next call
-      await createBatch(chunk, offset, attempt + 1);
-    }
+  const missingSlugs = new Set<string>();
+  for (const row of rows) {
+    const slug = serviceSlugFromKey(row.serviceKey);
+    if (slug && !serviceBySlug.has(slug)) missingSlugs.add(slug);
   }
 
-  for (let offset = 0; offset < rows.length; offset += batchSize) {
-    const chunk = rows.slice(offset, offset + batchSize);
-    await createBatch(chunk, offset);
-    created += chunk.length;
-    console.log(`Imported ${created}/${rows.length}`);
+  if (missingSlugs.size > 0) {
+    console.warn(
+      `Warning: ${missingSlugs.size} service slug(s) not found (reviews will import without service link):`,
+    );
+    console.warn([...missingSlugs].sort().join(", "));
+  }
+
+  console.log(`Deleting all existing reviews…`);
+  const deleted = await prisma.review.deleteMany({});
+  console.log(`Deleted ${deleted.count} review(s).`);
+
+  const now = new Date();
+  let imported = 0;
+  let published = 0;
+  let pending = 0;
+  let withoutService = 0;
+
+  console.log(
+    `Importing ${rows.length} reviews from ${file} (publish first ${publishCount})…`,
+  );
+
+  // Create in chunks for Neon reliability
+  const chunkSize = 50;
+  for (let start = 0; start < rows.length; start += chunkSize) {
+    const chunk = rows.slice(start, start + chunkSize);
+    await prisma.$transaction(
+      chunk.map((row, offset) => {
+        const index = start + offset;
+        const slug = serviceSlugFromKey(row.serviceKey);
+        const service = slug ? serviceBySlug.get(slug) : undefined;
+        if (!service) withoutService += 1;
+
+        const isPublished = index < publishCount;
+        if (isPublished) published += 1;
+        else pending += 1;
+        imported += 1;
+
+        const moderatedAt = isPublished
+          ? publishedAtForIndex(index, now)
+          : null;
+
+        return prisma.review.create({
+          data: {
+            authorNameEn: row.reviewerName.slice(0, 100),
+            authorRoleEn: buildAuthorRole(row).slice(0, 120),
+            contentEn: row.reviewContent.slice(0, 1200),
+            rating: clampRating(row.rating),
+            source: "MANUAL",
+            status: isPublished ? "APPROVED" : "PENDING",
+            isActive: isPublished,
+            isDummy: true,
+            customerConsent: true,
+            displayOrder: index + 1,
+            serviceId: service?.id ?? null,
+            externalId: `seed:${row.reviewId}`,
+            submittedAt: moderatedAt ?? now,
+            moderatedAt,
+          },
+        });
+      }),
+    );
   }
 
   console.log(
     JSON.stringify(
       {
         deleted: deleted.count,
-        created,
-        published: Math.min(publishCount, created),
-        pending: Math.max(0, created - publishCount),
-        missingService,
+        imported,
+        published,
+        pending,
+        withoutService,
+        publishCount,
       },
       null,
       2,

@@ -14,6 +14,7 @@ export const reviewCoreSchema = z.object({
   isActive: z.boolean().default(false),
   displayOrder: z.coerce.number().int().min(0).max(9999).default(0),
   serviceId: z.string().cuid().optional().nullable(),
+  isDummy: z.boolean().default(false),
 });
 
 export const createReviewSchema = reviewCoreSchema;
@@ -40,14 +41,6 @@ export const rejectReviewSchema = z.object({
   moderationNote: z.string().trim().min(5).max(500),
 });
 
-export const bulkReviewIdsSchema = z.object({
-  ids: z.array(z.string().cuid()).min(1).max(200),
-});
-
-export const bulkRejectReviewsSchema = bulkReviewIdsSchema.extend({
-  moderationNote: z.string().trim().min(5).max(500),
-});
-
 export const reorderReviewsSchema = z.object({
   items: z
     .array(
@@ -58,4 +51,12 @@ export const reorderReviewsSchema = z.object({
     )
     .min(1)
     .max(100),
+});
+
+export const bulkReviewIdsSchema = z.object({
+  ids: z.array(z.string().cuid()).min(1).max(200),
+});
+
+export const bulkRejectReviewsSchema = bulkReviewIdsSchema.extend({
+  moderationNote: z.string().trim().min(5).max(500),
 });
