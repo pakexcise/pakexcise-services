@@ -11,7 +11,10 @@ import { Button } from "@/components/ui/button";
 import { RatingStars } from "@/components/shared/rating-stars";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { buildBreadcrumbJsonLd, buildReviewsJsonLd } from "@/features/seo/lib/metadata";
-import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import {
+  resolveMetadataFromSeo,
+  resolveVisibleH1,
+} from "@/features/seo/lib/resolve-metadata";
 import { requireReviewsEnabled } from "@/features/settings/lib/feature-gates";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { resolveWhatsappLinkNumber } from "@/features/settings/lib/resolve-public-contact";
@@ -64,7 +67,7 @@ export async function generateMetadata(): Promise<Metadata> {
           removeDuplicatePrivateDisclaimer(content?.contentEn ?? "").slice(0, 160),
       },
       h1: {
-        en: content?.titleEn ?? "Customer Reviews",
+        en: seo?.h1En ?? content?.titleEn ?? "Customer Reviews",
       },
     },
   });
@@ -75,9 +78,10 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
   const params = await searchParams;
   const requestedPage = Math.max(1, Number(params.page ?? "1") || 1);
 
-  const [content, reviewsResult, summary, business, tMarketing, tCommon, currentUser, services] =
+  const [content, seo, reviewsResult, summary, business, tMarketing, tCommon, currentUser, services] =
     await Promise.all([
       getPageContent("reviews"),
+      seoMetaRepository.findByPageKey("reviews"),
       reviewRepository.listPublicPaginated(requestedPage, 6),
       reviewRepository.getPublicSummary(),
       getBusinessSettings(),
@@ -93,7 +97,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
       ? await reviewRepository.listEligibleApplicationsForCustomer(currentUser.id)
       : [];
 
-  const title = content?.titleEn ?? "Customer Reviews";
+  const title = resolveVisibleH1(seo, content?.titleEn ?? "Customer Reviews");
   const intro = removeDuplicatePrivateDisclaimer(content?.contentEn ?? "");
   const whatsappPhone = resolveWhatsappLinkNumber(business);
   const googleReviewHref = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL?.trim() || "";

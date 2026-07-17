@@ -25,7 +25,7 @@ import {
   buildFaqJsonLd,
   buildServiceJsonLd,
 } from "@/features/seo/lib/metadata";
-import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
 import {
   getServiceAssignedRegions,
   getServiceRegionLabel,
@@ -130,6 +130,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
 
   const name = service.nameEn ?? "";
+  const heroTitle = resolveVisibleH1(service.seoMeta, name);
   const description = service.shortDescriptionEn ?? "";
   const content = service.contentEn ?? service.shortDescriptionEn;
   const processingNotes = service.processingNotesEn ?? "";
@@ -220,7 +221,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       <ViewServiceTracker serviceSlug={service.slug} serviceId={service.id} />
       <JsonLd data={jsonLd} />
       <PageHero
-        title={name}
+        title={heroTitle}
         description={description}
         breadcrumbs={breadcrumbItems}
       />

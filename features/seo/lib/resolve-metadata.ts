@@ -33,6 +33,15 @@ export function resolvePageSeo(
   };
 }
 
+/** Visible page H1: prefer SeoMeta.h1En, otherwise fallback. */
+export function resolveVisibleH1(
+  seo: { h1En?: string | null } | null | undefined,
+  fallback: string,
+): string {
+  const fromSeo = seo?.h1En?.trim();
+  return fromSeo || fallback;
+}
+
 export async function resolveMetadataFromSeo(input: {
   locale: Locale | string;
   path: string;

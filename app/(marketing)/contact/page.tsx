@@ -17,7 +17,7 @@ import { getFeatureFlagSettings, getFormsSettings } from "@/features/settings/li
 import { buildBreadcrumbJsonLd, buildBusinessContactPoints, buildContactPageJsonLd } from "@/features/seo/lib/metadata";
 import { getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
-import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
 import { absoluteUrl } from "@/lib/utils";
 import { getActiveSocialLinks, regionRepository, seoMetaRepository } from "@/server/repositories";
 
@@ -39,14 +39,15 @@ export async function generateMetadata(): Promise<Metadata> {
       description: {
         en: settings.seo.metaDescriptionEn},
       h1: {
-        en: settings.heroTitleEn}}});
+        en: seo?.h1En ?? settings.heroTitleEn}}});
 }
 
 export default async function ContactPage() {
   const locale = "en";
-const [settings, socialLinks, regions, featureFlags, formsSettings, businessSettings, tContact, tNav, tOptions] =
+const [settings, seo, socialLinks, regions, featureFlags, formsSettings, businessSettings, tContact, tNav, tOptions] =
     await Promise.all([
     getContactPageSettings(),
+    seoMetaRepository.findByPageKey("contact"),
     getActiveSocialLinks(),
     regionRepository.listPublic(),
     getFeatureFlagSettings(),
@@ -61,6 +62,7 @@ const [settings, socialLinks, regions, featureFlags, formsSettings, businessSett
   }
 
   const content = localizeContactPageSettings(settings, locale);
+  const heroTitle = resolveVisibleH1(seo, content.heroTitle);
   const regionOptions = regions.map((region) =>
     region.nameEn ?? "",
   );
@@ -72,7 +74,7 @@ const [settings, socialLinks, regions, featureFlags, formsSettings, businessSett
     { name: tContact("breadcrumb"), url: absoluteUrl("/contact") }]);
   const contactPageJsonLd = buildContactPageJsonLd({
     pageUrl: absoluteUrl("/contact"),
-    pageName: content.heroTitle,
+    pageName: heroTitle,
     description: content.heroDescription,
     organizationName: businessSettings.siteName,
     baseUrl: absoluteUrl("/"),
@@ -92,7 +94,7 @@ const [settings, socialLinks, regions, featureFlags, formsSettings, businessSett
     <>
       <JsonLd data={[breadcrumbJsonLd, contactPageJsonLd]} />
       <PageHero
-        title={content.heroTitle}
+        title={heroTitle}
         description={content.heroDescription}
         breadcrumbs={[
           { label: tNav("home"), href: "/" },

@@ -92,7 +92,7 @@ export function SeoFieldsSection({
             placeholder="Leave empty to auto-generate from slug"
           />
           <p className="text-xs text-muted-foreground">
-            Leave empty to auto-generate: https://pakexcise.com/blog/your-slug
+            Leave empty to auto-generate from the page path (recommended).
           </p>
         </div>
         <div className="space-y-2 md:col-span-2">

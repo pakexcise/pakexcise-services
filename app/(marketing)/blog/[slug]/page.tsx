@@ -36,7 +36,7 @@ import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from "@/features/seo/lib/metadata";
-import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
 import { getBrandingSettings, getBusinessSettings } from "@/features/settings/lib/public-settings-cache";
 import { resolveSeoImageUrl } from "@/lib/seo-url";
 import { absoluteUrl } from "@/lib/utils";
@@ -130,7 +130,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
     ),
   ]);
 
-  const title = post.titleEn ?? "";
+  const title = resolveVisibleH1(post.seoMeta, post.titleEn ?? "");
   const excerpt = post.excerptEn ?? "";
   const content = post.contentEn ?? "";
   const categoryLabels = resolveBlogCategoryLabels(

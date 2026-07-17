@@ -20,7 +20,7 @@ import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from "@/features/seo/lib/metadata";
-import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
 import {
   getBusinessSettings,
   getFeatureFlagSettings,
@@ -111,6 +111,7 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
   const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
 
   const name = region.nameEn ?? "";
+  const heroTitle = resolveVisibleH1(region.seoMeta, name);
   const description = region.descriptionEn ?? "";
 
   const faqItems = mapFaqsForLocale(faqs.slice(0, 6), locale);
@@ -147,7 +148,7 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
-        title={name}
+        title={heroTitle}
         description={description}
         breadcrumbs={[
           { label: "Home", href: "/" },

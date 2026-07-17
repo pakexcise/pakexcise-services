@@ -16,7 +16,7 @@ import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from "@/features/seo/lib/metadata";
-import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
 import {
   getBusinessSettings,
   getFeatureFlagSettings,
@@ -110,6 +110,7 @@ export default async function CityDetailPage({ params }: CityPageProps) {
 
   const cityName = city.nameEn ?? "";
   const regionName = region.nameEn ?? "";
+  const heroTitle = resolveVisibleH1(city.seoMeta, cityName);
   const description = city.descriptionEn ?? "";
 
   const faqItems = mapFaqsForLocale(faqs.slice(0, 6), locale);
@@ -131,7 +132,7 @@ export default async function CityDetailPage({ params }: CityPageProps) {
     <>
       <JsonLd data={jsonLd} />
       <PageHero
-        title={cityName}
+        title={heroTitle}
         description={description}
         breadcrumbs={[
           { label: "Home", href: "/" },

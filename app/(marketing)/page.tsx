@@ -35,7 +35,7 @@ import type { HomeSectionKey } from "@/features/home-page/types";
 import {
   buildFaqJsonLd,
   buildItemListJsonLd} from "@/features/seo/lib/metadata";
-import { resolveMetadataFromSeo } from "@/features/seo/lib/resolve-metadata";
+import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
 import {
   getBusinessSettings,
   getFeatureFlagSettings} from "@/features/settings/lib/public-settings-cache";
@@ -126,6 +126,7 @@ const defaults = defaultHomePageSettings();
     blogPosts,
     reviews,
     reviewSummary,
+    homeSeo,
     tCommon,
     tMarketing] = await Promise.all([
     safeLoad("business", () => getBusinessSettings(), defaultBusinessSettings()),
@@ -162,6 +163,7 @@ const defaults = defaultHomePageSettings();
       count: 0,
       averageRating: 0,
     }),
+    safeLoad("homeSeo", () => seoMetaRepository.findByPageKey("home"), null),
     getTranslations("common"),
     getTranslations("marketing")]);
 
@@ -169,6 +171,7 @@ const defaults = defaultHomePageSettings();
   const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
   const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings);
   const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
+  const heroTitle = resolveVisibleH1(homeSeo, content.hero.title);
   const faqItems = mapFaqsForLocale(faqs ?? [], locale);
   const orderedSections = getOrderedActiveHomeSections(settings);
 
@@ -416,7 +419,7 @@ const defaults = defaultHomePageSettings();
 
       <HomeHeroSection
         badge={content.hero.badge}
-        title={content.hero.title}
+        title={heroTitle}
         subtitle={content.hero.description}
         browseCta={content.hero.browseCta}
         whatsappCta={content.hero.whatsappCta}
