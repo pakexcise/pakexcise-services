@@ -25,6 +25,7 @@
     "db:update-about-page": "node scripts/sync-env.mjs && tsx prisma/update-about-page.ts",
     "db:seed": "node scripts/sync-env.mjs && tsx prisma/seed.ts",
     "db:clear-redirects": "node scripts/sync-env.mjs && tsx scripts/clear-db-redirects.ts",
+    "db:sync-path-redirects": "node scripts/sync-env.mjs && tsx scripts/sync-path-redirects.ts",
     "db:sync-footer": "node scripts/sync-footer-navigation.mjs",
     "db:seed-blog-categories": "node scripts/sync-env.mjs && tsx prisma/seed-blog-categories-runner.ts",
     "db:seed-primary-blog": "node scripts/sync-env.mjs && tsx prisma/seed-primary-blog-runner.ts",

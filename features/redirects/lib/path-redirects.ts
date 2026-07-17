@@ -3,49 +3,23 @@ import "server-only";
 import type { Route } from "next";
 import { permanentRedirect, redirect } from "next/navigation";
 
+import {
+  buildPathRedirectMap,
+  writePathRedirectMap,
+} from "@/features/redirects/lib/path-redirect-cache";
+import {
+  destinationFromRedirectTarget,
+  isPathRedirectKey,
+  normalizeRedirectKey,
+} from "@/features/redirects/lib/path-redirect-keys";
 import { redirectRepository } from "@/server/repositories/redirect-repository";
+import { prisma } from "@/server/db/client";
 
-/** Content keys stay prefixed; page paths get a leading slash and no trailing slash. */
-export function normalizeRedirectKey(value: string): string {
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return trimmed;
-  }
-
-  if (trimmed.startsWith("blog:")) {
-    return trimmed;
-  }
-
-  if (trimmed.startsWith("/")) {
-    if (trimmed.length > 1 && trimmed.endsWith("/")) {
-      return trimmed.replace(/\/+$/, "") || "/";
-    }
-
-    return trimmed;
-  }
-
-  return trimmed;
-}
-
-export function isPathRedirectKey(value: string): boolean {
-  return normalizeRedirectKey(value).startsWith("/");
-}
-
-function destinationFromRedirectTarget(target: string): string {
-  const normalized = normalizeRedirectKey(target);
-
-  if (normalized.startsWith("blog:")) {
-    return `/blog/${normalized.slice("blog:".length)}`;
-  }
-
-  if (normalized.startsWith("/")) {
-    return normalized;
-  }
-
-  // Bare service slug stored as path redirect target.
-  return `/services/${normalized}`;
-}
+export {
+  destinationFromRedirectTarget,
+  isPathRedirectKey,
+  normalizeRedirectKey,
+} from "@/features/redirects/lib/path-redirect-keys";
 
 /**
  * Resolve a browser pathname (e.g. `/faqs`) against admin path redirects.
@@ -90,6 +64,26 @@ export async function resolveActivePathRedirect(pathname: string): Promise<{
   return null;
 }
 
+/** Refresh the Edge-readable path-redirect map used by `proxy.ts`. */
+export async function syncPathRedirectCache(): Promise<number> {
+  const rows = await prisma.redirect.findMany({
+    where: { isActive: true },
+    select: {
+      oldSlug: true,
+      newSlug: true,
+      statusCode: true,
+    },
+  });
+
+  const map = buildPathRedirectMap(rows);
+  await writePathRedirectMap(map);
+  return Object.keys(map).length;
+}
+
+/**
+ * @deprecated Prefer proxy-level redirects via `syncPathRedirectCache`.
+ * Kept for any remaining callers; no longer used by marketing layout.
+ */
 export async function applyMarketingPathRedirect(
   pathname: string | null | undefined,
 ): Promise<void> {
@@ -99,7 +93,6 @@ export async function applyMarketingPathRedirect(
     return;
   }
 
-  // Private areas are never redirected from marketing chrome.
   if (
     trimmed.startsWith("/admin") ||
     trimmed.startsWith("/customer") ||

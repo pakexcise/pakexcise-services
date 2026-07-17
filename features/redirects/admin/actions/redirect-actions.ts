@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache";
 import {
   LEGACY_SERVICE_SLUGS_TO_DEACTIVATE,
 } from "@/config/legacy-url-redirects";
-import { normalizeRedirectKey } from "@/features/redirects/lib/path-redirects";
+import {
+  normalizeRedirectKey,
+  syncPathRedirectCache,
+} from "@/features/redirects/lib/path-redirects";
 import {
   createRedirectSchema,
   redirectIdSchema,
@@ -47,6 +50,9 @@ function revalidateRedirectPaths() {
   revalidatePath("/blog");
   revalidatePath("/apply");
   revalidatePath("/request");
+  void syncPathRedirectCache().catch((error) => {
+    console.error("[syncPathRedirectCache]", error);
+  });
 }
 
 export async function createRedirectAction(

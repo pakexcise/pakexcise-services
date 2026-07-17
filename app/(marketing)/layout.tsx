@@ -1,12 +1,9 @@
-import { headers } from "next/headers";
-
 import { MarketingAnalytics } from "@/components/analytics/MarketingAnalytics";
 import { MaintenanceView } from "@/components/marketing/maintenance-view";
 import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
 import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
-import { applyMarketingPathRedirect } from "@/features/redirects/lib/path-redirects";
 import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
 import {
@@ -15,14 +12,14 @@ import {
 } from "@/features/settings/lib/resolve-public-contact";
 import { siteChromeShellClassName } from "@/lib/styles/site-chrome";
 
+/** Align marketing chrome with page ISR so public HTML can be cached. */
+export const revalidate = 3600;
+
 export default async function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headerStore = await headers();
-  await applyMarketingPathRedirect(headerStore.get("x-pakexcise-pathname"));
-
   const publicSettings = await getPublicSettings();
 
   const { business, publicUi, branding, features } = publicSettings;

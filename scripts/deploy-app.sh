@@ -43,6 +43,9 @@ if [[ -f .env.production ]]; then
 fi
 pnpm exec prisma db push
 
+echo "==> Sync path redirects cache (Edge proxy)"
+pnpm exec tsx scripts/sync-path-redirects.ts || echo "WARN: path redirect cache sync failed (continuing)"
+
 rm -rf .next/cache
 
 if [[ "$PM2_NAME" == "pakexcise-staging" ]]; then

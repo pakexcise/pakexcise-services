@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { authConfig, buildLoginRedirectUrl } from "@/config/auth";
+import { lookupCachedPathRedirect } from "@/features/redirects/lib/path-redirect-cache";
 import { applySecurityHeaders } from "@/server/security/headers";
 
 /** Legacy bilingual URL prefixes — permanently redirect to clean English paths. */
@@ -26,17 +27,6 @@ function redirectLegacyLocalePrefix(request: NextRequest): NextResponse | null {
   url.pathname = cleanPath === "" ? "/" : cleanPath;
 
   return NextResponse.redirect(url, 308);
-}
-
-function withPathnameHeader(request: NextRequest): NextRequest {
-  const headers = new Headers(request.headers);
-  headers.delete("accept-language");
-  headers.set("x-pakexcise-pathname", request.nextUrl.pathname);
-
-  return new NextRequest(request.url, {
-    method: request.method,
-    headers,
-  });
 }
 
 function hasAuthSessionCookie(request: NextRequest): boolean {
@@ -101,7 +91,7 @@ function clearLegacyLocaleCookie(response: NextResponse): NextResponse {
   return response;
 }
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const legacyRedirect = redirectLegacyLocalePrefix(request);
 
   if (legacyRedirect) {
@@ -114,11 +104,20 @@ export default function proxy(request: NextRequest) {
     return applySecurityHeaders(authRedirect);
   }
 
-  const response = NextResponse.next({
-    request: {
-      headers: withPathnameHeader(request).headers,
-    },
-  });
+  const pathRedirect = await lookupCachedPathRedirect(request.nextUrl.pathname);
+
+  if (pathRedirect) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathRedirect.destination;
+    url.search = "";
+    return applySecurityHeaders(
+      clearLegacyLocaleCookie(
+        NextResponse.redirect(url, pathRedirect.statusCode === 302 ? 302 : 301),
+      ),
+    );
+  }
+
+  const response = NextResponse.next();
 
   return applySecurityHeaders(
     preventAuthPageCaching(request, clearLegacyLocaleCookie(response)),
