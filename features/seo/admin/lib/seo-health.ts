@@ -2,6 +2,7 @@ import "server-only";
 
 import { getAppEnv, shouldAllowSearchIndexing } from "@/config/env.server";
 import { PRODUCTION_SITE_ORIGIN } from "@/config/env.shared";
+import { activeSeoMetaWhere } from "@/features/seo/admin/lib/obsolete-seo";
 import { getSeoSettings } from "@/features/settings/lib/public-settings-cache";
 import { seoAbsoluteUrl } from "@/lib/seo-url";
 import { prisma } from "@/server/db/prisma";
@@ -26,27 +27,28 @@ export type SeoHealthSnapshot = {
 
 export async function getSeoHealthSnapshot(): Promise<SeoHealthSnapshot> {
   const seoSettings = await getSeoSettings();
+  const activeWhere = activeSeoMetaWhere();
   const [
     seoRecordCount,
     missingMetaTitleCount,
     missingMetaDescriptionCount,
     missingH1Count,
   ] = await Promise.all([
-    prisma.seoMeta.count(),
+    prisma.seoMeta.count({ where: activeWhere }),
     prisma.seoMeta.count({
-      where: {
+      where: activeSeoMetaWhere({
         OR: [{ metaTitleEn: null }, { metaTitleEn: "" }],
-      },
+      }),
     }),
     prisma.seoMeta.count({
-      where: {
+      where: activeSeoMetaWhere({
         OR: [{ metaDescriptionEn: null }, { metaDescriptionEn: "" }],
-      },
+      }),
     }),
     prisma.seoMeta.count({
-      where: {
+      where: activeSeoMetaWhere({
         OR: [{ h1En: null }, { h1En: "" }],
-      },
+      }),
     }),
   ]);
 

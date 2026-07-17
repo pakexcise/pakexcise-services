@@ -8,6 +8,7 @@ import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { adminMetadata } from "@/features/admin/lib/metadata";
 import { SeoHealthPanel } from "@/features/seo/admin/components/seo-health-panel";
+import { PurgeGuideSeoButton } from "@/features/seo/admin/components/purge-guide-seo-button";
 import { resolveSeoLinkedEntity } from "@/features/seo/admin/lib/seo-linked-entity";
 import { getSeoHealthSnapshot } from "@/features/seo/admin/lib/seo-health";
 import { adminDefaultPageSize } from "@/config/admin";
@@ -66,7 +67,7 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
   const q = params.q?.trim() || undefined;
   const missing = parseMissing(params.missing);
 
-  const [result, health] = await Promise.all([
+  const [result, health, obsoleteGuideCount] = await Promise.all([
     adminSeoRepository.listPaginated({
       page,
       pageSize: adminDefaultPageSize,
@@ -74,6 +75,7 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
       missing,
     }),
     getSeoHealthSnapshot(),
+    adminSeoRepository.countObsoleteGuideRecords(),
   ]);
 
   const missingFilters: Array<{ value: "" | MissingFilter; label: string }> = [
@@ -83,6 +85,20 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
     { value: "h1", label: t("filters.missingH1") },
     { value: "keywords", label: t("filters.missingKeywords") },
   ];
+
+  const exportParams = new URLSearchParams();
+  if (q) exportParams.set("q", q);
+  if (missing) exportParams.set("missing", missing);
+  const exportHref = exportParams.toString()
+    ? `/api/admin/seo/export?${exportParams.toString()}`
+    : "/api/admin/seo/export";
+  const fullListHref = (() => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (missing) params.set("missing", missing);
+    const query = params.toString();
+    return query ? `/admin/seo/full?${query}` : "/admin/seo/full";
+  })();
 
   return (
     <div className="space-y-6">
@@ -113,6 +129,16 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
           missingTitles: t("health.missingTitles"),
           missingDescriptions: t("health.missingDescriptions"),
           missingH1s: t("health.missingH1s"),
+        }}
+      />
+
+      <PurgeGuideSeoButton
+        count={obsoleteGuideCount}
+        labels={{
+          title: t("purgeGuides.title"),
+          description: t("purgeGuides.description"),
+          action: t("purgeGuides.action"),
+          pending: t("purgeGuides.pending"),
         }}
       />
 
@@ -165,6 +191,12 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
           </select>
         </div>
         <Button type="submit">{t("filter")}</Button>
+        <Button type="button" variant="outline" asChild>
+          <Link href={fullListHref as Route}>{t("viewFullList")}</Link>
+        </Button>
+        <Button type="button" variant="outline" asChild>
+          <a href={exportHref}>{t("downloadCsv")}</a>
+        </Button>
       </form>
 
       {result.items.length === 0 ? (

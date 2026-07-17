@@ -28,6 +28,10 @@ export async function updateSeoMetaAction(
   const existing = await adminSeoRepository.findByIdForEdit(parsed.data.id);
   if (!existing) return errorResult("SEO record not found");
 
+  if (existing.pageKey.startsWith("guide:")) {
+    return errorResult("Guide SEO records are obsolete and cannot be edited");
+  }
+
   const data = normalizeSeoInputForUpdate(parsed.data.seo);
 
   await prisma.$transaction(async (tx) => {
@@ -75,4 +79,25 @@ export async function updateSeoMetaAction(
   }
 
   return successResult({ id: existing.id });
+}
+
+export async function purgeObsoleteGuideSeoAction(): Promise<
+  ActionResult<{ deleted: number }>
+> {
+  const user = await requirePermission("platform:manage");
+  const deleted = await adminSeoRepository.deleteObsoleteGuideRecords();
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "DELETE",
+    entityType: "seo_meta",
+    entityId: "guide:*",
+    after: { deleted, reason: "purge_obsolete_guide_seo" },
+  });
+
+  revalidatePath(ADMIN_PATH);
+  revalidatePath(`${ADMIN_PATH}/full`);
+  revalidatePath("/sitemap.xml");
+
+  return successResult({ deleted });
 }

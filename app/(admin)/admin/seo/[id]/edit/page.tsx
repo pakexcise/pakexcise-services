@@ -28,6 +28,7 @@ export default async function AdminSeoMetaEditPage({
   const { id } = await params;
   const record = await adminSeoRepository.findByIdForEdit(id);
   if (!record) notFound();
+  if (record.pageKey.startsWith("guide:")) notFound();
 
   const linked = resolveSeoLinkedEntity(record);
   const initialValues = seoFromRecord({

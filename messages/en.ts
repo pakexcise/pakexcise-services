@@ -2608,6 +2608,18 @@ const en = {
         "searchLabel": "Search",
         "searchPlaceholder": "Search page key, title, H1, or keywords",
         "filter": "Filter",
+        "viewFullList": "View full list",
+        "downloadCsv": "Download CSV",
+        "fullListTitle": "Full SEO list",
+        "fullListDescription": "Complete SEO metadata for every active page, including title, description, H1, keywords, and robots settings.",
+        "fullListCount": "{count} records",
+        "backToSeo": "Back to SEO",
+        "purgeGuides": {
+          "title": "Obsolete guide SEO records",
+          "description": "{count} leftover guide:* SEO record(s) point to removed Guide pages (404). Remove them from the database.",
+          "action": "Remove guide SEO records",
+          "pending": "Removing…"
+        },
         "legalPagesLinkTitle": "Legal pages",
         "legalPagesLinkDescription": "Manage privacy, terms, disclaimer, refund, payment, and cookie policies from the dedicated Legal Pages module.",
         "manageLegalPages": "Open legal pages",
