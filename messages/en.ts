@@ -1061,7 +1061,7 @@ const en = {
     "documentsTitle": "Commonly required documents",
     "documentsSubtitle": "Preview typical documents across services. Exact checklist depends on service and province.",
     "documentsEmpty": "Document requirements will appear here once configured by admin.",
-    "documentsViewAll": "View details",
+    "documentsViewAll": "View document requirements",
     "whyChooseTitle": "Why choose PakExcise",
     "whyChooseDescription": "A modern private facilitation experience built for clarity, security, and convenience.",
     "whyChooseItem1Title": "Private & transparent",

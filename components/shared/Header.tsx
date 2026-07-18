@@ -1,19 +1,32 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-
-import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
-import { useTranslations } from "@/lib/i18n/t";
 import { useState } from "react";
 
 import { AuthHeaderActionsLazy } from "@/components/shared/auth-header-actions-lazy";
 import { SiteLogo } from "@/components/shared/SiteLogo";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useTranslations } from "@/lib/i18n/t";
 import { disclaimerBannerClassName } from "@/lib/styles/disclaimer-banner";
+import { cn } from "@/lib/utils";
+
+const ThemeToggle = dynamic(
+  () =>
+    import("@/components/theme/ThemeToggle").then((mod) => mod.ThemeToggle),
+  {
+    ssr: false,
+    loading: () => (
+      <span
+        className="inline-flex size-10 shrink-0"
+        aria-hidden="true"
+      />
+    ),
+  },
+);
 
 const navItems = [
   { href: "/services", key: "services" },
@@ -138,7 +151,7 @@ export function Header({
               asChild
               size="sm"
               variant="secondary"
-              className="hidden bg-[#25D366] px-2.5 text-white hover:bg-[#20bd5a] md:inline-flex"
+              className="hidden bg-[#128C7E] px-2.5 text-white hover:bg-[#0f7a6c] md:inline-flex"
             >
               <a
                 href={whatsappHref}
@@ -208,7 +221,7 @@ export function Header({
               {showWhatsapp && whatsappHref ? (
                 <Button
                   asChild
-                  className="justify-start bg-[#25D366] text-white hover:bg-[#20bd5a] md:hidden"
+                  className="justify-start bg-[#128C7E] text-white hover:bg-[#0f7a6c] md:hidden"
                 >
                   <a
                     href={whatsappHref}

@@ -70,6 +70,7 @@ export function SiteLogo({
         width={LOGO_ICON_INTRINSIC_SIZE}
         height={LOGO_ICON_INTRINSIC_SIZE}
         sizes={sizes}
+        quality={65}
         unoptimized={isRemoteImageSrc(iconLogo)}
         className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
@@ -85,6 +86,7 @@ export function SiteLogo({
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
         sizes={sizes}
+        quality={65}
         unoptimized={isRemoteImageSrc(darkLogo)}
         className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
@@ -102,9 +104,11 @@ export function SiteLogo({
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
         sizes={sizes}
+        quality={65}
         unoptimized={isRemoteImageSrc(primaryLogo)}
         className={cn(sizeClassName, "dark:hidden", imageClassName)}
         priority={priority}
+        fetchPriority={priority ? "high" : undefined}
       />
       <Image
         src={darkLogo}
@@ -112,6 +116,7 @@ export function SiteLogo({
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
         sizes={sizes}
+        quality={65}
         unoptimized={isRemoteImageSrc(darkLogo)}
         className={cn(sizeClassName, "hidden dark:block", imageClassName)}
         /* Dark logo is hidden in light mode — do not compete with LCP. */

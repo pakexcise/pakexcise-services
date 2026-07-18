@@ -73,7 +73,7 @@ export function ContactMethodCard({
             asChild
             className={cn(
               "w-full",
-              isWhatsApp && "bg-[#25D366] text-white hover:bg-[#20bd5a]",
+              isWhatsApp && "bg-[#128C7E] text-white hover:bg-[#0f7a6c]",
             )}
             variant={isWhatsApp ? "default" : "outline"}
           >

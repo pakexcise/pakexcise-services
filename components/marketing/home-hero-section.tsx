@@ -44,22 +44,22 @@ export function HomeHeroSection({
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -right-20 top-10 size-72 rounded-full bg-secondary/25 blur-3xl"
+        className="pointer-events-none absolute -right-20 top-10 hidden size-72 rounded-full bg-secondary/25 blur-3xl sm:block"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-24 -left-16 size-64 rounded-full bg-primary/10 blur-3xl"
+        className="pointer-events-none absolute -bottom-24 -left-16 hidden size-64 rounded-full bg-primary/10 blur-3xl sm:block"
         aria-hidden="true"
       />
 
-      <div className="container-site relative grid gap-10 py-14 sm:py-16 md:py-24 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:items-center lg:gap-14">
+      <div className="container-site relative grid gap-10 py-12 sm:py-16 md:py-24 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:items-center lg:gap-14">
         <div className="space-y-7">
-          <div className="inline-flex items-center rounded-full border border-primary/25 bg-background/80 px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm">
+          <div className="inline-flex items-center rounded-full border border-primary/25 bg-background/80 px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm">
             {badge}
           </div>
 
           <div className="space-y-4">
-            <h1 className="max-w-3xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]">
+            <h1 className="max-w-3xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]">
               {title}
             </h1>
             <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
@@ -82,7 +82,7 @@ export function HomeHeroSection({
             <Button
               asChild
               size="lg"
-              className="h-12 bg-[#25D366] px-6 text-base text-white shadow-md shadow-[#25D366]/25 hover:bg-[#20bd5a]"
+              className="h-12 bg-[#128C7E] px-6 text-base text-white shadow-md shadow-[#128C7E]/25 hover:bg-[#0f7a6c]"
             >
               <a
                 href={whatsappHref}

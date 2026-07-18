@@ -48,7 +48,7 @@ export function RegionHelpSection({
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           asChild
-          className="bg-[#25D366] text-white hover:bg-[#20bd5a]"
+          className="bg-[#128C7E] text-white hover:bg-[#0f7a6c]"
           size="lg"
         >
           <a

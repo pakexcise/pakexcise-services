@@ -4,6 +4,7 @@ import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
 import { LegalDisclaimer } from "@/components/shared/LegalDisclaimer";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
+import { brandingAssets } from "@/config/branding";
 import { localizeGlobalSiteContent } from "@/features/settings/lib/global-site-content";
 import { getPublicSettings } from "@/features/settings/lib/public-settings-cache";
 import {
@@ -24,8 +25,8 @@ export default async function MarketingLayout({
 
   const { business, publicUi, branding, features } = publicSettings;
   const localized = localizeGlobalSiteContent(business, publicUi);
-  const maintenanceMessage =
-    features.maintenanceMessageEn;
+  const maintenanceMessage = features.maintenanceMessageEn;
+  const logoPreloadHref = branding.logoPath?.trim() || brandingAssets.logo;
 
   const headerProps = {
     embedded: true as const,
@@ -56,9 +57,14 @@ export default async function MarketingLayout({
     />
   );
 
+  const logoPreload = (
+    <link rel="preload" as="image" href={logoPreloadHref} fetchPriority="high" />
+  );
+
   if (features.maintenanceMode) {
     return (
       <>
+        {logoPreload}
         <MarketingAnalytics />
         <div className={siteChromeShellClassName}>
           <LegalDisclaimer bannerText={localized.disclaimer} embedded />
@@ -75,6 +81,7 @@ export default async function MarketingLayout({
 
   return (
     <>
+      {logoPreload}
       <MarketingAnalytics />
       <div className={siteChromeShellClassName}>
         <LegalDisclaimer bannerText={localized.disclaimer} embedded />

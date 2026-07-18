@@ -1,6 +1,6 @@
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
-
 import { Button } from "@/components/ui/button";
+import { WHATSAPP_BUTTON_CLASSNAME } from "@/lib/styles/whatsapp";
 
 type WhatsAppCTAProps = {
   phoneNumber: string;
@@ -23,10 +23,7 @@ export function WhatsAppCTA({
   className,
 }: WhatsAppCTAProps) {
   return (
-    <Button
-      asChild
-      className={className ?? "bg-[#25D366] text-white hover:bg-[#20bd5a]"}
-    >
+    <Button asChild className={className ?? WHATSAPP_BUTTON_CLASSNAME}>
       <a
         href={buildWhatsAppUrl(phoneNumber, message)}
         target="_blank"

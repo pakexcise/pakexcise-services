@@ -52,14 +52,16 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
+  adjustFontFallback: true,
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
-  /** Mono is rarely needed on the public homepage — avoid competing with LCP. */
   preload: false,
+  adjustFontFallback: true,
 });
 
 export async function generateMetadata(): Promise<Metadata> {

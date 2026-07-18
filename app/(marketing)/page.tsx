@@ -307,7 +307,7 @@ const defaults = defaultHomePageSettings();
               locale={locale}
               requiredLabel={tMarketing("service.required")}
               optionalLabel={tMarketing("service.optional")}
-              viewAllLabel={tCommon("learnMore")}
+              viewAllLabel={tMarketing("documentsViewAll")}
               emptyMessage={tMarketing("service.documentsEmpty")}
               tone={tone}
             />

@@ -42,7 +42,7 @@ export function HomeFinalCtaSection({
           <Button
             asChild
             size="lg"
-            className="h-12 bg-[#25D366] px-6 text-white shadow-md shadow-[#25D366]/20 hover:bg-[#20bd5a]"
+            className="h-12 bg-[#128C7E] px-6 text-white shadow-md shadow-[#128C7E]/20 hover:bg-[#0f7a6c]"
           >
             <a
               href={whatsappHref}

@@ -70,7 +70,7 @@ export function ContactSupportOptionsSection({
               <div className="flex size-10 items-center justify-center rounded-lg bg-[#25D366]/15">
                 <WhatsAppIcon className="size-5 text-[#25D366]" />
               </div>
-              <span className="rounded-full bg-[#25D366]/15 px-2.5 py-0.5 text-xs font-medium text-[#1a8f47]">
+              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-950 dark:bg-emerald-950 dark:text-emerald-100">
                 {labels.fastestBadge}
               </span>
             </div>
@@ -83,7 +83,7 @@ export function ContactSupportOptionsSection({
             <Button
               asChild
               size="lg"
-              className="w-full bg-[#25D366] text-white hover:bg-[#20bd5a]"
+              className="w-full bg-[#128C7E] text-white hover:bg-[#0f7a6c]"
             >
               <a
                 href={whatsappHref}

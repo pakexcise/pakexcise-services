@@ -109,7 +109,7 @@ export function HomeVehicleVisualSection({
               <Button
                 asChild
                 size="lg"
-                className="h-11 bg-[#25D366] text-white shadow-md shadow-[#25D366]/20 hover:bg-[#20bd5a]"
+                className="h-11 bg-[#128C7E] text-white shadow-md shadow-[#128C7E]/20 hover:bg-[#0f7a6c]"
               >
                 <a
                   href={whatsappHref}
