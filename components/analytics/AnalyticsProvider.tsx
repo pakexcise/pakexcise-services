@@ -44,11 +44,11 @@ function hasAnalyticsConsent(tracking?: TrackingRuntimeConfig): boolean {
 
 function scheduleIdleTask(task: () => void): void {
   if (typeof window.requestIdleCallback === "function") {
-    window.requestIdleCallback(() => task(), { timeout: 3000 });
+    window.requestIdleCallback(() => task(), { timeout: 6000 });
     return;
   }
 
-  window.setTimeout(task, 1500);
+  window.setTimeout(task, 3000);
 }
 
 function injectScript(id: string, src: string): void {

@@ -11,6 +11,7 @@ import {
   LOGO_ICON_INTRINSIC_SIZE,
   siteLogoDefaultSize,
   siteLogoSizeClasses,
+  siteLogoSizesAttr,
   type SiteLogoSize,
 } from "@/lib/styles/logo-sizes";
 
@@ -59,6 +60,7 @@ export function SiteLogo({
   const altName = getBrandDisplayName(siteName ?? branding.siteName);
   const resolvedSize = size ?? siteLogoDefaultSize[variant];
   const sizeClassName = siteLogoSizeClasses[resolvedSize];
+  const sizes = siteLogoSizesAttr[resolvedSize];
 
   if (variant === "icon") {
     return (
@@ -67,6 +69,7 @@ export function SiteLogo({
         alt={altName}
         width={LOGO_ICON_INTRINSIC_SIZE}
         height={LOGO_ICON_INTRINSIC_SIZE}
+        sizes={sizes}
         unoptimized={isRemoteImageSrc(iconLogo)}
         className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
@@ -81,6 +84,7 @@ export function SiteLogo({
         alt={altName}
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
+        sizes={sizes}
         unoptimized={isRemoteImageSrc(darkLogo)}
         className={cn(sizeClassName, imageClassName, className)}
         priority={priority}
@@ -97,6 +101,7 @@ export function SiteLogo({
         alt={altName}
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
+        sizes={sizes}
         unoptimized={isRemoteImageSrc(primaryLogo)}
         className={cn(sizeClassName, "dark:hidden", imageClassName)}
         priority={priority}
@@ -106,9 +111,12 @@ export function SiteLogo({
         alt={altName}
         width={FULL_LOGO_INTRINSIC_WIDTH}
         height={FULL_LOGO_INTRINSIC_HEIGHT}
+        sizes={sizes}
         unoptimized={isRemoteImageSrc(darkLogo)}
         className={cn(sizeClassName, "hidden dark:block", imageClassName)}
-        priority={priority}
+        /* Dark logo is hidden in light mode — do not compete with LCP. */
+        priority={false}
+        loading="lazy"
       />
     </span>
   );

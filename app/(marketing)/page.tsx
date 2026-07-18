@@ -19,7 +19,6 @@ import { HomeServicesSection } from "@/components/marketing/home-services-sectio
 import { HomeVehicleVisualSection } from "@/components/marketing/home-vehicle-visual-section";
 import { HomeWhyChooseSection } from "@/components/marketing/home-why-choose-section";
 import { JsonLd } from "@/components/marketing/json-ld";
-import { SectionErrorBoundary } from "@/components/marketing/section-error-boundary";
 import { SectionHeader } from "@/components/marketing/section-header";
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
@@ -404,9 +403,9 @@ const defaults = defaultHomePageSettings();
       }
 
       return (
-        <SectionErrorBoundary key={key} name={key}>
+        <div key={key} data-home-section={key}>
           {sectionNode}
-        </SectionErrorBoundary>
+        </div>
       );
     } catch (error) {
       console.error(`[homepage] section ${key} failed`, error);

@@ -6,7 +6,10 @@ import type {
   HomeVehicleVisualSettings,
   LocalizedTextPair,
 } from "@/features/home-page/types";
-import { DEFAULT_HOME_VEHICLE_VISUAL_IMAGE } from "@/features/home-page/lib/vehicle-visual";
+import {
+  DEFAULT_HOME_VEHICLE_VISUAL_IMAGE,
+  resolveHomeVehicleVisualImagePath,
+} from "@/features/home-page/lib/vehicle-visual";
 
 export const HOME_PAGE_SETTINGS_KEY = "settings:home-page";
 export const HOME_PAGE_SETTINGS_CACHE_TAG = "home-page-settings";
@@ -347,9 +350,9 @@ export function mergeHomePageSettings(
     vehicleVisual: {
       ...defaults.vehicleVisual,
       ...stored.vehicleVisual,
-      imagePath:
-        stored.vehicleVisual?.imagePath?.trim() ||
-        defaults.vehicleVisual.imagePath,
+      imagePath: resolveHomeVehicleVisualImagePath(
+        stored.vehicleVisual?.imagePath,
+      ),
       featurePoints:
         stored.vehicleVisual?.featurePoints?.map((item, index) =>
           mergeContentBlock(

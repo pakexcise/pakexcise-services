@@ -11,9 +11,9 @@ import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { Button } from "@/components/ui/button";
 import {
-  DEFAULT_HOME_VEHICLE_VISUAL_IMAGE,
   HOME_VEHICLE_VISUAL_IMAGE_HEIGHT,
   HOME_VEHICLE_VISUAL_IMAGE_WIDTH,
+  resolveHomeVehicleVisualImagePath,
 } from "@/features/home-page/lib/vehicle-visual";
 import { cn } from "@/lib/utils";
 
@@ -44,8 +44,7 @@ export function HomeVehicleVisualSection({
   whatsappHref,
   className,
 }: HomeVehicleVisualSectionProps) {
-  const resolvedImagePath =
-    imagePath?.trim() || DEFAULT_HOME_VEHICLE_VISUAL_IMAGE;
+  const resolvedImagePath = resolveHomeVehicleVisualImagePath(imagePath);
   const points = Array.isArray(featurePoints) ? featurePoints : [];
 
   return (
@@ -146,8 +145,10 @@ export function HomeVehicleVisualSection({
                     resolvedImagePath.startsWith("https://") ||
                     resolvedImagePath.startsWith("//")
                   }
-                  sizes="(max-width: 1024px) min(100vw, 640px), 560px"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 640px, 560px"
                   className="h-auto w-full max-w-[1024px] object-contain"
+                  loading="lazy"
+                  decoding="async"
                   priority={false}
                 />
               </div>

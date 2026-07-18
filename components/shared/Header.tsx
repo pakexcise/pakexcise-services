@@ -8,7 +8,7 @@ import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { useTranslations } from "@/lib/i18n/t";
 import { useState } from "react";
 
-import { AuthHeaderActions } from "@/components/shared/auth-header-actions";
+import { AuthHeaderActionsLazy } from "@/components/shared/auth-header-actions-lazy";
 import { SiteLogo } from "@/components/shared/SiteLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -104,6 +104,7 @@ export function Header({
           className="flex min-w-0 max-w-[62%] shrink-0 items-center text-start sm:max-w-none"
         >
           <SiteLogo
+            priority
             size="header"
             logoPath={logoPath}
             logoDarkPath={logoDarkPath}
@@ -155,7 +156,7 @@ export function Header({
 
           <ThemeToggle />
 
-          <AuthHeaderActions
+          <AuthHeaderActionsLazy
             labels={authHeaderLabels}
             variant="desktop"
             className="hidden sm:flex"
@@ -199,7 +200,7 @@ export function Header({
               </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2 border-t pt-3">
-              <AuthHeaderActions
+              <AuthHeaderActionsLazy
                 labels={authHeaderLabels}
                 variant="mobile"
                 onNavigate={() => setMobileOpen(false)}

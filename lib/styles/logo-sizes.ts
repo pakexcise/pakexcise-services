@@ -36,3 +36,14 @@ export const siteLogoDefaultSize: Record<
   icon: "icon",
   onPrimary: "header",
 };
+
+/** Match displayed CSS max widths so next/image does not request 1080w logos. */
+export const siteLogoSizesAttr: Record<SiteLogoSize, string> = {
+  header: "(max-width: 640px) 216px, 260px",
+  footer: "(max-width: 640px) 232px, 280px",
+  auth: "(max-width: 640px) 280px, 320px",
+  portal: "(max-width: 640px) 168px, 192px",
+  admin: "(max-width: 640px) 192px, 216px",
+  icon: "56px",
+  iconLarge: "96px",
+};

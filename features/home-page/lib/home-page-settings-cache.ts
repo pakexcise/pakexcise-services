@@ -8,6 +8,7 @@ import {
   defaultVehicleVisualSettings,
   mergeHomePageSettings,
 } from "@/features/home-page/lib/defaults";
+import { resolveHomeVehicleVisualImagePath } from "@/features/home-page/lib/vehicle-visual";
 import type {
   HomeContentBlock,
   HomePageSettings,
@@ -105,9 +106,7 @@ export function localizeHomePageSettings(
     howItWorksSteps: howItWorksSteps.map((step) => localizeBlock(step, locale)),
     whyChooseItems: whyChooseItems.map((item) => localizeBlock(item, locale)),
     vehicleVisual: {
-      imagePath:
-        vehicleVisual.imagePath?.trim() ||
-        defaultVehicleVisualSettings().imagePath,
+      imagePath: resolveHomeVehicleVisualImagePath(vehicleVisual.imagePath),
       imageAlt: vehicleVisual.imageAltEn ?? "",
       featurePoints: featurePoints.map((item) => localizeBlock(item, locale)),
       browseCta: vehicleVisual.browseCtaEn ?? "",
