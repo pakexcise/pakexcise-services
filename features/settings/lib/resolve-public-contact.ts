@@ -34,6 +34,10 @@ export function normalizeBusinessSettings(
 
   const legacyMessage = stored.whatsappDefaultMessage?.trim();
 
+  const supportDaysEn = stored.supportDaysEn?.trim() || defaults.supportDaysEn;
+  const supportHoursEn =
+    stored.supportHoursEn?.trim() || defaults.supportHoursEn;
+
   return {
     ...defaults,
     ...stored,
@@ -51,11 +55,12 @@ export function normalizeBusinessSettings(
       legacyMessage ||
       defaults.whatsappDefaultMessageEn,
     businessEmail: stored.businessEmail?.trim() || defaults.businessEmail,
-    supportDaysEn: stored.supportDaysEn?.trim() || defaults.supportDaysEn,
-    supportHoursEn: stored.supportHoursEn?.trim() || defaults.supportHoursEn,
+    supportDaysEn,
+    supportHoursEn,
     whatsappChannelUrl:
       stored.whatsappChannelUrl?.trim() || defaults.whatsappChannelUrl,
-    businessHoursEn: stored.businessHoursEn?.trim() || defaults.businessHoursEn,
+    /** Always rebuild so footer/hours never drift across pages. */
+    businessHoursEn: `${supportDaysEn} · ${supportHoursEn}`,
     disclaimerEn: stored.disclaimerEn?.trim() || defaults.disclaimerEn,
     footerDescriptionEn:
       stored.footerDescriptionEn?.trim() || defaults.footerDescriptionEn,

@@ -19,21 +19,61 @@ function getNested(obj: unknown, path: string): unknown {
   return current;
 }
 
+function extractPluralChoice(choices: string, label: string): string | undefined {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = choices.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`));
+  return match?.[1];
+}
+
+/** Resolve ICU-style `{count, plural, one {# x} other {# y}}` with nested braces. */
+function applyIcuPlurals(template: string, params: Params): string {
+  const pluralStart = /\{(\w+),\s*plural,\s*/g;
+  let result = "";
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = pluralStart.exec(template)) !== null) {
+    const countKey = match[1] ?? "count";
+    const contentStart = match.index + match[0].length;
+    let depth = 1;
+    let cursor = contentStart;
+
+    while (cursor < template.length && depth > 0) {
+      const char = template[cursor];
+      if (char === "{") depth += 1;
+      else if (char === "}") depth -= 1;
+      cursor += 1;
+    }
+
+    const choices = template.slice(contentStart, cursor - 1);
+    const count = Number(params[countKey] ?? 0);
+    const zero = extractPluralChoice(choices, "=0");
+    const one = extractPluralChoice(choices, "one");
+    const other = extractPluralChoice(choices, "other") ?? String(count);
+
+    let text = other;
+    if (count === 0 && zero != null) {
+      text = zero;
+    } else if (count === 1 && one != null) {
+      text = one;
+    }
+
+    text = text
+      .replaceAll("#", String(count))
+      .replaceAll(`{${countKey}}`, String(count));
+
+    result += template.slice(lastIndex, match.index) + text;
+    lastIndex = cursor;
+    pluralStart.lastIndex = cursor;
+  }
+
+  return result + template.slice(lastIndex);
+}
+
 function applyParams(template: string, params: Params): string {
-  return template
-    .replace(
-      /\{(\w+),\s*plural,\s*([^}]+)\}/g,
-      (_, countKey: string, choices: string) => {
-        const count = Number(params[countKey] ?? 0);
-        const zero = choices.match(/=0\s*\{([^}]*)\}/)?.[1];
-        const other = choices.match(/other\s*\{([^}]*)\}/)?.[1] ?? String(count);
-        const text = count === 0 && zero != null ? zero : other;
-        return text.replaceAll(`{${countKey}}`, String(count));
-      },
-    )
-    .replace(/\{(\w+)\}/g, (_, key: string) =>
-      params[key] != null ? String(params[key]) : `{${key}}`,
-    );
+  return applyIcuPlurals(template, params).replace(/\{(\w+)\}/g, (_, key: string) =>
+    params[key] != null ? String(params[key]) : `{${key}}`,
+  );
 }
 
 export type TFunction = ((key: string, params?: Params) => string) & {

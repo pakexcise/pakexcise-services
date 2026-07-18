@@ -126,12 +126,12 @@ export function defaultHomePageSettings(): HomePageSettings {
       popular: section(
         20,
         "Popular PakExcise Services",
-        "Start with the most requested PakExcise services. These services are shown dynamically based on Super Admin settings.",
+        "Start with the most requested PakExcise services based on current service availability.",
       ),
       services: section(
         30,
         "Services We Help With",
-        "Explore PakExcise services by category. Service availability depends on the province or region selected by Super Admin.",
+        "Explore PakExcise services by category. Availability depends on your province or region.",
       ),
       regions: section(
         40,
@@ -214,7 +214,7 @@ export function defaultHomePageSettings(): HomePageSettings {
       ),
       block(
         "Province-Based Services",
-        "Services are shown based on province availability managed from Super Admin.",
+        "Services are shown based on province availability for your selected region.",
       ),
       block(
         "Clear Document Guidance",
@@ -307,6 +307,34 @@ function sanitizeHomeLimit(
   return Math.min(max, Math.max(min, Math.trunc(parsed)));
 }
 
+/** Strip internal CMS wording that must never appear on public pages. */
+export function sanitizePublicMarketingCopy(value: string): string {
+  return value
+    .replace(
+      /These services are shown dynamically based on Super Admin settings\.?/gi,
+      "These services are shown based on current service availability.",
+    )
+    .replace(
+      /Service availability depends on the province or region selected by Super Admin\.?/gi,
+      "Availability depends on your province or region.",
+    )
+    .replace(
+      /managed from Super Admin\.?/gi,
+      "for your selected region.",
+    )
+    .replace(/\bSuper Admin\b/gi, "our team")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function sanitizeContentBlock(block: HomeContentBlock): HomeContentBlock {
+  return {
+    ...block,
+    titleEn: sanitizePublicMarketingCopy(block.titleEn),
+    descriptionEn: sanitizePublicMarketingCopy(block.descriptionEn),
+  };
+}
+
 export function mergeHomePageSettings(
   stored: Partial<HomePageSettings> | null | undefined,
 ): HomePageSettings {
@@ -318,7 +346,12 @@ export function mergeHomePageSettings(
 
   const sections = { ...defaults.sections };
   for (const key of HOME_SECTION_KEYS) {
-    sections[key] = mergeSection(stored.sections?.[key], defaults.sections[key]);
+    const merged = mergeSection(stored.sections?.[key], defaults.sections[key]);
+    sections[key] = {
+      ...merged,
+      titleEn: sanitizePublicMarketingCopy(merged.titleEn),
+      descriptionEn: sanitizePublicMarketingCopy(merged.descriptionEn),
+    };
   }
 
   const storedLimits = (stored.limits ?? {}) as Partial<HomePageSettings["limits"]>;
@@ -328,25 +361,41 @@ export function mergeHomePageSettings(
     hero: {
       ...defaults.hero,
       ...stored.hero,
+      titleEn: sanitizePublicMarketingCopy(
+        stored.hero?.titleEn ?? defaults.hero.titleEn,
+      ),
+      descriptionEn: sanitizePublicMarketingCopy(
+        stored.hero?.descriptionEn ?? defaults.hero.descriptionEn,
+      ),
       trustBadges:
         stored.hero?.trustBadges?.map((item, index) => ({
-          en: item?.en ?? defaults.hero.trustBadges[index]?.en ?? "",
+          en: sanitizePublicMarketingCopy(
+            item?.en ?? defaults.hero.trustBadges[index]?.en ?? "",
+          ),
         })) ?? defaults.hero.trustBadges,
       processCards:
         stored.hero?.processCards?.map((item, index) =>
-          mergeContentBlock(item, defaults.hero.processCards[index] ?? item),
-        ) ?? defaults.hero.processCards,
+          sanitizeContentBlock(
+            mergeContentBlock(item, defaults.hero.processCards[index] ?? item),
+          ),
+        ) ?? defaults.hero.processCards.map(sanitizeContentBlock),
     },
     sections,
-    optionsNoteEn: stored.optionsNoteEn ?? defaults.optionsNoteEn,
+    optionsNoteEn: sanitizePublicMarketingCopy(
+      stored.optionsNoteEn ?? defaults.optionsNoteEn,
+    ),
     howItWorksSteps:
-      stored.howItWorksSteps?.map((item, index) =>
-        mergeContentBlock(item, defaults.howItWorksSteps[index] ?? item),
-      ) ?? defaults.howItWorksSteps,
+      (stored.howItWorksSteps?.map((item, index) =>
+        sanitizeContentBlock(
+          mergeContentBlock(item, defaults.howItWorksSteps[index] ?? item),
+        ),
+      ) ?? defaults.howItWorksSteps.map(sanitizeContentBlock)),
     whyChooseItems:
-      stored.whyChooseItems?.map((item, index) =>
-        mergeContentBlock(item, defaults.whyChooseItems[index] ?? item),
-      ) ?? defaults.whyChooseItems,
+      (stored.whyChooseItems?.map((item, index) =>
+        sanitizeContentBlock(
+          mergeContentBlock(item, defaults.whyChooseItems[index] ?? item),
+        ),
+      ) ?? defaults.whyChooseItems.map(sanitizeContentBlock)),
     vehicleVisual: {
       ...defaults.vehicleVisual,
       ...stored.vehicleVisual,
@@ -355,19 +404,32 @@ export function mergeHomePageSettings(
       ),
       featurePoints:
         stored.vehicleVisual?.featurePoints?.map((item, index) =>
-          mergeContentBlock(
-            item,
-            defaults.vehicleVisual.featurePoints[index] ?? item,
+          sanitizeContentBlock(
+            mergeContentBlock(
+              item,
+              defaults.vehicleVisual.featurePoints[index] ?? item,
+            ),
           ),
-        ) ?? defaults.vehicleVisual.featurePoints,
+        ) ?? defaults.vehicleVisual.featurePoints.map(sanitizeContentBlock),
     },
     about: {
       ...defaults.about,
       ...stored.about,
+      titleEn: sanitizePublicMarketingCopy(
+        stored.about?.titleEn ?? defaults.about.titleEn,
+      ),
+      descriptionEn: sanitizePublicMarketingCopy(
+        stored.about?.descriptionEn ?? defaults.about.descriptionEn,
+      ),
+      additionalEn: sanitizePublicMarketingCopy(
+        stored.about?.additionalEn ?? defaults.about.additionalEn,
+      ),
       trustCards:
         stored.about?.trustCards?.map((item, index) =>
-          mergeContentBlock(item, defaults.about.trustCards[index] ?? item),
-        ) ?? defaults.about.trustCards,
+          sanitizeContentBlock(
+            mergeContentBlock(item, defaults.about.trustCards[index] ?? item),
+          ),
+        ) ?? defaults.about.trustCards.map(sanitizeContentBlock),
     },
     limits: {
       faqCount: sanitizeHomeLimit(
@@ -395,8 +457,9 @@ export function mergeHomePageSettings(
         6,
       ),
     },
-    footerDescriptionEn:
+    footerDescriptionEn: sanitizePublicMarketingCopy(
       stored.footerDescriptionEn ?? defaults.footerDescriptionEn,
+    ),
     seo: { ...defaults.seo, ...stored.seo },
   };
 }

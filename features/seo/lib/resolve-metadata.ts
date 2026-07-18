@@ -21,15 +21,23 @@ export type ResolvedPageSeo = {
   h1: string;
 };
 
+function pickSeoText(
+  value: string | null | undefined,
+  fallback: string,
+): string {
+  const trimmed = value?.trim();
+  return trimmed || fallback;
+}
+
 export function resolvePageSeo(
   _locale: Locale | string,
   seo: SeoMeta | null,
   fallbacks: SeoFallbacks,
 ): ResolvedPageSeo {
   return {
-    title: seo?.metaTitleEn ?? fallbacks.title.en,
-    description: seo?.metaDescriptionEn ?? fallbacks.description.en,
-    h1: seo?.h1En ?? fallbacks.h1?.en ?? fallbacks.title.en,
+    title: pickSeoText(seo?.metaTitleEn, fallbacks.title.en),
+    description: pickSeoText(seo?.metaDescriptionEn, fallbacks.description.en),
+    h1: pickSeoText(seo?.h1En, fallbacks.h1?.en ?? fallbacks.title.en),
   };
 }
 
@@ -38,8 +46,7 @@ export function resolveVisibleH1(
   seo: { h1En?: string | null } | null | undefined,
   fallback: string,
 ): string {
-  const fromSeo = seo?.h1En?.trim();
-  return fromSeo || fallback;
+  return pickSeoText(seo?.h1En, fallback);
 }
 
 export async function resolveMetadataFromSeo(input: {
@@ -66,10 +73,10 @@ export async function resolveMetadataFromSeo(input: {
     description: resolved.description,
     locale: input.locale,
     path: input.path,
-    canonical: input.seo?.canonicalUrl ?? undefined,
+    canonical: input.seo?.canonicalUrl?.trim() || undefined,
     keywords: input.seo?.focusKeywords ?? undefined,
-    ogTitle: input.seo?.ogTitleEn ?? resolved.title,
-    ogDescription: input.seo?.ogDescriptionEn ?? resolved.description,
+    ogTitle: pickSeoText(input.seo?.ogTitleEn, resolved.title),
+    ogDescription: pickSeoText(input.seo?.ogDescriptionEn, resolved.description),
     ogImage: input.ogImage ?? input.seo?.ogImage ?? brandingDefaults.ogImage,
     twitterImage: brandingDefaults.twitterImage,
     siteName: brandingDefaults.siteName,

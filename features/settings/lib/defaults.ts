@@ -29,7 +29,7 @@ export const DEFAULT_FOOTER_DESCRIPTION_EN =
 
 export function defaultBusinessSettings(): BusinessSettings {
   const supportDaysEn = "Monday to Sunday";
-  const supportHoursEn = "7:00 AM – 12:00 PM";
+  const supportHoursEn = "7:00 AM – 11:30 PM";
 
   return {
     siteName: siteConfig.name,

@@ -78,7 +78,10 @@ export async function generateMetadata({
         en: `${service.nameEn} | PakExcise.com`,
       },
       description: {
-        en: service.shortDescriptionEn ?? service.nameEn,
+        en:
+          service.shortDescriptionEn?.trim() ||
+          service.contentEn?.trim()?.slice(0, 160) ||
+          `Get private facilitation support for ${service.nameEn} with PakExcise. Not a government website.`,
       },
       h1: {
         en: service.nameEn,

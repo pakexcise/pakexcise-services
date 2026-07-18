@@ -63,7 +63,9 @@ export async function generateMetadata({
         en: `${city.nameEn} Excise Services | PakExcise.com`,
       },
       description: {
-        en: city.descriptionEn ?? city.nameEn,
+        en:
+          city.descriptionEn?.trim() ||
+          `Private facilitation support for vehicle and excise services in ${city.nameEn}, ${city.region.nameEn}. PakExcise is not a government website.`,
       },
       h1: { en: city.nameEn },
     },

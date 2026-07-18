@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import "@/app/globals.css";
 import { BrandThemeStyles } from "@/components/theme/BrandThemeStyles";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { shouldAllowSearchIndexing } from "@/config/env.server";
 import {
   resolveAppleIconPath,
@@ -127,7 +128,7 @@ export default async function RootLayout({
         data-locale="en"
         suppressHydrationWarning
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
