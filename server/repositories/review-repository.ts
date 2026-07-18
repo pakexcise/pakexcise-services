@@ -34,13 +34,20 @@ const approvedPublicWhere: Prisma.ReviewWhereInput = {
   isActive: true,
 };
 
+/** Newest published reviews first (matches relative dates on review cards). */
+const publicLatestOrderBy: Prisma.ReviewOrderByWithRelationInput[] = [
+  { moderatedAt: "desc" },
+  { submittedAt: "desc" },
+  { createdAt: "desc" },
+];
+
 export class ReviewRepository extends Repository {
   async listPublic(limit = 24): Promise<PublicReview[]> {
     return this.query(
       () =>
         this.db.review.findMany({
           where: approvedPublicWhere,
-          orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+          orderBy: publicLatestOrderBy,
           take: limit,
           select: publicReviewSelect,
         }),
@@ -54,7 +61,7 @@ export class ReviewRepository extends Repository {
         () =>
           this.db.review.findMany({
             where: { ...approvedPublicWhere, source: "GOOGLE" },
-            orderBy: [{ submittedAt: "desc" }, { displayOrder: "asc" }],
+            orderBy: publicLatestOrderBy,
             take: limit,
             select: publicReviewSelect,
           }),
@@ -64,7 +71,7 @@ export class ReviewRepository extends Repository {
         () =>
           this.db.review.findMany({
             where: { ...approvedPublicWhere, source: { not: "GOOGLE" } },
-            orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+            orderBy: publicLatestOrderBy,
             take: limit,
             select: publicReviewSelect,
           }),
@@ -82,7 +89,12 @@ export class ReviewRepository extends Repository {
       if (merged.length >= limit) break;
     }
 
-    return merged;
+    // Keep featured homepage strip newest-first after merge.
+    return merged.sort((a, b) => {
+      const aTime = new Date(a.moderatedAt ?? a.submittedAt).getTime();
+      const bTime = new Date(b.moderatedAt ?? b.submittedAt).getTime();
+      return bTime - aTime;
+    });
   }
 
   async listPublicPaginated(
@@ -93,7 +105,7 @@ export class ReviewRepository extends Repository {
       ({ skip, take }) =>
         this.db.review.findMany({
           where: approvedPublicWhere,
-          orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+          orderBy: publicLatestOrderBy,
           skip,
           take,
           select: publicReviewSelect,
@@ -111,7 +123,7 @@ export class ReviewRepository extends Repository {
             ...approvedPublicWhere,
             serviceId,
           },
-          orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+          orderBy: publicLatestOrderBy,
           take: limit,
           select: publicReviewSelect,
         }),
@@ -134,7 +146,7 @@ export class ReviewRepository extends Repository {
             ...approvedPublicWhere,
             serviceId: { in: serviceIds },
           },
-          orderBy: [{ displayOrder: "asc" }, { submittedAt: "desc" }],
+          orderBy: publicLatestOrderBy,
           take: limit,
           select: publicReviewSelect,
         }),

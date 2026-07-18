@@ -3004,7 +3004,13 @@ const en = {
       "bulkRejectReason": "Rejection reason for selected reviews",
       "selectAll": "Select page",
       "clearSelection": "Clear selection",
-      "downloadCsv": "Download CSV"
+      "downloadCsv": "Download CSV",
+      "allCategories": "All categories",
+      "uncategorized": "Uncategorized",
+      "sortBy": "Sort by",
+      "sortLatest": "Latest first",
+      "sortDisplayOrder": "Display order",
+      "sortCategory": "Category A–Z"
     },
     "settingsPanel": {
       "title": "System settings",

@@ -87,6 +87,12 @@ export default async function AdminReviewsPage() {
     selectAll: t("selectAll"),
     clearSelection: t("clearSelection"),
     downloadCsv: t("downloadCsv"),
+    allCategories: t("allCategories"),
+    uncategorized: t("uncategorized"),
+    sortBy: t("sortBy"),
+    sortLatest: t("sortLatest"),
+    sortDisplayOrder: t("sortDisplayOrder"),
+    sortCategory: t("sortCategory"),
   };
 
   return (

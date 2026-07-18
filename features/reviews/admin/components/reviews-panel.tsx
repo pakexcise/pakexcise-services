@@ -91,6 +91,12 @@ export type ReviewPanelLabels = {
   selectAll: string;
   clearSelection: string;
   downloadCsv: string;
+  allCategories: string;
+  uncategorized: string;
+  sortBy: string;
+  sortLatest: string;
+  sortDisplayOrder: string;
+  sortCategory: string;
 };
 
 type ServiceOption = {
@@ -160,6 +166,10 @@ export function ReviewsPanel({
     "ALL",
   );
   const [recordType, setRecordType] = useState<"ALL" | "DUMMY" | "REAL">("ALL");
+  const [serviceFilter, setServiceFilter] = useState<string>("ALL");
+  const [sortBy, setSortBy] = useState<"latest" | "displayOrder" | "category">(
+    "latest",
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkRejectOpen, setBulkRejectOpen] = useState(false);
   const [bulkRejectReason, setBulkRejectReason] = useState("");
@@ -167,7 +177,7 @@ export function ReviewsPanel({
   const [rejectReason, setRejectReason] = useState("");
   const [page, setPage] = useState(1);
 
-  const sorted = useMemo(
+  const byDisplayOrder = useMemo(
     () =>
       [...reviews].sort(
         (a, b) =>
@@ -177,6 +187,38 @@ export function ReviewsPanel({
     [reviews],
   );
 
+  const sorted = useMemo(() => {
+    const list = [...reviews];
+
+    if (sortBy === "displayOrder") {
+      return list.sort(
+        (a, b) =>
+          a.displayOrder - b.displayOrder ||
+          new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime(),
+      );
+    }
+
+    if (sortBy === "category") {
+      return list.sort((a, b) => {
+        const aName = (a.service?.nameEn ?? "").toLocaleLowerCase();
+        const bName = (b.service?.nameEn ?? "").toLocaleLowerCase();
+        if (!aName && bName) return 1;
+        if (aName && !bName) return -1;
+        const byName = aName.localeCompare(bName);
+        if (byName !== 0) return byName;
+        const aTime = new Date(a.moderatedAt ?? a.submittedAt).getTime();
+        const bTime = new Date(b.moderatedAt ?? b.submittedAt).getTime();
+        return bTime - aTime;
+      });
+    }
+
+    return list.sort((a, b) => {
+      const aTime = new Date(a.moderatedAt ?? a.submittedAt).getTime();
+      const bTime = new Date(b.moderatedAt ?? b.submittedAt).getTime();
+      return bTime - aTime;
+    });
+  }, [reviews, sortBy]);
+
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return sorted.filter((review) => {
@@ -184,6 +226,11 @@ export function ReviewsPanel({
       const matchesType =
         recordType === "ALL" ||
         (recordType === "DUMMY" ? review.isDummy : !review.isDummy);
+      const matchesService =
+        serviceFilter === "ALL" ||
+        (serviceFilter === "NONE"
+          ? !review.serviceId
+          : review.serviceId === serviceFilter);
       const haystack = [
         review.authorNameEn,
         review.authorRoleEn ?? "",
@@ -196,10 +243,11 @@ export function ReviewsPanel({
       return (
         matchesStatus &&
         matchesType &&
+        matchesService &&
         (!needle || haystack.includes(needle))
       );
     });
-  }, [query, recordType, sorted, status]);
+  }, [query, recordType, serviceFilter, sorted, status]);
 
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -322,8 +370,8 @@ export function ReviewsPanel({
   }
 
   function move(review: AdminReviewItem, direction: "up" | "down") {
-    const index = sorted.findIndex((item) => item.id === review.id);
-    const target = sorted[direction === "up" ? index - 1 : index + 1];
+    const index = byDisplayOrder.findIndex((item) => item.id === review.id);
+    const target = byDisplayOrder[direction === "up" ? index - 1 : index + 1];
     if (!target) return;
     startTransition(async () => {
       const result = await reorderReviewsAction({
@@ -443,7 +491,7 @@ export function ReviewsPanel({
       <section className="overflow-hidden rounded-xl border bg-card">
         <div className="space-y-3 border-b p-4">
           <h2 className="font-semibold">{labels.existing}</h2>
-          <div className="grid gap-3 sm:grid-cols-[1fr_160px_160px]">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <Input
               type="search"
               value={query}
@@ -452,6 +500,7 @@ export function ReviewsPanel({
                 setQuery(event.target.value);
                 setPage(1);
               }}
+              className="sm:col-span-2 lg:col-span-1 xl:col-span-1"
             />
             <select
               value={status}
@@ -460,6 +509,7 @@ export function ReviewsPanel({
                 setPage(1);
               }}
               className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
+              aria-label={labels.allStatuses}
             >
               <option value="ALL">{labels.allStatuses}</option>
               <option value="PENDING">{labels.statusPending}</option>
@@ -473,10 +523,41 @@ export function ReviewsPanel({
                 setPage(1);
               }}
               className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
+              aria-label={labels.allRecordTypes}
             >
               <option value="ALL">{labels.allRecordTypes}</option>
               <option value="DUMMY">{labels.recordTypeDummy}</option>
               <option value="REAL">{labels.recordTypeReal}</option>
+            </select>
+            <select
+              value={serviceFilter}
+              onChange={(event) => {
+                setServiceFilter(event.target.value);
+                setPage(1);
+              }}
+              className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
+              aria-label={labels.allCategories}
+            >
+              <option value="ALL">{labels.allCategories}</option>
+              <option value="NONE">{labels.uncategorized}</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.nameEn}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sortBy}
+              onChange={(event) => {
+                setSortBy(event.target.value as typeof sortBy);
+                setPage(1);
+              }}
+              className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
+              aria-label={labels.sortBy}
+            >
+              <option value="latest">{labels.sortLatest}</option>
+              <option value="category">{labels.sortCategory}</option>
+              <option value="displayOrder">{labels.sortDisplayOrder}</option>
             </select>
           </div>
           {selectedIds.length > 0 ? (
