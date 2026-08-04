@@ -20,11 +20,13 @@ jobs:
             echo "pm2_name=pakexcise-live" >> "$GITHUB_OUTPUT"
             echo "branch=main" >> "$GITHUB_OUTPUT"
             echo "url=https://pakexcise.com" >> "$GITHUB_OUTPUT"
+            echo "needs_auth=false" >> "$GITHUB_OUTPUT"
           else
             echo "app_dir=/var/www/pakexcise-staging" >> "$GITHUB_OUTPUT"
             echo "pm2_name=pakexcise-staging" >> "$GITHUB_OUTPUT"
             echo "branch=staging" >> "$GITHUB_OUTPUT"
             echo "url=https://staging.pakexcise.com" >> "$GITHUB_OUTPUT"
+            echo "needs_auth=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Set up SSH
@@ -42,4 +44,8 @@ jobs:
       - name: Verify public health endpoint
         run: |
           sleep 5
-          curl -fsS "${{ steps.env.outputs.url }}/api/health"
+          if [[ "${{ steps.env.outputs.needs_auth }}" == "true" ]]; then
+            curl -fsS -u "${{ secrets.STAGING_HEALTHCHECK_USER }}:${{ secrets.STAGING_HEALTHCHECK_PASS }}" "${{ steps.env.outputs.url }}/api/health"
+          else
+            curl -fsS "${{ steps.env.outputs.url }}/api/health"
+          fi
