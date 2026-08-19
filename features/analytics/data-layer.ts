@@ -14,6 +14,7 @@ import {
   toAttributionAnalyticsContext,
 } from "@/lib/attribution";
 import { pushGtagCommand } from "@/lib/analytics/gtag-client";
+import { shouldSendMarketingPixelEvent } from "@/lib/analytics/marketing-pixels-client";
 import { getTrafficAnalyticsContext } from "@/lib/analytics/traffic-context";
 
 export type DataLayerEvent = {
@@ -134,6 +135,11 @@ export function pushAnalyticsEvent<T extends AnalyticsEventName>(
   options?: { eventId?: string; includeAttribution?: boolean },
 ): string {
   const eventId = options?.eventId ?? generateEventId();
+
+  if (!shouldSendMarketingPixelEvent()) {
+    return eventId;
+  }
+
   const sanitized = sanitizeAnalyticsPayload(
     payload as Record<string, unknown>,
   );

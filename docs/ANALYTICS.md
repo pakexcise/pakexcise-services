@@ -55,6 +55,34 @@ Register these in GA4 Admin → Custom definitions (event scope):
 | Traffic Channel | `traffic_channel` |
 | Traffic Platform | `traffic_platform` |
 
+## Who is tracked
+
+| Visitor | Public marketing pages (`/`, `/services`, …) | Dashboard routes (`/admin`, `/customer`, …) |
+|---------|-----------------------------------------------|---------------------------------------------|
+| Guest | Yes — page views + events | No scripts loaded |
+| Customer (logged in) | Yes | No scripts loaded |
+| Admin / Support / Agent (logged in) | **No** — staff QA excluded | No scripts loaded |
+| Impersonation session | **No** | No scripts loaded |
+
+Dashboard routes never mount `MarketingAnalytics`. Staff browsing public pages while logged in are excluded via session role check.
+
+## Events sent to GA4
+
+| Event | When | Key parameters |
+|-------|------|----------------|
+| `page_view` | Each public marketing navigation | `page_path`, `traffic_channel`, `traffic_platform` |
+| `click_whatsapp` | WhatsApp button / FAB click | `placement` (e.g. `fab`, `header_desktop`) |
+| `click_social_link` | Footer/header social icon | `platform` |
+| `view_service` | Service detail page view | `service_slug` |
+| `start_application` | Apply flow started | `service_slug`, `step` |
+| `complete_step` | Apply wizard step completed | `service_slug`, `step` |
+| `submit_application` | Application submitted | `service_slug` |
+| `invoice_viewed` | Customer invoice view | `application_id` (no PII) |
+| `payment_uploaded` | Payment screenshot uploaded | `application_id` |
+| `application_completed` | Application marked complete | `application_id`, `service_slug` |
+
+In GA4: **Reports → Engagement → Events** (or mark key events in Admin → Events).
+
 ## Consent (admin → Settings → Tracking)
 
 | Mode | Behavior |

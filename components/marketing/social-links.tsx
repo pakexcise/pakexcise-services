@@ -123,7 +123,7 @@ export function SocialLinks({
                   footerPlatformStyle(link.platform),
                 )}
                 data-analytics-event="click_social_link"
-                data-platform={link.platform}
+                data-analytics-platform={link.platform}
               >
                 <SocialIcon
                   platform={link.platform}
@@ -156,7 +156,7 @@ export function SocialLinks({
                   title={link.labelEn}
                   className="flex size-11 items-center justify-center rounded-full border bg-background text-primary transition-colors hover:border-primary/40 hover:bg-primary/5"
                   data-analytics-event="click_social_link"
-                  data-platform={link.platform}
+                  data-analytics-platform={link.platform}
                 >
                   <SocialIcon
                     platform={link.platform}
@@ -187,7 +187,7 @@ export function SocialLinks({
                 title={link.labelEn}
                 className="flex items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                 data-analytics-event="click_social_link"
-                data-platform={link.platform}
+                data-analytics-platform={link.platform}
               >
                 <SocialIcon platform={link.platform} iconName={link.iconName} />
                 <span>{link.labelEn}</span>
@@ -213,7 +213,7 @@ export function SocialLinks({
               title={link.labelEn}
               className="text-primary transition-colors hover:text-primary/80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"
               data-analytics-event="click_social_link"
-              data-platform={link.platform}
+              data-analytics-platform={link.platform}
             >
               {link.labelEn}
             </a>

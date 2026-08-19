@@ -1,4 +1,5 @@
 import { ensureGtagStub, pushGtagCommand } from "@/lib/analytics/gtag-client";
+import { shouldSendMarketingPixelEvent } from "@/lib/analytics/marketing-pixels-client";
 
 export function isGoogleTagManagerLoaded(gtmId: string): boolean {
   if (typeof document === "undefined") {
@@ -27,7 +28,7 @@ export function pushGa4PageView(
   pagePath: string,
   extra: Record<string, string | number | boolean> = {},
 ): void {
-  if (typeof window === "undefined") {
+  if (typeof window === "undefined" || !shouldSendMarketingPixelEvent()) {
     return;
   }
 
@@ -51,7 +52,7 @@ export function pushGtmPageView(
   pagePath: string,
   extra: Record<string, string | number | boolean> = {},
 ): void {
-  if (typeof window === "undefined") {
+  if (typeof window === "undefined" || !shouldSendMarketingPixelEvent()) {
     return;
   }
 

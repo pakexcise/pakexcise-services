@@ -132,7 +132,20 @@ function isAnalyticsEventName(value: string): value is AnalyticsEventName {
 type AnalyticsProviderProps = {
   children?: React.ReactNode;
   tracking?: TrackingRuntimeConfig;
+  /** Staff sessions (admin/support/agent) — no GA4 page views or click events. */
+  excludeMarketingPixels?: boolean;
 };
+
+function canSendMarketingPixels(
+  tracking: TrackingRuntimeConfig | undefined,
+  excludeMarketingPixels: boolean,
+): boolean {
+  return (
+    !excludeMarketingPixels &&
+    Boolean(tracking?.productionTrackingEnabled) &&
+    hasAnalyticsConsent(tracking)
+  );
+}
 
 /**
  * Must NOT wrap route `children`.
@@ -141,7 +154,11 @@ type AnalyticsProviderProps = {
  *
  * Mount only from the marketing layout via MarketingAnalytics.
  */
-export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps) {
+export function AnalyticsProvider({
+  children,
+  tracking,
+  excludeMarketingPixels = false,
+}: AnalyticsProviderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const scriptsLoadedRef = useRef(false);
@@ -178,7 +195,7 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
       }
     }
 
-    if (!tracking?.productionTrackingEnabled || !hasAnalyticsConsent(tracking)) {
+    if (!canSendMarketingPixels(tracking, excludeMarketingPixels) || !tracking) {
       return;
     }
 
@@ -200,10 +217,10 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
     } else if (gtmId) {
       pushGtmPageView(pagePath, trafficParams);
     }
-  }, [pathname, searchParams, tracking]);
+  }, [excludeMarketingPixels, pathname, searchParams, tracking]);
 
   useEffect(() => {
-    if (!tracking?.productionTrackingEnabled) {
+    if (!tracking?.productionTrackingEnabled || excludeMarketingPixels) {
       return;
     }
 
@@ -227,7 +244,7 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
 
     window.addEventListener("load", load, { once: true });
     return () => window.removeEventListener("load", load);
-  }, [tracking]);
+  }, [excludeMarketingPixels, tracking]);
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
@@ -238,6 +255,10 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
       }
 
       if (!isPublicAnalyticsPath(window.location.pathname)) {
+        return;
+      }
+
+      if (!canSendMarketingPixels(tracking, excludeMarketingPixels)) {
         return;
       }
 
@@ -271,7 +292,7 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
 
     document.addEventListener("click", handleClick, { capture: true });
     return () => document.removeEventListener("click", handleClick, { capture: true });
-  }, []);
+  }, [excludeMarketingPixels, tracking]);
 
   return children ?? null;
 }
