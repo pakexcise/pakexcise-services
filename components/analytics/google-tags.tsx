@@ -5,19 +5,18 @@ import { getProductionTrackingIds } from "@/lib/analytics/production-tracking";
 /**
  * Marketing-only Google tags.
  *
- * Prefer GTM when configured (GTM owns the GA4 tag in the container).
- * Fall back to direct gtag only when GA4 is set without GTM — avoids double page_view.
+ * GA4 loads directly via gtag.js whenever a measurement ID is configured.
+ * GTM is optional and must not be the only path to GA4 — an empty GTM
+ * container would otherwise block all analytics.
  *
- * Initial automatic page_view is disabled; MarketingAnalytics / AnalyticsProvider
- * sends page_view with traffic_channel / traffic_platform after classification.
+ * Automatic page_view is disabled; AnalyticsProvider sends page_view with
+ * traffic_channel / traffic_platform after classification.
  */
 export function GoogleAnalyticsScripts() {
   const tracking = getProductionTrackingIds();
   const ga4Id = tracking?.ga4MeasurementId;
-  const gtmId = tracking?.gtmId;
 
-  // When GTM is present, GA4 should fire from the GTM container — not a second gtag bootstrap.
-  if (!ga4Id || gtmId) {
+  if (!ga4Id) {
     return null;
   }
 
@@ -26,16 +25,17 @@ export function GoogleAnalyticsScripts() {
       <Script
         async
         src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
-        strategy="lazyOnload"
+        strategy="afterInteractive"
       />
-      <Script id="google-analytics" strategy="lazyOnload">
+      <Script id="google-analytics" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', '${ga4Id}', {
             send_page_view: false,
-            page_type: 'public'
+            page_type: 'public',
+            anonymize_ip: true
           });
         `}
       </Script>
@@ -52,7 +52,7 @@ export function GoogleTagManagerHead() {
   }
 
   return (
-    <Script id="google-tag-manager" strategy="lazyOnload">
+    <Script id="google-tag-manager" strategy="afterInteractive">
       {`(function(w,d,s,l,i){w[l]=w[l]||[];
 w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js', page_type:'public'});
 var f=d.getElementsByTagName(s)[0],

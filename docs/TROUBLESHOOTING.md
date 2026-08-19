@@ -77,9 +77,13 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) common table. Most frequent: **code not pus
 
 ## Analytics verification
 
-**Public live page:** Network shows `gtm.js` or `gtag/js`.  
+See **[ANALYTICS.md](./ANALYTICS.md)** for full setup.
+
+**Public live page:** Network shows `gtag/js?id=G-...` (required) and optionally `gtm.js`.  
 **Admin live page:** neither script.  
 **Staging:** usually no marketing tags (`APP_ENV≠production`).
+
+**GA4 Realtime empty:** Usually empty GTM container with GTM-only bootstrap (fixed: direct gtag always loads when measurement ID is set). Rebuild after env changes.
 
 GA4 historical reports still show past admin titles — filter date after fix deploy.
 

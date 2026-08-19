@@ -193,12 +193,12 @@ export function AnalyticsProvider({ children, tracking }: AnalyticsProviderProps
       ...getTrafficAnalyticsContext(),
     };
 
-    // Prefer GTM dataLayer when GTM is configured; otherwise direct GA4.
-    // Tags bootstrap with send_page_view:false so this is the sole page_view source.
-    if (gtmId) {
-      pushGtmPageView(pagePath, trafficParams);
-    } else if (ga4Id) {
+    // Direct GA4 is the source of truth. GTM is optional and may be empty;
+    // never route page_view only through GTM or GA4 Realtime stays at zero.
+    if (ga4Id) {
       pushGa4PageView(ga4Id, pagePath, trafficParams);
+    } else if (gtmId) {
+      pushGtmPageView(pagePath, trafficParams);
     }
   }, [pathname, searchParams, tracking]);
 

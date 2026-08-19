@@ -20,6 +20,7 @@ PakExcise.com handover package for humans and Claude Code.
 | 10 | [PROJECT_STATUS.md](./PROJECT_STATUS.md) | Done / next / debt |
 | 11 | [MAINTENANCE.md](./MAINTENANCE.md) | Day-to-day engineering |
 | 12 | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) | Failures & diagnostics |
+| 13 | [ANALYTICS.md](./ANALYTICS.md) | GA4 / GTM setup & verification |
 
 Root [DEPLOYMENT.md](../DEPLOYMENT.md) points here.
 

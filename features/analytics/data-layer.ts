@@ -13,6 +13,7 @@ import {
   getStoredAttribution,
   toAttributionAnalyticsContext,
 } from "@/lib/attribution";
+import { pushGtagCommand } from "@/lib/analytics/gtag-client";
 import { getTrafficAnalyticsContext } from "@/lib/analytics/traffic-context";
 
 export type DataLayerEvent = {
@@ -100,11 +101,13 @@ function pushVendorEvents(
     return;
   }
 
-  if (typeof window.gtag === "function") {
-    window.gtag("event", mapGa4EventName(event), {
+  const ga4MeasurementId = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID?.trim();
+
+  if (ga4MeasurementId) {
+    pushGtagCommand("event", mapGa4EventName(event), {
       ...payload,
       event_id: eventId,
-      send_to: process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID,
+      send_to: ga4MeasurementId,
     });
   }
 
