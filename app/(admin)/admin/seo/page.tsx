@@ -111,15 +111,10 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
         labels={{
           title: t("csv.title"),
           description: t("csv.description"),
-          exportTitle: t("csv.exportTitle"),
-          exportDescription: t("csv.exportDescription"),
-          importTitle: t("csv.importTitle"),
-          importDescription: t("csv.importDescription"),
           columnsHint: t("csv.columnsHint"),
           updateHint: t("csv.updateHint"),
-          chooseFile: t("csv.chooseFile"),
+          exportAction: t("csv.exportAction"),
           importAction: t("csv.importAction"),
-          previewAction: t("csv.previewAction"),
           previewing: t("csv.previewing"),
           confirmAction: t("csv.confirmAction"),
           confirming: t("csv.confirming"),
@@ -127,13 +122,6 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
           previewReady: t("csv.previewReady"),
           importApplied: t("csv.importApplied"),
           noChangesReady: t("csv.noChangesReady"),
-          exportAll: t("csv.exportAll"),
-          exportStatic: t("csv.exportStatic"),
-          exportServices: t("csv.exportServices"),
-          exportCities: t("csv.exportCities"),
-          exportRegions: t("csv.exportRegions"),
-          exportBlog: t("csv.exportBlog"),
-          exportLegal: t("csv.exportLegal"),
           noFile: t("csv.noFile"),
           statsTotal: t("csv.statsTotal"),
           statsReady: t("csv.statsReady"),
@@ -144,6 +132,32 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
           statsInvalid: t("csv.statsInvalid"),
           statsChangedFields: t("csv.statsChangedFields"),
           rowLogTitle: t("csv.rowLogTitle"),
+          categories: {
+            static: {
+              title: t("csv.categories.static.title"),
+              description: t("csv.categories.static.description"),
+            },
+            services: {
+              title: t("csv.categories.services.title"),
+              description: t("csv.categories.services.description"),
+            },
+            cities: {
+              title: t("csv.categories.cities.title"),
+              description: t("csv.categories.cities.description"),
+            },
+            regions: {
+              title: t("csv.categories.regions.title"),
+              description: t("csv.categories.regions.description"),
+            },
+            blog: {
+              title: t("csv.categories.blog.title"),
+              description: t("csv.categories.blog.description"),
+            },
+            legal: {
+              title: t("csv.categories.legal.title"),
+              description: t("csv.categories.legal.description"),
+            },
+          },
         }}
       />
 

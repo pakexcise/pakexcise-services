@@ -3,6 +3,7 @@ import "server-only";
 import { revalidatePath } from "next/cache";
 
 import {
+  classifySeoCategory,
   parseRobotsCsv,
   parseSeoCsvRows,
   resolveSeoCsvIdentity,
@@ -10,6 +11,7 @@ import {
 } from "@/features/seo/admin/lib/seo-csv";
 import {
   emptySeoCsvPreviewStats,
+  type SeoCsvCategory,
   type SeoCsvPreviewStats,
   type SeoCsvRowPreview,
 } from "@/features/seo/admin/lib/seo-csv-shared";
@@ -363,6 +365,7 @@ function summarizePreview(rows: SeoCsvRowPreview[]): SeoCsvPreviewStats {
 
 export async function analyzeSeoCsvText(
   csvText: string,
+  expectedCategory?: Exclude<SeoCsvCategory, "all">,
 ): Promise<SeoCsvPreviewStats> {
   const rows = parseSeoCsvRows(csvText);
   const seenIds = new Map<string, number>();
@@ -424,6 +427,19 @@ export async function analyzeSeoCsvText(
       continue;
     }
 
+    const actualCategory = classifySeoCategory(existing as AdminSeoListItem);
+    if (expectedCategory && actualCategory !== expectedCategory) {
+      previews.push({
+        rowNumber,
+        id: row.id,
+        label: resolveSeoCsvIdentity(existing as AdminSeoListItem).slug || existing.pageKey,
+        status: "invalid",
+        message: `Wrong category: this row is ${actualCategory}, but you are importing ${expectedCategory}`,
+        changedFields: [],
+      });
+      continue;
+    }
+
     const identity = resolveSeoCsvIdentity(existing as AdminSeoListItem);
     const displayLabel = identity.slug || identity.name || existing.pageKey;
     const conflict = await detectSlugConflict(existing, row);
@@ -468,8 +484,9 @@ export async function analyzeSeoCsvText(
 export async function importSeoCsvText(input: {
   csvText: string;
   actorId: string;
+  expectedCategory?: Exclude<SeoCsvCategory, "all">;
 }): Promise<SeoCsvImportResult> {
-  const preview = await analyzeSeoCsvText(input.csvText);
+  const preview = await analyzeSeoCsvText(input.csvText, input.expectedCategory);
   if (preview.ready === 0) {
     return { ...preview, applied: false };
   }

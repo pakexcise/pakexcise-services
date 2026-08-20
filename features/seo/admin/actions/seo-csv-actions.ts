@@ -4,7 +4,10 @@ import {
   analyzeSeoCsvText,
   importSeoCsvText,
 } from "@/features/seo/admin/lib/seo-csv-import";
-import type { SeoCsvPreviewStats } from "@/features/seo/admin/lib/seo-csv-shared";
+import type {
+  SeoCsvCategory,
+  SeoCsvPreviewStats,
+} from "@/features/seo/admin/lib/seo-csv-shared";
 import {
   errorResult,
   successResult,
@@ -14,6 +17,23 @@ import { auditAdminAction } from "@/server/admin/audit-action";
 import { requirePermission } from "@/server/permissions/guards";
 
 const MAX_CSV_BYTES = 5 * 1024 * 1024;
+
+const CATEGORIES = new Set<Exclude<SeoCsvCategory, "all">>([
+  "static",
+  "services",
+  "cities",
+  "regions",
+  "blog",
+  "legal",
+]);
+
+function parseCategory(
+  value: FormDataEntryValue | null,
+): Exclude<SeoCsvCategory, "all"> | null {
+  if (typeof value !== "string") return null;
+  if (!CATEGORIES.has(value as Exclude<SeoCsvCategory, "all">)) return null;
+  return value as Exclude<SeoCsvCategory, "all">;
+}
 
 async function readCsvFile(formData: FormData): Promise<ActionResult<string>> {
   const file = formData.get("file");
@@ -48,8 +68,13 @@ async function readCsvFile(formData: FormData): Promise<ActionResult<string>> {
 
 export async function previewSeoCsvAction(
   formData: FormData,
-): Promise<ActionResult<SeoCsvPreviewStats & { fileName: string }>> {
+): Promise<ActionResult<SeoCsvPreviewStats & { fileName: string; category: string }>> {
   await requirePermission("platform:manage");
+
+  const category = parseCategory(formData.get("category"));
+  if (!category) {
+    return errorResult("Choose a valid SEO category for this import.");
+  }
 
   const file = formData.get("file");
   const fileName = file instanceof File ? file.name : "import.csv";
@@ -57,8 +82,8 @@ export async function previewSeoCsvAction(
   if (!csv.success) return csv;
 
   try {
-    const preview = await analyzeSeoCsvText(csv.data);
-    return successResult({ ...preview, fileName });
+    const preview = await analyzeSeoCsvText(csv.data, category);
+    return successResult({ ...preview, fileName, category });
   } catch (error) {
     return errorResult(
       error instanceof Error ? error.message : "CSV preview failed.",
@@ -68,8 +93,15 @@ export async function previewSeoCsvAction(
 
 export async function confirmSeoCsvImportAction(
   formData: FormData,
-): Promise<ActionResult<SeoCsvPreviewStats & { applied: boolean }>> {
+): Promise<
+  ActionResult<SeoCsvPreviewStats & { applied: boolean; category: string }>
+> {
   const user = await requirePermission("platform:manage");
+  const category = parseCategory(formData.get("category"));
+  if (!category) {
+    return errorResult("Choose a valid SEO category for this import.");
+  }
+
   const csv = await readCsvFile(formData);
   if (!csv.success) return csv;
 
@@ -77,14 +109,16 @@ export async function confirmSeoCsvImportAction(
     const result = await importSeoCsvText({
       csvText: csv.data,
       actorId: user.id,
+      expectedCategory: category,
     });
 
     await auditAdminAction({
       actorId: user.id,
       action: "UPDATE",
       entityType: "seo_meta",
-      entityId: "csv-import",
+      entityId: `csv-import:${category}`,
       after: {
+        category,
         total: result.total,
         ready: result.ready,
         skipped: result.skipped,
@@ -97,7 +131,7 @@ export async function confirmSeoCsvImportAction(
       },
     });
 
-    return successResult(result);
+    return successResult({ ...result, category });
   } catch (error) {
     return errorResult(
       error instanceof Error ? error.message : "CSV import failed.",

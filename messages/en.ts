@@ -2621,31 +2621,19 @@ const en = {
         "viewFullList": "View full list",
         "downloadCsv": "Download CSV",
         "csv": {
-          "title": "SEO CSV import & export",
-          "description": "Export SEO rows by type, edit the CSV offline, then preview and confirm import to update existing records only.",
-          "exportTitle": "Export CSV",
-          "exportDescription": "Download separate files for static pages, services, cities, regions, blog, or legal pages.",
-          "importTitle": "Import CSV",
-          "importDescription": "Upload an exported CSV, review the stats, then confirm. Rows are matched by id. id and updated_at are never overwritten from the file.",
-          "columnsHint": "Columns: id, updated_at, name, slug, path, h1, meta_title, meta_description, focused_keywords, og_title, og_description, canonical_url, robots",
-          "updateHint": "Import updates name, slug, path, h1, meta_title, meta_description, focused_keywords, og_title, og_description, canonical_url, and robots. Use robots values like index,follow or noindex,follow.",
-          "chooseFile": "Selected file",
+          "title": "SEO CSV export & import",
+          "description": "Each category has its own export and import. Export that category, edit offline, then import back into the same category card.",
+          "columnsHint": "Columns",
+          "updateHint": "Rows match by id. id and updated_at are never overwritten. Blank preview means your CSV matches current values — change a field, then re-import.",
+          "exportAction": "Export CSV",
           "importAction": "Import CSV",
-          "previewAction": "Preview import",
           "previewing": "Analyzing…",
           "confirmAction": "Confirm ({count})",
           "confirming": "Importing…",
           "clearPreview": "Clear",
           "previewReady": "Preview ready — review counts, then confirm import.",
           "importApplied": "Import applied successfully.",
-          "noChangesReady": "No changed rows are ready to import.",
-          "exportAll": "Export all",
-          "exportStatic": "Static pages",
-          "exportServices": "Services",
-          "exportCities": "Cities",
-          "exportRegions": "Regions",
-          "exportBlog": "Blog",
-          "exportLegal": "Legal",
+          "noChangesReady": "No changed rows are ready to import for this category.",
           "noFile": "Choose a CSV file before importing.",
           "statsTotal": "Total",
           "statsReady": "Ready",
@@ -2655,7 +2643,33 @@ const en = {
           "statsDuplicates": "Duplicates",
           "statsInvalid": "Invalid",
           "statsChangedFields": "Changed fields",
-          "rowLogTitle": "Row details"
+          "rowLogTitle": "Row details",
+          "categories": {
+            "static": {
+              "title": "Static pages",
+              "description": "Home, about, contact, FAQs, track, documents, and other marketing pages."
+            },
+            "services": {
+              "title": "Services",
+              "description": "SEO for service pages such as vehicle transfer and token tax."
+            },
+            "cities": {
+              "title": "Cities",
+              "description": "City pages under each province/region."
+            },
+            "regions": {
+              "title": "Regions",
+              "description": "Province and region landing pages."
+            },
+            "blog": {
+              "title": "Blog",
+              "description": "Published blog post SEO metadata."
+            },
+            "legal": {
+              "title": "Legal",
+              "description": "Privacy, terms, disclaimer, refund, payment, and cookie pages."
+            }
+          }
         },
         "fullListTitle": "Full SEO list",
         "fullListDescription": "Complete SEO metadata for every active page, including title, description, H1, keywords, and robots settings.",
