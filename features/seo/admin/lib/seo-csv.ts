@@ -10,7 +10,10 @@ import {
   seoCsvFilename,
   type SeoCsvCategory,
   type SeoCsvHeader,
+  type SeoCsvPreviewStats,
   type SeoCsvRow,
+  type SeoCsvRowPreview,
+  type SeoCsvRowStatus,
 } from "@/features/seo/admin/lib/seo-csv-shared";
 
 export {
@@ -19,7 +22,14 @@ export {
   parseRobotsCsv,
   seoCsvFilename,
 };
-export type { SeoCsvCategory, SeoCsvHeader, SeoCsvRow };
+export type {
+  SeoCsvCategory,
+  SeoCsvHeader,
+  SeoCsvPreviewStats,
+  SeoCsvRow,
+  SeoCsvRowPreview,
+  SeoCsvRowStatus,
+};
 
 export function classifySeoCategory(
   row: Pick<

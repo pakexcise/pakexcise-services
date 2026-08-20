@@ -1,6 +1,10 @@
 "use server";
 
-import { importSeoCsvText } from "@/features/seo/admin/lib/seo-csv-import";
+import {
+  analyzeSeoCsvText,
+  importSeoCsvText,
+} from "@/features/seo/admin/lib/seo-csv-import";
+import type { SeoCsvPreviewStats } from "@/features/seo/admin/lib/seo-csv-shared";
 import {
   errorResult,
   successResult,
@@ -11,18 +15,7 @@ import { requirePermission } from "@/server/permissions/guards";
 
 const MAX_CSV_BYTES = 5 * 1024 * 1024;
 
-export async function importSeoCsvAction(
-  formData: FormData,
-): Promise<
-  ActionResult<{
-    total: number;
-    updated: number;
-    unchanged: number;
-    skipped: number;
-    errors: string[];
-  }>
-> {
-  const user = await requirePermission("platform:manage");
+async function readCsvFile(formData: FormData): Promise<ActionResult<string>> {
   const file = formData.get("file");
 
   if (!(file instanceof File)) {
@@ -38,20 +31,51 @@ export async function importSeoCsvAction(
   }
 
   const name = file.name.toLowerCase();
-  if (!name.endsWith(".csv") && file.type !== "text/csv" && file.type !== "application/vnd.ms-excel") {
+  if (
+    !name.endsWith(".csv") &&
+    file.type !== "text/csv" &&
+    file.type !== "application/vnd.ms-excel"
+  ) {
     return errorResult("Upload a .csv file.");
   }
 
-  let csvText: string;
   try {
-    csvText = await file.text();
+    return successResult(await file.text());
   } catch {
     return errorResult("Could not read the CSV file.");
   }
+}
+
+export async function previewSeoCsvAction(
+  formData: FormData,
+): Promise<ActionResult<SeoCsvPreviewStats & { fileName: string }>> {
+  await requirePermission("platform:manage");
+
+  const file = formData.get("file");
+  const fileName = file instanceof File ? file.name : "import.csv";
+  const csv = await readCsvFile(formData);
+  if (!csv.success) return csv;
+
+  try {
+    const preview = await analyzeSeoCsvText(csv.data);
+    return successResult({ ...preview, fileName });
+  } catch (error) {
+    return errorResult(
+      error instanceof Error ? error.message : "CSV preview failed.",
+    );
+  }
+}
+
+export async function confirmSeoCsvImportAction(
+  formData: FormData,
+): Promise<ActionResult<SeoCsvPreviewStats & { applied: boolean }>> {
+  const user = await requirePermission("platform:manage");
+  const csv = await readCsvFile(formData);
+  if (!csv.success) return csv;
 
   try {
     const result = await importSeoCsvText({
-      csvText,
+      csvText: csv.data,
       actorId: user.id,
     });
 
@@ -62,10 +86,14 @@ export async function importSeoCsvAction(
       entityId: "csv-import",
       after: {
         total: result.total,
-        updated: result.updated,
-        unchanged: result.unchanged,
+        ready: result.ready,
         skipped: result.skipped,
-        errorCount: result.errors.length,
+        conflicts: result.conflicts,
+        missing: result.missing,
+        duplicates: result.duplicates,
+        invalid: result.invalid,
+        changedFields: result.changedFields,
+        applied: result.applied,
       },
     });
 

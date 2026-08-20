@@ -27,6 +27,35 @@ export type SeoCsvCategory =
 
 export type SeoCsvRow = Record<SeoCsvHeader, string>;
 
+export type SeoCsvRowStatus =
+  | "ready"
+  | "unchanged"
+  | "missing"
+  | "invalid"
+  | "conflict"
+  | "duplicate";
+
+export type SeoCsvRowPreview = {
+  rowNumber: number;
+  id: string;
+  label: string;
+  status: SeoCsvRowStatus;
+  message: string;
+  changedFields: string[];
+};
+
+export type SeoCsvPreviewStats = {
+  total: number;
+  ready: number;
+  skipped: number;
+  conflicts: number;
+  missing: number;
+  duplicates: number;
+  invalid: number;
+  changedFields: number;
+  rows: SeoCsvRowPreview[];
+};
+
 export function formatRobotsCsv(
   robotsIndex: boolean,
   robotsFollow: boolean,
@@ -62,4 +91,18 @@ export function parseRobotsCsv(value: string): {
 export function seoCsvFilename(category: SeoCsvCategory): string {
   const stamp = new Date().toISOString().slice(0, 10);
   return `pakexcise-seo-${category}-${stamp}.csv`;
+}
+
+export function emptySeoCsvPreviewStats(): SeoCsvPreviewStats {
+  return {
+    total: 0,
+    ready: 0,
+    skipped: 0,
+    conflicts: 0,
+    missing: 0,
+    duplicates: 0,
+    invalid: 0,
+    changedFields: 0,
+    rows: [],
+  };
 }
