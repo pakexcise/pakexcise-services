@@ -90,10 +90,17 @@ export function groupDocumentsByRegion(
     groups.set(regionKey, { regionLabel, items: [item] });
   }
 
-  return [...groups.entries()].map(([regionKey, group]) => ({
-    regionKey,
-    regionLabel: group.regionLabel,
-    items: group.items}));
+  return [...groups.entries()]
+    .map(([regionKey, group]) => ({
+      regionKey,
+      regionLabel: group.regionLabel,
+      items: group.items.sort((a, b) => a.displayOrder - b.displayOrder),
+    }))
+    .sort((a, b) => {
+      if (a.regionKey === "all-regions") return 1;
+      if (b.regionKey === "all-regions") return -1;
+      return a.regionLabel.localeCompare(b.regionLabel);
+    });
 }
 
 export function getRegionSupportNotes(

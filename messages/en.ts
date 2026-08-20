@@ -1282,7 +1282,8 @@ const en = {
         "submit": "Send message",
         "submitting": "Sending…",
         "successTitle": "Message sent",
-        "successDescription": "Your message has been sent successfully. Our support team will contact you shortly.",
+        "successDescription": "Your message has been saved. Continue on WhatsApp for the fastest reply from our support team (7AM–11:30PM, 7 days).",
+        "successWhatsappCta": "Continue on WhatsApp",
         "validationSummary": "Please fix the following:",
         "errors": {
           "fullNameRequired": "Enter your full name (at least 2 characters).",

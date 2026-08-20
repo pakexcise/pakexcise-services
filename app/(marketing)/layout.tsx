@@ -1,4 +1,5 @@
 import { MarketingAnalytics } from "@/components/analytics/MarketingAnalytics";
+import { MarketingSiteJsonLd } from "@/components/marketing/marketing-site-json-ld";
 import { MaintenanceView } from "@/components/marketing/maintenance-view";
 import { Footer } from "@/components/shared/Footer";
 import { Header } from "@/components/shared/Header";
@@ -65,6 +66,7 @@ export default async function MarketingLayout({
     return (
       <>
         {logoPreload}
+        <MarketingSiteJsonLd />
         <MarketingAnalytics />
         <div className={siteChromeShellClassName}>
           <LegalDisclaimer bannerText={localized.disclaimer} embedded />
@@ -82,6 +84,7 @@ export default async function MarketingLayout({
   return (
     <>
       {logoPreload}
+      <MarketingSiteJsonLd />
       <MarketingAnalytics />
       <div className={siteChromeShellClassName}>
         <LegalDisclaimer bannerText={localized.disclaimer} embedded />

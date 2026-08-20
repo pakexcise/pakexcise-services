@@ -67,6 +67,7 @@ export function ServiceOptionsSection({
     regionLabel,
     defaultMessage: whatsappDefaultMessage,
     locale,
+    pagePath: `/services/${serviceSlug}`,
   });
   const whatsappUrl = buildWhatsAppUrl(whatsappPhone, whatsappMessage);
   const guestHref = `/request/${serviceSlug}`;

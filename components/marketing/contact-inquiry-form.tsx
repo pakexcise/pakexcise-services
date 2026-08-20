@@ -12,6 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { submitContactInquiryAction } from "@/features/contact-inquiries/actions/submit-contact-inquiry";
 import {
+  buildContactInquiryWhatsAppMessage,
+  buildWhatsAppUrl,
+} from "@/lib/whatsapp/build-service-message";
+import {
   createContactInquiryFormSchema,
   type ContactInquiryFormValues,
 } from "@/lib/validations/contact-inquiry";
@@ -38,6 +42,7 @@ export type ContactInquiryFormLabels = {
   submitting: string;
   successTitle: string;
   successDescription: string;
+  successWhatsappCta: string;
   validationSummary: string;
   errors: {
     fullNameRequired: string;
@@ -54,6 +59,7 @@ type ContactInquiryFormProps = {
   labels: ContactInquiryFormLabels;
   serviceOptions: Array<{ value: string; label: string }>;
   regionOptions?: string[];
+  whatsappPhone?: string | null;
   className?: string;
 };
 
@@ -84,12 +90,15 @@ export function ContactInquiryForm({
   labels,
   serviceOptions,
   regionOptions = [],
+  whatsappPhone,
   className,
 }: ContactInquiryFormProps) {
   const [isPending, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
   const [showValidationSummary, setShowValidationSummary] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submittedValues, setSubmittedValues] =
+    useState<ContactInquiryFormValues | null>(null);
 
   const schema = useMemo(
     () => createContactInquiryFormSchema(labels.errors),
@@ -158,9 +167,25 @@ export function ContactInquiryForm({
         return;
       }
 
+      setSubmittedValues(values);
       setIsSuccess(true);
     });
   }
+
+  const whatsappHref =
+    isSuccess && whatsappPhone?.trim() && submittedValues
+      ? buildWhatsAppUrl(
+          whatsappPhone,
+          buildContactInquiryWhatsAppMessage({
+            fullName: submittedValues.fullName,
+            phone: submittedValues.phone,
+            serviceInterest: submittedValues.serviceInterest,
+            regionName: submittedValues.regionName,
+            cityName: submittedValues.cityName,
+            message: submittedValues.message,
+          }),
+        )
+      : null;
 
   if (isSuccess) {
     return (
@@ -173,6 +198,19 @@ export function ContactInquiryForm({
             <h2 className="text-xl font-bold">{labels.successTitle}</h2>
             <p className="text-sm text-muted-foreground">{labels.successDescription}</p>
           </div>
+          {whatsappHref ? (
+            <Button asChild size="lg" className="bg-[#128C7E] text-white hover:bg-[#0f7a6c]">
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-analytics-event="click_whatsapp"
+                data-analytics-placement="contact_form_success_whatsapp"
+              >
+                {labels.successWhatsappCta}
+              </a>
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
     );

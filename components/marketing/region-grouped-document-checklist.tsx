@@ -77,12 +77,16 @@ export function RegionGroupedDocumentChecklist({
     <section className="space-y-5">
       <h2 className="text-2xl font-bold">{title}</h2>
       <div className="space-y-6">
-        {groups.map((group) => (
+        {groups.map((group) => {
+          const fileCount = group.items.filter((item) => item.kind === "FILE").length;
+          const badgeCount = fileCount > 0 ? fileCount : group.items.length;
+
+          return (
           <div key={group.regionKey} className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-lg font-semibold">{group.regionLabel}</h3>
               <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                {group.items.length}
+                {badgeCount}
               </span>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -123,7 +127,8 @@ export function RegionGroupedDocumentChecklist({
               ))}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

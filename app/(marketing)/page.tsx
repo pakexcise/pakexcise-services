@@ -128,7 +128,8 @@ const defaults = defaultHomePageSettings();
     reviewSummary,
     homeSeo,
     tCommon,
-    tMarketing] = await Promise.all([
+    tMarketing,
+    tHome] = await Promise.all([
     safeLoad("business", () => getBusinessSettings(), defaultBusinessSettings()),
     safeLoad(
       "features",
@@ -165,7 +166,8 @@ const defaults = defaultHomePageSettings();
     }),
     safeLoad("homeSeo", () => seoMetaRepository.findByPageKey("home"), null),
     getTranslations("common"),
-    getTranslations("marketing")]);
+    getTranslations("marketing"),
+    getTranslations("home")]);
 
   const serviceCardLabels = buildServiceCardLabels(tCommon, tMarketing);
   const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
@@ -307,7 +309,7 @@ const defaults = defaultHomePageSettings();
               locale={locale}
               requiredLabel={tMarketing("service.required")}
               optionalLabel={tMarketing("service.optional")}
-              viewAllLabel={tMarketing("documentsViewAll")}
+              viewAllLabel={tHome("documentsViewAll")}
               emptyMessage={tMarketing("service.documentsEmpty")}
               tone={tone}
             />

@@ -35,7 +35,8 @@ export function buildServiceWhatsAppMessage({
   serviceName,
   regionLabel,
   defaultMessage,
-}: BuildServiceWhatsAppMessageInput): string {
+  pagePath,
+}: BuildServiceWhatsAppMessageInput & { pagePath?: string }): string {
   const intro =
     `Hello, I would like help with "${serviceName}" through PakExcise private facilitation.`;
 
@@ -45,9 +46,48 @@ export function buildServiceWhatsAppMessage({
     lines.push(`Province/Region: ${regionLabel.trim()}`);
   }
 
+  if (pagePath?.trim()) {
+    lines.push(`Ref: ${pagePath.trim()}`);
+  }
+
   if (defaultMessage.trim()) {
     lines.push("", defaultMessage.trim());
   }
+
+  return lines.join("\n");
+}
+
+export function buildContactInquiryWhatsAppMessage(input: {
+  fullName: string;
+  phone: string;
+  serviceInterest?: string;
+  regionName?: string;
+  cityName?: string;
+  message?: string;
+}): string {
+  const lines = [
+    "Hello PakExcise, I just submitted a contact request on your website.",
+    `Name: ${input.fullName.trim()}`,
+    `Phone: ${input.phone.trim()}`,
+  ];
+
+  if (input.serviceInterest?.trim()) {
+    lines.push(`Service: ${input.serviceInterest.trim()}`);
+  }
+
+  if (input.regionName?.trim()) {
+    lines.push(`Province/Region: ${input.regionName.trim()}`);
+  }
+
+  if (input.cityName?.trim()) {
+    lines.push(`City: ${input.cityName.trim()}`);
+  }
+
+  if (input.message?.trim()) {
+    lines.push("", input.message.trim());
+  }
+
+  lines.push("", "Ref: /contact");
 
   return lines.join("\n");
 }

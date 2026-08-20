@@ -73,6 +73,8 @@ export function Header({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const showWhatsapp = headerWhatsappEnabled && Boolean(whatsappPhone?.trim());
+  const trimmedAnnouncement = announcementBarText?.trim() ?? "";
+  const showAnnouncementBar = announcementBarEnabled && trimmedAnnouncement.length > 0;
   const whatsappHref =
     showWhatsapp && whatsappPhone && whatsappMessage
       ? buildWhatsAppUrl(whatsappPhone, whatsappMessage)
@@ -98,7 +100,7 @@ export function Header({
           "sticky top-0 z-40 isolate border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
       )}
     >
-      {announcementBarEnabled && announcementBarText ? (
+      {showAnnouncementBar ? (
         <div
           className={cn(
             "px-4 py-1.5 text-center text-xs leading-snug xl:hidden",
@@ -106,7 +108,7 @@ export function Header({
             disclaimerBannerClassName,
           )}
         >
-          {announcementBarText}
+          {trimmedAnnouncement}
         </div>
       ) : null}
 

@@ -54,7 +54,7 @@ export function defaultPublicUiSettings(): PublicUiSettings {
     footerWhatsappLabelEn: "Chat on WhatsApp",
     footerWhatsappChannelLabelEn: "Join WhatsApp Channel",
     announcementBarEnabled: true,
-    announcementBarTextEn: DEFAULT_DISCLAIMER_EN,
+    announcementBarTextEn: "",
     defaultApplyCtaTextEn: "Apply now",
     defaultSubmitRequestCtaTextEn: "Submit request",
     floatingWhatsappMessageEn: DEFAULT_WHATSAPP_MESSAGE_EN,

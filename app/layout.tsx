@@ -104,15 +104,8 @@ export default async function RootLayout({
   const bingVerification = allowIndexing ? getBingSiteVerification() : undefined;
 
   return (
-    <html
-      lang="en"
-      dir="ltr"
-      translate="no"
-      data-brand-theme=""
-      suppressHydrationWarning
-    >
+    <html lang="en" dir="ltr" data-brand-theme="" suppressHydrationWarning>
       <head>
-        <meta name="google" content="notranslate" />
         <meta httpEquiv="Content-Language" content="en" />
         {googleVerification ? (
           <meta

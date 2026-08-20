@@ -15,6 +15,7 @@ type RegionHelpSectionProps = {
   whatsappPhone: string;
   whatsappDefaultMessage: string;
   locale: Locale;
+  placement?: string;
   labels: {
     title: string;
     description: string;
@@ -28,6 +29,7 @@ export function RegionHelpSection({
   whatsappPhone,
   whatsappDefaultMessage,
   locale,
+  placement = "region_help_whatsapp",
   labels,
 }: RegionHelpSectionProps) {
   const whatsappMessage = buildServiceWhatsAppMessage({
@@ -56,7 +58,7 @@ export function RegionHelpSection({
             target="_blank"
             rel="noopener noreferrer"
             data-analytics-event="click_whatsapp"
-            data-analytics-placement="region_help_whatsapp"
+            data-analytics-placement={placement}
           >
             <WhatsAppIcon className="size-4" />
             {labels.whatsappCta}

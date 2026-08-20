@@ -8,6 +8,7 @@ import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { PublicReviewsSection } from "@/components/marketing/public-reviews-section";
+import { RegionHelpSection } from "@/components/marketing/region-help-section";
 import { RelatedServices } from "@/components/marketing/related-services";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
@@ -16,7 +17,7 @@ import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from "@/features/seo/lib/metadata";
-import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
+import { resolveMetadataFromSeo, resolveVisibleH1, shouldIndexCityPage } from "@/features/seo/lib/resolve-metadata";
 import {
   getBusinessSettings,
   getFeatureFlagSettings,
@@ -26,7 +27,6 @@ import {
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
 import { absoluteUrl } from "@/lib/utils";
-import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
 import {
   cityRepository,
   faqRepository,
@@ -54,6 +54,8 @@ export async function generateMetadata({
     return {};
   }
 
+  const indexable = shouldIndexCityPage(city);
+
   return await resolveMetadataFromSeo({
     locale,
     path: `/regions/${city.region.slug}/${city.slug}`,
@@ -69,6 +71,7 @@ export async function generateMetadata({
       },
       h1: { en: city.nameEn },
     },
+    robots: indexable ? undefined : { index: false, follow: true },
   });
 }
 
@@ -105,10 +108,8 @@ export default async function CityDetailPage({ params }: CityPageProps) {
     reviewRepository.listPublicForServices(serviceIds, 3),
     reviewRepository.getPublicSummaryForServices(serviceIds),
   ]);
-  const whatsappHref = buildWhatsAppUrl(
-    resolveWhatsappLinkNumber(business),
-    resolveWhatsappDefaultMessage(business),
-  );
+  const whatsappLinkNumber = resolveWhatsappLinkNumber(business);
+  const whatsappMessage = resolveWhatsappDefaultMessage(business, locale);
 
   const cityName = city.nameEn ?? "";
   const regionName = region.nameEn ?? "";
@@ -174,14 +175,27 @@ export default async function CityDetailPage({ params }: CityPageProps) {
             tone="muted"
           />
         ) : null}
+        <RegionHelpSection
+          regionName={`${cityName}, ${regionName}`}
+          whatsappPhone={whatsappLinkNumber}
+          whatsappDefaultMessage={whatsappMessage}
+          locale={locale}
+          placement="city_help_whatsapp"
+          labels={{
+            title: t("regions.regionHelp.title", { region: cityName }),
+            description: t("regions.regionHelp.description"),
+            whatsappCta: t("serviceOptions.whatsappCta"),
+            browseServicesCta: t("regions.regionHelp.browseServices"),
+          }}
+        />
         <CTASection
           title={t("service.ctaTitle")}
           description={t("service.ctaDescription")}
           applyLabel={t("service.applyNow")}
           applyHref="/services"
-          whatsappLabel={tCommon("whatsappHelp")}
-          whatsappPhone={business.whatsappNumber}
-          whatsappMessage={business.whatsappDefaultMessage}
+          whatsappLabel={t("serviceOptions.whatsappCta")}
+          whatsappPhone={whatsappLinkNumber}
+          whatsappMessage={whatsappMessage}
         />
       </div>
     </>

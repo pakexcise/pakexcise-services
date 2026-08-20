@@ -41,12 +41,63 @@ export function resolvePageSeo(
   };
 }
 
-/** Visible page H1: prefer SeoMeta.h1En, otherwise fallback. */
+const SEO_TITLE_BRAND_SUFFIX =
+  /\s*(?:[|\u2013\u2014-]\s*)?PakExcise(?:\.com)?\s*$/i;
+
+const GENERIC_CITY_DESCRIPTION =
+  /^Private excise facilitation support for .+, .+\.$/i;
+
+function stripSeoBrandSuffix(value: string): string {
+  return value.replace(SEO_TITLE_BRAND_SUFFIX, "").trim();
+}
+
+/** Visible page H1: prefer SeoMeta.h1En, never mirror the full SEO title tag. */
 export function resolveVisibleH1(
-  seo: { h1En?: string | null } | null | undefined,
+  seo: { h1En?: string | null; metaTitleEn?: string | null } | null | undefined,
   fallback: string,
 ): string {
-  return pickSeoText(seo?.h1En, fallback);
+  const rawH1 = seo?.h1En?.trim();
+  if (!rawH1) {
+    return fallback;
+  }
+
+  const normalizedH1 = stripSeoBrandSuffix(rawH1);
+  const normalizedMeta = stripSeoBrandSuffix(seo?.metaTitleEn?.trim() ?? "");
+
+  if (normalizedMeta && normalizedH1 === normalizedMeta) {
+    return fallback;
+  }
+
+  if (rawH1 === seo?.metaTitleEn?.trim()) {
+    return fallback;
+  }
+
+  return normalizedH1 || fallback;
+}
+
+export function shouldIndexCityPage(city: {
+  nameEn?: string | null;
+  descriptionEn?: string | null;
+  seoMeta?: Pick<SeoMeta, "robotsIndex"> | null;
+}): boolean {
+  if (city.seoMeta?.robotsIndex === false) {
+    return false;
+  }
+
+  if (city.seoMeta?.robotsIndex === true) {
+    return true;
+  }
+
+  const description = city.descriptionEn?.trim() ?? "";
+  if (!description || description.length < 100) {
+    return false;
+  }
+
+  if (GENERIC_CITY_DESCRIPTION.test(description)) {
+    return false;
+  }
+
+  return true;
 }
 
 export async function resolveMetadataFromSeo(input: {
@@ -56,6 +107,8 @@ export async function resolveMetadataFromSeo(input: {
   fallbacks: SeoFallbacks;
   /** When set, overrides stored SEO ogImage (e.g. blog featured image or logo fallback). */
   ogImage?: string | null;
+  /** When set, overrides robots from SeoMeta (e.g. thin city pages). */
+  robots?: { index: boolean; follow: boolean };
 }): Promise<Metadata> {
   const [branding, business] = await Promise.all([
     getBrandingSettings(),
@@ -82,7 +135,7 @@ export async function resolveMetadataFromSeo(input: {
     siteName: brandingDefaults.siteName,
     twitterCard:
       input.seo?.twitterCard === "summary" ? "summary" : "summary_large_image",
-    robots: {
+    robots: input.robots ?? {
       index: input.seo?.robotsIndex ?? true,
       follow: input.seo?.robotsFollow ?? true,
     },

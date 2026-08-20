@@ -129,6 +129,7 @@ const [settings, seo, socialLinks, regions, featureFlags, formsSettings, busines
               heading={content.formHeading}
               description={content.formDescription}
               locale={locale}
+              whatsappPhone={settings.whatsappNumber}
               serviceOptions={content.serviceInterestOptions}
               regionOptions={regionOptions}
               labels={{
@@ -149,6 +150,7 @@ const [settings, seo, socialLinks, regions, featureFlags, formsSettings, busines
                 submitting: tContact("form.submitting"),
                 successTitle: tContact("form.successTitle"),
                 successDescription: contactSuccessDescription,
+                successWhatsappCta: tContact("form.successWhatsappCta"),
                 validationSummary: tContact("form.validationSummary"),
                 errors: {
                   fullNameRequired: tContact("form.errors.fullNameRequired"),

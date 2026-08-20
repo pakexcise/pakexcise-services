@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { shouldAllowSearchIndexing } from "@/config/env.server";
 import { getFeatureFlagSettings, getSeoSettings } from "@/features/settings/lib/public-settings-cache";
+import { shouldIndexCityPage } from "@/features/seo/lib/resolve-metadata";
 import { seoAbsoluteUrl } from "@/lib/seo-url";
 import {
   blogPostRepository,
@@ -92,12 +93,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  const cityEntries: MetadataRoute.Sitemap = cities.map((city) => ({
-    url: seoAbsoluteUrl(`/regions/${city.regionSlug}/${city.citySlug}`),
-    lastModified: city.updatedAt,
-    changeFrequency: "weekly",
-    priority: 0.65,
-  }));
+  const cityEntries: MetadataRoute.Sitemap = (
+    await Promise.all(
+      cities.map(async (city) => {
+        const full = await cityRepository.findPublicByRegionSlugAndCitySlug(
+          city.regionSlug,
+          city.citySlug,
+        );
+        if (!full || !shouldIndexCityPage(full)) {
+          return null;
+        }
+        return {
+          url: seoAbsoluteUrl(`/regions/${city.regionSlug}/${city.citySlug}`),
+          lastModified: city.updatedAt,
+          changeFrequency: "weekly" as const,
+          priority: 0.65,
+        };
+      }),
+    )
+  ).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 
   const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: seoAbsoluteUrl(`/blog/${post.slug}`),

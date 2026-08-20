@@ -16,7 +16,7 @@ export async function LegalDisclaimer({
     <div
       role="note"
       className={cn(
-        "hidden px-3 py-2 xl:block",
+        "px-3 py-2",
         embedded ? "border-b border-border/60" : "border-b",
         disclaimerBannerClassName,
       )}
