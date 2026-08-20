@@ -20,7 +20,9 @@ export type SeoCsvCategory =
   | "static"
   | "services"
   | "cities"
-  | "other"
+  | "regions"
+  | "blog"
+  | "legal"
   | "all";
 
 export type SeoCsvRow = Record<SeoCsvHeader, string>;

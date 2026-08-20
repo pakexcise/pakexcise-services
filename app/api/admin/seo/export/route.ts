@@ -31,7 +31,9 @@ function parseCategory(value: string | null): SeoCsvCategory {
     value === "static" ||
     value === "services" ||
     value === "cities" ||
-    value === "other" ||
+    value === "regions" ||
+    value === "blog" ||
+    value === "legal" ||
     value === "all"
   ) {
     return value;

@@ -29,7 +29,9 @@ export function classifySeoCategory(
 ): Exclude<SeoCsvCategory, "all"> {
   if (row.serviceId) return "services";
   if (row.cityId) return "cities";
-  if (row.regionId || row.blogPostId || row.legalPageId) return "other";
+  if (row.regionId) return "regions";
+  if (row.blogPostId) return "blog";
+  if (row.legalPageId) return "legal";
   return "static";
 }
 

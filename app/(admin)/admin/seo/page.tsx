@@ -124,7 +124,9 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
           exportStatic: t("csv.exportStatic"),
           exportServices: t("csv.exportServices"),
           exportCities: t("csv.exportCities"),
-          exportOther: t("csv.exportOther"),
+          exportRegions: t("csv.exportRegions"),
+          exportBlog: t("csv.exportBlog"),
+          exportLegal: t("csv.exportLegal"),
           successSummary: t("csv.successSummary"),
           noFile: t("csv.noFile"),
         }}

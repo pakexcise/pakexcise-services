@@ -24,7 +24,9 @@ type SeoCsvPanelLabels = {
   exportStatic: string;
   exportServices: string;
   exportCities: string;
-  exportOther: string;
+  exportRegions: string;
+  exportBlog: string;
+  exportLegal: string;
   successSummary: string;
   noFile: string;
 };
@@ -42,13 +44,17 @@ const EXPORT_CATEGORIES: Array<{
     | "exportStatic"
     | "exportServices"
     | "exportCities"
-    | "exportOther";
+    | "exportRegions"
+    | "exportBlog"
+    | "exportLegal";
 }> = [
   { category: "all", labelKey: "exportAll" },
   { category: "static", labelKey: "exportStatic" },
   { category: "services", labelKey: "exportServices" },
   { category: "cities", labelKey: "exportCities" },
-  { category: "other", labelKey: "exportOther" },
+  { category: "regions", labelKey: "exportRegions" },
+  { category: "blog", labelKey: "exportBlog" },
+  { category: "legal", labelKey: "exportLegal" },
 ];
 
 function buildExportHref(category: SeoCsvCategory, exportQuery?: string): string {
