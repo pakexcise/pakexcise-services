@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { buildSeoCsv } from "@/features/seo/admin/lib/seo-csv";
+import {
+  buildSeoCsv,
+  filterSeoRowsByCategory,
+  seoCsvFilename,
+  type SeoCsvCategory,
+} from "@/features/seo/admin/lib/seo-csv";
 import { isAuthError } from "@/lib/errors/auth-errors";
 import { adminSeoRepository } from "@/server/repositories/admin-seo-repository";
 import { requirePermission } from "@/server/permissions/guards";
@@ -21,6 +26,19 @@ function parseMissing(value: string | null): MissingFilter | undefined {
   return undefined;
 }
 
+function parseCategory(value: string | null): SeoCsvCategory {
+  if (
+    value === "static" ||
+    value === "services" ||
+    value === "cities" ||
+    value === "other" ||
+    value === "all"
+  ) {
+    return value;
+  }
+  return "all";
+}
+
 export async function GET(request: Request) {
   try {
     await requirePermission("platform:manage");
@@ -37,16 +55,17 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim() || undefined;
   const missing = parseMissing(searchParams.get("missing"));
+  const category = parseCategory(searchParams.get("category"));
 
-  const rows = await adminSeoRepository.listAllDetailed({ q, missing });
+  const allRows = await adminSeoRepository.listAllDetailed({ q, missing });
+  const rows = filterSeoRowsByCategory(allRows, category);
   const csv = buildSeoCsv(rows);
-  const stamp = new Date().toISOString().slice(0, 10);
 
   return new NextResponse(csv, {
     status: 200,
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="pakexcise-seo-${stamp}.csv"`,
+      "Content-Disposition": `attachment; filename="${seoCsvFilename(category)}"`,
       "Cache-Control": "no-store",
     },
   });

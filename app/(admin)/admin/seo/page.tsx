@@ -7,6 +7,7 @@ import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
 import { adminMetadata } from "@/features/admin/lib/metadata";
+import { SeoCsvPanel } from "@/features/seo/admin/components/seo-csv-panel";
 import { SeoHealthPanel } from "@/features/seo/admin/components/seo-health-panel";
 import { PurgeGuideSeoButton } from "@/features/seo/admin/components/purge-guide-seo-button";
 import { resolveSeoLinkedEntity } from "@/features/seo/admin/lib/seo-linked-entity";
@@ -89,8 +90,9 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
   const exportParams = new URLSearchParams();
   if (q) exportParams.set("q", q);
   if (missing) exportParams.set("missing", missing);
-  const exportHref = exportParams.toString()
-    ? `/api/admin/seo/export?${exportParams.toString()}`
+  const exportQuery = exportParams.toString();
+  const exportHref = exportQuery
+    ? `/api/admin/seo/export?${exportQuery}`
     : "/api/admin/seo/export";
   const fullListHref = (() => {
     const params = new URLSearchParams();
@@ -103,6 +105,30 @@ export default async function AdminSeoPage({ searchParams }: SeoAdminPageProps) 
   return (
     <div className="space-y-6">
       <AdminPageHeader title={t("title")} description={t("description")} />
+
+      <SeoCsvPanel
+        exportQuery={exportQuery || undefined}
+        labels={{
+          title: t("csv.title"),
+          description: t("csv.description"),
+          exportTitle: t("csv.exportTitle"),
+          exportDescription: t("csv.exportDescription"),
+          importTitle: t("csv.importTitle"),
+          importDescription: t("csv.importDescription"),
+          columnsHint: t("csv.columnsHint"),
+          updateHint: t("csv.updateHint"),
+          chooseFile: t("csv.chooseFile"),
+          importAction: t("csv.importAction"),
+          importing: t("csv.importing"),
+          exportAll: t("csv.exportAll"),
+          exportStatic: t("csv.exportStatic"),
+          exportServices: t("csv.exportServices"),
+          exportCities: t("csv.exportCities"),
+          exportOther: t("csv.exportOther"),
+          successSummary: t("csv.successSummary"),
+          noFile: t("csv.noFile"),
+        }}
+      />
 
       <SeoHealthPanel
         health={health}
