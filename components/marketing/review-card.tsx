@@ -30,7 +30,13 @@ function initials(name: string): string {
 }
 
 export function ReviewCard({ review, fallbackLabel }: ReviewCardProps) {
-  const authorName = review.authorNameEn;
+  const authorName = review.authorNameEn?.trim();
+  const content = review.contentEn?.trim();
+
+  if (!authorName || !content || review.rating <= 0) {
+    return null;
+  }
+
   const rating = Math.max(1, Math.min(5, review.rating));
   const serviceLabel = review.service?.nameEn?.trim() || fallbackLabel;
   const publishedAt = review.moderatedAt ?? review.submittedAt ?? null;
@@ -62,7 +68,7 @@ export function ReviewCard({ review, fallbackLabel }: ReviewCardProps) {
       </CardHeader>
       <CardContent className="flex h-[calc(100%-8rem)] flex-col justify-between gap-6">
         <blockquote className="text-[15px] leading-7 text-foreground/80">
-          “{review.contentEn}”
+          “{content}”
         </blockquote>
         <div className="flex items-center gap-3 border-t pt-4">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">

@@ -29,9 +29,20 @@ export type PublicReview = Prisma.ReviewGetPayload<{
   select: typeof publicReviewSelect;
 }>;
 
+export function isPublishablePublicReview(review: PublicReview): boolean {
+  return Boolean(review.authorNameEn?.trim() && review.contentEn?.trim() && review.rating > 0);
+}
+
+function keepPublishable(reviews: PublicReview[]): PublicReview[] {
+  return reviews.filter(isPublishablePublicReview);
+}
+
 const approvedPublicWhere: Prisma.ReviewWhereInput = {
   status: "APPROVED",
   isActive: true,
+  authorNameEn: { not: "" },
+  contentEn: { not: "" },
+  rating: { gt: 0 },
 };
 
 /** Newest published reviews first (matches relative dates on review cards). */
@@ -82,7 +93,7 @@ export class ReviewRepository extends Repository {
     const merged: PublicReview[] = [];
     const seen = new Set<string>();
 
-    for (const review of [...googleReviews, ...otherReviews]) {
+    for (const review of keepPublishable([...googleReviews, ...otherReviews])) {
       if (seen.has(review.id)) continue;
       seen.add(review.id);
       merged.push(review);
@@ -112,7 +123,10 @@ export class ReviewRepository extends Repository {
         }),
       () => this.db.review.count({ where: approvedPublicWhere }),
       { page, pageSize },
-    );
+    ).then((result) => ({
+      ...result,
+      items: keepPublishable(result.items),
+    }));
   }
 
   async listPublicForService(serviceId: string, limit = 6): Promise<PublicReview[]> {

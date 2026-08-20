@@ -63,7 +63,7 @@ export async function generateMetadata({
 }: ServicePageProps): Promise<Metadata> {
   const { serviceSlug } = await params;
   const locale = "en";
-  const service = await serviceRepository.findPublicDetailBySlug(serviceSlug);
+  const service = await serviceRepository.findPublicSeoBySlug(serviceSlug);
 
   if (!service) {
     return {};

@@ -29,7 +29,12 @@ export function ServiceCard({
   labels,
   useDynamicSummary = true,
   variant = "elevated"}: ServiceCardProps) {
-  const name = service.nameEn ?? "";
+  const name = service.nameEn?.trim() || service.slug.replace(/-/g, " ");
+  const slug = service.slug?.trim();
+
+  if (!slug) {
+    return null;
+  }
 
   const { availabilityLine, summary: dynamicSummary } = getServiceCardDisplayText(
     service,
@@ -46,7 +51,7 @@ export function ServiceCard({
 
   return (
     <Link
-      href={`/services/${service.slug}`}
+      href={`/services/${slug}`}
       prefetch={false}
       className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >

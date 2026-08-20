@@ -1112,6 +1112,13 @@ const en = {
       "processTitle": "How you can get started",
       "disclaimer": "PakExcise.com is a private facilitation service. We are not a government website and are not affiliated with any government department."
     },
+    "documentsHub": {
+      "breadcrumb": "Documents",
+      "title": "Document requirements by service",
+      "description": "Browse typical document checklists by service and province before you apply. Exact requirements may vary by case.",
+      "empty": "Document requirements will appear here once configured by admin.",
+      "viewService": "View full service page"
+    },
     "service": {
       "documentsTitle": "Document checklist",
       "documentsEmpty": "Document requirements will appear here once configured by admin.",
@@ -1311,6 +1318,8 @@ const en = {
       "searchCitiesAria": "Search cities in this region",
       "noCitiesMatch": "No cities match your search.",
       "servicesInRegion": "Services in this region",
+      "pageHeading": "Excise & vehicle services in {region}",
+      "cityPageHeading": "Excise & vehicle services in {city}, {region}",
       "regionHelp": {
         "title": "Need help in {region}?",
         "description": "Open any service above to choose Quick WhatsApp, a quick support request, or account-based application with full website tracking.",
@@ -1344,8 +1353,8 @@ const en = {
       "ratingSummary": "{count} published reviews",
       "privateTitle": "Private facilitation",
       "privateDescription": "Independent support with clear process updates.",
-      "transparentTitle": "Transparent fees",
-      "transparentDescription": "Fees appear only on invoices after review.",
+      "transparentTitle": "Invoice-based fees",
+      "transparentDescription": "Service fees are shared on your invoice after review — not on public pages.",
       "privacyTitle": "Customer privacy",
       "privacyDescription": "Names may be abbreviated to protect customer identity.",
       "whatsappFastTitle": "Fast service via WhatsApp",

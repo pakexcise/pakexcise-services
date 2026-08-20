@@ -51,28 +51,34 @@ function stripSeoBrandSuffix(value: string): string {
   return value.replace(SEO_TITLE_BRAND_SUFFIX, "").trim();
 }
 
+function looksLikeSeoTitle(value: string, metaTitle?: string | null): boolean {
+  const normalized = stripSeoBrandSuffix(value);
+  const normalizedMeta = stripSeoBrandSuffix(metaTitle?.trim() ?? "");
+
+  if (!normalized) {
+    return true;
+  }
+
+  if (normalizedMeta && normalized === normalizedMeta) {
+    return true;
+  }
+
+  return /(?:\s[|\u2013\u2014-]\s*PakExcise|\| PakExcise)/i.test(value);
+}
+
 /** Visible page H1: prefer SeoMeta.h1En, never mirror the full SEO title tag. */
 export function resolveVisibleH1(
   seo: { h1En?: string | null; metaTitleEn?: string | null } | null | undefined,
   fallback: string,
 ): string {
+  const safeFallback = stripSeoBrandSuffix(fallback).trim() || fallback.trim();
   const rawH1 = seo?.h1En?.trim();
-  if (!rawH1) {
-    return fallback;
+
+  if (!rawH1 || looksLikeSeoTitle(rawH1, seo?.metaTitleEn)) {
+    return safeFallback;
   }
 
-  const normalizedH1 = stripSeoBrandSuffix(rawH1);
-  const normalizedMeta = stripSeoBrandSuffix(seo?.metaTitleEn?.trim() ?? "");
-
-  if (normalizedMeta && normalizedH1 === normalizedMeta) {
-    return fallback;
-  }
-
-  if (rawH1 === seo?.metaTitleEn?.trim()) {
-    return fallback;
-  }
-
-  return normalizedH1 || fallback;
+  return stripSeoBrandSuffix(rawH1) || safeFallback;
 }
 
 export function shouldIndexCityPage(city: {
@@ -89,7 +95,7 @@ export function shouldIndexCityPage(city: {
   }
 
   const description = city.descriptionEn?.trim() ?? "";
-  if (!description || description.length < 100) {
+  if (!description || description.length < 180) {
     return false;
   }
 

@@ -35,11 +35,19 @@ export class RegionRepository extends Repository {
                   service: {
                     isActive: true,
                     deletedAt: null,
-                    parentServiceId: null}}}}}}});
+                    parentServiceId: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
 
       return regions.map(({ _count, ...region }) => ({
         ...region,
-        activeServiceCount: _count.serviceRegions}));
+        activeServiceCount: _count.serviceRegions,
+      }));
     }, []);
   }
 

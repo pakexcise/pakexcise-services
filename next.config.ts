@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: true,
+  // Keep metadata in the initial HTML for crawlers and share unfurlers.
+  htmlLimitedBots:
+    /Googlebot|Google-InspectionTool|bingbot|BingPreview|Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|TelegramBot|SkypeUriPreview|Applebot|SemrushBot|AhrefsBot|DotBot|MJ12bot|GPTBot|ClaudeBot|Claude-User|anthropic|CCBot|Bytespider|PetalBot|curl|Wget|python-requests|Go-http-client|axios|node-fetch|undici/i,
   generateBuildId: async () => {
     const fromEnv = process.env.BUILD_ID?.trim();
     if (fromEnv) {

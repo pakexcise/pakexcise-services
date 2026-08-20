@@ -71,7 +71,7 @@ export async function generateMetadata({
           `Private facilitation support for excise and vehicle services in ${region.nameEn}. PakExcise is not a government website.`,
       },
       h1: {
-        en: region.nameEn,
+        en: `${region.nameEn} excise & vehicle services`,
       },
     },
   });
@@ -113,7 +113,10 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
   const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
 
   const name = region.nameEn ?? "";
-  const heroTitle = resolveVisibleH1(region.seoMeta, name);
+  const heroTitle = resolveVisibleH1(
+    region.seoMeta,
+    t("regions.pageHeading", { region: name }),
+  );
   const description = region.descriptionEn ?? "";
 
   const faqItems = mapFaqsForLocale(faqs.slice(0, 6), locale);

@@ -69,7 +69,9 @@ export async function generateMetadata({
           city.descriptionEn?.trim() ||
           `Private facilitation support for vehicle and excise services in ${city.nameEn}, ${city.region.nameEn}. PakExcise is not a government website.`,
       },
-      h1: { en: city.nameEn },
+      h1: {
+        en: `Excise & vehicle services in ${city.nameEn}`,
+      },
     },
     robots: indexable ? undefined : { index: false, follow: true },
   });
@@ -113,7 +115,10 @@ export default async function CityDetailPage({ params }: CityPageProps) {
 
   const cityName = city.nameEn ?? "";
   const regionName = region.nameEn ?? "";
-  const heroTitle = resolveVisibleH1(city.seoMeta, cityName);
+  const heroTitle = resolveVisibleH1(
+    city.seoMeta,
+    t("regions.cityPageHeading", { city: cityName, region: regionName }),
+  );
   const description = city.descriptionEn ?? "";
 
   const faqItems = mapFaqsForLocale(faqs.slice(0, 6), locale);

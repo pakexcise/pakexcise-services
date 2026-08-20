@@ -24,6 +24,7 @@ import { getCurrentUser } from "@/server/auth/current-user";
 import {
   getPageContent,
   reviewRepository,
+  isPublishablePublicReview,
   seoMetaRepository,
   serviceRepository,
 } from "@/server/repositories";
@@ -90,7 +91,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
       getCurrentUser(),
       serviceRepository.listPublicReviewOptions(),
     ]);
-  const reviews = reviewsResult.items;
+  const reviews = reviewsResult.items.filter(isPublishablePublicReview);
 
   const eligibleApplications =
     currentUser?.role === "CUSTOMER"

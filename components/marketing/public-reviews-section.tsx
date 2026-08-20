@@ -5,6 +5,7 @@ import { HomeSectionShell } from "@/components/marketing/home-section-shell";
 import { ReviewCard } from "@/components/marketing/review-card";
 import { Button } from "@/components/ui/button";
 import type { PublicReview } from "@/server/repositories/review-repository";
+import { isPublishablePublicReview } from "@/server/repositories/review-repository";
 
 export function PublicReviewsSection({
   reviews,
@@ -37,6 +38,12 @@ export function PublicReviewsSection({
     return null;
   }
 
+  const visibleReviews = reviews.filter(isPublishablePublicReview);
+
+  if (visibleReviews.length === 0) {
+    return null;
+  }
+
   return (
     <HomeSectionShell tone={tone}>
       <div className="mx-auto max-w-3xl text-center">
@@ -49,7 +56,7 @@ export function PublicReviewsSection({
       </div>
 
       <div className="mt-8 grid gap-5 md:grid-cols-3">
-        {reviews.slice(0, 3).map((review) => (
+        {visibleReviews.slice(0, 3).map((review) => (
           <ReviewCard
             key={review.id}
             review={review}

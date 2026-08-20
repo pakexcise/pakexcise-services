@@ -187,29 +187,14 @@ export type PublicServiceApplyConfig = Prisma.ServiceGetPayload<{
 
 function regionAssignedWhere(regionId: string): Prisma.ServiceWhereInput {
   return {
-    ...activeOnly(),
-    OR: [
-      {
-        serviceRegions: {
-          some: {
-            regionId,
-            isActive: true,
-            region: activeOnly(),
-          },
-        },
+    ...publicTopLevelServiceWhere,
+    serviceRegions: {
+      some: {
+        regionId,
+        isActive: true,
+        region: activeOnly(),
       },
-      {
-        parentService: {
-          serviceRegions: {
-            some: {
-              regionId,
-              isActive: true,
-              region: activeOnly(),
-            },
-          },
-        },
-      },
-    ],
+    },
   };
 }
 
@@ -299,10 +284,7 @@ export class ServiceRepository extends Repository {
     return this.query(
       () =>
         this.db.service.findMany({
-          where: {
-            isActive: true,
-            deletedAt: null,
-          },
+          where: publicTopLevelServiceWhere,
           orderBy: [
             { parentServiceId: "asc" },
             { displayOrder: "asc" },
@@ -344,6 +326,26 @@ export class ServiceRepository extends Repository {
           select: publicServiceSelect,
         }),
       [],
+    );
+  }
+
+  async findPublicSeoBySlug(slug: string) {
+    return this.query(
+      () =>
+        this.db.service.findFirst({
+          where: {
+            slug,
+            ...publicServiceWhere,
+          },
+          select: {
+            slug: true,
+            nameEn: true,
+            shortDescriptionEn: true,
+            contentEn: true,
+            seoMeta: true,
+          },
+        }),
+      null,
     );
   }
 
