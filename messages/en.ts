@@ -1144,7 +1144,9 @@ const en = {
       "fieldsTitle": "Required information",
       "fieldsDescription": "These details may be required depending on your selected province.",
       "fieldsEmpty": "No additional fields are configured for this service yet.",
-      "regionSupportTitle": "Province support notes"
+      "regionSupportTitle": "Province support notes",
+      "relatedTopicsTitle": "Related topics",
+      "relatedTopicsDescription": "Common search topics covered by this service page."
     },
     "legal": {
       "lastUpdated": "Last updated: {date}",

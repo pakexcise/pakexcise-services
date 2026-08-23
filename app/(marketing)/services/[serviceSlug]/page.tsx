@@ -16,6 +16,10 @@ import { ServiceOptionsSection } from "@/components/marketing/service-options-se
 import { ServiceRegionHubCards } from "@/components/marketing/service-region-hub-cards";
 import { ServiceRegionsList } from "@/components/marketing/service-regions-list";
 import { ServiceSubServices } from "@/components/marketing/service-sub-services";
+import {
+  parseFocusKeywords,
+  ServiceFocusKeywordsSection,
+} from "@/components/marketing/service-focus-keywords-section";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import {
@@ -227,6 +231,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             ) : null}
 
             <ProseContent content={content ?? ""} />
+
+            <ServiceFocusKeywordsSection
+              title={t("service.relatedTopicsTitle")}
+              description={t("service.relatedTopicsDescription")}
+              keywords={parseFocusKeywords(service.seoMeta?.focusKeywords)}
+            />
 
             <ServiceOptionsSection
               serviceSlug={service.slug}

@@ -16,6 +16,10 @@ import { ServiceFieldsPreview } from "@/components/marketing/service-fields-prev
 import { ServiceInfoSidebar } from "@/components/marketing/service-info-sidebar";
 import { ServiceOptionsSection } from "@/components/marketing/service-options-section";
 import { ServiceRegionsList } from "@/components/marketing/service-regions-list";
+import {
+  parseFocusKeywords,
+  ServiceFocusKeywordsSection,
+} from "@/components/marketing/service-focus-keywords-section";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import {
@@ -268,6 +272,14 @@ export default async function ServiceRegionDetailPage({
             ) : null}
 
             <ProseContent content={content ?? ""} />
+
+            <ServiceFocusKeywordsSection
+              title={t("service.relatedTopicsTitle")}
+              description={t("service.relatedTopicsDescription")}
+              keywords={parseFocusKeywords(
+                regionSeo?.focusKeywords || service.seoMeta?.focusKeywords,
+              )}
+            />
 
             {regionSupportNote ? (
               <section className="space-y-3 rounded-xl border bg-muted/30 p-5">
