@@ -3013,7 +3013,7 @@ const en = {
     },
     "reviews": {
       "title": "Customer reviews",
-      "description": "Moderate customer submissions, manage approved feedback, and sync Google Business Profile reviews.",
+      "description": "Moderate customer submissions, manage approved feedback, and sync Google reviews via Places API (New) or Business Profile.",
       "authenticityNotice": "Approve only genuine feedback with customer consent. Use abbreviated names when appropriate. Never publish private application details. Admin-entered notes are labeled as customer feedback, not independently verified ratings.",
       "existing": "Review queue",
       "empty": "No reviews match these filters.",

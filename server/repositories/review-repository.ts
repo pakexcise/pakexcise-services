@@ -16,6 +16,7 @@ export const publicReviewSelect = {
   source: true,
   submittedAt: true,
   moderatedAt: true,
+  reviewerPhotoUrl: true,
   service: {
     select: {
       id: true,

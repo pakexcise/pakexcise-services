@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Quote } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -12,6 +13,7 @@ type ReviewCardProps = {
     moderatedAt?: Date | string | null;
     submittedAt?: Date | string | null;
     source?: string | null;
+    reviewerPhotoUrl?: string | null;
     service?: {
       nameEn?: string | null;
     } | null;
@@ -71,9 +73,20 @@ export function ReviewCard({ review, fallbackLabel }: ReviewCardProps) {
           “{content}”
         </blockquote>
         <div className="flex items-center gap-3 border-t pt-4">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-            {initials(authorName)}
-          </span>
+          {review.reviewerPhotoUrl?.trim() ? (
+            <Image
+              src={review.reviewerPhotoUrl.trim()}
+              alt=""
+              width={40}
+              height={40}
+              className="size-10 shrink-0 rounded-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+              {initials(authorName)}
+            </span>
+          )}
           <div className="min-w-0">
             <p className="truncate font-semibold">{authorName}</p>
             {relativePublished ? (

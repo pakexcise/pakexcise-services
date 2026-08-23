@@ -441,7 +441,15 @@ export async function bulkDeleteReviewsAction(
 }
 
 export async function syncGoogleReviewsAction(): Promise<
-  ActionResult<{ imported: number; updated: number; skipped: number }>
+  ActionResult<{
+    provider: "places" | "gbp";
+    imported: number;
+    updated: number;
+    skipped: number;
+    syncedAt: string;
+    averageRating?: number | null;
+    totalReviewCount?: number | null;
+  }>
 > {
   const user = await requirePermission("content:manage");
 

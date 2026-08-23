@@ -48,7 +48,7 @@ Auth is server-enforced via Better Auth session + `server/permissions/guards.ts`
 | PATCH | `/api/notifications/in-app/[id]/read` | Mark read | Owner | |
 | POST | `/api/notifications/in-app/read-all` | Mark all read | Owner | |
 | GET/POST | `/api/notifications/process` | Drain notification queue | Shared secret (`NOTIFICATION_DISPATCH_SECRET`) | |
-| GET/POST | `/api/reviews/google/sync` | Import GBP reviews (one-way) | Shared secret (`GOOGLE_REVIEW_SYNC_SECRET`) | `app/api/reviews/google/sync/route.ts` |
+| GET/POST | `/api/reviews/google/sync` | Import Google reviews via Places API (New) or GBP (one-way) | Shared secret (`GOOGLE_REVIEW_SYNC_SECRET`) | `app/api/reviews/google/sync/route.ts` |
 | GET | `/api/realtime/stream` | SSE notifications | Logged-in + access check | |
 | GET | `/api/realtime/applications` | Poll app events `?since=` | Role-filtered | |
 | GET | `/api/admin/nav-badges` | Admin nav badge counts | Admin portal | |

@@ -100,25 +100,51 @@ pnpm email:verify-ses you@example.com
 | `NOTIFICATION_DISPATCH_SECRET` | Recommended for prod | Authenticates `/api/notifications/process` |
 | `NOTIFICATION_RECIPIENT_PEPPER` | Recommended | Hashing for recipient privacy |
 
-## Google Business Profile reviews
+## Google reviews (Places API New + optional GBP)
 
 One-way import only (`GET`/`POST` `/api/reviews/google/sync`). Website reviews are **not** posted to Google.
 
+### Preferred: Places API (New)
+
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `GOOGLE_BUSINESS_PROFILE_ACCOUNT_ID` | For sync | GBP account ID from API |
-| `GOOGLE_BUSINESS_PROFILE_LOCATION_ID` | For sync | GBP location ID from API |
-| `GOOGLE_BUSINESS_PROFILE_CLIENT_ID` | For sync | OAuth client ID |
-| `GOOGLE_BUSINESS_PROFILE_CLIENT_SECRET` | For sync | OAuth client secret |
-| `GOOGLE_BUSINESS_PROFILE_REFRESH_TOKEN` | For sync | Offline refresh token for a manager user |
+| `GOOGLE_PLACES_API_KEY` | For Places sync | API key restricted to **Places API (New)** |
+| `GOOGLE_PLACE_ID` | Optional | Place ID (`ChIJ...`). Auto-resolved via search for `PakExcise` if empty |
+| `GOOGLE_PLACES_SEARCH_QUERY` | Optional | Override search query (default `PakExcise`) |
+| `GOOGLE_MAPS_PLACE_URL` | Optional | Maps URL; used if it contains a `ChIJ` Place ID |
 | `GOOGLE_REVIEW_SYNC_SECRET` | Recommended | Bearer/query secret for the sync route |
 | `NEXT_PUBLIC_GOOGLE_REVIEW_URL` | Optional | “Review us on Google” CTA |
+
+**Not Place IDs** (do not put these in `GOOGLE_PLACE_ID`):
+
+- Business Profile ID (e.g. `8066285004634443548`)
+- Shop code / Business Manager connection IDs
+
+Find Place ID: Google Maps → PakExcise → Share, or [Place ID Finder](https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder). Or leave `GOOGLE_PLACE_ID` empty and let sync auto-search.
+
+Enable **Places API (New)** in Google Cloud, create an API key, restrict it to Places API (New) + your server IPs when possible.
+
+Places returns a **sample** of public reviews (typically up to ~5) plus rating / review count. Re-run sync on a schedule to refresh.
+
+### Fallback: Google Business Profile OAuth
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `GOOGLE_BUSINESS_PROFILE_ACCOUNT_ID` | For GBP sync | GBP account ID from API |
+| `GOOGLE_BUSINESS_PROFILE_LOCATION_ID` | For GBP sync | GBP location ID from API |
+| `GOOGLE_BUSINESS_PROFILE_CLIENT_ID` | For GBP sync | OAuth client ID |
+| `GOOGLE_BUSINESS_PROFILE_CLIENT_SECRET` | For GBP sync | OAuth client secret |
+| `GOOGLE_BUSINESS_PROFILE_REFRESH_TOKEN` | For GBP sync | Offline refresh token for a manager user |
+
+Used only when Places env vars are missing. Can import a fuller review list for managers.
 
 Schedule sync with VPS cron or QStash, e.g. every 6 hours:
 
 `Authorization: Bearer $GOOGLE_REVIEW_SYNC_SECRET` → `POST https://staging.pakexcise.com/api/reviews/google/sync`
 
-Reference only (not substitutes for API IDs): Business Profile ID `8066285004634443548`.
+Or use **Admin → Reviews → Sync Google**.
+
+Reference only (not a Place ID): Business Profile ID `8066285004634443548`.
 
 ## Turnstile / bot
 

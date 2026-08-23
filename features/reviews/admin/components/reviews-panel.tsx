@@ -398,7 +398,7 @@ export function ReviewsPanel({
         return;
       }
       setMessage(
-        `${labels.syncSuccess} (+${result.data.imported} / ~${result.data.updated})`,
+        `${labels.syncSuccess} [${result.data.provider}] (+${result.data.imported} / ~${result.data.updated})`,
       );
       refreshReviewUi();
     });
