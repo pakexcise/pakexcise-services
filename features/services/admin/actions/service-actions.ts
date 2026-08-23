@@ -31,14 +31,26 @@ import { requirePermission } from "@/server/permissions/guards";
 import { toPrismaNullableJson } from "@/lib/utils/prisma-json";
 import { adminServiceRepository } from "@/server/repositories/admin-service-repository";
 import { serviceRegionRepository } from "@/server/repositories/service-region-repository";
+import { syncServiceRegionSeoForService } from "@/features/services/lib/sync-service-region-seo";
 
 const ADMIN_SERVICES_PATH = "/admin/services";
 
-function revalidateServicePaths(slug?: string) {
+async function revalidateServicePaths(serviceId: string, slug?: string) {
   revalidatePath(ADMIN_SERVICES_PATH);
   revalidatePath("/services");
-  if (slug) {
-    revalidatePath(`/services/${slug}`);
+  if (!slug) return;
+
+  revalidatePath(`/services/${slug}`);
+  const regionIds = await serviceRegionRepository.listRegionIdsForService(serviceId);
+  if (regionIds.length === 0) return;
+
+  const regions = await prisma.region.findMany({
+    where: { id: { in: regionIds } },
+    select: { slug: true },
+  });
+
+  for (const region of regions) {
+    revalidatePath(`/services/${slug}/${region.slug}`);
   }
 }
 
@@ -123,6 +135,7 @@ export async function createServiceAction(
   });
 
   await serviceRegionRepository.syncForService(service.id, data.regionIds);
+  await syncServiceRegionSeoForService(service.id);
 
   if (data.seo) {
     await upsertServiceSeo(service.id, service.slug, normalizeSeoInput(data.seo));
@@ -148,7 +161,7 @@ export async function createServiceAction(
     after: serviceAuditSnapshot(created),
   });
 
-  revalidateServicePaths(service.slug);
+  revalidateServicePaths(service.id, service.slug);
   return successResult({ id: service.id });
 }
 
@@ -206,6 +219,7 @@ export async function updateServiceAction(
   });
 
   await serviceRegionRepository.syncForService(service.id, data.regionIds);
+  await syncServiceRegionSeoForService(service.id);
 
   if (data.seo) {
     await upsertServiceSeo(service.id, service.slug, normalizeSeoInput(data.seo));
@@ -222,6 +236,10 @@ export async function updateServiceAction(
       where: { serviceId: service.id },
       data: { pageKey: `service:${service.slug}` },
     });
+    await prisma.seoMeta.deleteMany({
+      where: { pageKey: { startsWith: `service:${existing.slug}:` } },
+    });
+    await syncServiceRegionSeoForService(service.id);
   }
 
   const updated = await adminServiceRepository.findById(service.id);
@@ -235,8 +253,8 @@ export async function updateServiceAction(
     after: serviceAuditSnapshot(updated),
   });
 
-  revalidateServicePaths(existing.slug);
-  revalidateServicePaths(service.slug);
+  revalidateServicePaths(existing.id, existing.slug);
+  revalidateServicePaths(service.id, service.slug);
   return successResult({ id: service.id });
 }
 
@@ -266,6 +284,8 @@ export async function deleteServiceAction(
     },
   });
 
+  await syncServiceRegionSeoForService(parsed.data.id);
+
   await auditAdminAction({
     actorId: user.id,
     action: "DELETE",
@@ -275,7 +295,7 @@ export async function deleteServiceAction(
     after: { deletedAt: new Date().toISOString(), isActive: false },
   });
 
-  revalidateServicePaths(existing.slug);
+  revalidateServicePaths(existing.id, existing.slug);
   return successResult({ id: parsed.data.id });
 }
 
@@ -301,6 +321,8 @@ export async function toggleServiceActiveAction(
     select: { id: true, isActive: true, slug: true },
   });
 
+  await syncServiceRegionSeoForService(service.id);
+
   await auditAdminAction({
     actorId: user.id,
     action: "UPDATE",
@@ -310,7 +332,7 @@ export async function toggleServiceActiveAction(
     after: { isActive: service.isActive },
   });
 
-  revalidateServicePaths(service.slug);
+  revalidateServicePaths(service.id, service.slug);
   return successResult({ id: service.id, isActive: service.isActive });
 }
 
@@ -341,7 +363,8 @@ export async function reorderServicesAction(
     after: { reordered: parsed.data.items },
   });
 
-  revalidateServicePaths();
+  revalidatePath(ADMIN_SERVICES_PATH);
+  revalidatePath("/services");
   return successResult({ updated: parsed.data.items.length });
 }
 
@@ -426,7 +449,7 @@ export async function upsertDocumentRequirementAction(
     after: documentAuditSnapshot(afterDoc),
   });
 
-  revalidateServicePaths(service.slug);
+  revalidateServicePaths(service.id, service.slug);
   revalidatePath(`${ADMIN_SERVICES_PATH}/${service.id}/edit`);
   return successResult({ id: documentId! });
 }
@@ -467,7 +490,7 @@ export async function deleteDocumentRequirementAction(
     before: documentAuditSnapshot(existing),
   });
 
-  revalidateServicePaths(service.slug);
+  revalidateServicePaths(service.id, service.slug);
   revalidatePath(`${ADMIN_SERVICES_PATH}/${service.id}/edit`);
   return successResult({ id: parsed.data.id });
 }

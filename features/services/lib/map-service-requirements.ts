@@ -117,7 +117,36 @@ export function getRegionSupportNotes(
 
       return {
         regionName: entry.region.nameEn ?? "",
-        notes};
+        notes,
+      };
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
+}
+
+export function filterDocumentsByRegion(
+  items: ServiceDocumentItem[],
+  regionSlug: string,
+): ServiceDocumentItem[] {
+  return items.filter(
+    (item) => !item.regionSlug || item.regionSlug === regionSlug,
+  );
+}
+
+export function filterFieldsByRegion(
+  items: ServiceFieldItem[],
+  regionId: string,
+): ServiceFieldItem[] {
+  return items.filter((item) => !item.regionId || item.regionId === regionId);
+}
+
+export function getRegionSupportNoteForSlug(
+  serviceRegions: PublicServiceDetail["serviceRegions"],
+  regionSlug: string,
+  locale: Locale,
+): string | null {
+  const entry = serviceRegions.find(
+    (item) => item.region?.slug === regionSlug,
+  );
+  const notes = entry?.supportNotesEn?.trim();
+  return notes || null;
 }

@@ -1,4 +1,7 @@
 import Link from "next/link";
+
+import { buildServiceRegionPath } from "@/features/services/lib/service-region-pages";
+
 type RegionItem = {
   slug: string;
   nameEn: string;
@@ -7,13 +10,14 @@ type RegionItem = {
 type ServiceRegionsListProps = {
   title: string;
   regions: RegionItem[];
-  locale: string;
+  serviceSlug?: string;
 };
 
 export function ServiceRegionsList({
   title,
   regions,
-  locale}: ServiceRegionsListProps) {
+  serviceSlug,
+}: ServiceRegionsListProps) {
   if (regions.length === 0) {
     return null;
   }
@@ -25,7 +29,11 @@ export function ServiceRegionsList({
         {regions.map((region) => (
           <li key={region.slug}>
             <Link
-              href={`/regions/${region.slug}`}
+              href={
+                serviceSlug
+                  ? buildServiceRegionPath(serviceSlug, region.slug)
+                  : `/regions/${region.slug}`
+              }
               prefetch={false}
               className="inline-flex rounded-full border bg-muted/40 px-3 py-1 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
             >

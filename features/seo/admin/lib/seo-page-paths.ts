@@ -5,7 +5,12 @@ export function publicPathFromSeoPageKey(pageKey: string): string | null {
   if (pageKey === "home") return "/";
 
   if (pageKey.startsWith("service:")) {
-    return `/services/${pageKey.slice("service:".length)}`;
+    const rest = pageKey.slice("service:".length);
+    const parts = rest.split(":");
+    if (parts.length === 2 && parts[0] && parts[1]) {
+      return `/services/${parts[0]}/${parts[1]}`;
+    }
+    return `/services/${rest}`;
   }
   if (pageKey.startsWith("region:")) {
     return `/regions/${pageKey.slice("region:".length)}`;

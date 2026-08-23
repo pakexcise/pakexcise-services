@@ -12,6 +12,8 @@ import {
 import { auditAdminAction } from "@/server/admin/audit-action";
 import { requirePermission } from "@/server/permissions/guards";
 import { serviceRegionRepository } from "@/server/repositories/service-region-repository";
+import { syncServiceRegionSeoForService } from "@/features/services/lib/sync-service-region-seo";
+import { prisma } from "@/server/db/client";
 
 export async function syncServiceAvailabilityAction(
   input: unknown,
@@ -26,6 +28,12 @@ export async function syncServiceAvailabilityAction(
   const { serviceId, regionIds } = parsed.data;
 
   await serviceRegionRepository.syncForService(serviceId, regionIds);
+  await syncServiceRegionSeoForService(serviceId);
+
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId },
+    select: { slug: true },
+  });
 
   await auditAdminAction({
     actorId: user.id,
@@ -39,6 +47,16 @@ export async function syncServiceAvailabilityAction(
   revalidatePath("/admin/services");
   revalidatePath("/services");
   revalidatePath("/regions");
+  if (service?.slug) {
+    revalidatePath(`/services/${service.slug}`);
+    const regions = await prisma.region.findMany({
+      where: { id: { in: regionIds } },
+      select: { slug: true },
+    });
+    for (const region of regions) {
+      revalidatePath(`/services/${service.slug}/${region.slug}`);
+    }
+  }
 
   return successResult({ ok: true });
 }

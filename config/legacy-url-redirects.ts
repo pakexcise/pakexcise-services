@@ -9,42 +9,42 @@
 export const LEGACY_SERVICE_SLUG_REDIRECTS = [
   { from: "token-tax-all-provinces", to: "token-tax-payment" },
   { from: "token-tax", to: "token-tax-payment" },
-  { from: "vehicle-transfer-punjab", to: "vehicle-transfer" },
-  { from: "vehicle-transfer-islamabad-ict", to: "vehicle-transfer" },
+  { from: "vehicle-transfer-punjab", to: "vehicle-transfer/punjab" },
+  { from: "vehicle-transfer-islamabad-ict", to: "vehicle-transfer/islamabad" },
   {
     from: "new-vehicle-registration-punjab",
-    to: "new-vehicle-registration",
+    to: "new-vehicle-registration/punjab",
   },
   {
     from: "new-vehicle-registration-islamabad-ict",
-    to: "new-vehicle-registration",
+    to: "new-vehicle-registration/islamabad",
   },
-  { from: "vehicle-inspection", to: "vehicle-passing-fitness" },
-  { from: "vehicle-inspection-punjab", to: "vehicle-passing-fitness" },
+  { from: "vehicle-inspection", to: "vehicle-passing-fitness/islamabad" },
+  { from: "vehicle-inspection-punjab", to: "vehicle-passing-fitness/islamabad" },
   {
     from: "vehicle-inspection-islamabad-ict",
-    to: "vehicle-passing-fitness",
+    to: "vehicle-passing-fitness/islamabad",
   },
   {
     from: "vehicle-passing-fitness-islamabad-ict",
-    to: "vehicle-passing-fitness",
+    to: "vehicle-passing-fitness/islamabad",
   },
-  { from: "route-permit-punjab", to: "route-permit" },
-  { from: "route-permit-islamabad-ict", to: "route-permit" },
-  { from: "data-correction-punjab-ict", to: "vehicle-data-correction" },
+  { from: "route-permit-punjab", to: "route-permit/punjab" },
+  { from: "route-permit-islamabad-ict", to: "route-permit/islamabad" },
+  { from: "data-correction-punjab-ict", to: "vehicle-data-correction/punjab" },
   {
     from: "data-correction-islamabad-ict",
-    to: "vehicle-data-correction",
+    to: "vehicle-data-correction/islamabad",
   },
   {
     from: "driving-license-renewal-punjab",
-    to: "driving-license-renewal",
+    to: "driving-license-renewal/punjab",
   },
   {
     from: "driving-license-renewal-punjab-ict",
-    to: "driving-license-renewal",
+    to: "driving-license-renewal/punjab",
   },
-  { from: "learner-license-punjab-ict", to: "learner-license" },
+  { from: "learner-license-punjab-ict", to: "learner-license/punjab" },
 ] as const;
 
 export const LEGACY_SERVICE_SLUGS_TO_DEACTIVATE = [
@@ -64,7 +64,8 @@ export function buildLegacyServiceNextRedirects(): NextConfigRedirect[] {
   return LEGACY_SERVICE_SLUG_REDIRECTS.flatMap(({ from, to }) =>
     SERVICE_PATH_PREFIXES.map((prefix) => ({
       source: `${prefix}/${from}`,
-      destination: `${prefix}/${to}`,
+      destination:
+        prefix === "/services" ? `${prefix}/${to}` : `${prefix}/${to.split("/")[0]}`,
       permanent: true,
     })),
   );

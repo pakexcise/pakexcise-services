@@ -3,6 +3,7 @@ import "server-only";
 import type { AdminSeoListItem } from "@/server/repositories/admin-seo-repository";
 import { publicPathFromSeoPageKey } from "@/features/seo/admin/lib/seo-page-paths";
 import { resolveSeoLinkedEntity } from "@/features/seo/admin/lib/seo-linked-entity";
+import { parseServiceRegionPageKey } from "@/features/services/lib/service-region-pages";
 import {
   SEO_CSV_HEADERS,
   formatRobotsCsv,
@@ -34,10 +35,13 @@ export type {
 export function classifySeoCategory(
   row: Pick<
     AdminSeoListItem,
-    "serviceId" | "regionId" | "cityId" | "blogPostId" | "legalPageId"
+    "serviceId" | "regionId" | "cityId" | "blogPostId" | "legalPageId" | "pageKey"
   >,
 ): Exclude<SeoCsvCategory, "all"> {
   if (row.serviceId) return "services";
+  if (row.pageKey.startsWith("service:") && row.pageKey.split(":").length === 3) {
+    return "services";
+  }
   if (row.cityId) return "cities";
   if (row.regionId) return "regions";
   if (row.blogPostId) return "blog";
@@ -73,6 +77,15 @@ export function resolveSeoCsvIdentity(row: AdminSeoListItem): {
   const path =
     publicPathFromSeoPageKey(row.pageKey) ??
     (row.pageKey.startsWith("/") ? row.pageKey : `/${row.pageKey}`);
+
+  const serviceRegion = parseServiceRegionPageKey(row.pageKey);
+  if (serviceRegion) {
+    return {
+      name: `${serviceRegion.serviceSlug} (${serviceRegion.regionSlug})`,
+      slug: `${serviceRegion.serviceSlug}/${serviceRegion.regionSlug}`,
+      path,
+    };
+  }
 
   if (row.service) {
     return {

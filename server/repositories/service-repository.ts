@@ -377,6 +377,101 @@ export class ServiceRepository extends Repository {
     );
   }
 
+  async findPublicDetailBySlugAndRegion(
+    serviceSlug: string,
+    regionSlug: string,
+  ): Promise<(PublicServiceDetail & { activeRegionId: string }) | null> {
+    return this.query(async () => {
+      const service = await this.db.service.findFirst({
+        where: {
+          slug: serviceSlug,
+          ...publicServiceWhere,
+          serviceRegions: {
+            some: {
+              isActive: true,
+              region: {
+                slug: regionSlug,
+                ...activeOnly(),
+              },
+            },
+          },
+        },
+        select: publicServiceDetailSelect,
+      });
+
+      if (!service) {
+        return null;
+      }
+
+      const activeRegion = service.serviceRegions.find(
+        (entry) => entry.region?.slug === regionSlug,
+      )?.region;
+
+      if (!activeRegion) {
+        return null;
+      }
+
+      return {
+        ...service,
+        activeRegionId: activeRegion.id,
+      };
+    }, null);
+  }
+
+  async findPublicRegionSeoByPageKey(pageKey: string) {
+    return this.query(
+      () =>
+        this.db.seoMeta.findUnique({
+          where: { pageKey },
+        }),
+      null,
+    );
+  }
+
+  async listActiveServiceRegionPaths(): Promise<
+    Array<{
+      serviceSlug: string;
+      regionSlug: string;
+      updatedAt: Date;
+    }>
+  > {
+    return this.query(
+      () =>
+        this.db.serviceRegion.findMany({
+          where: {
+            isActive: true,
+            service: publicServiceWhere,
+            region: activeOnly(),
+          },
+          select: {
+            updatedAt: true,
+            service: {
+              select: { slug: true, updatedAt: true },
+            },
+            region: {
+              select: { slug: true, updatedAt: true },
+            },
+          },
+          orderBy: [
+            { service: { displayOrder: "asc" } },
+            { displayOrder: "asc" },
+          ],
+        }).then((rows) =>
+          rows
+            .filter((row) => row.service && row.region)
+            .map((row) => ({
+              serviceSlug: row.service!.slug,
+              regionSlug: row.region!.slug,
+              updatedAt:
+                row.updatedAt > row.service!.updatedAt
+                  ? row.updatedAt
+                  : row.service!.updatedAt,
+            })),
+        ),
+      [],
+    );
+  }
+
   async findPublicApplyConfigBySlug(
     slug: string,
   ): Promise<PublicServiceApplyConfig | null> {

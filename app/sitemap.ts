@@ -86,6 +86,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  const serviceRegionPaths =
+    await serviceRepository.listActiveServiceRegionPaths().catch(() => []);
+  const serviceRegionEntries: MetadataRoute.Sitemap = serviceRegionPaths.map(
+    (entry) => ({
+      url: seoAbsoluteUrl(
+        `/services/${entry.serviceSlug}/${entry.regionSlug}`,
+      ),
+      lastModified: entry.updatedAt,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    }),
+  );
+
   const regionEntries: MetadataRoute.Sitemap = regions.map((region) => ({
     url: seoAbsoluteUrl(`/regions/${region.slug}`),
     lastModified: region.updatedAt,
@@ -123,6 +136,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticEntries,
     ...serviceEntries,
+    ...serviceRegionEntries,
     ...regionEntries,
     ...cityEntries,
     ...blogEntries,

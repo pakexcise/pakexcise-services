@@ -9,6 +9,10 @@ import { seedServiceConfig } from "./seed-service-config";
 import { seedRegionPlateFormats } from "./seed-region-plate-formats";
 import { seedLegalPages } from "./seed-legal-pages";
 import { seedPrimaryBlogPost } from "./seed-primary-blog";
+import {
+  cleanupLegacyServiceSeo,
+  syncAllActiveServiceRegionSeo,
+} from "../features/services/lib/sync-service-region-seo";
 
 const DEFAULT_MIME_TYPES = [
   "image/jpeg",
@@ -945,6 +949,9 @@ export async function seedMarketingData(prisma: PrismaClient): Promise<void> {
   }
 
   await seedLegalPages(prisma);
+
+  await cleanupLegacyServiceSeo();
+  await syncAllActiveServiceRegionSeo();
 
   console.log("Marketing content seeded.");
 }

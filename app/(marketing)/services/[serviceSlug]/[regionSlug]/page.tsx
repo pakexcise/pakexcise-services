@@ -9,13 +9,13 @@ import { HowItWorksSteps } from "@/components/marketing/how-it-works-steps";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PageHero } from "@/components/marketing/page-hero";
 import { ProseContent } from "@/components/marketing/prose-content";
+import { RegionGroupedDocumentChecklist } from "@/components/marketing/region-grouped-document-checklist";
 import { RelatedServices } from "@/components/marketing/related-services";
 import { PublicReviewsSection } from "@/components/marketing/public-reviews-section";
+import { ServiceFieldsPreview } from "@/components/marketing/service-fields-preview";
 import { ServiceInfoSidebar } from "@/components/marketing/service-info-sidebar";
 import { ServiceOptionsSection } from "@/components/marketing/service-options-section";
-import { ServiceRegionHubCards } from "@/components/marketing/service-region-hub-cards";
 import { ServiceRegionsList } from "@/components/marketing/service-regions-list";
-import { ServiceSubServices } from "@/components/marketing/service-sub-services";
 import { mapFaqsForLocale } from "@/features/marketing/lib/map-faqs";
 import { buildServiceCardLabels } from "@/features/marketing/lib/build-service-card-labels";
 import {
@@ -26,10 +26,19 @@ import {
 import { resolveMetadataFromSeo, resolveVisibleH1 } from "@/features/seo/lib/resolve-metadata";
 import {
   getServiceAssignedRegions,
-  getServiceRegionLabel,
 } from "@/features/services/lib/service-regions";
 import {
+  buildDefaultServiceRegionSeo,
+  buildServiceRegionPageKey,
+  buildServiceRegionPath,
+} from "@/features/services/lib/service-region-pages";
+import {
+  filterDocumentsByRegion,
+  filterFieldsByRegion,
+  getRegionSupportNoteForSlug,
+  groupDocumentsByRegion,
   mapServiceDocumentsForLocale,
+  mapServiceFieldsForLocale,
 } from "@/features/services/lib/map-service-requirements";
 import { absoluteUrl } from "@/lib/utils";
 import {
@@ -47,56 +56,88 @@ import {
   resolveWhatsappLinkNumber,
 } from "@/features/settings/lib/resolve-public-contact";
 import { buildWhatsAppUrl } from "@/lib/whatsapp/build-service-message";
+import { resolveCanonicalRegionSlug } from "@/config/region-slugs";
+
 export const revalidate = 3600;
 
-type ServicePageProps = {
-  params: Promise<{ serviceSlug: string }>;
+type ServiceRegionPageProps = {
+  params: Promise<{ serviceSlug: string; regionSlug: string }>;
 };
 
 export async function generateMetadata({
   params,
-}: ServicePageProps): Promise<Metadata> {
-  const { serviceSlug } = await params;
+}: ServiceRegionPageProps): Promise<Metadata> {
+  const { serviceSlug, regionSlug } = await params;
+  const canonicalRegionSlug = resolveCanonicalRegionSlug(regionSlug);
   const locale = "en";
-  const service = await serviceRepository.findPublicSeoBySlug(serviceSlug);
+
+  const service = await serviceRepository.findPublicDetailBySlugAndRegion(
+    serviceSlug,
+    canonicalRegionSlug,
+  );
 
   if (!service) {
     return {};
   }
 
+  const region = getServiceAssignedRegions(service).find(
+    (entry) => entry.slug === canonicalRegionSlug,
+  );
+  const pageKey = buildServiceRegionPageKey(serviceSlug, canonicalRegionSlug);
+  const seo = await serviceRepository.findPublicRegionSeoByPageKey(pageKey);
+  const defaults = buildDefaultServiceRegionSeo({
+    serviceName: service.nameEn,
+    serviceShortDescription: service.shortDescriptionEn,
+    regionName: region?.nameEn ?? canonicalRegionSlug,
+  });
+
   return await resolveMetadataFromSeo({
     locale,
-    path: `/services/${service.slug}`,
-    seo: service.seoMeta,
+    path: buildServiceRegionPath(serviceSlug, canonicalRegionSlug),
+    seo,
     fallbacks: {
-      title: {
-        en: `${service.nameEn} | PakExcise.com`,
-      },
-      description: {
-        en:
-          service.shortDescriptionEn?.trim() ||
-          service.contentEn?.trim()?.slice(0, 160) ||
-          `Get private facilitation support for ${service.nameEn} with PakExcise. Not a government website.`,
-      },
-      h1: {
-        en: service.nameEn,
-      },
+      title: { en: defaults.metaTitleEn },
+      description: { en: defaults.metaDescriptionEn },
+      h1: { en: defaults.h1En },
     },
   });
 }
 
-export default async function ServiceDetailPage({ params }: ServicePageProps) {
-  const { serviceSlug } = await params;
+export default async function ServiceRegionDetailPage({
+  params,
+}: ServiceRegionPageProps) {
+  const { serviceSlug, regionSlug } = await params;
+  const canonicalRegionSlug = resolveCanonicalRegionSlug(regionSlug);
+
+  if (canonicalRegionSlug !== regionSlug) {
+    redirect(
+      buildServiceRegionPath(serviceSlug, canonicalRegionSlug) as Route,
+    );
+  }
+
   const locale = "en";
-    const service = await serviceRepository.findPublicDetailBySlug(serviceSlug);
+  const service = await serviceRepository.findPublicDetailBySlugAndRegion(
+    serviceSlug,
+    canonicalRegionSlug,
+  );
 
   if (!service) {
     const slugRedirect = await redirectRepository.findActiveByOldSlug(serviceSlug);
 
     if (slugRedirect) {
-      redirect(`/services/${slugRedirect.newSlug}` as Route);
+      redirect(
+        buildServiceRegionPath(slugRedirect.newSlug, canonicalRegionSlug) as Route,
+      );
     }
 
+    notFound();
+  }
+
+  const region = getServiceAssignedRegions(service).find(
+    (entry) => entry.slug === canonicalRegionSlug,
+  );
+
+  if (!region) {
     notFound();
   }
 
@@ -105,7 +146,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const tHome = await getTranslations("home");
   const tNav = await getTranslations("nav");
 
-  const [serviceFaqs, relatedServices, businessSettings, featureFlags, serviceReviews, serviceReviewSummary] =
+  const pageKey = buildServiceRegionPageKey(serviceSlug, canonicalRegionSlug);
+  const [serviceFaqs, relatedServices, businessSettings, featureFlags, serviceReviews, serviceReviewSummary, regionSeo] =
     await Promise.all([
       faqRepository.listByServiceId(service.id),
       serviceRepository.listRelatedServices(service.id, 3),
@@ -113,6 +155,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       getFeatureFlagSettings(),
       reviewRepository.listPublicForService(service.id, 3),
       reviewRepository.getPublicSummary(service.id),
+      serviceRepository.findPublicRegionSeoByPageKey(pageKey),
     ]);
 
   const [reviews, reviewSummary] =
@@ -125,65 +168,63 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
   const whatsappMessage = resolveWhatsappDefaultMessage(businessSettings, locale);
-  const whatsappHref = buildWhatsAppUrl(whatsappLinkNumber, whatsappMessage);
 
   const name = service.nameEn ?? "";
-  const heroTitle = resolveVisibleH1(service.seoMeta, name);
-  const description = service.shortDescriptionEn ?? "";
+  const regionName = region.nameEn ?? "";
+  const seoDefaults = buildDefaultServiceRegionSeo({
+    serviceName: name,
+    serviceShortDescription: service.shortDescriptionEn,
+    regionName,
+  });
+  const heroTitle = resolveVisibleH1(regionSeo, seoDefaults.h1En);
+  const description =
+    regionSeo?.metaDescriptionEn?.trim() ||
+    service.shortDescriptionEn ||
+    seoDefaults.metaDescriptionEn;
   const content = service.contentEn ?? service.shortDescriptionEn;
   const processingNotes = service.processingNotesEn ?? "";
-  const categoryName = service.category
-    ? service.category.nameEn ?? ""
-    : null;
+  const categoryName = service.category ? service.category.nameEn ?? "" : null;
   const assignedRegions = getServiceAssignedRegions(service);
-  const regionName = getServiceRegionLabel(
-    service,
+  const regionSupportNote = getRegionSupportNoteForSlug(
+    service.serviceRegions,
+    canonicalRegionSlug,
     locale,
-    t("services.multipleRegions"),
-    t("services.allProvinces"),
   );
-  const areaServed =
-    assignedRegions.length > 0
-      ? assignedRegions
-          .map((region) =>
-            region.nameEn ?? "",
-          )
-          .join(", ")
-      : regionName;
 
   const faqItems = mapFaqsForLocale(serviceFaqs, locale);
   const allRegionsLabel = t("service.allRegionsScope");
-  const mappedDocuments = mapServiceDocumentsForLocale(
-    service.documentReqs,
-    locale,
-    allRegionsLabel,
+  const mappedDocuments = filterDocumentsByRegion(
+    mapServiceDocumentsForLocale(service.documentReqs, locale, allRegionsLabel),
+    canonicalRegionSlug,
+  );
+  const documentGroups = groupDocumentsByRegion(mappedDocuments, allRegionsLabel);
+  const mappedFields = filterFieldsByRegion(
+    mapServiceFieldsForLocale(service.formFields, locale, allRegionsLabel),
+    service.activeRegionId,
   );
   const requiredDocumentCount = mappedDocuments.filter(
     (doc) => doc.isRequired && doc.kind === "FILE",
   ).length;
 
-  const serviceUrl = absoluteUrl(`/services/${service.slug}`);
+  const pagePath = buildServiceRegionPath(serviceSlug, canonicalRegionSlug);
+  const serviceUrl = absoluteUrl(pagePath);
   const breadcrumbItems = [
     { label: tNav("home"), href: "/" },
     { label: t("services.title"), href: "/services" },
-    ...(categoryName
-      ? [{ label: categoryName, href: "/services" as const }]
-      : []),
-    { label: name },
+    { label: name, href: `/services/${service.slug}` },
+    { label: regionName },
   ];
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: t("services.title"), url: absoluteUrl("/services") },
-    ...(categoryName
-      ? [{ name: categoryName, url: absoluteUrl("/services") }]
-      : []),
-    { name, url: serviceUrl },
+    { name, url: absoluteUrl(`/services/${service.slug}`) },
+    { name: regionName, url: serviceUrl },
   ]);
   const serviceJsonLd = buildServiceJsonLd({
-    name,
+    name: `${name} — ${regionName}`,
     description: description || name,
     url: serviceUrl,
-    areaServed,
+    areaServed: regionName,
   });
   const faqJsonLd = buildFaqJsonLd(faqItems);
   const jsonLd = [breadcrumbJsonLd, serviceJsonLd, faqJsonLd].filter(
@@ -228,6 +269,15 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
             <ProseContent content={content ?? ""} />
 
+            {regionSupportNote ? (
+              <section className="space-y-3 rounded-xl border bg-muted/30 p-5">
+                <h2 className="text-xl font-bold">
+                  {t("service.regionSupportTitle")} — {regionName}
+                </h2>
+                <ProseContent content={regionSupportNote} />
+              </section>
+            ) : null}
+
             <ServiceOptionsSection
               serviceSlug={service.slug}
               serviceName={name}
@@ -236,30 +286,17 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               whatsappDefaultMessage={whatsappMessage}
               locale={locale}
               labels={serviceOptionsLabels}
-              hasSubServices={service.subServices.length > 0}
             />
 
-            <ServiceRegionHubCards
-              title={t("service.regionHubTitle")}
-              description={t("service.regionHubDescription")}
-              serviceSlug={service.slug}
-              regions={assignedRegions}
-              viewLabel={t("service.viewRegionPage")}
-            />
-
-            <ServiceRegionsList
-              title={t("service.availableIn")}
-              regions={assignedRegions}
-              serviceSlug={service.slug}
-            />
-
-            <ServiceSubServices
-              title={t("service.subServicesTitle")}
-              description={t("service.subServicesDescription")}
-              services={service.subServices}
-              locale={locale}
-              applyLabel={t("serviceOptions.accountSubServiceCta")}
-            />
+            {assignedRegions.length > 1 ? (
+              <ServiceRegionsList
+                title={t("service.otherRegionsTitle")}
+                regions={assignedRegions.filter(
+                  (entry) => entry.slug !== canonicalRegionSlug,
+                )}
+                serviceSlug={service.slug}
+              />
+            ) : null}
 
             {processingNotes?.trim() ? (
               <section className="space-y-3 rounded-xl border bg-muted/30 p-5">
@@ -267,6 +304,23 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 <ProseContent content={processingNotes} />
               </section>
             ) : null}
+
+            <ServiceFieldsPreview
+              title={t("service.fieldsTitle")}
+              description={t("service.fieldsDescription")}
+              fields={mappedFields}
+              requiredLabel={t("service.required")}
+              optionalLabel={t("service.optional")}
+              emptyMessage={t("service.fieldsEmpty")}
+            />
+
+            <RegionGroupedDocumentChecklist
+              title={t("service.documentsTitle")}
+              groups={documentGroups}
+              requiredLabel={t("service.required")}
+              optionalLabel={t("service.optional")}
+              emptyMessage={t("service.documentsEmpty")}
+            />
 
             <HowItWorksSteps
               title={tHome("howItWorksTitle")}
@@ -322,7 +376,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           </div>
 
           <ServiceInfoSidebar
-            serviceName={name}
+            serviceName={`${name} — ${regionName}`}
             regionLabel={regionName}
             documentCount={mappedDocuments.filter((doc) => doc.kind === "FILE").length}
             requiredDocumentCount={requiredDocumentCount}
