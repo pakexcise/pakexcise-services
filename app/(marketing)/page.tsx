@@ -7,7 +7,6 @@ import { ContactSupportOptionsSection } from "@/components/marketing/contact-sup
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { HomeAboutSection } from "@/components/marketing/home-about-section";
 import { HomeBlogSection } from "@/components/marketing/home-blog-section";
-import { HomeDocumentsPreviewSection } from "@/components/marketing/home-documents-preview-section";
 import { HomeFinalCtaSection } from "@/components/marketing/home-final-cta-section";
 import { HomeHeroSection } from "@/components/marketing/home-hero-section";
 import { HomeHowItWorksSection } from "@/components/marketing/home-how-it-works-section";
@@ -47,7 +46,6 @@ import {
 import { seoAbsoluteUrl } from "@/lib/seo-url";
 import {
   blogPostRepository,
-  documentRequirementRepository,
   faqRepository,
   getFeaturedServices,
   regionRepository,
@@ -122,14 +120,12 @@ const defaults = defaultHomePageSettings();
     popularServices,
     regions,
     faqs,
-    documents,
     blogPosts,
     reviews,
     reviewSummary,
     homeSeo,
     tCommon,
-    tMarketing,
-    tHome] = await Promise.all([
+    tMarketing] = await Promise.all([
     safeLoad("business", () => getBusinessSettings(), defaultBusinessSettings()),
     safeLoad(
       "features",
@@ -149,12 +145,6 @@ const defaults = defaultHomePageSettings();
       [],
     ),
     safeLoad(
-      "documents",
-      () =>
-        documentRequirementRepository.listPublicPreview(settings.limits.documentCount),
-      [],
-    ),
-    safeLoad(
       "blog",
       () => blogPostRepository.listPublished(settings.limits.blogCount),
       [],
@@ -166,8 +156,7 @@ const defaults = defaultHomePageSettings();
     }),
     safeLoad("homeSeo", () => seoMetaRepository.findByPageKey("home"), null),
     getTranslations("common"),
-    getTranslations("marketing"),
-    getTranslations("home")]);
+    getTranslations("marketing")]);
 
   const serviceCardLabels = buildServiceCardLabels(tCommon, tMarketing);
   const whatsappLinkNumber = resolveWhatsappLinkNumber(businessSettings);
@@ -296,22 +285,6 @@ const defaults = defaultHomePageSettings();
               whatsappCta={content.vehicleVisual.whatsappCta}
               requestCta={content.vehicleVisual.requestCta}
               whatsappHref={whatsappHref}
-            />
-          );
-          break;
-
-        case "documents":
-          sectionNode = (
-            <HomeDocumentsPreviewSection
-              title={content.sections.documents.title}
-              description={content.sections.documents.description}
-              documents={documents ?? []}
-              locale={locale}
-              requiredLabel={tMarketing("service.required")}
-              optionalLabel={tMarketing("service.optional")}
-              viewAllLabel={tHome("documentsViewAll")}
-              emptyMessage={tMarketing("service.documentsEmpty")}
-              tone={tone}
             />
           );
           break;

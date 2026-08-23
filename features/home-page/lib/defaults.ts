@@ -152,6 +152,7 @@ export function defaultHomePageSettings(): HomePageSettings {
         60,
         "Know the Requirements Before You Apply",
         "Each service may require different documents based on service type and province. PakExcise helps you understand what is needed before your request moves forward.",
+        false,
       ),
       whyChoose: section(
         70,
@@ -351,6 +352,8 @@ export function mergeHomePageSettings(
       ...merged,
       titleEn: sanitizePublicMarketingCopy(merged.titleEn),
       descriptionEn: sanitizePublicMarketingCopy(merged.descriptionEn),
+      // Documents preview removed from the public homepage.
+      ...(key === "documents" ? { isActive: false } : {}),
     };
   }
 

@@ -183,11 +183,17 @@ export async function Footer() {
     <footer className="border-t bg-linear-to-b from-muted/20 to-muted/40">
       <div className="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
         <div className="space-y-5 sm:col-span-2 lg:col-span-4">
-          <SiteLogo
-            size="footer"
-            footerLogoPath={footerLogoPath}
-            logoDarkPath={logoDarkPath}
-          />
+          <Link
+            href="/"
+            prefetch={false}
+            className="inline-flex max-w-full rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          >
+            <SiteLogo
+              size="footer"
+              footerLogoPath={footerLogoPath}
+              logoDarkPath={logoDarkPath}
+            />
+          </Link>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
             {description}
           </p>

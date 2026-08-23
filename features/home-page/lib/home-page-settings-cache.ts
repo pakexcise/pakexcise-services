@@ -128,7 +128,7 @@ export function getOrderedActiveHomeSections(
   settings: HomePageSettings,
 ): Array<{ key: HomeSectionKey; displayOrder: number }> {
   return (Object.keys(settings.sections) as HomeSectionKey[])
-    .filter((key) => settings.sections[key].isActive)
+    .filter((key) => key !== "documents" && settings.sections[key].isActive)
     .map((key) => ({
       key,
       displayOrder: settings.sections[key].displayOrder,
