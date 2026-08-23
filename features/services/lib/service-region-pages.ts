@@ -1,3 +1,5 @@
+import type { Route } from "next";
+
 import { resolveCanonicalRegionSlug } from "@/config/region-slugs";
 
 export type ServiceRegionPageRef = {
@@ -15,8 +17,8 @@ export function buildServiceRegionPageKey(
 export function buildServiceRegionPath(
   serviceSlug: string,
   regionSlug: string,
-): string {
-  return `/services/${serviceSlug}/${resolveCanonicalRegionSlug(regionSlug)}`;
+): Route {
+  return `/services/${serviceSlug}/${resolveCanonicalRegionSlug(regionSlug)}` as Route;
 }
 
 export function parseServiceRegionPageKey(

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 
 import { buildServiceRegionPath } from "@/features/services/lib/service-region-pages";
 
@@ -32,7 +33,7 @@ export function ServiceRegionsList({
               href={
                 serviceSlug
                   ? buildServiceRegionPath(serviceSlug, region.slug)
-                  : `/regions/${region.slug}`
+                  : (`/regions/${region.slug}` as Route)
               }
               prefetch={false}
               className="inline-flex rounded-full border bg-muted/40 px-3 py-1 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
