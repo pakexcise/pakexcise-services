@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import {
   createServiceCategorySchema,
   reorderServiceCategoriesSchema,
+  serviceCategoryIdSchema,
   toggleServiceCategorySchema,
   updateServiceCategorySchema} from "@/lib/validations/admin-service-category";
 import {
@@ -171,4 +172,48 @@ export async function reorderServiceCategoriesAction(
 
   revalidateCategoryPaths();
   return successResult({ count: parsed.data.orderedIds.length });
+}
+
+export async function deleteServiceCategoryAction(
+  input: unknown,
+): Promise<ActionResult<{ id: string }>> {
+  const user = await requirePermission("service:manage");
+  const parsed = parseInput(serviceCategoryIdSchema, input);
+
+  if (!parsed.success) {
+    return parsed;
+  }
+
+  const existing = await adminServiceCategoryRepository.findById(parsed.data.id);
+
+  if (!existing) {
+    return errorResult("Category not found");
+  }
+
+  if (existing.isActive) {
+    return errorResult(
+      "Deactivate this category before deleting it.",
+    );
+  }
+
+  if (existing._count.services > 0) {
+    return errorResult(
+      "Cannot delete a category that still has services assigned. Reassign those services first.",
+    );
+  }
+
+  await prisma.serviceCategory.delete({
+    where: { id: parsed.data.id },
+  });
+
+  await auditAdminAction({
+    actorId: user.id,
+    action: "DELETE",
+    entityType: "service_category",
+    entityId: parsed.data.id,
+    before: existing,
+  });
+
+  revalidateCategoryPaths();
+  return successResult({ id: parsed.data.id });
 }

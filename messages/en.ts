@@ -3346,7 +3346,13 @@ const en = {
         "apply": "Apply filters"
       },
       "actions": {
-        "edit": "Edit"
+        "edit": "Edit",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete",
+        "deleteConfirm": "Delete this inactive category permanently?",
+        "deleteBlockedActive": "Deactivate this category before deleting it.",
+        "deleteBlockedServices": "Reassign or remove all services from this category before deleting it."
       },
       "form": {
         "slug": "Slug",

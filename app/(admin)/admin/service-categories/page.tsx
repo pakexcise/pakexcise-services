@@ -6,7 +6,9 @@ import { Plus } from "lucide-react";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { EmptyState } from "@/features/admin/components/empty-state";
 import { PaginationControls } from "@/features/admin/components/pagination-controls";
+import { ServiceCategoryRowActions } from "@/features/service-categories/admin/components/category-list-actions";
 import { adminMetadata } from "@/features/admin/lib/metadata";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -118,14 +120,25 @@ export default async function AdminServiceCategoriesPage({
                   <TableCell className="font-mono text-sm">{category.slug}</TableCell>
                   <TableCell>{category._count.services}</TableCell>
                   <TableCell>
-                    {category.isActive ? t("status.active") : t("status.inactive")}
+                    <Badge variant={category.isActive ? "default" : "secondary"}>
+                      {category.isActive ? t("status.active") : t("status.inactive")}
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-end">
-                    <Button asChild size="sm" variant="outline">
-                      <Link href={`/admin/service-categories/${category.id}/edit`}>
-                        {t("actions.edit")}
-                      </Link>
-                    </Button>
+                    <ServiceCategoryRowActions
+                      id={category.id}
+                      isActive={category.isActive}
+                      serviceCount={category._count.services}
+                      labels={{
+                        edit: t("actions.edit"),
+                        activate: t("actions.activate"),
+                        deactivate: t("actions.deactivate"),
+                        delete: t("actions.delete"),
+                        deleteConfirm: t("actions.deleteConfirm"),
+                        deleteBlockedActive: t("actions.deleteBlockedActive"),
+                        deleteBlockedServices: t("actions.deleteBlockedServices"),
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
