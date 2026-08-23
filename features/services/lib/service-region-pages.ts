@@ -21,6 +21,17 @@ export function buildServiceRegionPath(
   return `/services/${serviceSlug}/${resolveCanonicalRegionSlug(regionSlug)}` as Route;
 }
 
+export function buildPublicServiceHref(
+  serviceSlug: string,
+  regionSlug?: string,
+): Route {
+  if (regionSlug) {
+    return buildServiceRegionPath(serviceSlug, regionSlug);
+  }
+
+  return `/services/${serviceSlug}` as Route;
+}
+
 export function parseServiceRegionPageKey(
   pageKey: string,
 ): ServiceRegionPageRef | null {

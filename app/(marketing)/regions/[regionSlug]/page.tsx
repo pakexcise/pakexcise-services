@@ -168,6 +168,7 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
           locale={locale}
           labels={buildServiceCardLabels(tCommon, t)}
           variant="region"
+          regionSlug={region.slug}
           emptyMessage={t("regions.emptyServices")}
           serviceCountLabel={t("regions.serviceCount", { count: services.length })}
         />
@@ -175,6 +176,7 @@ export default async function RegionDetailPage({ params }: RegionPageProps) {
         {plateFormatsSection ? (
           <RegionNumberPlateFormatsSection
             data={plateFormatsSection}
+            regionSlug={region.slug}
             relatedServices={services.map((service) => ({
               slug: service.slug,
               name: service.nameEn ?? "",

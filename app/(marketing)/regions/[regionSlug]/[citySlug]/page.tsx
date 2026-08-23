@@ -156,6 +156,7 @@ export default async function CityDetailPage({ params }: CityPageProps) {
           locale={locale}
           labels={buildServiceCardLabels(tCommon, t)}
           variant="region"
+          regionSlug={region.slug}
           emptyMessage={t("regions.emptyServices")}
           serviceCountLabel={t("regions.serviceCount", { count: services.length })}
         />

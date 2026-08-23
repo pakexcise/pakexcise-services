@@ -1,5 +1,6 @@
 import { DirectionalArrow } from "@/components/shared/directional-arrow";
 import { getServiceCardDisplayText } from "@/features/services/lib/service-regions";
+import { buildPublicServiceHref } from "@/features/services/lib/service-region-pages";
 import { cn } from "@/lib/utils";
 import type { PublicServiceSelect } from "@/server/repositories";
 
@@ -21,6 +22,7 @@ type ServiceCardProps = {
   labels: ServiceCardLabels;
   useDynamicSummary?: boolean;
   variant?: "default" | "elevated";
+  regionSlug?: string;
 };
 
 export function ServiceCard({
@@ -28,7 +30,9 @@ export function ServiceCard({
   locale,
   labels,
   useDynamicSummary = true,
-  variant = "elevated"}: ServiceCardProps) {
+  variant = "elevated",
+  regionSlug,
+}: ServiceCardProps) {
   const name = service.nameEn?.trim() || service.slug.replace(/-/g, " ");
   const slug = service.slug?.trim();
 
@@ -51,7 +55,7 @@ export function ServiceCard({
 
   return (
     <Link
-      href={`/services/${slug}`}
+      href={buildPublicServiceHref(slug, regionSlug)}
       prefetch={false}
       className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >

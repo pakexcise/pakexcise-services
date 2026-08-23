@@ -9,8 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { disclaimerBoxClassName } from "@/lib/styles/disclaimer-banner";
 
 import Link from "next/link";
+
+import { buildPublicServiceHref } from "@/features/services/lib/service-region-pages";
+
 type RegionNumberPlateFormatsSectionProps = {
   data: MappedRegionPlateFormatsSection;
+  regionSlug: string;
   relatedServices: Array<{ slug: string; name: string }>;
   labels: {
     formatsLabel: string;
@@ -38,6 +42,7 @@ function resolveRelatedServices(
 
 export function RegionNumberPlateFormatsSection({
   data,
+  regionSlug,
   relatedServices,
   labels,
 }: RegionNumberPlateFormatsSectionProps) {
@@ -124,7 +129,7 @@ export function RegionNumberPlateFormatsSection({
                       {cardServices.map((service) => (
                         <li key={service.slug}>
                           <Link
-                            href={`/services/${service.slug}`}
+                            href={buildPublicServiceHref(service.slug, regionSlug)}
                             prefetch={false}
                             className="text-sm font-medium text-primary hover:underline"
                           >

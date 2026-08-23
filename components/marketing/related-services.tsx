@@ -13,6 +13,7 @@ type RelatedServicesProps = {
   variant?: "default" | "region";
   emptyMessage?: string;
   serviceCountLabel?: string;
+  regionSlug?: string;
 };
 
 export function RelatedServices({
@@ -24,6 +25,7 @@ export function RelatedServices({
   variant = "default",
   emptyMessage,
   serviceCountLabel,
+  regionSlug,
 }: RelatedServicesProps) {
   if (services.length === 0) {
     return emptyMessage ? (
@@ -63,6 +65,7 @@ export function RelatedServices({
         labels={labels}
         useDynamicSummary={useDynamicSummary}
         variant="elevated"
+        regionSlug={regionSlug}
       />
     </section>
   );

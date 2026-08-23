@@ -372,6 +372,7 @@ export default async function ServiceRegionDetailPage({
               services={relatedServices}
               locale={locale}
               labels={buildServiceCardLabels(tCommon, t)}
+              regionSlug={canonicalRegionSlug}
             />
           </div>
 

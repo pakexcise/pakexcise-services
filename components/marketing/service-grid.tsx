@@ -9,6 +9,7 @@ type ServiceGridProps = {
   useDynamicSummary?: boolean;
   variant?: "default" | "elevated";
   emptyMessage?: string;
+  regionSlug?: string;
 };
 
 export function ServiceGrid({
@@ -18,6 +19,7 @@ export function ServiceGrid({
   useDynamicSummary = true,
   variant = "elevated",
   emptyMessage,
+  regionSlug,
 }: ServiceGridProps) {
   if (services.length === 0) {
     return emptyMessage ? (
@@ -35,6 +37,7 @@ export function ServiceGrid({
           labels={labels}
           useDynamicSummary={useDynamicSummary}
           variant={variant}
+          regionSlug={regionSlug}
         />
       ))}
     </div>
